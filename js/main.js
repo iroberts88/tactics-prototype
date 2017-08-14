@@ -139,13 +139,21 @@ function init() {
     console.log('Loading Complete');
     Acorn.changeState('game');
 
-    Graphics.app.ticker.add(function update(delta){
+    Graphics.app.ticker.add(function update(){
         Settings.stats.begin();
-        Acorn.states[Acorn.currentState].update(delta); //update the current state
+        Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
         Graphics.app.renderer.render(Graphics.app.stage);
         if (Acorn.Input.isPressed(Acorn.Input.Key.TOGGLESTATS)){
             Settings.toggleStats();
             Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
+        }
+        if (Acorn.Input.isPressed(Acorn.Input.Key.ROTATE1)){
+            Settings.rotateMap('left');
+            Acorn.Input.setValue(Acorn.Input.Key.ROTATE1, false);
+        }
+        if (Acorn.Input.isPressed(Acorn.Input.Key.ROTATE2)){
+            Settings.rotateMap('right');
+            Acorn.Input.setValue(Acorn.Input.Key.ROTATE2, false);
         }
         Settings.stats.end();
     })

@@ -8,12 +8,11 @@
         masterVolume: null,
         musicVolume: null,
         sfxVolume: null,
-        dust: null,
-        trails: null,
+
         autoFullScreen: null,
         stats: null,
         statsOn: null,
-
+        currentRotation: null,
         credentials: null,
         credentialsOn: null,
 
@@ -36,21 +35,31 @@
             this.credentials = new Credentials();
             this.credentials.domElement.style.position = 'absolute';
             this.credentialsOn = false;
-            this.dust = true;
-            this.trails = true;
+            this.currentRotation = 0;
         },
-        toggleDust: function(){
-            if (this.dust){
-                this.dust = false;
-            }else{
-                this.dust = true;
-            }
-        },
-        toggleTrails: function(){
-            if (this.trails){
-                this.trails = false;
-            }else{
-                this.trails = true;
+        
+        rotateMap: function(dir){
+            if (!Map.rotateData){
+                var c = this.currentRotation;
+                if (dir == 'right'){
+                    this.currentRotation -= 1;
+                    if (this.currentRotation == -1){
+                        this.currentRotation = 3;
+                    }
+                }else if (dir == 'left'){
+                    this.currentRotation += 1;
+                    if (this.currentRotation == 4){
+                        this.currentRotation = 0;
+                    }
+                }
+                Map.rotateData = {
+                    t: 0,
+                    extraRot: 0,
+                    time: 0.1,
+                    dir: dir,
+                    rot1: c,
+                    rot2: this.currentRotation,
+                }
             }
         },
         toggleCredentials: function(on){

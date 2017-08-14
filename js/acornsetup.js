@@ -265,6 +265,7 @@
 
             Acorn.Input.onMouseClick(function(e) {
                 Acorn.Input.mouseDown = true;
+                console.log(e);
             });
             Acorn.Input.onMouseUp(function(e) {
                 Acorn.Input.mouseDown = false;
@@ -272,8 +273,9 @@
 
             Acorn.Input.onScroll(function(e) {
                 //save the original mouse Location based on bounds of the map
-                var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - Graphics.world.position.x) / (Map.bounds[0]*Graphics.world.scale.x)));
-                var mouseY = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.Y - Graphics.world.position.y) / (Map.bounds[1]*Graphics.world.scale.y)));
+                //TODO if map.rotatedata = null?
+                var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - (Graphics.world.position.x-Graphics.world.width/2)) / (Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x)));
+                var mouseY = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.Y - (Graphics.world.position.y-Graphics.world.height/2)) / (Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y)));
                 if (e.deltaY < 0){
                     Graphics.world.scale.x = Math.min(1.4,Graphics.world.scale.x+.04);
                     Graphics.world.scale.y = Math.min(1.4,Graphics.world.scale.y+.04);
@@ -282,8 +284,8 @@
                     Graphics.world.scale.y = Math.max(0.04,Graphics.world.scale.y-.04);
                 }
                 //reposition the map to stay on mouse point
-                Graphics.world.position.x = Acorn.Input.mouse.X - (mouseX*Map.bounds[0]*Graphics.world.scale.x);
-                Graphics.world.position.y = Acorn.Input.mouse.Y - (mouseY*Map.bounds[1]*Graphics.world.scale.y);
+                Graphics.world.position.x = Acorn.Input.mouse.X - (mouseX*Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x) + Graphics.world.width/2;
+                Graphics.world.position.y = Acorn.Input.mouse.Y - (mouseY*Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y) + Graphics.world.height/2;
             });
 
             Acorn.Input.onMouseMove(function(e) {
@@ -292,15 +294,17 @@
                     var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
                     Graphics.world.position.x = Graphics.world.position.x + mX;
                     Graphics.world.position.y = Graphics.world.position.y + mY;
-                    if (Graphics.world.position.x < (-1*Map.bounds[0]*Graphics.world.scale.x)){
-                        Graphics.world.position.x = (-1*Map.bounds[0]*Graphics.world.scale.x);
-                    }else if (Graphics.world.position.x > Graphics.width - Map.startAt){
-                        Graphics.world.position.x = Graphics.width - Map.startAt;
+                    var posX = Graphics.world.position.x - Graphics.world.width/2;
+                    var posY = Graphics.world.position.y - Graphics.world.height/2;
+                    if (posX < (-1*Graphics.world.width+300)){
+                        Graphics.world.position.x = (-1*Graphics.world.width/2)+300;
+                    }else if (posX > Graphics.width -300){
+                        Graphics.world.position.x = Graphics.width + Graphics.world.width/2 -300;
                     }
-                    if (Graphics.world.position.y < -1*Map.bounds[1]*Graphics.world.scale.y){
-                        Graphics.world.position.y = -1*Map.bounds[1]*Graphics.world.scale.y;
-                    }else if (Graphics.world.position.y > Graphics.height - Map.startAt){
-                        Graphics.world.position.y = Graphics.height - Map.startAt;
+                    if (posY < (-1*Graphics.world.height+300)){
+                        Graphics.world.position.y = (-1*Graphics.world.height/2)+300;
+                    }else if (posY > Graphics.height -300){
+                        Graphics.world.position.y = Graphics.height + Graphics.world.height/2 -300;
                     }
                 }
                 //find if a tile is moused over

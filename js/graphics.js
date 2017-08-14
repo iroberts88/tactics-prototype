@@ -99,7 +99,7 @@
             this.actualRatio = [w/this.baseWidth,h/this.baseHeight];
         },
         startLoad: function(){
-            PIXI.loader
+            Graphics.app.loader
                 .add('img/sheet1.json')
                 .load(Graphics.loadResources);
             
@@ -140,7 +140,8 @@
 
             //Load all textures
             var textures = [
-                'tile'
+                'base_tile1',
+                'base_tile2'
             ];
 
             //add all textures to resources
@@ -158,7 +159,7 @@
             if (typeof Graphics.resources[id] === 'undefined'){
                 console.log(id);
                 console.log('-- Graphics resource not found' )
-                return Graphics.resources['tile'];
+                return Graphics.resources['base_tile1'];
             }else{
                 return Graphics.resources[id];
             }
