@@ -2,27 +2,29 @@
 
 "base_tile1.png":
 {
-	"frame": {"x":1,"y":1,"w":117,"h":155},
+	"frame": {"x":2,"y":2,"w":32,"h":40},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":69,"y":38,"w":117,"h":155},
-	"sourceSize": {"w":256,"h":256}
+	"spriteSourceSize": {"x":16,"y":8,"w":32,"h":40},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
 },
 "base_tile2.png":
 {
-	"frame": {"x":120,"y":1,"w":130,"h":142},
+	"frame": {"x":36,"y":2,"w":32,"h":40},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":63,"y":45,"w":130,"h":142},
-	"sourceSize": {"w":256,"h":256}
+	"spriteSourceSize": {"x":16,"y":8,"w":32,"h":40},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
 }},
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "sheet1.png",
 	"format": "RGBA8888",
-	"size": {"w":251,"h":157},
+	"size": {"w":70,"h":44},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:54a4f044c241ff292c8183e90c4e149b:426fc32fba6b38ca1c68f2edf189420e:81b8455959c6df0a71f2d78f10f487eb$"
+	"smartupdate": "$TexturePacker:SmartUpdate:439b406f3946b4ff75e3e7df2d0a8ef7:5947423c4ae60163439e935d7dbff708:81b8455959c6df0a71f2d78f10f487eb$"
 }
 }

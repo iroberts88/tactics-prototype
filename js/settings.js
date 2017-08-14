@@ -55,7 +55,7 @@
                 Map.rotateData = {
                     t: 0,
                     extraRot: 0,
-                    time: 0.1,
+                    time: 0.25,
                     dir: dir,
                     rot1: c,
                     rot2: this.currentRotation,

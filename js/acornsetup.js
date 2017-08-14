@@ -253,7 +253,7 @@
                 init: function(){
                     //document.body.style.cursor = 'none';
                     Graphics.clear();
-                    Map.init({width: 100,height: 100,startAt: 300});
+                    Map.init({width: 25,height: 25,startAt: 300});
                 },
                 update: function(dt){
                     //update chat console
@@ -277,11 +277,11 @@
                 var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - (Graphics.world.position.x-Graphics.world.width/2)) / (Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x)));
                 var mouseY = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.Y - (Graphics.world.position.y-Graphics.world.height/2)) / (Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y)));
                 if (e.deltaY < 0){
-                    Graphics.world.scale.x = Math.min(1.4,Graphics.world.scale.x+.04);
-                    Graphics.world.scale.y = Math.min(1.4,Graphics.world.scale.y+.04);
+                    Graphics.world.scale.x = Math.min(3.0,Graphics.world.scale.x+.04);
+                    Graphics.world.scale.y = Math.min(3.0,Graphics.world.scale.y+.04);
                 }else{
-                    Graphics.world.scale.x = Math.max(0.04,Graphics.world.scale.x-.04);
-                    Graphics.world.scale.y = Math.max(0.04,Graphics.world.scale.y-.04);
+                    Graphics.world.scale.x = Math.max(0.1,Graphics.world.scale.x-.04);
+                    Graphics.world.scale.y = Math.max(0.1,Graphics.world.scale.y-.04);
                 }
                 //reposition the map to stay on mouse point
                 Graphics.world.position.x = Acorn.Input.mouse.X - (mouseX*Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x) + Graphics.world.width/2;
