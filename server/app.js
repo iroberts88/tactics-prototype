@@ -16,7 +16,7 @@ function init() {
     // ----------------------------------------------------------
     // Start Database Connection
     // ----------------------------------------------------------
-    var url = 'mongodb://127.0.0.1/wisp';
+    var url = 'mongodb://127.0.0.1/lithiumAve';
     rc.ready();
     //TODO -- update to a new database
     rc.require('dbHighScores','dbUsers');
@@ -27,7 +27,7 @@ function init() {
         console.log("DB errors: " + err);
         
         // ---- Load HighScores ----
-        var HSColl = db.collection('highScores');
+        var HSColl = db.collection('wisp_highScores');
         HSColl.find().toArray(function(err, arr) {
             ge.loadHighScores(arr);
             rc.ready('dbHighScores');

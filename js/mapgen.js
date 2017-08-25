@@ -3,7 +3,8 @@
     MapGen = {
         getNewMap: function(){
             return {
-                TILE_SIZE: 128,
+                TILE_SIZE: 32,
+                TILE_HEIGHT: 8,
                 startAt: null, //TODO this should be to compensate for max tile height
                 bounds: null,
                 mapArray: null,
@@ -15,10 +16,13 @@
                 tileSizeActual: null,
                 rotateData: null,
                 blurFilter: null,
+                iso: null,
                 init: function(data) {
                     this.height = data.height;
                     this.width = data.width;
-                    this.startAt = data.startAt;
+                    this.iso = data.iso;
+                    //this.startAt = data.startAt;
+                    this.startAt = Math.max(this.TILE_SIZE*this.height, this.TILE_SIZE*this.width);
                     this.bounds = [this.TILE_SIZE*(this.width-1.5) + this.startAt, this.TILE_SIZE * (this.height*.75 - 1.5) + this.startAt];
                     this.tileScale = 1;
                     this.tileSizeActual = this.TILE_SIZE/this.tileScale;
@@ -29,11 +33,38 @@
                     this.mapTextures = [];
                     this.blurFilter = new PIXI.filters.BlurFilter();
                     this.blurFilter.blur = 10;
-                    var container = new PIXI.Container();
-                    for (var i = 0; i < this.height;i++){
+                    this.container = new PIXI.Container();
+                    var map = [
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [1,1,2,2,2,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1,1,2,2,2,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1,1,1,1,1,3,3,3,3,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1,1,1,1,1,4,4,3,3,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1,1,1,1,1,4,4,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                        [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5],
+                        [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,5],
+                        [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,6],
+                        [5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,11,12,13]
+                    ];
+                    for (var i = 0; i < map.length;i++){
                         var a = [];
-                        for (var j = 0;j < this.width;j++){
-                            a.push({h: Math.floor(Math.random()*4),sprites: []});
+                        for (var j = 0;j < map[i].length;j++){
+                            a.push({h: map[i][j],sprites: []});
                         }
                         this.mapArray.push(a);
                     }
@@ -45,21 +76,26 @@
                             var node = this.mapArray[i][j];
                             for (var k = 0;k <=node.h;k++){
                                 var sprite = Graphics.getSprite('base_tile1');
-                                sprite.position.x = this.startAt + j*(this.tileSizeActual*0.875) - (this.tileSizeActual*0.4375*(i%2));
-                                sprite.position.y = this.startAt + i*(this.tileSizeActual*0.75) - (25*k);
+                                if (data.iso){
+                                    sprite.position.x = this.startAt + j*(this.tileSizeActual/2) - i*(this.tileSizeActual/2);
+                                    sprite.position.y = this.startAt + i*(this.tileSizeActual*0.75) + j*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k)
+                                }else{
+                                    sprite.position.x = this.startAt + j*(this.tileSizeActual) - (this.tileSizeActual*0.5*(i%2));
+                                    sprite.position.y = this.startAt + i*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k);
+                                }
                                 sprite.anchor.x = .5;
                                 sprite.anchor.y = .5;
                                 sprite.scale.x = this.tileScale;
                                 sprite.scale.y = this.tileScale;
                                 sprite.loc = {x: i,y: j,z: k};
                                 node.sprites.push(sprite);
-                                container.addChild(sprite);
+                                this.container.addChild(sprite);
                             } 
                         }
                     }
-                    container._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(container.width+128+this.startAt,container.height+128+this.startAt);
-                    Graphics.app.renderer.render(container,texture);
+                    this.container._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(this.container.width+this.TILE_SIZE+this.startAt,this.container.height+this.TILE_SIZE+this.startAt);
+                    Graphics.app.renderer.render(this.container,texture);
                     var mapSprite = new PIXI.Sprite(texture);
                     //get the anchor point
                     mapSprite.anchor.x = (this.startAt + (this.mapArray[this.height-1][this.width-1].sprites[0].position.x - this.mapArray[0][0].sprites[0].position.x)/2)/mapSprite.width;
@@ -68,41 +104,59 @@
                     Graphics.worldContainer.addChild(mapSprite);
 
                     //1
-                    var container2 = new PIXI.Container();
-                    for (var i = this.width-1;i>=0;i--){
-                        this.mapArray2[''+(this.width-1-i)] = {};
-                        for (var j = 0; j <= this.height;j+=2){
-                            try{
+                    this.container2 = new PIXI.Container();
+                    if (data.iso){
+                        for (var i = this.width-1;i>=0;i--){
+                            this.mapArray2[''+(this.width-1-i)] = {};
+                            for (var j = 0; j < this.height;j+=1){
                                 var node = this.mapArray[j][i];
                                 this.mapArray2[''+(this.width-1-i)][j] = {h: node.h,sprites: []};
                                 for (var k = 0;k <=node.h;k++){
                                     var sprite = node.sprites[k];
                                     sprite.texture = Graphics.getResource('base_tile2');
-                                    sprite.position.x = this.startAt + j*(this.tileSizeActual*0.74);
-                                    sprite.position.y = this.startAt + (this.width-1-i)*(this.tileSizeActual*0.875) + (this.tileSizeActual*0.4375*(j%2)) - (25*k);
+                                    sprite.position.x = this.startAt + j*(this.tileSizeActual*0.75) - (this.width-1-i)*(this.tileSizeActual*0.75);
+                                    sprite.position.y = this.startAt + (this.width-1-i)*(this.tileSizeActual/2) + j*(this.tileSizeActual/2) - (this.TILE_HEIGHT*k);
                                     this.mapArray2[''+(this.width-1-i)][j].sprites.push(sprite);
-                                    container2.addChild(sprite);
+                                    this.container2.addChild(sprite);
                                 }
-                            }catch(e){}
-                            try{
-                                if (j!=0){
-                                    var node = this.mapArray[j-1][i];
-                                    this.mapArray2[''+(this.width-1-i)][j-1] = {h: node.h,sprites: []};
+                            }
+                        }
+                    }else{
+                        for (var i = this.width-1;i>=0;i--){
+                            this.mapArray2[''+(this.width-1-i)] = {};
+                            for (var j = 0; j <= this.height;j+=2){
+                                try{
+                                    var node = this.mapArray[j][i];
+                                    this.mapArray2[''+(this.width-1-i)][j] = {h: node.h,sprites: []};
                                     for (var k = 0;k <=node.h;k++){
                                         var sprite = node.sprites[k];
                                         sprite.texture = Graphics.getResource('base_tile2');
-                                        sprite.position.x = this.startAt + (j-1)*(this.tileSizeActual*0.74);
-                                        sprite.position.y = this.startAt + (this.width-1-i)*(this.tileSizeActual*0.875) + (this.tileSizeActual*0.4375*((j-1)%2)) - (25*k);
-                                        this.mapArray2[''+(this.width-1-i)][j-1].sprites.push(sprite);
-                                        container2.addChild(sprite);
+                                        sprite.position.x = this.startAt + j*(this.tileSizeActual*0.75);
+                                        sprite.position.y = this.startAt + (this.width-1-i)*(this.tileSizeActual) + (this.tileSizeActual*0.5*(j%2)) - (this.TILE_HEIGHT*k);
+                                        this.mapArray2[''+(this.width-1-i)][j].sprites.push(sprite);
+                                        this.container2.addChild(sprite);
                                     }
-                                }
-                            }catch(e){}
+                                }catch(e){}
+                                try{
+                                    if (j!=0){
+                                        var node = this.mapArray[j-1][i];
+                                        this.mapArray2[''+(this.width-1-i)][j-1] = {h: node.h,sprites: []};
+                                        for (var k = 0;k <=node.h;k++){
+                                            var sprite = node.sprites[k];
+                                            sprite.texture = Graphics.getResource('base_tile2');
+                                            sprite.position.x = this.startAt + (j-1)*(this.tileSizeActual*0.75);
+                                            sprite.position.y = this.startAt + (this.width-1-i)*(this.tileSizeActual) + (this.tileSizeActual*0.5*((j-1)%2)) - (this.TILE_HEIGHT*k);
+                                            this.mapArray2[''+(this.width-1-i)][j-1].sprites.push(sprite);
+                                            this.container2.addChild(sprite);
+                                        }
+                                    }
+                                }catch(e){}
+                            }
                         }
                     }
-                    container2._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(container2.width+128+this.startAt,container2.height+128+this.startAt);
-                    Graphics.app.renderer.render(container2,texture);
+                    this.container2._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(this.container2.width+this.TILE_SIZE+this.startAt,this.container2.height+this.TILE_SIZE+this.startAt);
+                    Graphics.app.renderer.render(this.container2,texture);
                     var mapSprite = new PIXI.Sprite(texture);
                     //get the anchor point
                     mapSprite.anchor.x = (this.startAt + (this.mapArray2[this.width-1][this.height-1].sprites[0].position.x - this.mapArray2[0][0].sprites[0].position.x)/2)/mapSprite.width;
@@ -110,10 +164,9 @@
                     mapSprite.visible = false;
                     this.mapTextures.push(mapSprite);
                     Graphics.worldContainer.addChild(mapSprite);
-                    container2.removeChildren();
 
                     //2
-                    var container3 = new PIXI.Container();
+                    this.container3 = new PIXI.Container();
                     for (var i = this.height-1;i>=0;i--){
                         this.mapArray3[''+(this.height-1-i)] = {};
                         for (var j = this.width-1; j >= 0;j--){
@@ -122,16 +175,21 @@
                             for (var k = 0;k <=node.h;k++){
                                 var sprite = node.sprites[k];
                                 sprite.texture = Graphics.getResource('base_tile1');
-                                sprite.position.x = this.startAt + (this.width-1-j)*(this.tileSizeActual*0.875) + (this.tileSizeActual*0.4375*(i%2));
-                                sprite.position.y = this.startAt + (this.height-1-i)*(this.tileSizeActual*0.75) - (25*k);
+                                if (data.iso){
+                                    sprite.position.x = this.startAt + (this.width-1-j)*(this.tileSizeActual/2) - (this.height-1-i)*(this.tileSizeActual/2);
+                                    sprite.position.y = this.startAt + (this.height-1-i)*(this.tileSizeActual*0.75) + (this.width-1-j)*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k);
+                                }else{
+                                    sprite.position.x = this.startAt + (this.width-1-j)*(this.tileSizeActual) + (this.tileSizeActual*0.5*(i%2));
+                                    sprite.position.y = this.startAt + (this.height-1-i)*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k);
+                                }
                                 this.mapArray3[''+(this.height-1-i)][''+(this.width-1-j)].sprites.push(sprite);
-                                container3.addChild(sprite);
+                                this.container3.addChild(sprite);
                             } 
                         }
                     }
-                    container3._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(container3.width+128+this.startAt,container3.height+128+this.startAt);
-                    Graphics.app.renderer.render(container3,texture);
+                    this.container3._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(this.container3.width+this.TILE_SIZE+this.startAt,this.container3.height+this.TILE_SIZE+this.startAt);
+                    Graphics.app.renderer.render(this.container3,texture);
                     var mapSprite = new PIXI.Sprite(texture);
                     //get the anchor point
                     mapSprite.anchor.x = (this.startAt + (this.mapArray3[this.height-1][this.width-1].sprites[0].position.x - this.mapArray3[0][0].sprites[0].position.x)/2)/mapSprite.width;
@@ -141,46 +199,65 @@
                     Graphics.worldContainer.addChild(mapSprite);
 
                     //3
-                    var container4 = new PIXI.Container();
-                    for (var i = 0;i<this.width;i++){
-                        this.mapArray4[i] = {};
-                        for (var j = this.height-1; j>=-1 ;j-=2){
-                            try{
+                    this.container4 = new PIXI.Container();
+                    
+                    if (data.iso){
+                        for (var i = 0;i<this.width;i++){
+                            this.mapArray4[i] = {};
+                            for (var j = this.height-1; j>=0 ;j--){
                                 var node = this.mapArray[j][i];
                                 this.mapArray4[i][''+(this.height-1-j)] = {h: node.h,sprites: []};
                                 for (var k = 0;k <=node.h;k++){
                                     var sprite = node.sprites[k];
                                     sprite.texture = Graphics.getResource('base_tile2');
-                                    sprite.position.x = this.startAt + (this.height-1-j)*(this.tileSizeActual*0.74);
-                                    sprite.position.y = this.startAt + i*(this.tileSizeActual*0.875) - (this.tileSizeActual*0.4375*((this.height-1-j)%2)) - (25*k);
-                                    container4.addChild(sprite);
+                                    sprite.position.x = this.startAt + (this.height-1-j)*(this.tileSizeActual*0.75) - i*(this.tileSizeActual*0.75);
+                                    sprite.position.y = this.startAt + i*(this.tileSizeActual/2) + (this.height-1-j)*(this.tileSizeActual/2) - (this.TILE_HEIGHT*k);
                                     this.mapArray4[i][''+(this.height-1-j)].sprites.push(sprite);
+                                    this.container4.addChild(sprite);
                                 }
-                            }catch(e){};
-                            
+                            }
                         }
-                        for (var j = this.height-1; j>=-1 ;j-=2){
-                            try{
-                                if (j != this.height-1){
-                                    var node = this.mapArray[j+1][i];
-                                    this.mapArray4[i][''+(this.height-2-j)] = {h: node.h,sprites: []};
+                    }else{
+                        for (var i = 0;i<this.width;i++){
+                            this.mapArray4[i] = {};
+                            for (var j = this.height-1; j>=-1 ;j-=2){
+                                try{
+                                    if (j != this.height-1){
+                                        var node = this.mapArray[j+1][i];
+                                        this.mapArray4[i][''+(this.height-2-j)] = {h: node.h,sprites: []};
+                                        for (var k = 0;k <=node.h;k++){
+                                            var sprite = node.sprites[k];
+                                            sprite.texture = Graphics.getResource('base_tile2');
+                                            sprite.position.x = this.startAt + (this.height-2-j)*(this.tileSizeActual*0.75);
+                                            sprite.position.y = this.startAt + i*(this.tileSizeActual) - (this.tileSizeActual*0.5*((this.height-2-j)%2)) - (this.TILE_HEIGHT*k);
+                                            this.container4.addChild(sprite);
+                                            this.mapArray4[i][''+(this.height-2-j)].sprites.push(sprite);
+                                        }
+                                    }
+                                }catch(e){
+                                    console.log(e);
+                                };
+                            }
+                            for (var j = this.height-1; j>=-1 ;j-=2){
+                                try{
+                                    var node = this.mapArray[j][i];
+                                    this.mapArray4[i][''+(this.height-1-j)] = {h: node.h,sprites: []};
                                     for (var k = 0;k <=node.h;k++){
                                         var sprite = node.sprites[k];
                                         sprite.texture = Graphics.getResource('base_tile2');
-                                        sprite.position.x = this.startAt + (this.height-2-j)*(this.tileSizeActual*0.74);
-                                        sprite.position.y = this.startAt + i*(this.tileSizeActual*0.875) + (this.tileSizeActual*0.4375*((this.height-2-j)%2)) - (25*k);
-                                        container4.addChild(sprite);
-                                        this.mapArray4[i][''+(this.height-2-j)].sprites.push(sprite);
+                                        sprite.position.x = this.startAt + (this.height-1-j)*(this.tileSizeActual*0.75);
+                                        sprite.position.y = this.startAt + i*(this.tileSizeActual) - (this.tileSizeActual*0.5*((this.height-1-j)%2)) - (this.TILE_HEIGHT*k);
+                                        this.container4.addChild(sprite);
+                                        this.mapArray4[i][''+(this.height-1-j)].sprites.push(sprite);
                                     }
-                                }
-                            }catch(e){
-                                console.log(e);
-                            };
+                                }catch(e){};
+                                
+                            } 
                         }
                     }
-                    container4._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(container4.width+128+this.startAt,container4.height+128+this.startAt);
-                    Graphics.app.renderer.render(container4,texture);
+                    this.container4._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(this.container4.width+this.TILE_SIZE+this.startAt,this.container4.height+this.TILE_SIZE+this.startAt);
+                    Graphics.app.renderer.render(this.container4,texture);
                     var mapSprite = new PIXI.Sprite(texture);
                     //get the anchor point
                     mapSprite.anchor.x = (this.startAt + (this.mapArray4[this.width-1][this.height-1].sprites[0].position.x - this.mapArray4[0][0].sprites[0].position.x)/2)/mapSprite.width;
@@ -195,12 +272,14 @@
                         this.mapTextures[s].position.x = Graphics.world.width/2;
                         this.mapTextures[s].position.y = Graphics.world.height/2;
                     }
+                    Graphics.world.position.x = Graphics.width/2;
+                    Graphics.world.position.y = Graphics.height/2;
                 },
 
                 update: function(dt) {
                     if (this.rotateData){
                         this.rotateData.t += dt;
-                        Graphics.world.filters = [this.blurFilter];
+                        //Graphics.world.filters = [this.blurFilter];
                         if(this.rotateData.t >= this.rotateData.time/2){
                             for (var i = 0; i < Map.mapTextures.length;i++){
                                 if (i == this.rotateData.rot2){
@@ -211,10 +290,11 @@
                             }
                             this.rotateData.extraRot = 1;
                         }
+                        var r = 1.5708;//7.85398; 
                         if (this.rotateData.dir == 'right'){
-                            Graphics.world.rotation = (1.5708*(this.rotateData.t/this.rotateData.time)-(this.rotateData.extraRot*1.5708));
+                            Graphics.world.rotation = (r*(this.rotateData.t/this.rotateData.time)-(this.rotateData.extraRot*r));
                         }if (this.rotateData.dir == 'left'){
-                            Graphics.world.rotation = (-1.5708*(this.rotateData.t/this.rotateData.time)+(this.rotateData.extraRot*1.5708));
+                            Graphics.world.rotation = (-r*(this.rotateData.t/this.rotateData.time)+(this.rotateData.extraRot*r));
                         }
                         if (this.rotateData.t >= this.rotateData.time){
                             Graphics.world.filters = [];

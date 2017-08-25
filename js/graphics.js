@@ -101,6 +101,7 @@
         startLoad: function(){
             Graphics.app.loader
                 .add('img/sheet1.json')
+                .add('img/sheet2.json')
                 .load(Graphics.loadResources);
             
         },
@@ -122,8 +123,18 @@
 
             //Load all movie clips
             var animations = [
+                'unit_base_ul_', 9,
+                'unit_base_l_', 9,
+                'unit_base_u_', 9,
+                'unit_base_d_', 9,
+                'unit_base_dl_', 9
             ];
             Graphics.animationSpeeds = {
+                'unit_base_ul_': 0.25,
+                'unit_base_l_': 0.25,
+                'unit_base_u_': 0.25,
+                'unit_base_d_': 0.25,
+                'unit_base_dl_': 0.25
             };
 
             //add all movie clips to resources
