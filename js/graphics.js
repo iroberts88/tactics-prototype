@@ -25,18 +25,17 @@
 
             this.world = new PIXI.Container();
             this.ui = new PIXI.Container();
-
+            this.bgContainer = new PIXI.Graphics();
+            this.bgContainer.position.x = 0;
+            this.bgContainer.position.y = 0;
+            this.drawBG();
+            this.app.stage.addChild(this.bgContainer);
             this.app.stage.addChild(this.world);
             this.app.stage.addChild(this.ui);
 
             // Show loading message while waiting
             this.showLoadingMessage(true);
 
-            this.bgContainer = new PIXI.Graphics();
-            this.bgContainer.position.x = 0;
-            this.bgContainer.position.y = 0;
-            this.drawBG();
-            this.world.addChild(this.bgContainer); //ADD BG CONTAINER
             this.worldContainer = new PIXI.Container();
             this.worldContainer.position.x = 0;
             this.worldContainer.position.y = 0;
@@ -62,6 +61,18 @@
         },
 
         drawBG: function(){
+            var canvas = document.createElement('canvas');
+            canvas.width  = this.width;
+            canvas.height = this.height;
+            var ctx = canvas.getContext('2d');
+            var gradient = ctx.createLinearGradient(0, 0, 0, this.height*0.75);
+            gradient.addColorStop(0, "blue");
+            gradient.addColorStop(1, "white");
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0,0,this.width,this.height);
+            var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+            
+            this.bgContainer.addChild(sprite);
         },
         clear: function(){
             this.bgContainer.clear();

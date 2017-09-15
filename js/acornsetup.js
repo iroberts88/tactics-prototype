@@ -253,7 +253,7 @@
                 init: function(){
                     //document.body.style.cursor = 'none';
                     Graphics.clear();
-                    Map.init({width: 25,height: 25,startAt: 300,iso: 0});
+                    Map.init({width: 25,height: 25,startAt: 300,iso: 1});
                 },
                 update: function(dt){
                     //update chat console

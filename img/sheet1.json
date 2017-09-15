@@ -2,19 +2,19 @@
 
 "base_tile1.png":
 {
-	"frame": {"x":2,"y":2,"w":32,"h":40},
+	"frame": {"x":2,"y":2,"w":32,"h":43},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":16,"y":8,"w":32,"h":40},
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
 	"sourceSize": {"w":64,"h":64},
 	"pivot": {"x":0.5,"y":0.5}
 },
 "base_tile2.png":
 {
-	"frame": {"x":36,"y":2,"w":32,"h":40},
+	"frame": {"x":36,"y":2,"w":32,"h":43},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":16,"y":8,"w":32,"h":40},
+	"spriteSourceSize": {"x":19,"y":4,"w":32,"h":43},
 	"sourceSize": {"w":64,"h":64},
 	"pivot": {"x":0.5,"y":0.5}
 }},
@@ -23,8 +23,8 @@
 	"version": "1.0",
 	"image": "sheet1.png",
 	"format": "RGBA8888",
-	"size": {"w":70,"h":44},
+	"size": {"w":70,"h":47},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:439b406f3946b4ff75e3e7df2d0a8ef7:5947423c4ae60163439e935d7dbff708:81b8455959c6df0a71f2d78f10f487eb$"
+	"smartupdate": "$TexturePacker:SmartUpdate:3a5c738e7db30fd8dbc6adb183612cf0:c0df6732919b0d2d95626cc3a5c8db60:81b8455959c6df0a71f2d78f10f487eb$"
 }
 }
