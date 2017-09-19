@@ -4,34 +4,30 @@
         getNewUnit: function(){
             return {
                 id: null,
-                loc: null,
-                mapLoc: null,
-                targetLoc: null,
-                scale: null,
-                sprite: null,
-                deltaTime: null,
-                path: null,
-                moved: null,
-                maxPathLength: null,
-                speed: null,
-                //variables for movement
-                xDistance: null,
-                yDistance: null,
-                hyp: null,
-                move: null,
-                actualMoveX: null,
-                actualMoveY: null,
-                actualMoveHyp: null,
-                //
-                sayBubble: null,
-                warning: null,
+                
+                //Unit Stats
+                //health
+                currentHealth: null,
+                maximumHealth: null,
+                //energy
+                currentEnergy: null,
+                maximumEnergy: null,
+                //shields
+                currentShields: null,
+                maximumShields: null,
+                shieldDelay: null,
+                shieldRecharge: null,
+                //attributes
+                strength: null,
+                intelligence: null,
+                endurance: null,
+                willpower: null,
+                agility: null,
+                dexterity: null,
+                charisma: null,
 
-                kill: null,
-                playerCount: null,
-                tint: null,
+                level: null,
 
-                name: null,
-                    
                 init: function(data) {
                     this.maxPathLength = 8;
                     this.kill = false;
@@ -55,8 +51,6 @@
                     }else{
                         this.tint = 0xFFFFFF;
                     }
-
-                    
 
                     this.rRotation = 0.067;
                     this.rDivider = 1.5;
