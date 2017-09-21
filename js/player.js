@@ -1,5 +1,5 @@
 
 (function(window) {
-    Player = Unit.getnewUnit();
+    Player = Unit.getNewUnit();
     window.Player = Player;
 })(window);

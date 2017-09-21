@@ -21,6 +21,42 @@
                     this.height = data.height;
                     this.width = data.width;
                     this.iso = data.iso;
+                    this.size = data.size;
+                    this._axialMap = {};
+                    for (var i = data.size*-1; i <=data.size;i++){
+                        var row = {};
+                        for (var j = data.size*-1; j <=data.size;j++){
+                            if (Math.sqrt((i+j)*(i+j)) <= data.size){
+                                var node = {
+                                    q: i,
+                                    r: j,
+                                    h: Math.ceil(Math.random()*5),
+                                    sprites: []
+                                }
+                                row[j] = node;
+                            }
+                        }
+                        this._axialMap[i] = row;
+                    }
+                    this._cubeMap = {}
+                    for (var i = data.size*-1; i <=data.size;i++){
+                        var row1 = {};
+                        for (var j = data.size*-1; j <=data.size;j++){
+                            var row2 = {};
+                            for (var k = data.size*-1; k <=data.size;k++){
+                                if (i + j + k == 0){
+                                    var node = {
+                                        x: i,
+                                        y: j,
+                                        z: k
+                                    }
+                                    row2[k] = node;
+                                }
+                            }
+                            row1[j] = row2; 
+                        }
+                        this._cubeMap[i] = row1;
+                    }
                     //this.startAt = data.startAt;
                     this.startAt = Math.max(this.TILE_SIZE*this.height, this.TILE_SIZE*this.width);
                     this.bounds = [this.TILE_SIZE*(this.width-1.5) + this.startAt, this.TILE_SIZE * (this.height*.75 - 1.5) + this.startAt];
@@ -69,6 +105,7 @@
                         this.mapArray.push(a);
                     }
 
+                    
                     //create the 4 map images
                     //0
                     for (var i = 0; i < this.height;i++){
@@ -89,17 +126,58 @@
                                 sprite.scale.y = this.tileScale;
                                 sprite.loc = {x: i,y: j,z: k};
                                 node.sprites.push(sprite);
+                                //this.container.addChild(sprite);
+                            } 
+                        }
+                    }
+                    var st = 0;
+                    for (var i = -1*this.size; i <= 0;i++){
+                        for (var j = st;j <= this.size;j++){
+                            var node = this._axialMap[j][i];
+                            for (var k = 0;k <=node.h;k++){
+                                var sprite = Graphics.getSprite('base_tile1');
+                                sprite.position.x = this.startAt + j*(this.tileSizeActual) - (this.tileSizeActual*0.5*st);
+                                sprite.position.y = this.startAt + i*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k);
+                                sprite.anchor.x = .5;
+                                sprite.anchor.y = .5;
+                                sprite.scale.x = this.tileScale;
+                                sprite.scale.y = this.tileScale;
+                                sprite.loc = {x: i,y: j,z: k};
+                                node.sprites.push(sprite);
                                 this.container.addChild(sprite);
                             } 
                         }
+                        st -= 1;
+                    }
+                    var newStart = [this._axialMap[this.size*-1][0].sprites[0].position.x + this.tileSizeActual*0.5,this._axialMap[this.size*-1][0].sprites[0].position.y + this.tileSizeActual*0.75];
+                    var stop = this.size-1;
+                    var st = 1;
+                    for (var i = 1; i <= this.size;i++){
+                        for (var j = this.size*-1;j <= stop;j++){
+                            var node = this._axialMap[j][i];
+                            for (var k = 0;k <=node.h;k++){
+                                var sprite = Graphics.getSprite('base_tile1');
+                                sprite.position.x = this.startAt + j*(this.tileSizeActual) + (this.tileSizeActual*0.5*st) + this.tileSizeActual*0.5*this.size;
+                                sprite.position.y = this.startAt + (this.tileSizeActual*0.75*(this.size)) + i*(this.tileSizeActual*0.75) - (this.TILE_HEIGHT*k) - this.tileSizeActual*0.75*this.size;
+                                sprite.anchor.x = .5;
+                                sprite.anchor.y = .5;
+                                sprite.scale.x = this.tileScale;
+                                sprite.scale.y = this.tileScale;
+                                sprite.loc = {x: i,y: j,z: k};
+                                node.sprites.push(sprite);
+                                this.container.addChild(sprite);
+                            } 
+                        }
+                        stop -= 1;
+                        st += 1;
                     }
                     this.container._calculateBounds();
                     var texture = new PIXI.RenderTexture.create(this.container.width+this.TILE_SIZE+this.startAt,this.container.height+this.TILE_SIZE+this.startAt);
                     Graphics.app.renderer.render(this.container,texture);
                     var mapSprite = new PIXI.Sprite(texture);
                     //get the anchor point
-                    mapSprite.anchor.x = (this.startAt + (this.mapArray[this.height-1][this.width-1].sprites[0].position.x - this.mapArray[0][0].sprites[0].position.x)/2)/mapSprite.width;
-                    mapSprite.anchor.y = (this.startAt + (this.mapArray[this.height-1][this.width-1].sprites[0].position.y - this.mapArray[0][0].sprites[0].position.y)/2)/mapSprite.height;
+                    mapSprite.anchor.x = 0.5;//(this.startAt + (this.mapArray[this.height-1][this.width-1].sprites[0].position.x - this.mapArray[0][0].sprites[0].position.x)/2)/mapSprite.width;
+                    mapSprite.anchor.y = 0.5;//(this.startAt + (this.mapArray[this.height-1][this.width-1].sprites[0].position.y - this.mapArray[0][0].sprites[0].position.y)/2)/mapSprite.height;
                     this.mapTextures.push(mapSprite);
                     Graphics.worldContainer.addChild(mapSprite);
 
