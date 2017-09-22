@@ -249,6 +249,72 @@
             //-----------------------------------------------------------------------------------------------|
 
             Acorn.addState({
+                stateId: 'mainMenu',
+                init: function(){
+                    console.log('Initializing main menu');
+                    document.body.style.cursor = 'default';
+                    Graphics.clear();
+                    Graphics.drawBG();
+                    this.logo = new PIXI.Text('Tactics Prototype' , {font: '100px Orbitron', fill: 'white', align: 'left', fill: 'white', align: 'left', 
+                                                                dropShadow: true,
+                                                                dropShadowColor: '#000000',
+                                                                stroke: '#000000',
+                                                                strokeThickness: 5,
+                                                                dropShadow: true,
+                                                                dropShadowColor: '#000000',
+                                                                dropShadowBlur: 4,
+                                                                dropShadowAngle: Math.PI / 6,
+                                                                dropShadowDistance: 6,});
+                    this.logo.position.x = (Graphics.width / 2);
+                    this.logo.position.y = (Graphics.height / 6);
+                    this.logo.anchor.x = 0.5;
+                    this.logo.anchor.y = 0.5;
+                    Graphics.uiContainer.addChild(this.logo);
+
+                    //create map button
+                    this.createButton = new PIXI.Text('Create New Map' , {font: '48px Orbitron', fill: 'white', align: 'left', fill: 'white', align: 'left', 
+                                                                dropShadow: true,
+                                                                dropShadowColor: '#000000',
+                                                                stroke: '#000000',
+                                                                strokeThickness: 5,
+                                                                dropShadow: true,
+                                                                dropShadowColor: '#000000',
+                                                                dropShadowBlur: 4,
+                                                                dropShadowAngle: Math.PI / 6,
+                                                                dropShadowDistance: 6,});
+                    this.createButton.position.x = Graphics.width/5;
+                    this.createButton.position.y = Graphics.height/1.5;
+                    this.createButton.anchor.x = 0.5;
+                    this.createButton.anchor.y = 0.5;
+                    Graphics.uiContainer.addChild(this.createButton);
+                    this.createButton.interactive = true;
+                    this.createButton.buttonMode = true;
+                    this.createButton.on('click', function onClick(){
+                        Acorn.changeState('MapGen');
+                    });
+                    this.createButton.on('tap', function onClick(){
+                        Acorn.changeState('MapGen');
+                    });
+
+                },
+                update: function(dt){
+                }
+            });
+
+            Acorn.addState({
+                stateId: 'MapGen',
+                init: function(){
+                    console.log('Initializing main menu');
+                    document.body.style.cursor = 'default';
+                    Graphics.clear();
+                    MapGen.init();
+                },
+                update: function(dt){
+                    MapGen.update();
+                }
+            });
+
+            Acorn.addState({
                 stateId: 'game',
                 init: function(){
                     //document.body.style.cursor = 'none';
@@ -265,7 +331,6 @@
 
             Acorn.Input.onMouseClick(function(e) {
                 Acorn.Input.mouseDown = true;
-                console.log(e);
             });
             Acorn.Input.onMouseUp(function(e) {
                 Acorn.Input.mouseDown = false;
@@ -274,7 +339,7 @@
             Acorn.Input.onScroll(function(e) {
                 //save the original mouse Location based on bounds of the map
                 //TODO if map.rotatedata = null?
-                var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - (Graphics.world.position.x-Graphics.world.width/2)) / (Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x)));
+                /*var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - (Graphics.world.position.x-Graphics.world.width/2)) / (Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x)));
                 var mouseY = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.Y - (Graphics.world.position.y-Graphics.world.height/2)) / (Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y)));
                 if (e.deltaY < 0){
                     Graphics.world.scale.x = Math.min(3.0,Graphics.world.scale.x+.04);
@@ -285,10 +350,11 @@
                 }
                 //reposition the map to stay on mouse point
                 Graphics.world.position.x = Acorn.Input.mouse.X - (mouseX*Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x) + Graphics.world.width/2;
-                Graphics.world.position.y = Acorn.Input.mouse.Y - (mouseY*Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y) + Graphics.world.height/2;
+                Graphics.world.position.y = Acorn.Input.mouse.Y - (mouseY*Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y) + Graphics.world.height/2;*/
             });
 
             Acorn.Input.onMouseMove(function(e) {
+                /*
                 if (Acorn.Input.mouseDown){
                     var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                     var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
@@ -296,21 +362,21 @@
                     Graphics.world.position.y = Graphics.world.position.y + mY;
                     var posX = Graphics.world.position.x - Graphics.world.width/2;
                     var posY = Graphics.world.position.y - Graphics.world.height/2;
-                    if (posX < (-1*Graphics.world.width+300)){
-                        Graphics.world.position.x = (-1*Graphics.world.width/2)+300;
-                    }else if (posX > Graphics.width -300){
-                        Graphics.world.position.x = Graphics.width + Graphics.world.width/2 -300;
+                    if (posX < (-1*Graphics.world.width)){
+                        Graphics.world.position.x = (-1*Graphics.world.width/2);
+                    }else if (posX > Graphics.width){
+                        Graphics.world.position.x = Graphics.width + Graphics.world.width/2;
                     }
-                    if (posY < (-1*Graphics.world.height+300)){
-                        Graphics.world.position.y = (-1*Graphics.world.height/2)+300;
-                    }else if (posY > Graphics.height -300){
-                        Graphics.world.position.y = Graphics.height + Graphics.world.height/2 -300;
+                    if (posY < (-1*Graphics.world.height)){
+                        Graphics.world.position.y = (-1*Graphics.world.height/2);
+                    }else if (posY > Graphics.height ){
+                        Graphics.world.position.y = Graphics.height + Graphics.world.height/2 ;
                     }
                 }
                 //find if a tile is moused over
                 var scale = Graphics.world.scale.x;
                 var start = [scale * Map.startAt + Graphics.world.position.x,scale * Map.startAt + Graphics.world.position.x];
-                
+                */
             });
 
             Acorn.Input.onTouchEvent(function(e) {

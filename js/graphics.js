@@ -60,14 +60,21 @@
             this.animationSpeeds = {};
         },
 
-        drawBG: function(){
+        drawBG: function(color1,color2){
+            this.bgContainer.removeChildren();
+            if (typeof color1 == 'undefined'){
+                color1 = 'black';
+            }
+            if (typeof color2 == 'undefined'){
+                color2 = 'black';
+            }
             var canvas = document.createElement('canvas');
             canvas.width  = this.width;
             canvas.height = this.height;
             var ctx = canvas.getContext('2d');
             var gradient = ctx.createLinearGradient(0, 0, 0, this.height*0.75);
-            gradient.addColorStop(0, "blue");
-            gradient.addColorStop(1, "white");
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
             ctx.fillStyle = gradient;
             ctx.fillRect(0,0,this.width,this.height);
             var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
@@ -202,7 +209,7 @@
                 console.log('-- Graphics resource not found' )
             }
 		},
-        drawBoxAround: function(sprite,g, ybuffer,xbuffer){
+        drawBoxAround: function(sprite,g,color,size,ybuffer,xbuffer){
             //draws a box around sprite in
             //g = graphics container
             if (typeof ybuffer == 'undefined'){
@@ -211,10 +218,13 @@
             if (typeof xbuffer == 'undefined'){
                 xbuffer = 0;
             }
-            Utils.colorShifter(this.colorShift);
-            var c = '0x' + Utils.componentToHex(Math.round(this.colorShift.r)) + Utils.componentToHex(Math.round(this.colorShift.g)) + Utils.componentToHex(Math.round(this.colorShift.b));
-            parseInt(c);
-            g.lineStyle(2,c,1);
+            if (typeof color == 'undefined'){
+                color = '0xFFFFFF';
+            }
+            if (typeof size == 'undefined'){
+                size = 2;
+            }
+            g.lineStyle(size,color,1);
             g.moveTo(sprite.position.x - sprite.width/2 + xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
             g.lineTo(sprite.position.x + sprite.width/2 - xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
             g.lineTo(sprite.position.x + sprite.width/2 - xbuffer,sprite.position.y + sprite.height/2 - ybuffer);
@@ -228,12 +238,11 @@
             bar.on('mouseup', function onClick(e){
                 if (bar.clicked){
                     var position = e.data.getLocalPosition(e.target);
-                    var start =  -1 * bar._width/2;
-                    var percent = (position.x - start) / bar._width;
+                    var start =  -1 * bar.width/2;
+                    var percent = (position.x - start) / bar.width;
                     if (percent < 0){percent = 0;}
                     if (percent > 1){percent = 1;}
                     func(percent);
-                    bar.percent = percent;
                 }
                 bar.clicked = false;
             });
@@ -246,12 +255,11 @@
             bar.on('touchend', function onClick(e){
                 if (bar.clicked){
                     var position = e.data.getLocalPosition(e.target);
-                    var start =  -1 * bar._width/2;
-                    var percent = (position.x - start) / bar._width;
+                    var start =  -1 * bar.width/2;
+                    var percent = (position.x - start) / bar.width;
                     if (percent < 0){percent = 0;}
                     if (percent > 1){percent = 1;}
                     func(percent);
-                    bar.percent = percent;
                 }
                 bar.clicked = false;
             });
