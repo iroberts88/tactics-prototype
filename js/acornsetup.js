@@ -281,7 +281,6 @@
             Acorn.addState({
                 stateId: 'MapGen',
                 init: function(){
-                    console.log('Initializing Map Editor');
                     document.body.style.cursor = 'default';
                     Graphics.clear();
                     MapGen.init();
@@ -293,7 +292,7 @@
             Acorn.addState({
                 stateId: 'MapGenInit',
                 init: function(){
-                    console.log('Initializing main menu');
+                    console.log('Initializing Map Type Selection');
                     document.body.style.cursor = 'default';
                     Graphics.clear();
                     var colors= [
@@ -318,10 +317,10 @@
                     };
                     this.typeSelected = 'r';
                     this.mapSizes = {
-                        'r': {min: 10, max: 200},
-                        'rh': {min: 10, max: 200},
-                        'h': {min: 5, max: 100},
-                        't': {min: 5, max: 100}
+                        'r': {min: 10, max: 60},
+                        'rh': {min: 10, max: 60},
+                        'h': {min: 5, max: 30},
+                        't': {min: 5, max: 30}
                     }
                     this.size = 10;
                     this.sizePercent = 0;
@@ -625,22 +624,23 @@
             if (typeof data.anchor == 'undefined'){
                 data.anchor = [0.5,0.5];
             }
-            if (data.style)
+
             var button = new PIXI.Text(data.text,data.style)
             button.position.x = data.position[0];
             button.position.y = data.position[1];
             button.anchor.x = data.anchor[0];
             button.anchor.y = data.anchor[1];
+
             // OPTIONAL data.interactive
             if (typeof data.interactive != 'undefined'){
                 button.interactive = data.interactive;
             }
             // OPTIONAL data.buttonMode
-            if (typeof data.buttonMode == 'undefined'){
+            if (typeof data.buttonMode != 'undefined'){
                 button.buttonMode = data.buttonMode;
             }
             // OPTIONAL data.clickFunc
-            if (typeof data.clickfunc == 'undefined'){
+            if (typeof data.clickFunc != 'undefined'){
                 button.on('tap', data.clickFunc);
                 button.on('click', data.clickFunc);
             }
