@@ -255,62 +255,267 @@
                     document.body.style.cursor = 'default';
                     Graphics.clear();
                     Graphics.drawBG();
-                    this.logo = new PIXI.Text('Tactics Prototype' , {font: '100px Orbitron', fill: 'white', align: 'left', fill: 'white', align: 'left', 
-                                                                dropShadow: true,
-                                                                dropShadowColor: '#000000',
-                                                                stroke: '#000000',
-                                                                strokeThickness: 5,
-                                                                dropShadow: true,
-                                                                dropShadowColor: '#000000',
-                                                                dropShadowBlur: 4,
-                                                                dropShadowAngle: Math.PI / 6,
-                                                                dropShadowDistance: 6,});
-                    this.logo.position.x = (Graphics.width / 2);
-                    this.logo.position.y = (Graphics.height / 6);
-                    this.logo.anchor.x = 0.5;
-                    this.logo.anchor.y = 0.5;
+                    //The Main Menu Logo
+                    this.logo = AcornSetup.makeButton({
+                        text: 'Tactics Prototype',
+                        position: [(Graphics.width/2),(Graphics.height/6)],
+                    });
+                    this.logo.style.fontSize = 100;
                     Graphics.uiContainer.addChild(this.logo);
-
                     //create map button
-                    this.createButton = new PIXI.Text('Create New Map' , {font: '48px Orbitron', fill: 'white', align: 'left', fill: 'white', align: 'left', 
-                                                                dropShadow: true,
-                                                                dropShadowColor: '#000000',
-                                                                stroke: '#000000',
-                                                                strokeThickness: 5,
-                                                                dropShadow: true,
-                                                                dropShadowColor: '#000000',
-                                                                dropShadowBlur: 4,
-                                                                dropShadowAngle: Math.PI / 6,
-                                                                dropShadowDistance: 6,});
-                    this.createButton.position.x = Graphics.width/5;
-                    this.createButton.position.y = Graphics.height/1.5;
-                    this.createButton.anchor.x = 0.5;
-                    this.createButton.anchor.y = 0.5;
+                    this.createButton = AcornSetup.makeButton({
+                        text: 'Create New Map',
+                        position: [(Graphics.width/5),(Graphics.height/1.5)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            Acorn.changeState('MapGenInit');
+                        }
+                    });
                     Graphics.uiContainer.addChild(this.createButton);
-                    this.createButton.interactive = true;
-                    this.createButton.buttonMode = true;
-                    this.createButton.on('click', function onClick(){
-                        Acorn.changeState('MapGen');
-                    });
-                    this.createButton.on('tap', function onClick(){
-                        Acorn.changeState('MapGen');
-                    });
 
                 },
                 update: function(dt){
                 }
             });
-
             Acorn.addState({
                 stateId: 'MapGen',
                 init: function(){
-                    console.log('Initializing main menu');
+                    console.log('Initializing Map Editor');
                     document.body.style.cursor = 'default';
                     Graphics.clear();
                     MapGen.init();
                 },
-                update: function(dt){
+                update: function(){
                     MapGen.update();
+                }
+            });
+            Acorn.addState({
+                stateId: 'MapGenInit',
+                init: function(){
+                    console.log('Initializing main menu');
+                    document.body.style.cursor = 'default';
+                    Graphics.clear();
+                    var colors= [
+                        'aqua', 'black', 'blue', 'fuchsia', 'green', 
+                        'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
+                        'silver', 'teal', 'white', 'yellow'
+                    ];
+                    Graphics.drawBG(colors[Math.floor(Math.random()*colors.length)], colors[Math.floor(Math.random()*colors.length)]);
+                    var style = {
+                        font: '100px Orbitron', 
+                        fill: 'white', 
+                        align: 'left', 
+                        dropShadow: true,
+                        dropShadowColor: '#000000',
+                        stroke: '#000000',
+                        strokeThickness: 5,
+                        dropShadow: true,
+                        dropShadowColor: '#000000',
+                        dropShadowBlur: 4,
+                        dropShadowAngle: Math.PI / 6,
+                        dropShadowDistance: 6
+                    };
+                    this.typeSelected = 'r';
+                    this.mapSizes = {
+                        'r': {min: 10, max: 200},
+                        'rh': {min: 10, max: 200},
+                        'h': {min: 5, max: 100},
+                        't': {min: 5, max: 100}
+                    }
+                    this.size = 10;
+                    this.sizePercent = 0;
+                    this.sizePercent2 = 0;
+
+                    //Select Map Type Text
+                    this.select = AcornSetup.makeButton({
+                        text: 'Select Map Type',
+                        style: style,
+                        position: [(Graphics.width / 2),(Graphics.height / 8)]
+                    });
+                    Graphics.uiContainer.addChild(this.select);
+
+                    //rectangle
+                    this.rectangle = AcornSetup.makeButton({
+                        text: 'Rectangle',
+                        style: style,
+                        position: [(Graphics.width/3),(Graphics.height/4)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['MapGenInit'];
+                            state.typeSelected = 'r';
+                            state.rectangle.style.fill = 'gray';
+                            state.hexagon.style.fill = 'white';
+                            state.triangle.style.fill = 'white';
+                            state.rhombus.style.fill = 'white';
+                        }
+                    });
+                    this.rectangle.style.fontSize = 64;
+                    this.rectangle.style.fill = 'gray';
+                    Graphics.uiContainer.addChild(this.rectangle);
+
+                    //triangle
+                    this.triangle = AcornSetup.makeButton({
+                        text: 'Triangle',
+                        style: style,
+                        position: [(Graphics.width*0.66),(Graphics.height/4)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['MapGenInit'];
+                            state.typeSelected = 't';
+                            state.rectangle.style.fill = 'white';
+                            state.hexagon.style.fill = 'white';
+                            state.triangle.style.fill = 'gray';
+                            state.rhombus.style.fill = 'white';
+                        }
+                    });
+                    this.triangle.style.fontSize = 64;
+                    Graphics.uiContainer.addChild(this.triangle);
+                    
+                    //hexagon
+                    this.hexagon = AcornSetup.makeButton({
+                        text: 'Hexagon',
+                        style: style,
+                        position: [(Graphics.width/3),(Graphics.height/3)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['MapGenInit'];
+                            state.typeSelected = 'h';
+                            state.rectangle.style.fill = 'white';
+                            state.hexagon.style.fill = 'gray';
+                            state.triangle.style.fill = 'white';
+                            state.rhombus.style.fill = 'white';
+                        }
+                    });
+                    this.hexagon.style.fontSize = 64;
+                    Graphics.uiContainer.addChild(this.hexagon);
+
+                    //rhombus
+                    this.rhombus = AcornSetup.makeButton({
+                        text: 'Rhombus',
+                        style: style,
+                        position: [(Graphics.width*0.66),(Graphics.height/3)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['MapGenInit'];
+                            state.typeSelected = 'rh';
+                            state.rectangle.style.fill = 'white';
+                            state.hexagon.style.fill = 'white';
+                            state.triangle.style.fill = 'white';
+                            state.rhombus.style.fill = 'gray';
+                        }
+                    });
+                    this.rhombus.style.fontSize = 64;
+                    Graphics.uiContainer.addChild(this.rhombus);
+
+                    var barStyle = {font: '50px Verdana', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'}
+                    this.sizeBar = AcornSetup.makeButton({
+                        text: '____________________',
+                        style: barStyle,
+                        position: [(Graphics.width/2),(Graphics.height/2)],
+                        interactive: true,
+                        buttonMode: true
+                    });
+                    Graphics.uiContainer.addChild(this.sizeBar);
+                    Graphics.setSlideBar(this.sizeBar, function setPercent(p){
+                        var state = Acorn.states['MapGenInit'];
+                        state.sizePercent = p;
+                    });
+
+                    this.sizeBar2 = AcornSetup.makeButton({
+                        text: '____________________',
+                        style: barStyle,
+                        position: [(Graphics.width/2),(Graphics.height/2 + 75)],
+                        interactive: true,
+                        buttonMode: true
+                    });
+                    Graphics.uiContainer.addChild(this.sizeBar2);
+                    Graphics.setSlideBar(this.sizeBar2, function setPercent(p){
+                        var state = Acorn.states['MapGenInit'];
+                        state.sizePercent2 = p;
+                    });
+
+                    //size text
+                    this.sizeText = AcornSetup.makeButton({
+                        text: 'Size :',
+                        style: style,
+                        position: [0,(Graphics.height / 2)],
+                    });
+                    this.sizeText.position.x = (Graphics.width / 2) - this.sizeBar.width/2 - this.sizeText.width/2;
+                    this.sizeText.style.fontSize = 48;
+                    Graphics.uiContainer.addChild(this.sizeText);
+                    //size number next to bar 1
+                    this.sizeNum = AcornSetup.makeButton({
+                        text: '0',
+                        style: style,
+                        position: [(Graphics.width / 2) + this.sizeBar.width/2 + 15,(Graphics.height / 2)],
+                        anchor: [0,0.5],
+                    });
+                    this.sizeNum.style.fontSize = 48;
+                    Graphics.uiContainer.addChild(this.sizeNum);
+                    //create map button
+                    this.createButton = AcornSetup.makeButton({
+                        text: 'Create',
+                        style: style,
+                        position: [(Graphics.width / 2),(Graphics.height - 150)],
+                        anchor: [0,0.5],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['MapGenInit'];
+                            var s;
+                            MapGen.type = state.typeSelected;
+                            if (MapGen.type == 't' || MapGen.type == 'h'){
+                                var min = state.mapSizes[state.typeSelected].min;
+                                var max = state.mapSizes[state.typeSelected].max;
+                                s = Math.round(min + state.sizePercent*(max-min));
+                            }else{
+                                var min = state.mapSizes[state.typeSelected].min;
+                                var max = state.mapSizes[state.typeSelected].max;
+                                s = [Math.round(min + state.sizePercent*(max-min)), Math.round(min + state.sizePercent2*(max-min))];
+                            }
+                            MapGen.size = s;
+                            Acorn.changeState('MapGen');
+                        }
+                    });
+                    this.createButton.style.fontSize = 48;
+                    Graphics.uiContainer.addChild(this.createButton);
+
+                },
+                update: function(dt){
+                    Graphics.worldPrimitives.clear();
+                    if (this.typeSelected == 'r' || this.typeSelected == 'rh'){
+                        this.sizeBar2.visible = true;
+                        Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
+                        Graphics.worldPrimitives.drawRect(this.sizeBar2.position.x - this.sizeBar2.width/2,
+                                                  this.sizeBar2.position.y - this.sizeBar2.height/2,
+                                                  this.sizePercent2*this.sizeBar2.width,
+                                                  this.sizeBar2.height);
+                        Graphics.worldPrimitives.endFill();
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0xFFFFFF',2);
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0x000000',2,-2,-2);
+                        var min = this.mapSizes[this.typeSelected].min;
+                        var max = this.mapSizes[this.typeSelected].max;
+                        this.sizeNum.text = Math.round(min + this.sizePercent*(max-min)) + ' x ' + Math.round(min + this.sizePercent2*(max-min));
+                    }else{
+                        this.sizeBar2.visible = false;
+                        var min = this.mapSizes[this.typeSelected].min;
+                        var max = this.mapSizes[this.typeSelected].max;
+                        this.sizeNum.text = '' + Math.round(min + this.sizePercent*(max-min));
+                    }
+                    Graphics.worldPrimitives.lineStyle(1,0xFFFFFF,0.6);
+                    Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
+                    Graphics.worldPrimitives.drawRect(this.sizeBar.position.x - this.sizeBar.width/2,
+                                              this.sizeBar.position.y - this.sizeBar.height/2,
+                                              this.sizePercent*this.sizeBar.width,
+                                              this.sizeBar.height);
+                    Graphics.worldPrimitives.endFill();
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0xFFFFFF',2);
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0x000000',2,-2,-2);
                 }
             });
 
@@ -389,6 +594,57 @@
                     Acorn.Net.socket_.emit('playerUpdate',{newMouseLoc: [position.x,position.y]});
                 }catch(e){}*/
             });
+        },
+        makeButton: function(data){
+            // OPTIONAL data.text - the text on the button
+            if (typeof data.text == 'undefined'){
+                data.text = ' ';
+            }
+            // OPTIONAL data.style style property for PIXI Text
+            if (typeof data.style == 'undefined'){
+                data.style  = {
+                    font: '48px Orbitron', 
+                    fill: 'white', 
+                    align: 'left',
+                    dropShadow: true,
+                    dropShadowColor: '#000000',
+                    stroke: '#000000',
+                    strokeThickness: 5,
+                    dropShadow: true,
+                    dropShadowColor: '#000000',
+                    dropShadowBlur: 4,
+                    dropShadowAngle: Math.PI / 6,
+                    dropShadowDistance: 6
+                }
+            }
+            // OPTIONAL data.position
+            if (typeof data.position == 'undefined'){
+                data.position = [0,0];
+            }
+            // OPTIONAL data.anchor
+            if (typeof data.anchor == 'undefined'){
+                data.anchor = [0.5,0.5];
+            }
+            if (data.style)
+            var button = new PIXI.Text(data.text,data.style)
+            button.position.x = data.position[0];
+            button.position.y = data.position[1];
+            button.anchor.x = data.anchor[0];
+            button.anchor.y = data.anchor[1];
+            // OPTIONAL data.interactive
+            if (typeof data.interactive != 'undefined'){
+                button.interactive = data.interactive;
+            }
+            // OPTIONAL data.buttonMode
+            if (typeof data.buttonMode == 'undefined'){
+                button.buttonMode = data.buttonMode;
+            }
+            // OPTIONAL data.clickFunc
+            if (typeof data.clickfunc == 'undefined'){
+                button.on('tap', data.clickFunc);
+                button.on('click', data.clickFunc);
+            }
+            return button
         }
     }
     window.AcornSetup = AcornSetup;

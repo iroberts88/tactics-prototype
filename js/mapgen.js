@@ -1,277 +1,47 @@
 
 (function(window) {
     MapGen = {
+        TILE_SIZE: 31,
+        TILE_HEIGHT: 11,
+
+        type: null,
+        size: null,
 
         init: function() {
-            Graphics.clear();
-            var colors= [
-                'aqua', 'black', 'blue', 'fuchsia', 'green', 
-                'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
-                'silver', 'teal', 'white', 'yellow'
-            ];
-            Graphics.drawBG(colors[Math.floor(Math.random()*colors.length)], colors[Math.floor(Math.random()*colors.length)]);
-            var style = {
-                font: '100px Orbitron', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
-            this.select = new PIXI.Text('Select Map Type' , style);
-            this.select.position.x = (Graphics.width / 2);
-            this.select.position.y = (Graphics.height / 8);
-            this.select.anchor.x = 0.5;
-            this.select.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.select);
-
-            this.typeSelected = 'r';
-            this.size = 10;
-            //rectangle
-            this.rectangle = new PIXI.Text('Rectangle' , style);
-            this.rectangle.style.fontSize = 64;
-            this.rectangle.style.fill = 'gray';
-            this.rectangle.position.x = Graphics.width/3;
-            this.rectangle.position.y = Graphics.height/4;
-            this.rectangle.anchor.x = 0.5;
-            this.rectangle.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.rectangle);
-            this.rectangle.interactive = true;
-            this.rectangle.buttonMode = true;
-            this.rectangle.on('click', function onClick(){
-                MapGen.typeSelected = 'r';
-                MapGen.rectangle.style.fill = 'gray';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            this.rectangle.on('tap', function onClick(){
-                MapGen.typeSelected = 'r';
-                MapGen.rectangle.style.fill = 'gray';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            //triangle
-            this.triangle = new PIXI.Text('Triangle' , style);
-            this.triangle.style.fontSize = 64;
-            this.triangle.position.x = Graphics.width*.66;
-            this.triangle.position.y = Graphics.height/4;
-            this.triangle.anchor.x = 0.5;
-            this.triangle.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.triangle);
-            this.triangle.interactive = true;
-            this.triangle.buttonMode = true;
-            this.triangle.on('click', function onClick(){
-                MapGen.typeSelected = 't';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'gray';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            this.triangle.on('tap', function onClick(){
-                MapGen.typeSelected = 'r';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'gray';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            //hexagon
-            this.hexagon = new PIXI.Text('Hexagon' , style);
-            this.hexagon.style.fontSize = 64;
-            this.hexagon.position.x = Graphics.width/3;
-            this.hexagon.position.y = Graphics.height/3;
-            this.hexagon.anchor.x = 0.5;
-            this.hexagon.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.hexagon);
-            this.hexagon.interactive = true;
-            this.hexagon.buttonMode = true;
-            this.hexagon.on('click', function onClick(){
-                MapGen.typeSelected = 'h';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'gray';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            this.hexagon.on('tap', function onClick(){
-                MapGen.typeSelected = 'h';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'gray';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'white';
-            });
-            //rhombus
-            this.rhombus = new PIXI.Text('Rhombus' , style);
-            this.rhombus.style.fontSize = 64;
-            this.rhombus.position.x = Graphics.width*.66;
-            this.rhombus.position.y = Graphics.height/3;
-            this.rhombus.anchor.x = 0.5;
-            this.rhombus.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.rhombus);
-            this.rhombus.interactive = true;
-            this.rhombus.buttonMode = true;
-            this.rhombus.on('click', function onClick(){
-                MapGen.typeSelected = 'rh';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'gray';
-            });
-            this.rhombus.on('tap', function onClick(){
-                MapGen.typeSelected = 'rh';
-                MapGen.rectangle.style.fill = 'white';
-                MapGen.hexagon.style.fill = 'white';
-                MapGen.triangle.style.fill = 'white';
-                MapGen.rhombus.style.fill = 'gray';
-            });
-
-            this.sizePercent = 0;
-            this.sizeBar = new PIXI.Text('____________________' , {font: '50px Verdana', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'});
-            this.sizeBar.position.x = (Graphics.width / 2);
-            this.sizeBar.position.y = (Graphics.height / 2);
-            this.sizeBar.anchor.x = 0.5;
-            this.sizeBar.anchor.y = 0.5;
-            this.sizeBar.interactive = true;
-            this.sizeBar.buttonMode = true;
-            this.sizeBar.clicked = false;
-            this.sizeBar.percent = Settings.sizeVolume;
-            Graphics.uiContainer.addChild(this.sizeBar);
-            Graphics.setSlideBar(this.sizeBar, function setPercent(p){MapGen.sizePercent = p;});
-            this.sizeBar.on('mousemove', function onClick(e){
-                if (MapGen.sizeBar.clicked){
-                    var position = e.data.global.x - Graphics.width/2;
-                    var start =  -1 * MapGen.sizeBar.width/2;
-                    var percent = (position - start) / MapGen.sizeBar.width;
-                    if (percent < 0){percent = 0;}
-                    if (percent > 1){percent = 1;}
-                    MapGen.sizePercent = percent;
-                }
-            });
-            this.sizeBar.on('touchmove', function onClick(e){
-                if (MapGen.sizeBar.clicked){
-                    var position = e.data.global.x - MapGen.sizeBar.position.x;
-                    var start =  -1 * MapGen.sizeBar.width/2;
-                    var percent = (position - start) / MapGen.sizeBar.width;
-                    if (percent < 0){percent = 0;}
-                    if (percent > 1){percent = 1;}
-                    MapGen.sizePercent = percent;
-                }
-            });
-
-            this.size = new PIXI.Text('Size :' , style);
-            this.size.style.fontSize = 48;
-            this.size.position.x = (Graphics.width / 2) - this.sizeBar.width/2 - this.size.width;
-            this.size.position.y = (Graphics.height / 2);
-            this.size.anchor.x = 0.5;
-            this.size.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.size);
-
-            this.sizeText = new PIXI.Text('0' , style);
-            this.sizeText.style.fontSize = 48;
-            this.sizeText.position.x = (Graphics.width / 2) + this.sizeBar.width/2 + 15;
-            this.sizeText.position.y = (Graphics.height / 2);
-            this.sizeText.anchor.x = 0.0;
-            this.sizeText.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.sizeText);
-
-            this.sizePercent2 = 0;
-            this.sizeBar2 = new PIXI.Text('____________________' , {font: '50px Verdana', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'});
-            this.sizeBar2.position.x = (Graphics.width / 2);
-            this.sizeBar2.position.y = (Graphics.height / 2) + 75;
-            this.sizeBar2.anchor.x = 0.5;
-            this.sizeBar2.anchor.y = 0.5;
-            this.sizeBar2.interactive = true;
-            this.sizeBar2.buttonMode = true;
-            this.sizeBar2.clicked = false;
-            this.sizeBar2.percent = Settings.sizeVolume;
-            Graphics.uiContainer.addChild(this.sizeBar2);
-            Graphics.setSlideBar(this.sizeBar2, function setPercent(p){MapGen.sizePercent2 = p;});
-            this.sizeBar2.on('mousemove', function onClick(e){
-                if (MapGen.sizeBar2.clicked){
-                    var position = e.data.global.x - Graphics.width/2;
-                    var start =  -1 * MapGen.sizeBar2.width/2;
-                    var percent = (position - start) / MapGen.sizeBar2.width;
-                    if (percent < 0){percent = 0;}
-                    if (percent > 1){percent = 1;}
-                    MapGen.sizePercent2 = percent;
-                }
-            });
-            this.sizeBar2.on('touchmove', function onClick(e){
-                if (MapGen.sizeBar2.clicked){
-                    var position = e.data.global.x - MapGen.sizeBar2.position.x;
-                    var start =  -1 * MapGen.sizeBar2.width/2;
-                    var percent = (position - start) / MapGen.sizeBar2.width;
-                    if (percent < 0){percent = 0;}
-                    if (percent > 1){percent = 1;}
-                    MapGen.sizePercent2 = percent;
-                }
-            });
-
-            //create map button
-            this.createButton = new PIXI.Text('Create' , style);
-            this.createButton.style.fontSize = 48;
-            this.createButton.position.x = Graphics.width/2;
-            this.createButton.position.y = Graphics.height - 150;
-            this.createButton.anchor.x = 0.5;
-            this.createButton.anchor.y = 0.5;
-            Graphics.uiContainer.addChild(this.createButton);
-            this.createButton.interactive = true;
-            this.createButton.buttonMode = true;
-            this.createButton.on('click', function onClick(){
-            });
-            this.createButton.on('tap', function onClick(){
-
-            });
-
-            this.mapSizes = {
-                'r': {min: 5, max: 50},
-                'rh': {min: 5, max: 50},
-                'h': {min: 3, max: 25},
-                't': {min: 10, max: 100}
+            switch(this.type){
+                case 'r':
+                    this.initRectangle();
+                    break;
+                case 'rh':
+                    this.initRhombus();
+                    break;
+                case 't':
+                    this.initTriangle();
+                    break;
+                case 'h':
+                    this.initHexagon();
+                    break;
             }
         },
- 
+        initRectangle: function(){
+            console.log('Initializing a ' + this.size[0] + 'x' + this.size[1] + ' Rectangle Map');
+        },
+        initRhombus: function(){
+            console.log('Initializing a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
+        },
+        initTriangle: function(){
+            console.log('Initializing a ' + this.size + ' unit Triangle Map');
+        },
+        initHexagon: function(){
+            console.log('Initializing a ' + this.size + ' unit Rhombus Map');
+        },
         update: function(deltaTime){
-            Graphics.worldPrimitives.clear();
-            if (this.typeSelected == 'r' || this.typeSelected == 'rh'){
-                this.sizeBar2.visible = true;
-                Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
-                Graphics.worldPrimitives.drawRect(this.sizeBar2.position.x - this.sizeBar2.width/2,
-                                          this.sizeBar2.position.y - this.sizeBar2.height/2,
-                                          this.sizePercent2*this.sizeBar2.width,
-                                          this.sizeBar2.height);
-                Graphics.worldPrimitives.endFill();
-                Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0xFFFFFF',2);
-                Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0x000000',2,-2,-2);
-                var min = this.mapSizes[this.typeSelected].min;
-                var max = this.mapSizes[this.typeSelected].max;
-                this.sizeText.text = Math.round(min + this.sizePercent*(max-min)) + ' x ' + Math.round(min + this.sizePercent2*(max-min));
-            }else{
-                this.sizeBar2.visible = false;
-                var min = this.mapSizes[this.typeSelected].min;
-                var max = this.mapSizes[this.typeSelected].max;
-                this.sizeText.text = '' + Math.round(min + this.sizePercent*(max-min));
-            }
-            Graphics.worldPrimitives.lineStyle(1,0xFFFFFF,0.6);
-            Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
-            Graphics.worldPrimitives.drawRect(this.sizeBar.position.x - this.sizeBar.width/2,
-                                      this.sizeBar.position.y - this.sizeBar.height/2,
-                                      this.sizePercent*this.sizeBar.width,
-                                      this.sizeBar.height);
-            Graphics.worldPrimitives.endFill();
-            Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0x000000',2,-2,-2);
+
         },
+
+
         getNewMap: function(){
             return {
-                TILE_SIZE: 31,
-                TILE_HEIGHT: 11,
                 startAt: null, //TODO this should be to compensate for max tile height
                 bounds: null,
                 mapArray: null,

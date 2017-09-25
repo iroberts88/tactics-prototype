@@ -232,6 +232,8 @@
             g.lineTo(sprite.position.x - sprite.width/2 + xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
         },
         setSlideBar: function(bar,func){
+            bar.clicked = false;
+            bar.percent = 0;
             bar.on('mousedown', function onClick(){
                 bar.clicked = true;
             });
@@ -265,6 +267,26 @@
             });
             bar.on('touchendoutside', function onClick(){
                 bar.clicked = false;
+            });
+            bar.on('mousemove', function onMove(e){
+                if (bar.clicked){
+                    var position = e.data.global.x - Graphics.width/2;
+                    var start =  -1 * bar.width/2;
+                    var percent = (position - start) / bar.width;
+                    if (percent < 0){percent = 0;}
+                    if (percent > 1){percent = 1;}
+                    func(percent);
+                }
+            });
+            bar.on('touchmove', function onMove(e){
+                if (bar.clicked){
+                    var position = e.data.global.x - Graphics.width/2;
+                    var start =  -1 * bar.width/2;
+                    var percent = (position - start) / bar.width;
+                    if (percent < 0){percent = 0;}
+                    if (percent > 1){percent = 1;}
+                    func(percent);
+                }
             });
         }
     };
