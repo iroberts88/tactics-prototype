@@ -39,26 +39,26 @@
         },
         
         rotateMap: function(dir){
-            if (!Map.rotateData){
-                var c = this.currentRotation;
+            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
+                var c = MapGen.currentRotation;
+                var d = 1;
                 if (dir == 'right'){
-                    this.currentRotation -= 1;
-                    if (this.currentRotation == -1){
-                        this.currentRotation = 3;
+                    MapGen.currentRotation -= 1;
+                    if (MapGen.currentRotation == -1){
+                        MapGen.currentRotation = MapGen.totalRotations;
                     }
                 }else if (dir == 'left'){
-                    this.currentRotation += 1;
-                    if (this.currentRotation == 4){
-                        this.currentRotation = 0;
+                    d = -1;
+                    MapGen.currentRotation += 1;
+                    if (MapGen.currentRotation == MapGen.totalRotations){
+                        MapGen.currentRotation = 0;
                     }
                 }
                 Map.rotateData = {
                     t: 0,
                     extraRot: 0,
                     time: 0.15,
-                    dir: dir,
-                    rot1: c,
-                    rot2: this.currentRotation,
+                    angle: ((360/MapGen.totalRotations)*Math.PI/180)*d
                 }
             }
         },
