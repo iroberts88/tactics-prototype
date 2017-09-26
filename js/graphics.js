@@ -24,6 +24,7 @@
             this.actualRatio = [1,1]; //for screen scaling
 
             this.world = new PIXI.Container();
+            this.world.interactive = true;
             this.ui = new PIXI.Container();
             this.bgContainer = new PIXI.Graphics();
             this.bgContainer.position.x = 0;
@@ -39,6 +40,7 @@
             this.worldContainer = new PIXI.Container();
             this.worldContainer.position.x = 0;
             this.worldContainer.position.y = 0;
+            this.worldContainer.interactive = true;
             this.world.addChild(this.worldContainer); // ADD WORLD CONTAINER
             this.worldPrimitives = new PIXI.Graphics();
             this.world.addChild(this.worldPrimitives); //ADD WORLD PRIMS (Cleared on update);

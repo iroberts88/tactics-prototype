@@ -45,7 +45,7 @@
                 if (dir == 'right'){
                     MapGen.currentRotation -= 1;
                     if (MapGen.currentRotation == -1){
-                        MapGen.currentRotation = MapGen.totalRotations;
+                        MapGen.currentRotation = MapGen.totalRotations-1;
                     }
                 }else if (dir == 'left'){
                     d = -1;
@@ -54,10 +54,11 @@
                         MapGen.currentRotation = 0;
                     }
                 }
-                Map.rotateData = {
+                MapGen.rotateData = {
                     t: 0,
                     extraRot: 0,
-                    time: 0.15,
+                    time: 0.05,
+                    dir: dir,
                     angle: ((360/MapGen.totalRotations)*Math.PI/180)*d
                 }
             }

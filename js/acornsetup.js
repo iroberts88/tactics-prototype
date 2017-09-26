@@ -285,8 +285,8 @@
                     Graphics.clear();
                     MapGen.init();
                 },
-                update: function(){
-                    MapGen.update();
+                update: function(dt){
+                    MapGen.update(dt);
                 }
             });
             Acorn.addState({
@@ -558,29 +558,13 @@
             });
 
             Acorn.Input.onMouseMove(function(e) {
-                /*
-                if (Acorn.Input.mouseDown){
+                
+                if (Acorn.Input.buttons[2]){
                     var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                     var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
-                    Graphics.world.position.x = Graphics.world.position.x + mX;
-                    Graphics.world.position.y = Graphics.world.position.y + mY;
-                    var posX = Graphics.world.position.x - Graphics.world.width/2;
-                    var posY = Graphics.world.position.y - Graphics.world.height/2;
-                    if (posX < (-1*Graphics.world.width)){
-                        Graphics.world.position.x = (-1*Graphics.world.width/2);
-                    }else if (posX > Graphics.width){
-                        Graphics.world.position.x = Graphics.width + Graphics.world.width/2;
-                    }
-                    if (posY < (-1*Graphics.world.height)){
-                        Graphics.world.position.y = (-1*Graphics.world.height/2);
-                    }else if (posY > Graphics.height ){
-                        Graphics.world.position.y = Graphics.height + Graphics.world.height/2 ;
-                    }
+                    MapGen.move(mX,mY);
                 }
-                //find if a tile is moused over
-                var scale = Graphics.world.scale.x;
-                var start = [scale * Map.startAt + Graphics.world.position.x,scale * Map.startAt + Graphics.world.position.x];
-                */
+                
             });
 
             Acorn.Input.onTouchEvent(function(e) {

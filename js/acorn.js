@@ -65,7 +65,7 @@
             prevX: null,
             prevY: null,
         },
-        mouseDown: false,
+        buttons: {},
         mouseUpCallback: null,
         mouseClickCallback: null,
         mouseMoveCallback: null,
@@ -133,11 +133,13 @@
             }
         },
         handleMouseClick: function(e){
+            Acorn.Input.buttons[e.button] = true;
             if(Acorn.Input.mouseClickCallback && typeof Acorn.Input.mouseClickCallback === 'function') {
                 Acorn.Input.mouseClickCallback(e);
             }
         },
         handleMouseUp: function(e){
+            Acorn.Input.buttons[e.button] = false;
             if(Acorn.Input.mouseUpCallback && typeof Acorn.Input.mouseUpCallback === 'function') {
                 Acorn.Input.mouseUpCallback(e);
             }
