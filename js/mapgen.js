@@ -284,6 +284,42 @@
         },
         initTriangle: function(){
             console.log('Generating a ' + this.size + ' unit Triangle Map');
+            //Generate the cube and axial coordinate systems
+            for (var i = 0; i <=this.size;i++){
+                var row = {};
+                for (var j = 0; j <=this.size;j++){
+                    if (Math.sqrt((i+j)*(i+j)) <= this.size){
+                        var node = {
+                            q: i,
+                            r: j,
+                            h: 0,
+
+                        }
+                        row[j] = node;
+                    }
+                }
+                this.axialMap[i] = row;
+            }
+            for (var i = 0; i <=this.size;i++){
+                var row1 = {};
+                for (var j = 0; j <=this.size;j++){
+                    var row2 = {};
+                    for (var k = -5; k <=this.size;k++){
+                        if (i + j + k == 0){
+                            var node = {
+                                x: i,
+                                y: j,
+                                z: k
+                            }
+                            row2[k] = node;
+                        }
+                    }
+                    row1[j] = row2; 
+                }
+                this.cubeMap[i] = row1;
+            }
+            //Triangle maps have 6 rotation points
+            //set up the sprites for all 6 rotations
         },
         initHexagon: function(){
             console.log('Generating a ' + this.size + ' unit Hexagon Map');
