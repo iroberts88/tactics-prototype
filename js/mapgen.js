@@ -237,9 +237,11 @@
 
             switch(this.type){
                 case 'r':
+                    this.totalRotations = 12;
                     this.initRectangle();
                     break;
                 case 'rh':
+                    this.totalRotations = 12;
                     this.initRhombus();
                     break;
                 case 't':
@@ -383,6 +385,12 @@
                 //180 degree rotation at position 6
                 var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
                 sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
+                //240 degree rotation at position 8
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
+                //300 degree rotation at position 10
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
             });
             Graphics.worldContainer.addChild(this.container2);
             this.getHexContainer('1',function(sprite,node){
@@ -400,31 +408,38 @@
                 //180 degree rotation at position 7
                 var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
                 sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
+                //240 degree rotation at position 9
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
+                //300 degree rotation at position 11
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
             });
         },
         initRhombus: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
             //Generate the cube and axial coordinate systems
-            for (var i = this.size*-1; i <=this.size;i++){
+            for (var i = 0; i < this.size[0];i++){
                 var row = {};
-                for (var j = this.size*-1; j <=this.size;j++){
-                    if (Math.sqrt((i+j)*(i+j)) <= this.size){
-                        var node = {
-                            q: i,
-                            r: j,
-                            h: 0,
+                for (var j = 0; j < this.size[1];j++){
+                    var node = {
+                        q: i,
+                        r: j,
+                        h: 0,
 
-                        }
-                        row[j] = node;
                     }
+                    row[j] = node;
                 }
                 this.axialMap[i] = row;
             }
-            for (var i = this.size*-1; i <=this.size;i++){
+            var s = this.size[0];
+            if (this.size[1] > s){s = this.size[1];}
+            s = s*2;
+            for (var i = s*-1; i <=s;i++){
                 var row1 = {};
-                for (var j = this.size*-1; j <=this.size;j++){
+                for (var j = s*-1; j <=s;j++){
                     var row2 = {};
-                    for (var k = this.size*-1; k <=this.size;k++){
+                    for (var k = s*-1; k <=s;k++){
                         if (i + j + k == 0){
                             var node = {
                                 x: i,
