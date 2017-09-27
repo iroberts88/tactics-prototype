@@ -24,7 +24,7 @@
         rotateData: null,
         currentRotation: 0,
 
-        currentTool: 'heightMod',
+        currentTool: 'height',
         toolSize: 1,
         sensitivity: 4,
 
@@ -34,6 +34,44 @@
 
         init: function() {
             this.drawBG();
+            //create all of the tile textures!
+            this.tileTextures = {}
+            this.tileTypes = ['base'];
+            for (var i = 0; i < this.tileTypes.length;i++){
+                var t = this.tileTypes[i];
+                this.tileTextures[this.tileTypes[i]] = {1: [],2:[]};
+                for (var h = 0;h <= this.MAX_NODE_HEIGHT;h++){
+                    //create new texture
+                    var c = new PIXI.Container();
+                    var startingLoc = 32 + h*MapGen.TILE_HEIGHT;
+                    for (var j = 0; j <= h;j++){
+                        var s = Graphics.getSprite(t + '_tile1');
+                        s.anchor.x = 0.0;
+                        s.anchor.y = 0.5;
+                        s.position.x = 0;
+                        s.position.y = startingLoc + j*-MapGen.TILE_HEIGHT;
+                        c.addChild(s)
+                    }
+                    c._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(c.width,c.height);
+                    Graphics.app.renderer.render(c,texture);
+                    this.tileTextures[this.tileTypes[i]][1].push(texture);
+                    c.removeChildren();
+                    for (var j = 0; j <= h;j++){
+                        var s = Graphics.getSprite(t + '_tile2');
+                        s.anchor.x = 0.0;
+                        s.anchor.y = 0.5;
+                        s.position.x = 0;
+                        s.position.y = startingLoc + j*-MapGen.TILE_HEIGHT;
+                        c.addChild(s)
+                    }
+                    c._calculateBounds();
+                    var texture = new PIXI.RenderTexture.create(c.width,c.height);
+                    Graphics.app.renderer.render(c,texture);
+                    this.tileTextures[this.tileTypes[i]][2].push(texture);
+                }
+            }
+
             //create tool buttons
             var style = {
                 font: '32px Orbitron', 
@@ -66,7 +104,7 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'heightMod';
+                    MapGen.currentTool = 'height';
                 }
             });
             this.heightTool.position.x = this.toolText.position.x;
@@ -85,6 +123,19 @@
             this.landscapeTool.position.x = this.toolText.position.x;
             this.landscapeTool.position.y = this.heightTool.position.y + this.heightTool.height/2 + this.landscapeTool.height/2;
             Graphics.uiContainer.addChild(this.landscapeTool);
+
+            this.noiseTool = AcornSetup.makeButton({
+                text: 'noise',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTool = 'noise';
+                }
+            });
+            this.noiseTool.position.x = this.toolText.position.x;
+            this.noiseTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2;
+            Graphics.uiContainer.addChild(this.noiseTool);
 
             //create size buttons
 
@@ -192,6 +243,7 @@
                     this.initRhombus();
                     break;
                 case 't':
+                    this.totalRotations = 12;
                     this.initTriangle();
                     break;
                 case 'h':
@@ -278,33 +330,28 @@
 
         initRectangle: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rectangle Map');
-        },
-        initRhombus: function(){
-            console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
-        },
-        initTriangle: function(){
-            console.log('Generating a ' + this.size + ' unit Triangle Map');
             //Generate the cube and axial coordinate systems
-            for (var i = 0; i <=this.size;i++){
-                var row = {};
-                for (var j = 0; j <=this.size;j++){
-                    if (Math.sqrt((i+j)*(i+j)) <= this.size){
-                        var node = {
-                            q: i,
-                            r: j,
-                            h: 0,
-
-                        }
-                        row[j] = node;
+            for (var j = 0; j < this.size[1];j++){
+                for (var i = 0+(Math.ceil(-j/2)); i < this.size[0]+(Math.ceil(-j/2));i++){
+                    if (typeof this.axialMap[i] == 'undefined'){
+                        this.axialMap[i] = {}
                     }
+                    var node = {
+                        q: i,
+                        r: j,
+                        h: 0,
+
+                    }
+                    this.axialMap[i][j] = node;
                 }
-                this.axialMap[i] = row;
             }
-            for (var i = 0; i <=this.size;i++){
+            var size = this.size[0]*2;
+            if (this.size[1] > size){size = this.size[1]}
+            for (var i = size*-1; i <=size;i++){
                 var row1 = {};
-                for (var j = 0; j <=this.size;j++){
+                for (var j = size*-1; j <=size;j++){
                     var row2 = {};
-                    for (var k = -5; k <=this.size;k++){
+                    for (var k = size*-1; k <=size;k++){
                         if (i + j + k == 0){
                             var node = {
                                 x: i,
@@ -318,8 +365,214 @@
                 }
                 this.cubeMap[i] = row1;
             }
-            //Triangle maps have 6 rotation points
-            //set up the sprites for all 6 rotations
+            //Rect maps have 8 rotation points
+            //set up the sprites for all 8 rotations
+            
+            this.getHexContainer('2',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
+                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
+                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
+                //60 degree rotation at position 2
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
+                //120 degree rotation at position 4
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
+                //180 degree rotation at position 6
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
+            });
+            Graphics.worldContainer.addChild(this.container2);
+            this.getHexContainer('1',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
+                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
+                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
+                //60 degree rotation at position 3
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
+                //120 degree rotation at position 5
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
+                //180 degree rotation at position 7
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
+            });
+        },
+        initRhombus: function(){
+            console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
+            //Generate the cube and axial coordinate systems
+            for (var i = this.size*-1; i <=this.size;i++){
+                var row = {};
+                for (var j = this.size*-1; j <=this.size;j++){
+                    if (Math.sqrt((i+j)*(i+j)) <= this.size){
+                        var node = {
+                            q: i,
+                            r: j,
+                            h: 0,
+
+                        }
+                        row[j] = node;
+                    }
+                }
+                this.axialMap[i] = row;
+            }
+            for (var i = this.size*-1; i <=this.size;i++){
+                var row1 = {};
+                for (var j = this.size*-1; j <=this.size;j++){
+                    var row2 = {};
+                    for (var k = this.size*-1; k <=this.size;k++){
+                        if (i + j + k == 0){
+                            var node = {
+                                x: i,
+                                y: j,
+                                z: k
+                            }
+                            row2[k] = node;
+                        }
+                    }
+                    row1[j] = row2; 
+                }
+                this.cubeMap[i] = row1;
+            }
+            //Hex maps have 12 rotation points
+            //set up the sprites for all 12 rotations
+            
+            this.getHexContainer('2',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
+                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
+                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
+                //60 degree rotation at position 2
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
+                //120 degree rotation at position 4
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
+                //180 degree rotation at position 6
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
+                //240 degree rotation at position 8
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
+                //300 degree rotation at position 10
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
+            });
+            Graphics.worldContainer.addChild(this.container2);
+            this.getHexContainer('1',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
+                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
+                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
+                //60 degree rotation at position 3
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
+                //120 degree rotation at position 5
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
+                //180 degree rotation at position 7
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
+                //240 degree rotation at position 9
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
+                //300 degree rotation at position 11
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
+            });
+        },
+        initTriangle: function(){
+            console.log('Generating a ' + this.size + ' unit Triangle Map');
+            //Generate the cube and axial coordinate systems
+            var n = 0;
+            for (var i = Math.ceil(-this.size/3); i <= Math.ceil(this.size/2);i++){
+                for (var j = Math.ceil(-this.size/3); j <= Math.ceil(this.size/2)+n;j++){
+                    if (Math.sqrt((i+j)*(i+j)) < this.size){
+                        if (typeof this.axialMap[j] == 'undefined'){
+                            this.axialMap[j] = {}
+                        }
+                        var node = {
+                            q: i,
+                            r: j,
+                            h: 0
+                        }
+                        this.axialMap[j][i] = node;
+                    }
+                }
+                n-=1
+            }
+            for (var i = this.size*-1; i <=this.size;i++){
+                var row1 = {};
+                for (var j = this.size*-1; j <=this.size;j++){
+                    var row2 = {};
+                    for (var k = this.size*-1; k <=this.size;k++){
+                        if (i + j + k == 0){
+                            var node = {
+                                x: i,
+                                y: j,
+                                z: k
+                            }
+                            row2[k] = node;
+                        }
+                    }
+                    row1[j] = row2; 
+                }
+                this.cubeMap[i] = row1;
+            }
+            //Triangle maps have 12 rotation points
+            //set up the sprites for all 12 rotations
+
+            this.getHexContainer('2',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
+                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
+                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
+                //60 degree rotation at position 2
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
+                //120 degree rotation at position 4
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
+                //180 degree rotation at position 6
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
+                //240 degree rotation at position 8
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
+                //300 degree rotation at position 10
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
+            });
+            Graphics.worldContainer.addChild(this.container2);
+            this.getHexContainer('1',function(sprite,node){
+                sprite.rotatedPositions = {};
+                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
+                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
+                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
+                //60 degree rotation at position 3
+                var cube = MapGen.getCube(node);
+                var newCube = [-cube.z,-cube.x,-cube.y];
+                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
+                //120 degree rotation at position 5
+                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
+                //180 degree rotation at position 7
+                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
+                //240 degree rotation at position 9
+                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
+                //300 degree rotation at position 11
+                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
+            });
         },
         initHexagon: function(){
             console.log('Generating a ' + this.size + ' unit Hexagon Map');
@@ -530,9 +783,10 @@
             this.sensitivityText.text = 'Sensitivity: ' + this.sensitivity;
             Graphics.drawBoxAround(this.landscapeTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
             Graphics.drawBoxAround(this.heightTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
+            Graphics.drawBoxAround(this.noiseTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
             Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
             Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
-            if (MapGen.currentTool == 'heightMod'){
+            if (MapGen.currentTool == 'height'){
                 Graphics.uiPrimitives2.drawRect(
                     this.heightTool.position.x - this.heightTool.width/2,
                     this.heightTool.position.y - this.heightTool.height/2,
@@ -545,6 +799,13 @@
                     this.landscapeTool.position.y - this.landscapeTool.height/2,
                     this.landscapeTool.width,
                     this.landscapeTool.height
+                );
+            }else if (MapGen.currentTool == 'noise'){
+                Graphics.uiPrimitives2.drawRect(
+                    this.noiseTool.position.x - this.noiseTool.width/2,
+                    this.noiseTool.position.y - this.noiseTool.height/2,
+                    this.noiseTool.width,
+                    this.noiseTool.height
                 );
             }
             Graphics.worldPrimitives.endFill();
@@ -605,7 +866,7 @@
                     }
                     if (dragged){
                         switch(this.currentTool){
-                            case 'heightMod':
+                            case 'height':
                                 if (dragged === 1){
                                     //increase all of the lowest sprite heights
                                     var lowest = Infinity;
@@ -626,10 +887,10 @@
                                             var a = this.getAxial(c);
                                             if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
                                                 //all the lowest nodes, increase height!
-                                                a.sprite1.texture = this.getNewSpriteHeight('base_tile1',lowest+1);
+                                                a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                 a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                a.sprite2.texture = this.getNewSpriteHeight('base_tile2',lowest+1);
+                                                a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                 a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                 a.h += 1;
@@ -658,10 +919,10 @@
                                             var a = this.getAxial(c);
                                             if (a.h == highest && a.h > 0){
                                                 //all the highest nodes, decrease height
-                                                a.sprite1.texture = this.getNewSpriteHeight('base_tile1',highest-1);
+                                                a.sprite1.texture = this.tileTextures['base'][1][highest-1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                 a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                a.sprite2.texture = this.getNewSpriteHeight('base_tile2',highest-1);
+                                                a.sprite2.texture = this.tileTextures['base'][2][highest-1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                 a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                 a.h -= 1;
@@ -692,10 +953,10 @@
                                             var a = this.getAxial(c);
                                             if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
                                                 //all the lowest nodes, increase height!
-                                                a.sprite1.texture = this.getNewSpriteHeight('base_tile1',lowest+1);
+                                                a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                 a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                a.sprite2.texture = this.getNewSpriteHeight('base_tile2',lowest+1);
+                                                a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                 a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                 a.h += 1;
@@ -721,10 +982,10 @@
                                                 var a = this.getAxial(c);
                                                 if (a.h == ringLowest && a.h < this.MAX_NODE_HEIGHT && ringLowest < lowest){
                                                     //all the lowest nodes, increase height!
-                                                    a.sprite1.texture = this.getNewSpriteHeight('base_tile1',ringLowest+1);
+                                                    a.sprite1.texture = this.tileTextures['base'][1][ringLowest+1];
                                                     a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                     a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                    a.sprite2.texture = this.getNewSpriteHeight('base_tile2',ringLowest+1);
+                                                    a.sprite2.texture = this.tileTextures['base'][2][ringLowest+1];
                                                     a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                     a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                     a.h += 1;
@@ -757,10 +1018,10 @@
                                             var a = this.getAxial(c);
                                             if (a.h == highest && a.h > 0){
                                                 //all the highest nodes, decrease height
-                                                a.sprite1.texture = this.getNewSpriteHeight('base_tile1',highest-1);
+                                                a.sprite1.texture = this.tileTextures['base'][1][highest-1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                 a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                a.sprite2.texture = this.getNewSpriteHeight('base_tile2',highest-1);
+                                                a.sprite2.texture = this.tileTextures['base'][2][highest-1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                 a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                 a.h -= 1;
@@ -784,12 +1045,12 @@
                                             try{
                                                 var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
                                                 var a = this.getAxial(c);
-                                                if (a.h == ringHighest && a.h >0 && ringHighest > highest){
-                                                    //all the lowest nodes, increase height!
-                                                    a.sprite1.texture = this.getNewSpriteHeight('base_tile1',ringHighest-1);
+                                                if (a.h == ringHighest && a.h > 0 && ringHighest > highest){
+                                                    //all the lowest nodes, decrease height!
+                                                    a.sprite1.texture = this.tileTextures['base'][1][ringHighest-1];
                                                     a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                                     a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
-                                                    a.sprite2.texture = this.getNewSpriteHeight('base_tile2',ringHighest-1);
+                                                    a.sprite2.texture = this.tileTextures['base'][2][ringHighest-1];
                                                     a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                                     a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
                                                     a.h -= 1;
@@ -801,6 +1062,32 @@
                                         this.dragStart.n = 0;
                                     }
                                     this.dragStart.n -= 1;
+                                }
+
+                                break;
+                            case 'noise':
+                                if (dragged === 1 || dragged === -1){
+                                    //increase all of the lowest sprite heights
+                                    var lowest = Infinity;
+                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                    for (var i = 0;i < arr.length;i++){
+                                        try{
+                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.getAxial(c);
+                                            var n = 1;
+                                            if (Math.round(Math.random())){n = -1}
+                                            var newHeight = Math.min(this.MAX_NODE_HEIGHT,Math.max(a.h+n,0));
+                                            a.h = newHeight;
+                                            a.sprite1.texture = this.tileTextures['base'][1][newHeight];
+                                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                            a.sprite2.texture = this.tileTextures['base'][2][newHeight];
+                                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                        }catch(e){}
+                                    }
+                                    
                                 }
                                 break;
                         }

@@ -320,7 +320,7 @@
                         'r': {min: 10, max: 60},
                         'rh': {min: 10, max: 60},
                         'h': {min: 5, max: 30},
-                        't': {min: 5, max: 30}
+                        't': {min: 7, max: 70}
                     }
                     this.size = 10;
                     this.sizePercent = 0;
@@ -468,7 +468,15 @@
                             var state = Acorn.states['MapGenInit'];
                             var s;
                             MapGen.type = state.typeSelected;
-                            if (MapGen.type == 't' || MapGen.type == 'h'){
+                            if (MapGen.type == 't'){
+                                var min = state.mapSizes[state.typeSelected].min;
+                                var max = state.mapSizes[state.typeSelected].max;
+                                s = Math.round(min + state.sizePercent*(max-min));
+                                while (s%3 != 1){
+                                    s += 1;
+                                    console.log(s);
+                                }
+                            }else if (MapGen.type == 'h'){
                                 var min = state.mapSizes[state.typeSelected].min;
                                 var max = state.mapSizes[state.typeSelected].max;
                                 s = Math.round(min + state.sizePercent*(max-min));
@@ -500,6 +508,15 @@
                         var min = this.mapSizes[this.typeSelected].min;
                         var max = this.mapSizes[this.typeSelected].max;
                         this.sizeNum.text = Math.round(min + this.sizePercent*(max-min)) + ' x ' + Math.round(min + this.sizePercent2*(max-min));
+                    }else if (this.typeSelected == 't'){
+                        this.sizeBar2.visible = false;
+                        var min = this.mapSizes[this.typeSelected].min;
+                        var max = this.mapSizes[this.typeSelected].max;
+                        var n = Math.round(min + this.sizePercent*(max-min));
+                        while (n%3 != 1){
+                            n+=1;
+                        }
+                        this.sizeNum.text = '' + n;
                     }else{
                         this.sizeBar2.visible = false;
                         var min = this.mapSizes[this.typeSelected].min;
