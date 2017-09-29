@@ -155,6 +155,14 @@ function init() {
             Settings.rotateMap('right');
             Acorn.Input.setValue(Acorn.Input.Key.ROTATE2, false);
         }
+        if (Acorn.Input.isPressed(Acorn.Input.Key.YSCALE1)){
+            Settings.setYScale('up');
+            Acorn.Input.setValue(Acorn.Input.Key.YSCALE1, false);
+        }
+        if (Acorn.Input.isPressed(Acorn.Input.Key.YSCALE2)){
+            Settings.setYScale('down');
+            Acorn.Input.setValue(Acorn.Input.Key.YSCALE2, false);
+        }
         Settings.stats.end();
     })
 }

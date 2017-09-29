@@ -50,7 +50,8 @@
             CHARSHEET: 5,
             ROTATE1: 6,
             ROTATE2: 7,
-            INTERACT: 8,
+            YSCALE1: 8,
+            YSCALE2: 9,
             TOGGLEMAP: 10,
             TOGGLESTATS: 11,
             BACKSPACE: 12
@@ -83,15 +84,15 @@
             window.onwheel = Acorn.Input.handleScroll;
         },
         bind: function() {
-            this.keyBindings[83] = Acorn.Input.Key.DOWN; //default S
-            this.keyBindings[87] = Acorn.Input.Key.ROTATE2; //default W
+            this.keyBindings[83] = Acorn.Input.Key.YSCALE1; //default S
+            this.keyBindings[87] = Acorn.Input.Key.YSCALE2; //default W
             this.keyBindings[65] = Acorn.Input.Key.LEFT; //default D
             this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default A
             this.keyBindings[32] = Acorn.Input.Key.TOGGLESTATS; //default Space
             this.keyBindings[67] = Acorn.Input.Key.CHARSHEET; //default C
             this.keyBindings[69] = Acorn.Input.Key.INTERACT; //default E
-            this.keyBindings[81] = Acorn.Input.Key.ROTATE1; //default Q
-            this.keyBindings[82] = Acorn.Input.Key.ROTATE; //default R
+            this.keyBindings[68] = Acorn.Input.Key.ROTATE2; //default A
+            this.keyBindings[65] = Acorn.Input.Key.ROTATE1; //default D
             this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
             this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
         },

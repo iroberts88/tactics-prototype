@@ -8,6 +8,12 @@
         MAX_SENSITIVITY: 15,
         MAX_NODE_HEIGHT: 20,
 
+        ZOOM_SETTINGS: [0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0],
+        currentZoomSetting: 2,
+
+        YSCALE_SETTINGS: [0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0],
+        currentYScaleSetting: 7,
+
         type: null,
         size: null,
 
@@ -20,6 +26,8 @@
 
         container: null, //container for all sprites
         container2: null,
+
+        cAverages: null, //the average of all sprite locations (used for correct rotations)
 
         rotateData: null,
         currentRotation: 0,
@@ -179,6 +187,15 @@
             this.sizeMinus.position.y = this.sizeText.position.y + this.sizeMinus.height/2;
             Graphics.uiContainer.addChild(this.sizeMinus);
 
+            this.rotateText = AcornSetup.makeButton({
+                text: 'Rotate (A,D)',
+                style: style,
+            });
+            this.rotateText.style.fontSize = 20;
+            this.rotateText.position.x = Graphics.width/2;
+            this.rotateText.position.y = this.rotateText.height/2;
+            Graphics.uiContainer.addChild(this.rotateText);
+
             this.rotateLeft = AcornSetup.makeButton({
                 text: '◄',
                 style: style,
@@ -190,7 +207,7 @@
             });
             this.rotateLeft.style.fontSize = 40;
             this.rotateLeft.position.x = Graphics.width/2 - this.rotateLeft.width/2;
-            this.rotateLeft.position.y = 0 + this.rotateLeft.height/2;
+            this.rotateLeft.position.y = this.rotateLeft.height/2 + this.rotateText.height/2+5;
             Graphics.uiContainer.addChild(this.rotateLeft);
             this.rotateRight = AcornSetup.makeButton({
                 text: '►',
@@ -203,12 +220,83 @@
             });
             this.rotateRight.style.fontSize = 40;
             this.rotateRight.position.x = Graphics.width/2 + this.rotateRight.width/2;
-            this.rotateRight.position.y = 0 + this.rotateRight.height/2;
+            this.rotateRight.position.y = this.rotateRight.height/2 + this.rotateText.height/2+5;
             Graphics.uiContainer.addChild(this.rotateRight);
 
+            this.yScaleText = AcornSetup.makeButton({
+                text: 'Vert Shift (W,S)',
+                style: style,
+            });
+            this.yScaleText.style.fontSize = 20;
+            this.yScaleText.position.x = Graphics.width/3;
+            this.yScaleText.position.y = this.yScaleText.height/2;
+            Graphics.uiContainer.addChild(this.yScaleText);
+
+            this.yScaleLeft = AcornSetup.makeButton({
+                text: '▲',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.Input.setValue(Acorn.Input.Key.YSCALE1, true);
+                }
+            });
+            this.yScaleLeft.style.fontSize = 40;
+            this.yScaleLeft.position.x = Graphics.width/3 - this.yScaleLeft.width/2;
+            this.yScaleLeft.position.y = this.yScaleLeft.height/2 + this.yScaleText.height/2+5;
+            Graphics.uiContainer.addChild(this.yScaleLeft);
+            this.yScaleRight = AcornSetup.makeButton({
+                text: '▼',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.Input.setValue(Acorn.Input.Key.YSCALE2, true);
+                }
+            });
+            this.yScaleRight.style.fontSize = 40;
+            this.yScaleRight.position.x = Graphics.width/3 + this.yScaleRight.width/2;
+            this.yScaleRight.position.y = this.yScaleRight.height/2 + this.yScaleText.height/2+5;
+            Graphics.uiContainer.addChild(this.yScaleRight);
+
+            this.zoomText = AcornSetup.makeButton({
+                text: 'Zoom (mwheel)',
+                style: style,
+            });
+            this.zoomText.style.fontSize = 20;
+            this.zoomText.position.x = Graphics.width/1.5;
+            this.zoomText.position.y = this.zoomText.height/2;
+            Graphics.uiContainer.addChild(this.zoomText);
+
+            this.zoomUp = AcornSetup.makeButton({
+                text: '+',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Settings.zoom('in');
+                }
+            });
+            this.zoomUp.style.fontSize = 40;
+            this.zoomUp.position.x = Graphics.width/1.5 - this.zoomUp.width/2 - 20;
+            this.zoomUp.position.y = this.zoomUp.height/2 + this.zoomText.height/2+5;
+            Graphics.uiContainer.addChild(this.zoomUp);
+            this.zoomDown = AcornSetup.makeButton({
+                text: '-',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Settings.zoom('out');
+                }
+            });
+            this.zoomDown.style.fontSize = 40;
+            this.zoomDown.position.x = Graphics.width/1.5 + this.zoomDown.width/2 + 20;
+            this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
+            Graphics.uiContainer.addChild(this.zoomDown);
 
             this.sensitivityText = AcornSetup.makeButton({
-                text: 'Sensitivity: 30',
+                text: 'Sensitivity: 4',
                 style: style,
             });
             this.sensitivityText.style.fontSize = 32;
@@ -342,9 +430,18 @@
         merge: function(left,right){
             var result = [];
             while (left.length && right.length) {
-                if (left[0].position.y <= right[0].position.y) {
+                if (left[0].position.y < right[0].position.y) {
                     result.push(left.shift());
-                } else {
+                } else if (left[0].position.y == right[0].position.y) {
+                    //if they are the same height, sort by z direction
+                    var leftNode = this.axialMap[left[0].axialCoords.q][left[0].axialCoords.r];
+                    var rightNode = this.axialMap[right[0].axialCoords.q][right[0].axialCoords.r];
+                    if (leftNode.h <= rightNode.h){
+                        result.push(left.shift());
+                    }else{
+                        result.push(right.shift());
+                    }
+                }else{
                     result.push(right.shift());
                 }
             }
@@ -395,54 +492,9 @@
                 }
                 this.cubeMap[i] = row1;
             }
-            //Rect maps have 8 rotation points
-            //set up the sprites for all 8 rotations
-            
-            this.getHexContainer('2',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
-                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
-                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
-                //60 degree rotation at position 2
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
-                //120 degree rotation at position 4
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
-                //180 degree rotation at position 6
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
-                //240 degree rotation at position 8
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
-                //300 degree rotation at position 10
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
-            });
+            //set up the sprites for all 12 rotations
+            this.getHexContainer();
             Graphics.worldContainer.addChild(this.container2);
-            this.getHexContainer('1',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
-                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
-                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
-                //60 degree rotation at position 3
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
-                //120 degree rotation at position 5
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
-                //180 degree rotation at position 7
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
-                //240 degree rotation at position 9
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
-                //300 degree rotation at position 11
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
-            });
         },
         initRhombus: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
@@ -481,80 +533,34 @@
                 }
                 this.cubeMap[i] = row1;
             }
-            //Hex maps have 12 rotation points
             //set up the sprites for all 12 rotations
-            
-            this.getHexContainer('2',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
-                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
-                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
-                //60 degree rotation at position 2
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
-                //120 degree rotation at position 4
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
-                //180 degree rotation at position 6
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
-                //240 degree rotation at position 8
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
-                //300 degree rotation at position 10
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
-            });
+            this.getHexContainer();
             Graphics.worldContainer.addChild(this.container2);
-            this.getHexContainer('1',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
-                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
-                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
-                //60 degree rotation at position 3
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
-                //120 degree rotation at position 5
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
-                //180 degree rotation at position 7
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
-                //240 degree rotation at position 9
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
-                //300 degree rotation at position 11
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
-            });
         },
         initTriangle: function(){
             console.log('Generating a ' + this.size + ' unit Triangle Map');
             //Generate the cube and axial coordinate systems
-            var n = 0;
-            for (var i = Math.ceil(-this.size/3); i <= Math.ceil(this.size/2);i++){
-                for (var j = Math.ceil(-this.size/3); j <= Math.ceil(this.size/2)+n;j++){
+            for (var i = 0; i < this.size;i++){
+                if (typeof this.axialMap[i] == 'undefined'){
+                    this.axialMap[i] = {};
+                }
+                for (var j = 0; j < this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) < this.size){
-                        if (typeof this.axialMap[j] == 'undefined'){
-                            this.axialMap[j] = {}
-                        }
                         var node = {
                             q: i,
                             r: j,
                             h: 0
                         }
-                        this.axialMap[j][i] = node;
+                        this.axialMap[i][j] = node;
                     }
                 }
-                n-=1
             }
-            for (var i = this.size*-1; i <=this.size;i++){
+            var s = this.size
+            for (var i = s*-1; i <=s;i++){
                 var row1 = {};
-                for (var j = this.size*-1; j <=this.size;j++){
+                for (var j = s*-1; j <=s;j++){
                     var row2 = {};
-                    for (var k = this.size*-1; k <=this.size;k++){
+                    for (var k = s*-1; k <=s;k++){
                         if (i + j + k == 0){
                             var node = {
                                 x: i,
@@ -568,54 +574,9 @@
                 }
                 this.cubeMap[i] = row1;
             }
-            //Triangle maps have 12 rotation points
             //set up the sprites for all 12 rotations
-
-            this.getHexContainer('2',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
-                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
-                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
-                //60 degree rotation at position 2
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
-                //120 degree rotation at position 4
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
-                //180 degree rotation at position 6
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
-                //240 degree rotation at position 8
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
-                //300 degree rotation at position 10
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
-            });
+            this.getHexContainer();
             Graphics.worldContainer.addChild(this.container2);
-            this.getHexContainer('1',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
-                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
-                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
-                //60 degree rotation at position 3
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
-                //120 degree rotation at position 5
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
-                //180 degree rotation at position 7
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
-                //240 degree rotation at position 9
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
-                //300 degree rotation at position 11
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
-            });
         },
         initHexagon: function(){
             console.log('Generating a ' + this.size + ' unit Hexagon Map');
@@ -653,90 +614,276 @@
                 }
                 this.cubeMap[i] = row1;
             }
-            //Hex maps have 12 rotation points
             //set up the sprites for all 12 rotations
-            
-            this.getHexContainer('2',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.x = MapGen.TILE_SIZE * 1.5 * node.q;
-                sprite.position.y = MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2);
-                sprite.rotatedPositions[0] = [MapGen.TILE_SIZE * 1.5 * node.q,MapGen.TILE_SIZE * Math.sqrt(3) * (node.r+node.q/2)];
-                //60 degree rotation at position 2
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[2] = [MapGen.TILE_SIZE * 1.5 * newCube[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[1]+newCube[0]/2)];
-                //120 degree rotation at position 4
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[4] = [MapGen.TILE_SIZE * 1.5 * newCube2[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)];
-                //180 degree rotation at position 6
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[6] = [MapGen.TILE_SIZE * 1.5 * newCube3[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)];
-                //240 degree rotation at position 8
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[8] = [MapGen.TILE_SIZE * 1.5 * newCube4[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)];
-                //300 degree rotation at position 10
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[10] = [MapGen.TILE_SIZE * 1.5 * newCube5[0],MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)];
-            });
+            this.getHexContainer();
             Graphics.worldContainer.addChild(this.container2);
-            this.getHexContainer('1',function(sprite,node){
-                sprite.rotatedPositions = {};
-                sprite.position.y = MapGen.TILE_SIZE * 1.5 * node.r;
-                sprite.position.x = MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2);
-                sprite.rotatedPositions[1] = [MapGen.TILE_SIZE * Math.sqrt(3) * (node.q+node.r/2),MapGen.TILE_SIZE * 1.5 * node.r];
-                //60 degree rotation at position 3
-                var cube = MapGen.getCube(node);
-                var newCube = [-cube.z,-cube.x,-cube.y];
-                sprite.rotatedPositions[3] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube[0]+newCube[1]/2),MapGen.TILE_SIZE * 1.5 * newCube[1]];
-                //120 degree rotation at position 5
-                var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                sprite.rotatedPositions[5] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),MapGen.TILE_SIZE * 1.5 * newCube2[1]];
-                //180 degree rotation at position 7
-                var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                sprite.rotatedPositions[7] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),MapGen.TILE_SIZE * 1.5 * newCube3[1]];
-                //240 degree rotation at position 9
-                var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                sprite.rotatedPositions[9] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),MapGen.TILE_SIZE * 1.5 * newCube4[1]];
-                //300 degree rotation at position 11
-                var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                sprite.rotatedPositions[11] = [MapGen.TILE_SIZE * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),MapGen.TILE_SIZE * 1.5 * newCube5[1]];
-            });
             
         },
-        getHexContainer: function(tileset,posFunc){
-            this['container' + tileset] = new PIXI.Container();
-            this['container' + tileset].interactive = true;
+        getHexContainer: function(){
+            this.container1 = new PIXI.Container();
+            this.container1.interactive = true;
+            this.container2 = new PIXI.Container();
+            this.container2.interactive = true;
+            var cAverages ={};
+
+            for (var i = 0; i <12;i++){
+                cAverages[i] = {};
+                for (var j = 0; j <this.ZOOM_SETTINGS.length;j++){
+                    cAverages[i][j] = {};
+                    for (var k = 0; k < this.YSCALE_SETTINGS.length;k++){
+                        cAverages[i][j][k] = {
+                            x: 0,
+                            y: 0
+                        }
+                    }
+                }
+            }
+            var totalNodes = 0;
+            for (var x in this.axialMap){
+                for (var y in this.axialMap[x]){
+                    totalNodes += 1;
+                    var node = this.axialMap[x][y];
+                    var yScale = this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting];
+                    var xScale = this.ZOOM_SETTINGS[this.currentZoomSetting];
+                    node.sprite2= Graphics.getSprite('base_tile2');
+                    node.sprite1= Graphics.getSprite('base_tile1');
+                    node.sprite1.scale.y = yScale;
+                    node.sprite2.scale.y = yScale;
+                    node.sprite1.scale.x = xScale;
+                    node.sprite2.scale.x = xScale;
+                    //get all of the rotated positions!!
+                    node.sprite2.rotatedPositions = {};
+                    node.sprite2.position.x = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting] * 1.5 * node.q;
+                    node.sprite2.position.y = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting] * Math.sqrt(3) * (node.r+node.q/2);
+                    node.sprite2.rotatedPositions[0] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[0][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[0][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * node.q,
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (node.r+node.q/2)
+                            };
+                            cAverages[0][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * node.q;
+                            cAverages[0][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (node.r+node.q/2);
+                        }
+                    }
+                    var cube = MapGen.getCube(node);
+                    var newCube = [-cube.z,-cube.x,-cube.y];
+                    node.sprite2.rotatedPositions[2] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[2][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[2][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube[0],
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube[1]+newCube[0]/2)
+                            };
+                            cAverages[2][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube[0];
+                            cAverages[2][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube[1]+newCube[0]/2);
+                        }
+                    }
+                    var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                    node.sprite2.rotatedPositions[4] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[4][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[4][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube2[0],
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)
+                            };
+                            cAverages[4][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube2[0];
+                            cAverages[4][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2);
+                        }
+                    }
+                    var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                    node.sprite2.rotatedPositions[6] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[6][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[6][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube3[0],
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)
+                            };
+                            cAverages[6][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube3[0];
+                            cAverages[6][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2);
+                        }
+                    }
+                    var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                    node.sprite2.rotatedPositions[8] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[8][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[8][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube4[0],
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)
+                            };
+                            cAverages[8][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube4[0];
+                            cAverages[8][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2);
+                        }
+                    }
+                    var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                    node.sprite2.rotatedPositions[10] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite2.rotatedPositions[10][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite2.rotatedPositions[10][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube5[0],
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)
+                            };
+                            cAverages[10][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube5[0];
+                            cAverages[10][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2);
+                        }
+                    }
+
+                    node.sprite1.rotatedPositions = {};
+                    node.sprite1.position.y = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting] * 1.5 * node.r;
+                    node.sprite1.position.x = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting] * Math.sqrt(3) * (node.q+node.r/2);
+                    node.sprite1.rotatedPositions[1] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[1][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[1][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (node.q+node.r/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * node.r
+                            };
+                            cAverages[1][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (node.q+node.r/2);
+                            cAverages[1][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * node.r;
+                        }
+                    }
+                    var cube = MapGen.getCube(node);
+                    var newCube = [-cube.z,-cube.x,-cube.y];
+                    node.sprite1.rotatedPositions[3] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[3][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[3][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube[0]+newCube[1]/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube[1]
+                            };
+                            cAverages[3][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube[0]+newCube[1]/2);
+                            cAverages[3][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube[1];
+                        }
+                    }
+                    var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
+                    node.sprite1.rotatedPositions[5] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[5][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[5][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube2[1]
+                            };
+                            cAverages[5][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2);
+                            cAverages[5][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube2[1];
+                        }
+                    }
+                    var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
+                    node.sprite1.rotatedPositions[7]= {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[7][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[7][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube3[1]
+                            };
+                            cAverages[7][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2);
+                            cAverages[7][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube3[1];
+                        }
+                    }
+                    var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
+                    node.sprite1.rotatedPositions[9] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[9][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[9][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube4[1]
+                            };
+                            cAverages[9][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2);
+                            cAverages[9][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube4[1];
+                        }
+                    }
+                    var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
+                    node.sprite1.rotatedPositions[11] = {};
+                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
+                        node.sprite1.rotatedPositions[11][i] = {};
+                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
+                            node.sprite1.rotatedPositions[11][i][j] = {
+                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),
+                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube5[1]
+                            };
+                            cAverages[11][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2);
+                            cAverages[11][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube5[1];
+                        }
+                    }
+
+                    node.sprite1.anchor.x = .5;
+                    node.sprite1.anchor.y = .5;
+                    node.sprite1.axialCoords = {q:x,r:y};
+                    node.sprite1.cubeCoords = {x:x,y:-x-y,z:y};
+                    node.sprite1.interactive = true;
+                    node.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
+                    MapGen.setupEvents(node.sprite1);
+                    this.container1.addChild(node.sprite1);
+
+                    node.sprite2.anchor.x = .5;
+                    node.sprite2.anchor.y = .5;
+                    node.sprite2.axialCoords = {q:x,r:y};
+                    node.sprite2.cubeCoords = {x:x,y:-x-y,z:y};
+                    node.sprite2.interactive = true;
+                    node.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
+                    MapGen.setupEvents(node.sprite2);
+                    this.container2.addChild(node.sprite2);
+                }
+            }
+            for (var i in cAverages){
+                for (var j in cAverages[i]){
+                    for (var k in cAverages[i][j]){
+                        cAverages[i][j][k].x = cAverages[i][j][k].x/totalNodes;
+                        cAverages[i][j][k].y = cAverages[i][j][k].y/totalNodes;
+                    }
+                }
+            }
             for (var x in this.axialMap){
                 for (var y in this.axialMap[x]){
                     var node = this.axialMap[x][y];
-                    node['sprite'+tileset]= Graphics.getSprite('base_tile' + tileset);
-                    posFunc(node['sprite'+tileset],node);
-                    node['sprite'+tileset].anchor.x = .5;
-                    node['sprite'+tileset].anchor.y = .5;
-                    node['sprite'+tileset].axialCoords = {q:x,r:y};
-                    node['sprite'+tileset].cubeCoords = {x:x,y:-x-y,z:y};
-                    node['sprite'+tileset].interactive = true;
-                    node['sprite'+tileset].hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
-                    MapGen.setupEvents(node['sprite'+tileset]);
-                    this['container' + tileset].addChild(node['sprite'+tileset]);
+                    for (var i = 0;i < 12;i+=2){
+                        for(var j in node.sprite2.rotatedPositions[i]){
+                            for (var k in node.sprite2.rotatedPositions[i][j]){
+                                node.sprite2.rotatedPositions[i][j][k].x -= cAverages[i][j][k].x;
+                                node.sprite2.rotatedPositions[i][j][k].y -= cAverages[i][j][k].y;
+                            }
+                        }
+                    }
+                    for (var i = 1;i < 12;i+=2){
+                        for(var j in node.sprite1.rotatedPositions[i]){
+                            for (var k in node.sprite1.rotatedPositions[i][j]){
+                                node.sprite1.rotatedPositions[i][j][k].x -= cAverages[i][j][k].x;
+                                node.sprite1.rotatedPositions[i][j][k].y -= cAverages[i][j][k].y;
+                            }
+                        }
+                    }
                 }
             }
-            this['container' + tileset].children = MapGen.mergeSort(this['container' + tileset].children);
-            this['container' + tileset].position.x = Graphics.width/2;
-            this['container' + tileset].position.y = Graphics.height/2;
+            this.container1.children = MapGen.mergeSort(this.container1.children);
+            this.container1.position.x = Graphics.width/2;
+            this.container1.position.y = Graphics.height/2;
+            this.container2.children = MapGen.mergeSort(this.container2.children);
+            this.container2.position.x = Graphics.width/2;
+            this.container2.position.y = Graphics.height/2;
         },
         updateSprites: function(arr){
-            //updates sprite position in c.children arr after a rotation
+            //updates sprite position in c.children arr after a rotation/zoom ect.
             for (var i = 0; i < arr.length;i++){
-                arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][0];
-                arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][1];
+                arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
+                arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
+                arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
+                arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
                 arr[i].tint = 0xFFFFFF;
             }
             return MapGen.mergeSort(arr);
         },
         setupEvents: function(sprite){
             //setup drag and click events for sprite
-            console.log("setting up events");
             sprite.clicked = false;
             sprite.on('mousedown', function onClick(e){
                 MapGen.dragStart = {x:Acorn.Input.mouse.X,y:Acorn.Input.mouse.Y};
@@ -859,9 +1006,7 @@
                 }
 
                 this.rotateData.t += deltaTime;
-                this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
-                this.container2.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
-                if (this.rotateData.t >= this.rotateData.time/2 && !this.rotateData.swapped){
+                if (!this.rotateData.swapped){
                     this.rotateData.extraRot = -this.rotateData.angle;
                     this.rotateData.swapped = true;
                     Graphics.worldContainer.removeChildren();
@@ -869,12 +1014,13 @@
                     if (!(this.currentRotation%2)){t = 2}
                     Graphics.worldContainer.addChild(this['container' + t]);
                     this['container' + t].children = this.updateSprites(this['container' + t].children);
-                }else{
-                    if (this.rotateData.t >= this.rotateData.time){
-                        this.container1.rotation = 0;
-                        this.container2.rotation = 0;
-                        this.rotateData = null;
-                    }
+                }
+                this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
+                this.container2.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
+                if (this.rotateData.t >= this.rotateData.time){
+                    this.container1.rotation = 0;
+                    this.container2.rotation = 0;
+                    this.rotateData = null;
                 }
 
             }else{
@@ -932,10 +1078,10 @@
                                                 //all the lowest nodes, increase height!
                                                 a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.h += 1;
                                             }
                                         }catch(e){}
@@ -964,10 +1110,10 @@
                                                 //all the highest nodes, decrease height
                                                 a.sprite1.texture = this.tileTextures['base'][1][highest-1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.sprite2.texture = this.tileTextures['base'][2][highest-1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.h -= 1;
                                             }
                                         }catch(e){}
@@ -998,10 +1144,10 @@
                                                 //all the lowest nodes, increase height!
                                                 a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.h += 1;
                                             }
                                         }catch(e){}
@@ -1027,10 +1173,10 @@
                                                     //all the lowest nodes, increase height!
                                                     a.sprite1.texture = this.tileTextures['base'][1][ringLowest+1];
                                                     a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                     a.sprite2.texture = this.tileTextures['base'][2][ringLowest+1];
                                                     a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                     a.h += 1;
                                                 }
                                             }catch(e){}
@@ -1063,10 +1209,10 @@
                                                 //all the highest nodes, decrease height
                                                 a.sprite1.texture = this.tileTextures['base'][1][highest-1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.sprite2.texture = this.tileTextures['base'][2][highest-1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                 a.h -= 1;
                                             }
                                         }catch(e){}
@@ -1092,10 +1238,10 @@
                                                     //all the lowest nodes, decrease height!
                                                     a.sprite1.texture = this.tileTextures['base'][1][ringHighest-1];
                                                     a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                     a.sprite2.texture = this.tileTextures['base'][2][ringHighest-1];
                                                     a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                                     a.h -= 1;
                                                 }
                                             }catch(e){}
@@ -1124,10 +1270,10 @@
                                             a.h = newHeight;
                                             a.sprite1.texture = this.tileTextures['base'][1][newHeight];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                             a.sprite2.texture = this.tileTextures['base'][2][newHeight];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*a.h,32,32+this.TILE_HEIGHT*a.h);
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                                         }catch(e){}
                                     }
                                     
@@ -1135,6 +1281,10 @@
                                 break;
                         }
                         this.dragStart.y = Acorn.Input.mouse.Y;
+
+                        var t = 1;
+                        if (!(MapGen.currentRotation%2)){t = 2}
+                        MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
                     }
                 }
             }

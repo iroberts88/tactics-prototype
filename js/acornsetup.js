@@ -320,7 +320,7 @@
                         'r': {min: 10, max: 60},
                         'rh': {min: 10, max: 60},
                         'h': {min: 5, max: 30},
-                        't': {min: 7, max: 70}
+                        't': {min: 10, max: 60}
                     }
                     this.size = 10;
                     this.sizePercent = 0;
@@ -472,10 +472,6 @@
                                 var min = state.mapSizes[state.typeSelected].min;
                                 var max = state.mapSizes[state.typeSelected].max;
                                 s = Math.round(min + state.sizePercent*(max-min));
-                                while (s%3 != 1){
-                                    s += 1;
-                                    console.log(s);
-                                }
                             }else if (MapGen.type == 'h'){
                                 var min = state.mapSizes[state.typeSelected].min;
                                 var max = state.mapSizes[state.typeSelected].max;
@@ -513,9 +509,6 @@
                         var min = this.mapSizes[this.typeSelected].min;
                         var max = this.mapSizes[this.typeSelected].max;
                         var n = Math.round(min + this.sizePercent*(max-min));
-                        while (n%3 != 1){
-                            n+=1;
-                        }
                         this.sizeNum.text = '' + n;
                     }else{
                         this.sizeBar2.visible = false;
@@ -558,20 +551,11 @@
             });
 
             Acorn.Input.onScroll(function(e) {
-                //save the original mouse Location based on bounds of the map
-                //TODO if map.rotatedata = null?
-                /*var mouseX = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.X - (Graphics.world.position.x-Graphics.world.width/2)) / (Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x)));
-                var mouseY = Math.min(1.0,Math.max(0.1,(Acorn.Input.mouse.Y - (Graphics.world.position.y-Graphics.world.height/2)) / (Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y)));
                 if (e.deltaY < 0){
-                    Graphics.world.scale.x = Math.min(3.0,Graphics.world.scale.x+.04);
-                    Graphics.world.scale.y = Math.min(3.0,Graphics.world.scale.y+.04);
+                    Settings.zoom('in');
                 }else{
-                    Graphics.world.scale.x = Math.max(0.1,Graphics.world.scale.x-.04);
-                    Graphics.world.scale.y = Math.max(0.1,Graphics.world.scale.y-.04);
+                    Settings.zoom('out');
                 }
-                //reposition the map to stay on mouse point
-                Graphics.world.position.x = Acorn.Input.mouse.X - (mouseX*Map.mapTextures[Settings.currentRotation].width*Graphics.world.scale.x) + Graphics.world.width/2;
-                Graphics.world.position.y = Acorn.Input.mouse.Y - (mouseY*Map.mapTextures[Settings.currentRotation].height*Graphics.world.scale.y) + Graphics.world.height/2;*/
             });
 
             Acorn.Input.onMouseMove(function(e) {

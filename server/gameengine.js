@@ -30,7 +30,7 @@ var GameEngine = function() {
 }
 
 GameEngine.prototype.init = function () {
-    this.start();
+    //this.start();
 };
 
 GameEngine.prototype.start = function () {

@@ -50,7 +50,7 @@ init();
 // ----------------------------------------------------------
 // Start Web Server
 // ----------------------------------------------------------
-app.listen(8087);
+app.listen(8088);
 
 function webResponse(req, res) {
     var filename = req.url;

@@ -37,7 +37,42 @@
             this.credentialsOn = false;
             this.currentRotation = 0;
         },
-        
+        zoom: function(dir){
+            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
+                if (dir == 'in'){
+                    MapGen.currentZoomSetting += 1;
+                    if (MapGen.currentZoomSetting == MapGen.ZOOM_SETTINGS.length){
+                        MapGen.currentZoomSetting = MapGen.ZOOM_SETTINGS.length-1;
+                    }
+                }else if (dir == 'out'){
+                    MapGen.currentZoomSetting -= 1;
+                    if (MapGen.currentZoomSetting == -1){
+                        MapGen.currentZoomSetting = 0;
+                    }
+                }
+                var t = 1;
+                if (!(MapGen.currentRotation%2)){t = 2}
+                MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+            }
+        },
+        setYScale: function(dir){
+            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
+                if (dir == 'up'){
+                    MapGen.currentYScaleSetting += 1;
+                    if (MapGen.currentYScaleSetting == MapGen.YSCALE_SETTINGS.length){
+                        MapGen.currentYScaleSetting = MapGen.YSCALE_SETTINGS.length-1;
+                    }
+                }else if (dir == 'down'){
+                    MapGen.currentYScaleSetting -= 1;
+                    if (MapGen.currentYScaleSetting == -1){
+                        MapGen.currentYScaleSetting = 0;
+                    }
+                }
+                var t = 1;
+                if (!(MapGen.currentRotation%2)){t = 2}
+                MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+            }
+        },
         rotateMap: function(dir){
             if (!Map.rotateData && Acorn.currentState == 'MapGen'){
                 var c = MapGen.currentRotation;
