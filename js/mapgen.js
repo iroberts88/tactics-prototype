@@ -125,7 +125,7 @@
             Graphics.uiContainer.addChild(this.landscapeTool);
 
             this.noiseTool = AcornSetup.makeButton({
-                text: 'noise',
+                text: 'Noise',
                 style: style,
                 interactive: true,
                 buttonMode: true,
@@ -178,6 +178,34 @@
             this.sizeMinus.position.x = this.sizeText.position.x + this.sizeText.width/2 + 50;
             this.sizeMinus.position.y = this.sizeText.position.y + this.sizeMinus.height/2;
             Graphics.uiContainer.addChild(this.sizeMinus);
+
+            this.rotateLeft = AcornSetup.makeButton({
+                text: '◄',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.Input.setValue(Acorn.Input.Key.ROTATE1, true);
+                }
+            });
+            this.rotateLeft.style.fontSize = 40;
+            this.rotateLeft.position.x = Graphics.width/2 - this.rotateLeft.width/2;
+            this.rotateLeft.position.y = 0 + this.rotateLeft.height/2;
+            Graphics.uiContainer.addChild(this.rotateLeft);
+            this.rotateRight = AcornSetup.makeButton({
+                text: '►',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.Input.setValue(Acorn.Input.Key.ROTATE2, true);
+                }
+            });
+            this.rotateRight.style.fontSize = 40;
+            this.rotateRight.position.x = Graphics.width/2 + this.rotateRight.width/2;
+            this.rotateRight.position.y = 0 + this.rotateRight.height/2;
+            Graphics.uiContainer.addChild(this.rotateRight);
+
 
             this.sensitivityText = AcornSetup.makeButton({
                 text: 'Sensitivity: 30',
