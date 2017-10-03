@@ -36,6 +36,8 @@
         toolSize: 1,
         sensitivity: 4,
 
+        currentTileType: 'base',
+
         selectedSprite: null,
         setNewSelectedNode: 0,
         dragStart: null,
@@ -44,7 +46,7 @@
             this.drawBG();
             //create all of the tile textures!
             this.tileTextures = {}
-            this.tileTypes = ['base'];
+            this.tileTypes = ['base','grass','dirt','ice','snow','sand'];
             for (var i = 0; i < this.tileTypes.length;i++){
                 var t = this.tileTypes[i];
                 this.tileTextures[this.tileTypes[i]] = {1: [],2:[]};
@@ -145,8 +147,104 @@
             this.noiseTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2;
             Graphics.uiContainer.addChild(this.noiseTool);
 
-            //create size buttons
+            this.tilesTool = AcornSetup.makeButton({
+                text: 'Tiles',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTool = 'tiles';
+                    MapGen.sandTile.visible = true;
+                    MapGen.baseTile.visible = true;
+                    MapGen.grassTile.visible = true;
+                    MapGen.iceTile.visible = true;
+                    MapGen.snowTile.visible = true;
+                    MapGen.dirtTile.visible = true;
+                }
+            });
+            this.tilesTool.position.x = this.toolText.position.x;
+            this.tilesTool.position.y = this.noiseTool.position.y + this.noiseTool.height/2 + this.tilesTool.height/2;
+            Graphics.uiContainer.addChild(this.tilesTool);
 
+            //create tiles tool options
+            this.toolOptionsText = AcornSetup.makeButton({
+                text: 'Tool Options',
+                style: style,
+            });
+            this.toolOptionsText.position.x = Graphics.width-25 - this.toolText.width/2;
+            this.toolOptionsText.position.y = 25 + this.toolText.height/2;
+            Graphics.uiContainer.addChild(this.toolOptionsText);
+            this.baseTile = AcornSetup.makeButton({
+                sprite: 'base_tile2',
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'base';
+                }
+            });
+            this.baseTile.position.x = this.toolOptionsText.position.x - this.baseTile.width/2;
+            this.baseTile.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
+            Graphics.uiContainer.addChild(this.baseTile);
+            this.dirtTile = AcornSetup.makeButton({
+                sprite: 'dirt_tile2',
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'dirt';
+                }
+            });
+            this.dirtTile.position.x = this.toolOptionsText.position.x + this.dirtTile.width/2;
+            this.dirtTile.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
+            Graphics.uiContainer.addChild(this.dirtTile);
+            this.grassTile = AcornSetup.makeButton({
+                sprite: 'grass_tile2',
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'grass';
+                }
+            });
+            this.grassTile.position.x = this.toolOptionsText.position.x - this.grassTile.width/2;
+            this.grassTile.position.y = this.dirtTile.position.y + this.dirtTile.height;
+            Graphics.uiContainer.addChild(this.grassTile);
+            this.snowTile = AcornSetup.makeButton({
+                sprite: 'snow_tile2',
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'snow';
+                }
+            });
+            this.snowTile.position.x = this.toolOptionsText.position.x + this.snowTile.width/2;
+            this.snowTile.position.y = this.dirtTile.position.y + this.dirtTile.height;
+            Graphics.uiContainer.addChild(this.snowTile);
+            this.iceTile = AcornSetup.makeButton({
+                sprite: 'ice_tile2',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'ice';
+                }
+            });
+            this.iceTile.position.x = this.toolOptionsText.position.x - this.iceTile.width/2;
+            this.iceTile.position.y = this.snowTile.position.y + this.snowTile.height;
+            Graphics.uiContainer.addChild(this.iceTile);
+            this.sandTile = AcornSetup.makeButton({
+                sprite: 'sand_tile2',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    MapGen.currentTileType = 'sand';
+                }
+            });
+            this.sandTile.position.x = this.toolOptionsText.position.x + this.sandTile.width/2;
+            this.sandTile.position.y = this.snowTile.position.y + this.snowTile.height;
+            Graphics.uiContainer.addChild(this.sandTile);
+
+
+            //create size buttons
             this.sizeText = AcornSetup.makeButton({
                 text: 'Tool Size: 1',
                 style: style,
@@ -463,12 +561,7 @@
                     if (typeof this.axialMap[i] == 'undefined'){
                         this.axialMap[i] = {}
                     }
-                    var node = {
-                        q: i,
-                        r: j,
-                        h: 0,
-
-                    }
+                    var node = this.getAxialNode(i,j);
                     this.axialMap[i][j] = node;
                 }
             }
@@ -502,12 +595,7 @@
             for (var i = 0; i < this.size[0];i++){
                 var row = {};
                 for (var j = 0; j < this.size[1];j++){
-                    var node = {
-                        q: i,
-                        r: j,
-                        h: 0,
-
-                    }
+                    var node = this.getAxialNode(i,j);
                     row[j] = node;
                 }
                 this.axialMap[i] = row;
@@ -546,11 +634,7 @@
                 }
                 for (var j = 0; j < this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) < this.size){
-                        var node = {
-                            q: i,
-                            r: j,
-                            h: 0
-                        }
+                        var node = this.getAxialNode(i,j);
                         this.axialMap[i][j] = node;
                     }
                 }
@@ -585,12 +669,7 @@
                 var row = {};
                 for (var j = this.size*-1; j <=this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) <= this.size){
-                        var node = {
-                            q: i,
-                            r: j,
-                            h: 0,
-
-                        }
+                        var node = this.getAxialNode(i,j);
                         row[j] = node;
                     }
                 }
@@ -871,14 +950,19 @@
             this.container2.position.x = Graphics.width/2;
             this.container2.position.y = Graphics.height/2;
         },
-        updateSprites: function(arr){
+        updateSprites: function(arr, resetTint){
+            if (typeof resetTint == 'undefined'){
+                resetTint = false;
+            }
             //updates sprite position in c.children arr after a rotation/zoom ect.
             for (var i = 0; i < arr.length;i++){
                 arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
                 arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
                 arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
                 arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
-                arr[i].tint = 0xFFFFFF;
+                if (resetTint){
+                    arr[i].tint = 0xFFFFFF;
+                }
             }
             return MapGen.mergeSort(arr);
         },
@@ -913,12 +997,12 @@
             sprite.on('touchendoutside', function onClick(e){
             });
             sprite.on('pointerover', function onMove(e){
-                if (!MapGen.dragStart){
+                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
                     MapGen.setNewSelectedNode = sprite;
                 }
             }); 
             sprite.on('pointerout', function onMove(e){
-                if (!MapGen.dragStart){
+                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
                     var cubeNode = MapGen.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                     var arr = MapGen.cubeSpiral(cubeNode,MapGen.toolSize-1);
                     for (var i = 0;i < arr.length;i++){
@@ -974,6 +1058,7 @@
             Graphics.drawBoxAround(this.landscapeTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
             Graphics.drawBoxAround(this.heightTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
             Graphics.drawBoxAround(this.noiseTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
+            Graphics.drawBoxAround(this.tilesTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
             Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
             Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
             if (MapGen.currentTool == 'height'){
@@ -998,6 +1083,33 @@
                     this.noiseTool.height
                 );
             }
+            if (MapGen.currentTool == 'tiles'){
+                Graphics.uiPrimitives2.drawRect(
+                    this.tilesTool.position.x - this.tilesTool.width/2,
+                    this.tilesTool.position.y - this.tilesTool.height/2,
+                    this.tilesTool.width,
+                    this.tilesTool.height
+                );
+                Graphics.uiPrimitives2.drawRect(
+                    this[this.currentTileType + 'Tile'].position.x - this[this.currentTileType + 'Tile'].width/2,
+                    this[this.currentTileType + 'Tile'].position.y - this[this.currentTileType + 'Tile'].height/2,
+                    this[this.currentTileType + 'Tile'].width,
+                    this[this.currentTileType + 'Tile'].height
+                );
+                /*Graphics.drawBoxAround(this.baseTile,Graphics.uiPrimitives2,'0xFFFFFF',2);
+                Graphics.drawBoxAround(this.dirtTile,Graphics.uiPrimitives2,'0xFFFFFF',2);
+                Graphics.drawBoxAround(this.grassTile,Graphics.uiPrimitives2,'0xFFFFFF',2);
+                Graphics.drawBoxAround(this.iceTile,Graphics.uiPrimitives2,'0xFFFFFF',2);
+                Graphics.drawBoxAround(this.snowTile,Graphics.uiPrimitives2,'0xFFFFFF',2);
+                Graphics.drawBoxAround(this.sandTile,Graphics.uiPrimitives2,'0xFFFFFF',2);*/
+            }else{
+                this.sandTile.visible = false;
+                this.baseTile.visible = false;
+                this.grassTile.visible = false;
+                this.iceTile.visible = false;
+                this.snowTile.visible = false;
+                this.dirtTile.visible = false;
+            }
             Graphics.worldPrimitives.endFill();
             if (this.rotateData){
                 //rotate the map if rotate data is given
@@ -1013,7 +1125,7 @@
                     var t = 1;
                     if (!(this.currentRotation%2)){t = 2}
                     Graphics.worldContainer.addChild(this['container' + t]);
-                    this['container' + t].children = this.updateSprites(this['container' + t].children);
+                    this['container' + t].children = this.updateSprites(this['container' + t].children,true);
                 }
                 this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
                 this.container2.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
@@ -1046,6 +1158,12 @@
                     if (typeof this.dragStart.n == 'undefined'){
                         this.dragStart.n = 0;
                     }
+                    //init time - for tools that work based off time held
+                    if (typeof this.dragStart.time == 'undefined'){
+                        this.dragStart.time = 0;
+                    }
+                    this.dragStart.time += deltaTime
+
                     var dragged = 0;
                     if (this.dragStart.y - Acorn.Input.mouse.Y > this.sensitivity){
                         dragged = 1;
@@ -1053,240 +1171,267 @@
                     if (this.dragStart.y - Acorn.Input.mouse.Y < -this.sensitivity){
                         dragged = -1;
                     }
-                    if (dragged){
-                        switch(this.currentTool){
-                            case 'height':
-                                if (dragged === 1){
-                                    //increase all of the lowest sprite heights
-                                    var lowest = Infinity;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h < lowest){
-                                                lowest = a.h;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
-                                                //all the lowest nodes, increase height!
-                                                a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
-                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
-                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.h += 1;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    
-                                }
-                                if (dragged === -1){
-                                    //decrease height
-                                    var highest = 0;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h > highest){
-                                                highest = a.h;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h == highest && a.h > 0){
-                                                //all the highest nodes, decrease height
-                                                a.sprite1.texture = this.tileTextures['base'][1][highest-1];
-                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures['base'][2][highest-1];
-                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.h -= 1;
-                                            }
-                                        }catch(e){}
-                                    }
-
-                                }
-                                break;
-                            case 'landscape':
-                                if (dragged === 1){
-                                    //increase all of the lowest sprite heights
-                                    var lowest = Infinity;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h < lowest){
-                                                lowest = a.h;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
-                                                //all the lowest nodes, increase height!
-                                                a.sprite1.texture = this.tileTextures['base'][1][lowest+1];
-                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures['base'][2][lowest+1];
-                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.h += 1;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var j = 1; j <= this.dragStart.n;j++){
-                                        var ringLowest = Infinity;
-                                        var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                        var arr = this.cubeRing(cubeNode,this.toolSize-1 + j);
-                                        for (var i = 0;i < arr.length;i++){
-                                            try{
-                                                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                                var a = this.getAxial(c);
-                                                if (a.h < ringLowest){
-                                                    ringLowest = a.h;
-                                                }
-                                            }catch(e){}
+                    switch(this.currentTool){
+                        case 'height':
+                            if (dragged === 1){
+                                //increase all of the lowest sprite heights
+                                var lowest = Infinity;
+                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h < lowest){
+                                            lowest = a.h;
                                         }
-                                        for (var i = 0;i < arr.length;i++){
-                                            try{
-                                                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                                var a = this.getAxial(c);
-                                                if (a.h == ringLowest && a.h < this.MAX_NODE_HEIGHT && ringLowest < lowest){
-                                                    //all the lowest nodes, increase height!
-                                                    a.sprite1.texture = this.tileTextures['base'][1][ringLowest+1];
-                                                    a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                    a.sprite2.texture = this.tileTextures['base'][2][ringLowest+1];
-                                                    a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                    a.h += 1;
-                                                }
-                                            }catch(e){}
-                                        }
-                                    }
-                                    if (this.dragStart.n < 0){
-                                        this.dragStart.n = 0;
-                                    }
-                                    this.dragStart.n += 1;
+                                    }catch(e){}
                                 }
-                                if (dragged === -1){
-                                    //decrease height
-                                    var highest = 0;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h > highest){
-                                                highest = a.h;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h == highest && a.h > 0){
-                                                //all the highest nodes, decrease height
-                                                a.sprite1.texture = this.tileTextures['base'][1][highest-1];
-                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures['base'][2][highest-1];
-                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.h -= 1;
-                                            }
-                                        }catch(e){}
-                                    }
-                                    for (var j = -1; j >= this.dragStart.n;j--){
-                                        var ringHighest = 0;
-                                        var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                        var arr = this.cubeRing(cubeNode,this.toolSize-1 + (j*-1));
-                                        for (var i = 0;i < arr.length;i++){
-                                            try{
-                                                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                                var a = this.getAxial(c);
-                                                if (a.h > ringHighest){
-                                                    ringHighest = a.h;
-                                                }
-                                            }catch(e){}
-                                        }
-                                        for (var i = 0;i < arr.length;i++){
-                                            try{
-                                                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                                var a = this.getAxial(c);
-                                                if (a.h == ringHighest && a.h > 0 && ringHighest > highest){
-                                                    //all the lowest nodes, decrease height!
-                                                    a.sprite1.texture = this.tileTextures['base'][1][ringHighest-1];
-                                                    a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                    a.sprite2.texture = this.tileTextures['base'][2][ringHighest-1];
-                                                    a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                    a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                    a.h -= 1;
-                                                }
-                                            }catch(e){}
-                                        }
-                                    }
-                                    if (this.dragStart.n > 0){
-                                        this.dragStart.n = 0;
-                                    }
-                                    this.dragStart.n -= 1;
-                                }
-
-                                break;
-                            case 'noise':
-                                if (dragged === 1 || dragged === -1){
-                                    //increase all of the lowest sprite heights
-                                    var lowest = Infinity;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
-                                    for (var i = 0;i < arr.length;i++){
-                                        try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            var n = 1;
-                                            if (Math.round(Math.random())){n = -1}
-                                            var newHeight = Math.min(this.MAX_NODE_HEIGHT,Math.max(a.h+n,0));
-                                            a.h = newHeight;
-                                            a.sprite1.texture = this.tileTextures['base'][1][newHeight];
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
+                                            //all the lowest nodes, increase height!
+                                            a.sprite1.texture = this.tileTextures[a.tile][1][lowest+1];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
                                             a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                            a.sprite2.texture = this.tileTextures['base'][2][newHeight];
+                                            a.sprite2.texture = this.tileTextures[a.tile][2][lowest+1];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                                             a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.h += 1;
+                                        }
+                                    }catch(e){}
+                                }
+                                
+                            }
+                            if (dragged === -1){
+                                //decrease height
+                                var highest = 0;
+                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h > highest){
+                                            highest = a.h;
+                                        }
+                                    }catch(e){}
+                                }
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h == highest && a.h > 0){
+                                            //all the highest nodes, decrease height
+                                            a.sprite1.texture = this.tileTextures[a.tile][1][highest-1];
+                                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.tileTextures[a.tile][2][highest-1];
+                                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.h -= 1;
+                                        }
+                                    }catch(e){}
+                                }
+
+                            }
+                            break;
+                        case 'landscape':
+                            if (dragged === 1){
+                                //increase all of the lowest sprite heights
+                                var lowest = Infinity;
+                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h < lowest){
+                                            lowest = a.h;
+                                        }
+                                    }catch(e){}
+                                }
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
+                                            //all the lowest nodes, increase height!
+                                            a.sprite1.texture = this.tileTextures[a.tile][1][lowest+1];
+                                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.tileTextures[a.tile][2][lowest+1];
+                                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.h += 1;
+                                        }
+                                    }catch(e){}
+                                }
+                                for (var j = 1; j <= this.dragStart.n;j++){
+                                    var ringLowest = Infinity;
+                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var arr = this.cubeRing(cubeNode,this.toolSize-1 + j);
+                                    for (var i = 0;i < arr.length;i++){
+                                        try{
+                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.getAxial(c);
+                                            if (a.h < ringLowest){
+                                                ringLowest = a.h;
+                                            }
                                         }catch(e){}
                                     }
-                                    
+                                    for (var i = 0;i < arr.length;i++){
+                                        try{
+                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.getAxial(c);
+                                            if (a.h == ringLowest && a.h < this.MAX_NODE_HEIGHT && ringLowest < lowest){
+                                                //all the lowest nodes, increase height!
+                                                a.sprite1.texture = this.tileTextures[a.tile][1][ringLowest+1];
+                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.texture = this.tileTextures[a.tile][2][ringLowest+1];
+                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.h += 1;
+                                            }
+                                        }catch(e){}
+                                    }
                                 }
-                                break;
-                        }
-                        this.dragStart.y = Acorn.Input.mouse.Y;
+                                if (this.dragStart.n < 0){
+                                    this.dragStart.n = 0;
+                                }
+                                this.dragStart.n += 1;
+                            }
+                            if (dragged === -1){
+                                //decrease height
+                                var highest = 0;
+                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h > highest){
+                                            highest = a.h;
+                                        }
+                                    }catch(e){}
+                                }
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        if (a.h == highest && a.h > 0){
+                                            //all the highest nodes, decrease height
+                                            a.sprite1.texture = this.tileTextures[a.tile][1][highest-1];
+                                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.tileTextures[a.tile][2][highest-1];
+                                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.h -= 1;
+                                        }
+                                    }catch(e){}
+                                }
+                                for (var j = -1; j >= this.dragStart.n;j--){
+                                    var ringHighest = 0;
+                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var arr = this.cubeRing(cubeNode,this.toolSize-1 + (j*-1));
+                                    for (var i = 0;i < arr.length;i++){
+                                        try{
+                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.getAxial(c);
+                                            if (a.h > ringHighest){
+                                                ringHighest = a.h;
+                                            }
+                                        }catch(e){}
+                                    }
+                                    for (var i = 0;i < arr.length;i++){
+                                        try{
+                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.getAxial(c);
+                                            if (a.h == ringHighest && a.h > 0 && ringHighest > highest){
+                                                //all the lowest nodes, decrease height!
+                                                a.sprite1.texture = this.tileTextures[a.tile][1][ringHighest-1];
+                                                a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.texture = this.tileTextures[a.tile][2][ringHighest-1];
+                                                a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.h -= 1;
+                                            }
+                                        }catch(e){}
+                                    }
+                                }
+                                if (this.dragStart.n > 0){
+                                    this.dragStart.n = 0;
+                                }
+                                this.dragStart.n -= 1;
+                            }
 
-                        var t = 1;
-                        if (!(MapGen.currentRotation%2)){t = 2}
-                        MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                            break;
+                        case 'noise':
+                            if (this.dragStart.time >= this.sensitivity/10){
+                                this.dragStart.time -= (this.sensitivity/10);
+                                //increase all of the lowest sprite heights
+                                var lowest = Infinity;
+                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                for (var i = 0;i < arr.length;i++){
+                                    try{
+                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.getAxial(c);
+                                        var n = 1;
+                                        if (Math.round(Math.random())){n = -1}
+                                        var newHeight = Math.min(this.MAX_NODE_HEIGHT,Math.max(a.h+n,0));
+                                        if (newHeight){
+                                            a.h = newHeight;
+                                            a.sprite1.texture = this.tileTextures[a.tile][1][newHeight];
+                                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.tileTextures[a.tile][2][newHeight];
+                                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                        }
+                                    }catch(e){}
+                                }
+                                
+                            }
+                            break;
+                        case 'tiles':
+
+                            //change sprite tile
+                            var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                            var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                            for (var i = 0;i < arr.length;i++){
+                                try{
+                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.getAxial(c);
+                                    if (a.tile != this.currentTileType){
+                                        a.sprite1.texture = this.tileTextures[this.currentTileType][1][a.h];
+                                        a.sprite2.texture = this.tileTextures[this.currentTileType][2][a.h];
+                                        a.tile = this.currentTileType;
+                                    }
+                                }catch(e){}
+                            }
+                            break;
                     }
+                    if (dragged){this.dragStart.y = Acorn.Input.mouse.Y;}
+
+                    var t = 1;
+                    if (!(MapGen.currentRotation%2)){t = 2}
+                    MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
                 }
+            }
+        },
+
+        getAxialNode: function(q,r){
+            return {
+                q:q,
+                r:r,
+                h:0,
+                tile: 'base'
             }
         }
 

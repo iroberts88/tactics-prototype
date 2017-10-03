@@ -609,12 +609,19 @@
             if (typeof data.anchor == 'undefined'){
                 data.anchor = [0.5,0.5];
             }
-
-            var button = new PIXI.Text(data.text,data.style)
-            button.position.x = data.position[0];
-            button.position.y = data.position[1];
-            button.anchor.x = data.anchor[0];
-            button.anchor.y = data.anchor[1];
+            if (typeof data.sprite != 'undefined'){
+                var button = Graphics.getSprite(data.sprite);
+                button.position.x = data.position[0];
+                button.position.y = data.position[1];
+                button.anchor.x = data.anchor[0];
+                button.anchor.y = data.anchor[1];
+            }else{
+                var button = new PIXI.Text(data.text,data.style)
+                button.position.x = data.position[0];
+                button.position.y = data.position[1];
+                button.anchor.x = data.anchor[0];
+                button.anchor.y = data.anchor[1];
+            }
 
             // OPTIONAL data.interactive
             if (typeof data.interactive != 'undefined'){

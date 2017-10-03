@@ -2,19 +2,109 @@
 
 "base_tile1.png":
 {
-	"frame": {"x":2,"y":2,"w":32,"h":43},
+	"frame": {"x":37,"y":2,"w":34,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":5,"w":34,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"base_tile2.png":
+{
+	"frame": {"x":2,"y":2,"w":33,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":5,"w":33,"h":44},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"dirt_tile1.png":
+{
+	"frame": {"x":108,"y":2,"w":32,"h":43},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
 	"sourceSize": {"w":64,"h":64},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"base_tile2.png":
+"dirt_tile2.png":
 {
-	"frame": {"x":36,"y":2,"w":32,"h":43},
+	"frame": {"x":142,"y":2,"w":32,"h":43},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":19,"y":4,"w":32,"h":43},
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"grass_tile1.png":
+{
+	"frame": {"x":176,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"grass_tile2.png":
+{
+	"frame": {"x":210,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ice_tile1.png":
+{
+	"frame": {"x":244,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ice_tile2.png":
+{
+	"frame": {"x":73,"y":2,"w":33,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":5,"w":33,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"sand_tile1.png":
+{
+	"frame": {"x":278,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"sand_tile2.png":
+{
+	"frame": {"x":312,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"snow_tile1.png":
+{
+	"frame": {"x":346,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
+	"sourceSize": {"w":64,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"snow_tile2.png":
+{
+	"frame": {"x":380,"y":2,"w":32,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":5,"w":32,"h":43},
 	"sourceSize": {"w":64,"h":64},
 	"pivot": {"x":0.5,"y":0.5}
 }},
@@ -23,8 +113,8 @@
 	"version": "1.0",
 	"image": "sheet1.png",
 	"format": "RGBA8888",
-	"size": {"w":70,"h":47},
+	"size": {"w":414,"h":48},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:3a5c738e7db30fd8dbc6adb183612cf0:c0df6732919b0d2d95626cc3a5c8db60:81b8455959c6df0a71f2d78f10f487eb$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5f1174f5d4bb85b516bf560590b2080d:8aaa5d5f311ffed7b702161f4ef4badb:81b8455959c6df0a71f2d78f10f487eb$"
 }
 }

@@ -166,13 +166,22 @@
                 };
                 Graphics.resources[animations[j]] = animTextures;
 
-
             }
 
             //Load all textures
             var textures = [
                 'base_tile1',
-                'base_tile2'
+                'base_tile2',
+                'dirt_tile1',
+                'dirt_tile2',
+                'snow_tile1',
+                'snow_tile2',
+                'ice_tile1',
+                'grass_tile2',
+                'grass_tile1',
+                'ice_tile2',
+                'sand_tile1',
+                'sand_tile2'
             ];
 
             //add all textures to resources
