@@ -636,6 +636,15 @@
                 button.on('tap', data.clickFunc);
                 button.on('click', data.clickFunc);
             }
+            if (typeof data.mOverFunc != 'undefined'){
+                button.on('pointerover', data.mOverFunc);
+                button.on('touchmove', data.mOverFunc);
+            }
+            if (typeof data.mOutFunc != 'undefined'){
+                button.on('touchend', data.mOutFunc);
+                button.on('touchendoutside', data.mOutFunc);
+                button.on('pointerout', data.mOutFunc);
+            }
             return button
         }
     }
