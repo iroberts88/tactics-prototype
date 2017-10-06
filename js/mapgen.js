@@ -7,7 +7,7 @@
         MIN_SENSITIVITY: 1,
         MAX_SENSITIVITY: 15,
         MAX_NODE_HEIGHT: 20,
-        CHAR_HEIGHT: 1, //the height of LOS 'characters'
+        char_height: 2, //the height of LOS 'characters'
 
         ZOOM_SETTINGS: [0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0],
         currentZoomSetting: 5,
@@ -50,7 +50,6 @@
         currentlyMousedOver: null,
         pathToolData: null,
         losToolData: null,
-        currentLOS: 5,
         losDrawn: false,
 
         init: function() {
@@ -303,10 +302,10 @@
                         spritesAltered: [],
                         losShown: false
                     };
-                    //MapGen.losDistance.visible = true;
-                    //MapGen.losDistanceNum.visible = true;
-                    //MapGen.losDistancePlus.visible = true;
-                    //MapGen.losDistanceMinus.visible = true;
+                    MapGen.losDistance.visible = true;
+                    MapGen.losDistanceNum.visible = true;
+                    MapGen.losDistancePlus.visible = true;
+                    MapGen.losDistanceMinus.visible = true;
                     MapGen.toolSize = 1;
                 },
                 mOverFunc: function onMOver(){
@@ -345,7 +344,7 @@
             Graphics.uiContainer.addChild(this.toolOptionsText);
 
             this.losDistance = AcornSetup.makeButton({
-                text: 'LOS Distance: ',
+                text: 'Unit Height: ',
                 interactive: true,
                 buttonMode: true,
             });
@@ -359,8 +358,8 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    if (MapGen.currentLOS < 50){
-                        MapGen.currentLOS += 1;
+                    if (MapGen.char_height < 10){
+                        MapGen.char_height += 1;
                     }
                 }
             });
@@ -374,8 +373,8 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    if (MapGen.currentLOS > 1){
-                        MapGen.currentLOS -= 1;
+                    if (MapGen.char_height > 1){
+                        MapGen.char_height -= 1;
                     }
                 }
             });
@@ -1498,7 +1497,7 @@
                 this.losDistancePlus.visible = false;
                 this.losDistanceMinus.visible = false;
             }else{
-                this.losDistanceNum.text = '' + this.currentLOS;
+                this.losDistanceNum.text = '' + this.char_height;
             }
             if (MapGen.currentTool == 'tiles'){
                 Graphics.uiPrimitives2.drawRect(
@@ -1903,7 +1902,7 @@
                             if (this.dragStart && this.losToolData.losShown == false){
                                 var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var aNode = MapGen.getAxial(cubeNode);
-                                var aH = aNode.h + this.CHAR_HEIGHT;
+                                var aH = aNode.h + this.char_height;
                                 var arr = this.cubeSpiral(cubeNode,this.maxSize);
                                 for (var i = 0;i < arr.length;i++){
                                     var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
@@ -1924,7 +1923,7 @@
                                     var highestAngle = 0;
                                     for (var j = 1; j < r1.length;j++){
                                         var a = MapGen.getAxial(r1[j]);
-                                        var h = (j==(r1.length-1)) ? (a.h+this.CHAR_HEIGHT) : a.h;
+                                        var h = (j==(r1.length-1)) ? (a.h+this.char_height) : a.h;
                                         var angle = 0;
                                         if (h > aH){
                                             angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
@@ -1947,7 +1946,7 @@
                                     highestAngle = 0;
                                     for (var j = 1; j < r2.length;j++){
                                         var a = MapGen.getAxial(r2[j]);
-                                        var h = (j==(r2.length-1)) ? (a.h+this.CHAR_HEIGHT): a.h;
+                                        var h = (j==(r2.length-1)) ? (a.h+this.char_height): a.h;
                                         var angle = 0;
                                         if (h > aH){
                                             angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
