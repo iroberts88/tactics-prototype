@@ -1807,35 +1807,38 @@
                             }
                             break;
                         case 'delete':
-                            var node = this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
-                            this.dragStart = null;
-                            //remove sprite
-                            //for each neighbor, make sure there is a path to the other another neighbors
-                            var isAPath = true;
-                            for (var i = 0; i < 6;i++){
-                                var cube = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var neighbor = this.getCubeNeighbor(cube,i);
-                                for (var j = 0; j < 6;j++){
-                                    var neighbor2 = this.getCubeNeighbor(cube,j);
-                                    if (neighbor && neighbor2){
-                                        if (!neighbor.deleted && !neighbor2.deleted){
-                                            var arr = this.findPath(neighbor,neighbor2,cube);
-                                            if (arr.length == 0){
-                                                isAPath = false;
-                                                console.log(neighbor);
-                                                console.log(neighbor2);
+                            try{
+                                var node = this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
+                                this.dragStart = null;
+                                //remove sprite
+                                //for each neighbor, make sure there is a path to the other another neighbors
+                                var isAPath = true;
+                                for (var i = 0; i < 6;i++){
+                                    var cube = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var neighbor = this.getCubeNeighbor(cube,i);
+                                    for (var j = 0; j < 6;j++){
+                                        var neighbor2 = this.getCubeNeighbor(cube,j);
+                                        if (neighbor && neighbor2){
+                                            if (!neighbor.deleted && !neighbor2.deleted){
+                                                var arr = this.findPath(neighbor,neighbor2,cube);
+                                                if (arr.length == 0){
+                                                    isAPath = false;
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            if (isAPath){
-                                this.container1.removeChild(node.sprite1);
-                                this.container2.removeChild(node.sprite2);
-                                this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].deleted = true;
-                                this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].h = 0;
-                                this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z].deleted = true;
-                                this.selectedSprite = null;
+                                if (isAPath){
+                                    this.container1.removeChild(node.sprite1);
+                                    this.container2.removeChild(node.sprite2);
+                                    this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].deleted = true;
+                                    this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].h = 0;
+                                    this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z].deleted = true;
+                                    this.selectedSprite = null;
+                                }
+                            }catch(e){
+                                console.log('Error when deleting node');
+                                console.log(e);
                             }
                             break;
                         case 'add':
@@ -1880,6 +1883,9 @@
                             }
                             break;
                         case 'los':
+
+                            //Un-Comment below to show lines drawn to each node
+
                             /*var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                             var aNode = MapGen.getAxial(cubeNode);
                             var arr = this.cubeSpiral(cubeNode,this.maxSize);
