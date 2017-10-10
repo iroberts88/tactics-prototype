@@ -108,10 +108,10 @@ $(function() {
 });
 
 function setupSocket() {
-    //Acorn.Net.init();
+    Acorn.Net.init();
 
     //set up acorn.Net
-    //AcornSetup.net();
+    AcornSetup.net();
 
     console.log("network ready!");
 }

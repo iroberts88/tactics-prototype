@@ -9,34 +9,10 @@
               Acorn.Net.ready = true;
               checkReady();
             });
-
-            Acorn.Net.on('gameInfo', function (data) {
-              console.log('Connected to game session: Info Received');
-              console.log(data);
-              Acorn.changeState('inGame');
-              //Init Player
-              mainObj.playerId = data.id;
-              Player.init(data);
-              Player.id = data.id;
-              Party.init();
-              Enemies.init();
-              for (var i = 0; i < data.players.length; i++){
-                if (data.players[i].id != data.playerId){
-                    data.players[i].tint = 0xff1924;
-                    Party.addNewMember(data.players[i]);
-                }
-              }
-
-              for (var i = 0; i < data.enemies.length; i++){
-                Enemies.addEnemy(data.enemies[i]);
-              }
-            });
-
-            Acorn.Net.on('addPlayerWisp', function (data) {
-              if (data.id != mainObj.playerId){
-                data.tint = 0xff1924;
-                Party.addNewMember(data);
-              }
+            
+            Acorn.Net.on('editMap', function (data) {
+              MapGen.data = data;
+              Acorn.changeState('MapGen');
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -71,166 +47,6 @@
                         break;
                 }
               }catch(e){}
-            });
-
-            Acorn.Net.on('warning', function (data) {
-              Player.addWarning(data.time, data.level);
-            });
-
-            Acorn.Net.on('backToMainMenu', function (data) {
-                try{
-                    Player.userData = data.userData;
-                    Acorn.changeState('mainMenu');
-                }catch(e){
-                    console.log(e);
-                }
-            });
-
-            Acorn.Net.on('youLose', function (data) {
-                if (!Player.gameEnded) {
-                    Player.gameEnded = true;
-                    var uLost = new PIXI.Text('You Lose', { font: '100px Audiowide', fill: 'white', align: 'left' });
-                    uLost.position.x = (Graphics.width / 2);
-                    uLost.position.y = (Graphics.height / 4);
-                    uLost.anchor.x = 0.5;
-                    uLost.anchor.y = 0.5;
-                    Graphics.uiContainer.addChild(uLost);
-                    if (data.score){
-                        var score = new PIXI.Text('Final Score: ' + data.score, { font: '100px Audiowide', fill: 'white', align: 'left' });
-                        score.position.x = (Graphics.width / 2);
-                        score.position.y = (Graphics.height / 4 + 100);
-                        score.anchor.x = 0.5;
-                        score.anchor.y = 0.5;
-                        Graphics.uiContainer.addChild(score);
-                    }
-                }
-            });
-
-             Acorn.Net.on('youLasted', function (data) {
-                if (!Player.gameEnded) {
-                    Player.gameEnded = true;
-                    var uLost = new PIXI.Text('You Lasted ' + data.time + ' Seconds', { font: '100px Audiowide', fill: 'white', align: 'left' });
-                    uLost.position.x = (Graphics.width / 2);
-                    uLost.position.y = (Graphics.height / 4);
-                    uLost.anchor.x = 0.5;
-                    uLost.anchor.y = 0.5;
-                    Graphics.uiContainer.addChild(uLost);
-                }
-            });
-
-            Acorn.Net.on('highScores', function (data) {
-                Player.highScores = data;
-                Acorn.states['highScoreScreen'].gotHighScores = true;
-            });
-
-            Acorn.Net.on('youWin', function (data) {
-                if (!Player.gameEnded) {
-                    Player.gameEnded = true;
-                    var uLost = new PIXI.Text('You Win!', { font: '100px Audiowide', fill: 'white', align: 'left' });
-                    uLost.position.x = (Graphics.width / 2);
-                    uLost.position.y = (Graphics.height / 4);
-                    uLost.anchor.x = 0.5;
-                    uLost.anchor.y = 0.5;
-                    Graphics.uiContainer.addChild(uLost);
-                }
-            });
-
-            Acorn.Net.on('disconnect', function (data) {
-                if (!Player.gameEnded) {
-                    Player.gameEnded = true;
-                    var uLost = new PIXI.Text('Disconnect', { font: '100px Audiowide', fill: 'white', align: 'left' });
-                    uLost.position.x = (Graphics.width / 2);
-                    uLost.position.y = (Graphics.height / 4);
-                    uLost.anchor.x = 0.5;
-                    uLost.anchor.y = 0.5;
-                    Graphics.uiContainer.addChild(uLost);
-                }
-            });
-
-            Acorn.Net.on('killPlayer', function (data) {
-              if (data.id != mainObj.playerId){
-                Party.removeMember(data);
-              }else{
-                //you died!
-                var dustAmount = 100;
-                for (var i = 0; i < dustAmount; i ++){
-                    Dust.addDust({
-                        vector: [1,0],
-                        pos: [Player.loc.x,Player.loc.y],
-                        angle: 180,
-                        color: Player.tint
-                    })
-                }
-                Player.kill = true;
-                Graphics.worldContainer.removeChild(Player.player);
-              }
-            });
-
-            Acorn.Net.on('unKillPlayer', function (data) {
-                Player.kill = false;
-                Graphics.worldContainer.addChild(Player.player);
-            });
-
-            Acorn.Net.on('updatePlayerLoc', function (data) {
-              //update player position
-              try{
-                  Party.members[data.playerId].updateLoc(data.newLoc[0], data.newLoc[1]);
-              }catch(e){
-                //console.log("client error - could not update player location");
-                //console.log(e);
-              }
-            });
-
-            Acorn.Net.on('updateEnemyLoc', function (data) {
-              //update player position
-              try{
-                  Enemies.enemyList[data.id].sprite.position.x = data.newPos[0];
-                  Enemies.enemyList[data.id].sprite.position.y = data.newPos[1];
-                  Enemies.enemyList[data.id].moveVector.x = data.newDir[0];
-                  Enemies.enemyList[data.id].moveVector.y = data.newDir[1];
-              }catch(e){
-                //console.log("client error - could not update player location");
-                //console.log(e);
-              }
-            });
-
-            Acorn.Net.on('updatePlayerCount', function(data) {
-                try{
-                    Player.playerCount = data.p;
-                }catch(e){
-                    console.log(e);
-                }
-            });
-            Acorn.Net.on('say', function (data) {
-              if (data.playerId == mainObj.playerId){
-                Player.addSayBubble(data.text);
-              }else{
-                for (var i in Party.members){
-                    if (Party.members[i].id == data.playerId){
-                        Party.members[i].addSayBubble(data.text);
-                    }
-                }
-              }
-            });
-
-            Acorn.Net.on('addEnemies', function (data) {
-                if (!Player.gameEnded){
-                  for (var i = 0; i < data.data.length; i++){
-                    Enemies.addEnemy(data.data[i]);
-                  }
-                }
-            });
-
-            Acorn.Net.on('removeEnemy', function (data) {
-                Enemies.killEnemy(data.id);
-            });
-
-            Acorn.Net.on('enemyNewTarget', function (data) {
-                try{
-                    Enemies.enemyList[data.id].behaviour.targetId = data.targetId;
-                }catch(e){
-                    console.log(e);
-                }
             });
 
             Acorn.Net.on('debug', function (data) {
@@ -273,6 +89,19 @@
                         }
                     });
                     Graphics.uiContainer.addChild(this.createButton);
+
+                    //create map button
+                    this.loadMapButton = AcornSetup.makeButton({
+                        text: 'Edit Map',
+                        position: [(Graphics.width/5),(Graphics.height/1.2)],
+                        interactive: true,
+                        buttonMode: true,
+                        clickFunc: function onClick(){
+                            var name = prompt("Enter map name", '');
+                            Acorn.Net.socket_.emit('editMap',{name: name});
+                        }
+                    });
+                    Graphics.uiContainer.addChild(this.loadMapButton);
 
                 },
                 update: function(dt){

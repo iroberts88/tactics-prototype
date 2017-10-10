@@ -23,7 +23,7 @@
         cubeMap: null,
 
         currentMap: 0,
-        totalRotations: null,
+        totalRotations: 12,
 
         container: null, //container for all sprites
         container2: null,
@@ -55,13 +55,6 @@
         init: function() {
             this.drawBG();
             //create all of the tile textures!
-            if (this.type == 't'){
-                this.maxSize = Math.round(this.size*1.5)
-            }else if (this.type == 'h'){
-                this.maxSize = Math.round(this.size*2)
-            }else {
-                this.maxSize = this.size[0] + this.size[1];
-            }
             this.tileTextures = {}
             this.tileTypes = ['base','grass','dirt','ice','snow','sand'];
             for (var i = 0; i < this.tileTypes.length;i++){
@@ -702,6 +695,38 @@
             this.sensitivityMinus.position.y = this.sensitivityText.position.y + this.sensitivityMinus.height/2;
             Graphics.uiContainer.addChild(this.sensitivityMinus);
 
+            this.saveButton = AcornSetup.makeButton({
+                text: "Save Map",
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    var name = prompt("Please enter a name for the map", 'new_map');
+                    var mapData = {};
+                    for (var i in MapGen.axialMap){
+                        for (var j in MapGen.axialMap[i]){
+                            if (typeof mapData[i] == 'undefined'){
+                                mapData[i] = {};
+                            }
+                            var node = {
+                                q: MapGen.axialMap[i][j].q,
+                                r: MapGen.axialMap[i][j].r,
+                                h: MapGen.axialMap[i][j].h,
+                                deleted: MapGen.axialMap[i][j].deleted,
+                                tile: MapGen.axialMap[i][j].tile
+                            }
+                            mapData[i][j] = node;
+                        }
+                    }
+                    console.log(mapData);
+                    Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
+                }
+            });
+            this.saveButton.position.x = Graphics.width - this.saveButton.width/2;
+            this.saveButton.position.y = Graphics.height - this.saveButton.height/2;
+            Graphics.uiContainer.addChild(this.saveButton);
+
+            //set up some stuff
             this.axialMap = {};
             this.axialDirections = [
                 [1,0],[1,-1],[0,-1],
@@ -718,23 +743,74 @@
             ];
             this.allMaps = [];
 
-            switch(this.type){
-                case 'r':
-                    this.totalRotations = 12;
-                    this.initRectangle();
-                    break;
-                case 'rh':
-                    this.totalRotations = 12;
-                    this.initRhombus();
-                    break;
-                case 't':
-                    this.totalRotations = 12;
-                    this.initTriangle();
-                    break;
-                case 'h':
-                    this.totalRotations = 12;
-                    this.initHexagon();
-                    break;
+            if (typeof this.data == 'undefined'){
+                if (this.type == 't'){
+                    this.maxSize = Math.round(this.size*1.5)
+                }else if (this.type == 'h'){
+                    this.maxSize = Math.round(this.size*2)
+                }else {
+                    this.maxSize = this.size[0] + this.size[1];
+                }
+                switch(this.type){
+                    case 'r':
+                        this.initRectangle();
+                        break;
+                    case 'rh':
+                        this.initRhombus();
+                        break;
+                    case 't':
+                        this.initTriangle();
+                        break;
+                    case 'h':
+                        this.initHexagon();
+                        break;
+                }
+            }else{
+                try{
+                    var size = 0;
+                    var size2 = 0;
+                    for (var i in this.data.mapData){
+                        size += 1;
+                        size2 = 0;
+                        for (var j in this.data.mapData[i]){
+                            size2 += 1;
+                            if (typeof this.axialMap[i] == 'undefined'){
+                                this.axialMap[i] = {};
+                            }
+                            var node = this.getAxialNode(i,j);
+                            this.axialMap[i][j] = node;
+                            this.axialMap[i][j].h = this.data.mapData[i][j].h;
+                            this.axialMap[i][j].deleted = this.data.mapData[i][j].deleted;
+                            this.axialMap[i][j].tile = this.data.mapData[i][j].tile;
+                        }
+                    }
+                    this.maxSize = size + size2;
+                    this.initCubeMap();
+                    this.getHexContainer();
+                    for (var i in this.axialMap){
+                        for (var j in this.axialMap[i]){
+                            var a = this.axialMap[i][j]
+                            a.sprite1.texture = this.tileTextures[a.tile][1][a.h];
+                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
+                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                            a.sprite2.texture = this.tileTextures[a.tile][2][a.h];
+                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
+                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                            if (a.deleted){
+                                this.container1.removeChild(a.sprite1);
+                                this.container2.removeChild(a.sprite2);
+                                var cube = this.getCube(a);
+                                cube.deleted = true;
+                            }
+                        }
+                    }
+                    this.updateSprites(this.container1.children);
+                    this.updateSprites(this.container2.children);
+                    Graphics.worldContainer.addChild(this.container2);
+                }catch(e){
+                    console.log('Unable to initialize map');
+                    Acorn.changeState('mainMenu');
+                }
             }
         },
         //returns a cube node when given an axial node
@@ -851,7 +927,7 @@
                         x: parseInt(i),
                         y: parseInt(-i-j),
                         z: parseInt(j),
-                        ghost:false
+                        deleted:false
                     }
                     this.cubeMap[node.x][node.y][node.z] = node;
                 }
@@ -1348,14 +1424,21 @@
                 resetTint = false;
             }
             //updates sprite position in c.children arr after a rotation/zoom ect.
-            for (var i = 0; i < arr.length;i++){
-                arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
-                arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
-                arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
-                arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
-                if (resetTint){
-                    arr[i].tint = 0xFFFFFF;
+            try{
+                for (var i = 0; i < arr.length;i++){
+                    arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
+                    arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
+                    arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
+                    arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
+                    if (resetTint){
+                        arr[i].tint = 0xFFFFFF;
+                    }
                 }
+            }catch(e){
+                console.log(this.currentRotation)
+                console.log(e);
+                console.log(i);
+                console.log(arr);
             }
             return MapGen.mergeSort(arr);
         },
@@ -2000,11 +2083,13 @@
                             this.setNewSelectedNode = 0;
                             break;
                     }
-                    if (dragged){this.dragStart.y = Acorn.Input.mouse.Y;}
+                    try{
+                        if (dragged){this.dragStart.y = Acorn.Input.mouse.Y;}
 
-                    var t = 1;
-                    if (!(MapGen.currentRotation%2)){t = 2}
-                    MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                        var t = 1;
+                        if (!(MapGen.currentRotation%2)){t = 2}
+                        MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                    }catch(e){}
                 }
             }
         },
@@ -2015,7 +2100,7 @@
                 r:r,
                 h:0,
                 tile: 'base',
-                ghost: false
+                deleted: false
             }
         }
 

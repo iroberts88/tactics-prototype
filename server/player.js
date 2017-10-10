@@ -1,68 +1,21 @@
 //----------------------------------------------------------------
 //player.js
 //----------------------------------------------------------------
-
-var SAT = require('./SAT.js'), //SAT POLYGON COLLISSION1
-    Unit = require('./unit.js').Unit,
-    User = require('./user.js').User,
-    mongo = require('mongodb').MongoClient
-
-var P = SAT.Polygon;
-var V = SAT.Vector;
-var C = SAT.Circle;
+var mongo = require('mongodb').MongoClient;
 
 Player = function(){
 
-    var player = Unit()
-
-    player.radius = null;
-    player.targetPosition = null;
-    //variables for movement
-    player.xDistance = null;
-    player.yDistance = null;
-    player.hyp = null;
-    player.move = null;
-    player.actualMoveX = null;
-    player.actualMoveY = null;
-    player.actualMoveHyp = null;
-
-    player.vectorHitbox = null;
-
-    player.tryingToJoinGame = null;
-    player.tryingToJoinSession = null;
-
-    player.kill = null;
-    player.revive = null;
-    player.killCountDown = null;
-    player.god = false;
-    player.godTimer = 0;
-    player.godTemp = false;
-
-    player.score = 0;
-
-    player.user = null;
+    var player = {
+        gameEngine: null,
+        gameSession: null,
+        user: null
+    };
 
     player.init = function (data) {
         //init player specific variables
-        this.speed = 6000;
-        this.score = 0;
-        this.god = false;
-        this.godTimer = 0;
-        this.godTemp = false;
-        this.radius = 20;
-        this.kill = false;
-        this.revive = false;
-        this.killCountDown = 5; //seconds before returned to main menu
+       
         this.netQueue = [];
-        this.hitData = new P(new V(960, 540),   [new V(Math.round(-.8*this.radius),Math.round(-.8*this.radius)),
-                                             new V(Math.round(-.8*this.radius),Math.round(.8*this.radius)),
-                                             new V(Math.round(.8*this.radius),Math.round(.8*this.radius)),
-                                             new V(Math.round(.8*this.radius),Math.round(-.8*this.radius))]);
-        this.targetPosition = new V(960,540);
-
-        this.vectorHitbox = new P(new V(960,540),[new V(0,-1),new V(0,1),new V(10,1),new V(10,-1)]);
-
-        player.tryingToJoinGame = false;
+        
 
         if (typeof data.socket != 'undefined'){
             this.socket = data.socket;
@@ -70,35 +23,16 @@ Player = function(){
         }
     };
     player.tick = function(deltaTime){
-        if (this.godTimer > 0){
-            this.godTimer -= deltaTime;
-            this.godTemp = true;
-        }else if(this.godTemp){
-            this.godTemp = false;
-            this.god = false;
-        }
-        //Move closer to targetPosition
-        this.xDistance = this.targetPosition.x - this.hitData.pos.x;
-        this.yDistance = this.targetPosition.y - this.hitData.pos.y;
-        this.hyp = Math.sqrt(this.xDistance*this.xDistance + this.yDistance*this.yDistance);
-        this.move = new V(this.xDistance/this.hyp,this.yDistance/this.hyp);
-        this.actualMoveX = this.move.x*this.speed*deltaTime;
-        this.actualMoveY = this.move.y*this.speed*deltaTime;
-        this.actualMoveHyp = Math.sqrt(this.actualMoveX*this.actualMoveX + this.actualMoveY*this.actualMoveY);
-        if (this.hyp < this.actualMoveHyp){
-            this.vectorHitbox = new P(new V(this.hitData.pos.x,this.hitData.pos.y),[new V(0,this.radius*-1),new V(0,this.radius),new V(this.hyp+1,this.radius),new V(this.hyp+1,this.radius*-1)]);
-            this.hitData.pos = new V(this.targetPosition.x, this.targetPosition.y);
-        }else{
-            this.vectorHitbox = new P(new V(this.hitData.pos.x,this.hitData.pos.y),[new V(0,this.radius*-1),new V(0,this.radius),new V(this.actualMoveHyp+1,this.radius),new V(this.actualMoveHyp+1,this.radius*-1)]);
-            this.hitData.pos.x += this.actualMoveX;
-            this.hitData.pos.y += this.actualMoveY;
-        }
-        this.vectorHitbox.rotate(Math.atan2(this.yDistance,this.xDistance));
+       
     };
 
     player.onDisconnect = function(callback) {
         this.onDisconnectHandler = callback;
     };
+
+    player.setGameEngine = function(ge){
+        this.gameEngine = ge;
+    }
 
     player.setupSocket = function() {
 
@@ -108,35 +42,37 @@ Player = function(){
         this.socket.on('playerUpdate', function (data) {
             if (that.gameSession){
                 //if the player is in a gameSession - deal with received data
-                if (data.newMouseLoc){
-                    //need to track player movement on server
-                    for (var p in that.gameSession.players){
-                        var player = that.gameSession.players[p];
-                        if (that.id != p){
-                            that.gameSession.queuePlayer(player,'updatePlayerLoc', {playerId: that.id, newLoc: data.newMouseLoc});
-                        }
-                    }
-                    //update the new location
-                    that.targetPosition.x = data.newMouseLoc[0];
-                    that.targetPosition.y= data.newMouseLoc[1];
-                }
+               
             }else{
-                if (data.requestPlayerCount){
-                    that.gameEngine.queuePlayer(that,'updatePlayerCount', {p: that.gameEngine.playerCount});
-                }else if (data.logout){
-                    that.user.unlock();
-                    that.user.updateDB();
-                    that.user = null;
-                    that.gameEngine.queuePlayer(that,'logout', {});
-                }else if (data.requestHighScores){
-                    that.gameEngine.queuePlayer(that,'highScores', {
-                        solo: that.gameEngine.soloHighScores,
-                        coop: that.gameEngine.coopHighScores,
-                        vs: that.gameEngine.vsHighScores,
-                        stars: that.gameEngine.starsHighScores
-                    });
-                }
+               
             }
+        });
+
+        this.socket.on('createMap', function (data) {
+            mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                db.collection('tactics_maps').insertOne({
+                    name: data.name,
+                    mapData: data.mapData
+                });
+                db.close();
+            });
+        });
+
+        this.socket.on('editMap', function (data) {
+            var url = 'mongodb://127.0.0.1/lithiumAve';
+            mongo.connect(url, function(err, db) {
+                // ---- Attemp to find existing user ----
+                var query = { name: data.name };
+                db.collection('tactics_maps').find(query).toArray(function(err, arr) {
+                    if (err) throw err;
+                    if (arr.length == 1 ){
+                        that.gameEngine.queuePlayer(that,"editMap", {name:arr[0].name,mapData:arr[0].mapData});
+                    }else{
+                        console.log('No map named ' + data.name);
+                    }
+                });
+                db.close();
+            });
         });
 
         this.socket.on('clientCommand', function(data) {
@@ -157,94 +93,8 @@ Player = function(){
                 commands.push(c.substring(from,c.length));
                 switch (commands[0]){
                     case 'say':
-                        commandBool = true
-                        that.gameSession.queueData("say", {playerId: that.id,text: c.substring(4)});
+                        
                         break;
-                    case 'god':
-                        //toggle god mode
-                        if (that.user.userData.admin){
-                            commandBool = true
-                            if (that.god){
-                                that.god = false;
-                            }else{
-                                that.god = true;
-                            }
-                            break;
-                        }else{
-                            console.log('Not an admin');
-                        }
-                    case 'how':
-                        commandBool = true;
-                        if (commands[1] == 'do'){
-                            if (commands[2] == 'you'){
-                                if (commands[3] == 'turn'){
-                                    if (commands[4] == 'this'){
-                                        if (commands[5] == 'on'){
-                                            if (!that.gameSession){
-                                                that.tryingToJoinGame = 'chaos';
-                                            }
-                                        }   
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case 'test':
-                        if (that.user.userData.admin){
-                            commandBool = true;
-                            if (!that.gameSession){
-                                that.tryingToJoinGame = 'secret';
-                            }
-                        }
-                        break;
-                    case 'stars':
-                        commandBool = true;
-                        if (!that.gameSession){
-                            that.gameEngine.singlePlayerSession(that, 'star');
-                        }
-                        break;
-                    case 'setlevel':
-                        if (that.user.userData.admin){
-                            commandBool = true;
-                            try{
-                                that.gameSession.level = parseInt(commands[1]);
-                            }catch(e){
-
-                            }
-                        }
-                        break;
-                    case 't':
-                        if (that.user.userData.admin){
-                            commandBool = true;
-                            try{
-                                that.gameSession.level = 666;
-                            }catch(e){
-                                
-                            }
-                        }
-                        break;
-                    case 'log':
-                        if (that.user.userData.admin){
-                            commandBool = true;
-                            console.log('log');
-                        }
-                        break;
-                    case 'ping':
-                        commandBool = true;
-                        if (!that.gameSession){
-                            that.gameEngine.queuePlayer(that,"ping", {});
-                        }else{
-                            that.gameSession.queuePlayer(that,"ping", {});
-                        }
-                        break;
-                }
-                if (!commandBool && c != ''){
-                    if (c.length > 40){
-                        c = c.substring(0,40);
-                    }
-                    var d = new Date().toString();
-                    that.user.userData.chatLog.push({text: c, timeStamp:d});
-                    that.gameSession.queueData("say", {playerId: that.id,text: c});
                 }
             }catch(e){
                 console.log(e);
@@ -252,6 +102,7 @@ Player = function(){
         });
 
         this.socket.on('disconnect', function () {
+            /*
             try{
                 that.gameEngine.playerCount -= 1;
                 that.user.unlock();
@@ -267,25 +118,12 @@ Player = function(){
                 }
             }catch(e){
                 console.log('error on disconnect ( will error out on guest or user = null)');
-            }
+            }*/
         });
 
-        this.socket.on('join', function (data) {
-            console.log('Player ' + that.id + ' wants to join a game.');
-            if (!that.gameSession){
-                if (data.solo){
-                    that.gameEngine.singlePlayerSession(that);
-                }else if (data.coop){
-                    that.tryingToJoinGame = 'coop';
-                }else if (data.vs){
-                    that.tryingToJoinGame = 'vs';
-                }else if (data.stars){
-                    that.gameEngine.singlePlayerSession(that, 'star');
-                }
-            }
-        });
-
+        
         this.socket.on('loginAttempt', function (data) {
+
             try{
                 if (!that.gameSession){
                     if (data.guest){
@@ -298,7 +136,7 @@ Player = function(){
                     }else if (data.sn && data.pw){
                         data.sn = data.sn.toLowerCase();
                         if (!that.gameEngine.users[that.gameEngine._userIndex[data.sn.toLowerCase()]].lock){
-                            var url = 'mongodb://127.0.0.1/wisp';
+                            var url = 'mongodb://127.0.0.1/lithiumAve';
                             mongo.connect(url, function(err, db) {
                                 // ---- Attemp to find existing user ----
                                 var query = { userName: data.sn };
@@ -381,17 +219,6 @@ Player = function(){
             }
         });
 
-        this.socket.on('cancelJoin', function (data) {
-            that.tryingToJoinGame = false;
-            if (that.tryingToJoinSession){
-                for (var i = 0; i < that.tryingToJoinSession.playersToAdd.length; i++){
-                    if (that.tryingToJoinSession.playersToAdd[i] === that){
-                        that.tryingToJoinSession.playersToAdd.splice(i,1);
-                        break;
-                    }
-                }
-            }
-        });
     };
 
     return player;

@@ -19,18 +19,18 @@ function init() {
     var url = 'mongodb://127.0.0.1/lithiumAve';
     rc.ready();
     //TODO -- update to a new database
-    rc.require('dbHighScores','dbUsers');
+    rc.require('dbMaps','dbUsers');
 
     // Use connect method to connect to the DB
     mongo.connect(url, function(err, db) {
         console.log("Connected to db");
         console.log("DB errors: " + err);
         
-        // ---- Load HighScores ----
-        var HSColl = db.collection('wisp_highScores');
+        // ---- Load Maps ----
+        var HSColl = db.collection('tactics_maps');
         HSColl.find().toArray(function(err, arr) {
-            ge.loadHighScores(arr);
-            rc.ready('dbHighScores');
+            ge.loadMaps(arr);
+            rc.ready('dbMaps');
         });
 
         // ---- Load Userbase ----
