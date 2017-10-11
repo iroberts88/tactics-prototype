@@ -8,7 +8,8 @@ Player = function(){
     var player = {
         gameEngine: null,
         gameSession: null,
-        user: null
+        user: null,
+        mapData: null
     };
 
     player.init = function (data) {
@@ -48,20 +49,58 @@ Player = function(){
             }
         });
 
+        this.socket.on('confirmMapSave', function (data) {
+            try{
+                if (data.c){
+                    mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                        var query = { name: that.mapData.name };
+                        var removed = db.collection('tactics_maps').remove(query);
+                        if (removed.nRemoved){
+                            db.collection('tactics_maps').insertOne({
+                                name: that.mapData.name,
+                                mapData: that.mapData.mapData
+                            });
+                        }else{
+                            console.log("Map doesn't exist? eh?");
+                            that.mapData = null;
+                        }
+                        db.close();
+                    });
+                }else{
+                    that.mapData = null;
+                }
+            }catch(e){
+
+            }
+        });
+
         this.socket.on('createMap', function (data) {
             mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
-                db.collection('tactics_maps').insertOne({
-                    name: data.name,
-                    mapData: data.mapData
+                //see if map exists
+                var exists = false;
+                var query = { name: data.name };
+                db.collection('tactics_maps').find(query).toArray(function(err, arr) {
+                    if (err) throw err;
+                    if (arr.length == 1 ){
+                        that.gameEngine.queuePlayer(that,"confirmMapSave", {name:data.name});
+                        that.mapData = data;
+                        exists = true;
+                    }
                 });
-                db.close();
+                if (!exists){
+                    db.collection('tactics_maps').insertOne({
+                        name: data.name,
+                        mapData: data.mapData
+                    });
+                    db.close();
+                }
             });
         });
 
         this.socket.on('editMap', function (data) {
             var url = 'mongodb://127.0.0.1/lithiumAve';
             mongo.connect(url, function(err, db) {
-                // ---- Attemp to find existing user ----
+                // ---- Attemp to find existing map ----
                 var query = { name: data.name };
                 db.collection('tactics_maps').find(query).toArray(function(err, arr) {
                     if (err) throw err;

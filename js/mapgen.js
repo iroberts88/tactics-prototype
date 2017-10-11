@@ -936,9 +936,10 @@
         findPath: function(startNode,endNode,skip,maxJump){
 
             //A* search
-            //map = map object
             //start = starting axial node;
-            //end = ending axial node
+            //end = ending axial node;
+            //skip - nodes to skip (for delete in map editor) TODO - the game version probably shouldnt have this
+            //maxJump - the maximum height diff for a neighboring node to be viable
             //returns empty array if no path exists
             //returns path array if path exists [node,node,node,...]
 
@@ -968,6 +969,7 @@
                 var currentNode = openList[lowInd];
 
                 if(currentNode.x == endNode.x && currentNode.y == endNode.y && currentNode.z == endNode.z) {
+                    //Found the optimal path. Add all node parents to the result array and return
                     var curr = currentNode;
                     var ret = [];
                     while(curr.parent) {
@@ -985,6 +987,10 @@
                 var currentAxial = this.getAxial(currentNode);
 
                 //process neighbors
+                /*
+                TODO -- eventually, this should also scan neighbors within jump distance 
+                (eg. in decreasing height at a higher distance)
+                */
                 for (var i = 0;i < 6;i++){
                     var node = this.getCubeNeighbor(currentNode,i);
                     //first check if the node exists

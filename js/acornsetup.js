@@ -15,6 +15,14 @@
               Acorn.changeState('MapGen');
             });
 
+            Acorn.Net.on('confirmMapSave', function (data) {
+                if (confirm('Overwrite map "' + data.name + '"?') == true) {
+                    Acorn.Net.socket_.emit('confirmMapSave',{c:true});
+                } else {
+                    Acorn.Net.socket_.emit('confirmMapSave',{c:false});
+                }
+            });
+
             Acorn.Net.on('loggedIn', function (data) {
               Player.userData = data;
               Settings.toggleCredentials(false);
