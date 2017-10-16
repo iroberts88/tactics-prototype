@@ -52,6 +52,9 @@
         losToolData: null,
         losDrawn: false,
 
+        mapNames: null,
+        mapName: '',
+
         init: function() {
             this.drawBG();
             //create all of the tile textures!
@@ -701,7 +704,7 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    var name = prompt("Please enter a name for the map", 'new_map');
+                    var name = prompt("Please enter a name for the map", MapGen.mapName);
                     var mapData = {};
                     for (var i in MapGen.axialMap){
                         for (var j in MapGen.axialMap[i]){
@@ -718,13 +721,28 @@
                             mapData[i][j] = node;
                         }
                     }
-                    console.log(mapData);
                     Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
                 }
             });
             this.saveButton.position.x = Graphics.width - this.saveButton.width/2;
             this.saveButton.position.y = Graphics.height - this.saveButton.height/2;
             Graphics.uiContainer.addChild(this.saveButton);
+
+            this.deleteButton = AcornSetup.makeButton({
+                text: "Delete Map",
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    if (confirm('Delete map "' + MapGen.mapName + '"?') == true) {
+                        Acorn.Net.socket_.emit('deleteMap',{name:MapGen.mapName});
+                        Acorn.changeState('mainMenu');
+                    }
+                }
+            });
+            this.deleteButton.position.x = Graphics.width - this.saveButton.width - this.deleteButton.width;
+            this.deleteButton.position.y = Graphics.height - this.deleteButton.height/2;
+            Graphics.uiContainer.addChild(this.deleteButton);
 
             //set up some stuff
             this.axialMap = {};
@@ -809,9 +827,11 @@
                     Graphics.worldContainer.addChild(this.container2);
                 }catch(e){
                     console.log('Unable to initialize map');
+                    Graphics.showLoadingMessage(false);
                     Acorn.changeState('mainMenu');
                 }
             }
+            Graphics.showLoadingMessage(false);
         },
         //returns a cube node when given an axial node
         getCube: function(axialNode){
@@ -996,7 +1016,7 @@
                     //first check if the node exists
                     if (node){
                         var axial = this.getAxial(node);
-                        if(this.findGraphNode(closedList,node) || node == skip || node.deleted || axial.h - currentAxial.h > maxJump) { //TODO check Height here as well
+                        if(this.findGraphNode(closedList,node) || node == skip || node.deleted || axial.h - currentAxial.h > maxJump) {
                             // not a valid node to process, skip to next neighbor
                             continue;
                         }
@@ -1019,7 +1039,9 @@
                             // This the the first time we have arrived at this node, it must be the best
                             gScoreIsBest = true;
                             //take heuristic score
-                            node.h = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z));
+                            //a small amount is added based on height diff 
+                            //to avoid paths with too much height variation when possible
+                            node.h = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
                             openList.push(node);
                         }else if(gScore < node.g) {
                             // We have already seen the node, but last time it had a worse g (distance from start)
@@ -1040,8 +1062,7 @@
             return [];
         }, 
         removeGraphNode:  function(arr,node){
-            //for use in astar
-            //removes node 'node' from array 'arr'
+            //for use in findPath
             for (var i = 0;i < arr.length;i++){
                 if (arr[i] == node){
                     arr.splice(i,1);
@@ -1049,10 +1070,7 @@
             }
         },
         findGraphNode:  function(arr,node){
-            //for use in astar
-            //searches array 'arr' for node 'node'
-            //returns true if array contains node
-            //returns false if array doesnt contain node
+            //for use in findPath
             for (var i = 0;i < arr.length;i++){
                 if (arr[i] == node){
                     return true;
@@ -1060,6 +1078,7 @@
             }
             return false;
         },
+
         //sort a list of sprites to be added to a container
         mergeSort: function(arr){
             if (arr.length <= 1){
@@ -1552,6 +1571,7 @@
             }else{
                 this.removeDescText -= deltaTime;
             }
+            this.deleteButton.visible = this.name == '' ? false : true;
             Graphics.uiPrimitives2.clear();
             Graphics.worldPrimitives.clear();
             this.sizeText.text = 'Tool Size: ' + this.toolSize;
@@ -1943,8 +1963,8 @@
                                         var axial = this.getAxial(neighbor);
                                         this.container1.addChild(axial.sprite1);
                                         this.container2.addChild(axial.sprite2);
-                                        axial.deleted = true;
-                                        neighbor.deleted = true;
+                                        axial.deleted = false;
+                                        neighbor.deleted = false;
                                     }
                                 }
                             }
@@ -2066,21 +2086,21 @@
                                         var t = 1;
                                         if (!(MapGen.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0xFF6666;
+                                        s.tint = 0xFF0000;
                                         this.losToolData.spritesAltered.push(s);
                                     }else if ((!blocked1 && !blocked2) == false){
                                         //partial cover
                                         var t = 1;
                                         if (!(MapGen.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0xFFFF66;
+                                        s.tint = 0xFFFF00;
                                         this.losToolData.spritesAltered.push(s);
                                     }else{
                                         //NO COVER
                                         var t = 1;
                                         if (!(MapGen.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0x66FF66;
+                                        s.tint = 0x00FF00;
                                         this.losToolData.spritesAltered.push(s);
                                     }
                                 }

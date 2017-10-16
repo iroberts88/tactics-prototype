@@ -16,7 +16,7 @@ var GameEngine = function() {
     this.sessions = {}; //List of currently active gameSessions
     this.players = {}; //List of players that do not have a gameSession
     this.openSessions = null;
-
+    this.maps = [];
     this.playerCount = 0;
     //variables for ID's
     this.ids = {};
@@ -105,6 +105,9 @@ GameEngine.prototype.getID = function() {
 // ----------------------------------------------------------
 
 GameEngine.prototype.loadMaps = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        this.maps.push(arr[i].name);
+    }
     console.log('loaded Maps from db');
 }
 
@@ -132,7 +135,7 @@ GameEngine.prototype.newConnection = function(socket) {
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
-    self.queuePlayer(p,'connInfo', {});
+    self.queuePlayer(p,'connInfo', {mapNames: self.maps});
     self.players[p.id] = p;
 }
 

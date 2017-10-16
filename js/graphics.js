@@ -126,16 +126,18 @@
             
         },
         showLoadingMessage: function(display, message) {
-            if(display) {
-                this.loadingMessage = new PIXI.Text((message ? message : 'Loading...' ), {font: '35px Arial', fill: 'white', align: 'left'});
-                this.loadingMessage.position.x = (this.width / 2) - 100;
-                this.loadingMessage.position.y = (this.height / 2);
-                this.app.stage.addChild(this.loadingMessage);
-            } else {
-                this.app.stage.removeChild(this.loadingMessage)
-                this.loadingMessage = null;
-            }
-            this.app.renderer.render(this.app.stage);
+            try{
+                if(display) {
+                    this.loadingMessage = new PIXI.Text((message ? message : 'Loading...' ), {font: '35px Arial', fill: 'white', align: 'left'});
+                    this.loadingMessage.position.x = (this.width / 2) - 100;
+                    this.loadingMessage.position.y = (this.height / 2);
+                    this.app.stage.addChild(this.loadingMessage);
+                } else {
+                    this.app.stage.removeChild(this.loadingMessage)
+                    this.loadingMessage = null;
+                }
+                this.app.renderer.render(this.app.stage);
+            }catch(e){}
         },
 
         loadResources: function() {

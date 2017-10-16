@@ -27,8 +27,8 @@ function init() {
         console.log("DB errors: " + err);
         
         // ---- Load Maps ----
-        var HSColl = db.collection('tactics_maps');
-        HSColl.find().toArray(function(err, arr) {
+        var mColl = db.collection('tactics_maps');
+        mColl.find().toArray(function(err, arr) {
             ge.loadMaps(arr);
             rc.ready('dbMaps');
         });

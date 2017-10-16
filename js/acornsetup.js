@@ -5,14 +5,18 @@
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
               console.log('Connected to server: Info Received');
-              console.log(data);
+              MapGen.mapNames = data.mapNames;
               Acorn.Net.ready = true;
               checkReady();
             });
             
             Acorn.Net.on('editMap', function (data) {
-              MapGen.data = data;
-              Acorn.changeState('MapGen');
+                if (data.found){
+                  MapGen.data = data;
+                  Acorn.changeState('MapGen');
+                }else{
+                    Graphics.showLoadingMessage(false);
+                }
             });
 
             Acorn.Net.on('confirmMapSave', function (data) {
@@ -21,6 +25,11 @@
                 } else {
                     Acorn.Net.socket_.emit('confirmMapSave',{c:false});
                 }
+            });
+
+            Acorn.Net.on('mapSaved', function (data) {
+                //new map has been saved, set name
+                MapGen.mapName = data.name;
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -105,8 +114,14 @@
                         interactive: true,
                         buttonMode: true,
                         clickFunc: function onClick(){
-                            var name = prompt("Enter map name", '');
+                            var s = "Enter map name: \n";
+                            for (var i = 0;i < MapGen.mapNames.length;i++){
+                                s = s + ' <' + MapGen.mapNames[i] + '> ';
+                            }
+                            var name = prompt(s, '');
                             Acorn.Net.socket_.emit('editMap',{name: name});
+                            MapGen.mapName = name;
+                            Graphics.showLoadingMessage(true);
                         }
                     });
                     Graphics.uiContainer.addChild(this.loadMapButton);

@@ -53,9 +53,11 @@ Player = function(){
             try{
                 if (data.c){
                     mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                        console.log("deleting old map");
                         var query = { name: that.mapData.name };
                         var removed = db.collection('tactics_maps').remove(query);
-                        if (removed.nRemoved){
+                        if (removed.nRemoved != 0){
+                            console.log("saving new map");
                             db.collection('tactics_maps').insertOne({
                                 name: that.mapData.name,
                                 mapData: that.mapData.mapData
@@ -71,6 +73,24 @@ Player = function(){
                 }
             }catch(e){
 
+            }
+        });
+
+        this.socket.on('deleteMap', function (data) {
+            try{
+                mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                    console.log("deleting map");
+                    var query = { name: data.name };
+                    var removed = db.collection('tactics_maps').remove(query);
+                    db.close();
+                });
+                for (var i = 0; i < that.gameEngine.maps.length;i++){
+                    if (data.name == that.gameEngine.maps[i]){
+                        that.gameEngine.maps.splice(i,1);
+                    }
+                }
+            }catch(e){
+                console.log(e);
             }
         });
 
@@ -93,6 +113,8 @@ Player = function(){
                         mapData: data.mapData
                     });
                     db.close();
+                    that.gameEngine.maps.push(data.name);
+                    that.gameEngine.queuePlayer(that,"mapSaved", {name:data.name});
                 }
             });
         });
@@ -100,14 +122,15 @@ Player = function(){
         this.socket.on('editMap', function (data) {
             var url = 'mongodb://127.0.0.1/lithiumAve';
             mongo.connect(url, function(err, db) {
-                // ---- Attemp to find existing map ----
+                // ---- Attempt to find existing map ----
                 var query = { name: data.name };
                 db.collection('tactics_maps').find(query).toArray(function(err, arr) {
                     if (err) throw err;
                     if (arr.length == 1 ){
-                        that.gameEngine.queuePlayer(that,"editMap", {name:arr[0].name,mapData:arr[0].mapData});
+                        that.gameEngine.queuePlayer(that,"editMap", {found:true,name:arr[0].name,mapData:arr[0].mapData});
                     }else{
                         console.log('No map named ' + data.name);
+                        that.gameEngine.queuePlayer(that,"editMap", {found: false});
                     }
                 });
                 db.close();
