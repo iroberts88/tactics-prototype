@@ -330,13 +330,26 @@
             this.toolDescriptionText.visible = false;
             Graphics.uiContainer.addChild(this.toolDescriptionText);
 
+            //back button
+            this.exitButton = AcornSetup.makeButton({
+                text: 'Exit',
+                style: style,
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.changeState('mainMenu');
+                }
+            });
+            this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
+            this.exitButton.position.y = 25 + this.exitButton.height/2;
+            Graphics.uiContainer.addChild(this.exitButton);
+
             //create tiles tool options
             this.toolOptionsText = AcornSetup.makeButton({
                 text: 'Tool Options',
-                style: style,
+                style: style
             });
             this.toolOptionsText.position.x = Graphics.width-25 - this.toolText.width/2;
-            this.toolOptionsText.position.y = 25 + this.toolText.height/2;
+            this.toolOptionsText.position.y = this.exitButton.position.y +  this.exitButton.height/2 + 25 + this.toolText.height/2;
             Graphics.uiContainer.addChild(this.toolOptionsText);
 
             this.losDistance = AcornSetup.makeButton({
@@ -963,6 +976,7 @@
             //returns empty array if no path exists
             //returns path array if path exists [node,node,node,...]
 
+            //Init the start node and the end node
             startNode.f = 0;
             startNode.g = 0;
             startNode.h = 0;
@@ -1095,7 +1109,7 @@
                 if (left[0].position.y < right[0].position.y) {
                     result.push(left.shift());
                 } else if (left[0].position.y == right[0].position.y) {
-                    //if they are the same height, sort by z direction
+                    //if they are at the same y position, sort by z direction (height)
                     var leftNode = this.axialMap[left[0].axialCoords.q][left[0].axialCoords.r];
                     var rightNode = this.axialMap[right[0].axialCoords.q][right[0].axialCoords.r];
                     if (leftNode.h <= rightNode.h){
@@ -1576,14 +1590,15 @@
             Graphics.worldPrimitives.clear();
             this.sizeText.text = 'Tool Size: ' + this.toolSize;
             this.sensitivityText.text = 'Sensitivity: ' + this.sensitivity;
-            Graphics.drawBoxAround(this.landscapeTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.heightTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.noiseTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.tilesTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.addTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.deleteTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.pathTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
-            Graphics.drawBoxAround(this.losTool,Graphics.uiPrimitives2,'0xFFFFFF',2);
+            Graphics.drawBoxAround(this.landscapeTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.heightTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.noiseTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.tilesTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.addTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.deleteTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.pathTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.losTool,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.exitButton,Graphics.uiPrimitives2,{});
             Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
             Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
             Graphics.uiPrimitives2.drawRect(

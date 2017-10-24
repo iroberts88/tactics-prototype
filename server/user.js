@@ -14,18 +14,8 @@ function User() {
             this.userData = {
                 userName: 'guest',
                 password: 'guest',
-                stats: {
-                    soloGamesPlayed : 0,
-                    coopGamesPlayed : 0,
-                    coopLevelRecord: 0,
-                    vsGamesPlayed : 0,
-                    starsGamesPlayed : 0,
-                    soloHighScore : 0,
-                    coopHighScore : 0,
-                    vsGamesWon : 0,
-                    starsLongestGame : 0,
-                    soloLevelRecord : 0
-                },
+                characters: [],
+                inventory: [],
                 chatLog: [],
                 admin: false,
                 createDate: Date.now(),
@@ -38,8 +28,8 @@ function User() {
             if (typeof data.password != 'undefined'){
                 this.userData.password = data.password;
             }
-            if (typeof data.stats != 'undefined'){
-                this.userData.stats = data.stats;
+            if (typeof data.characters != 'undefined'){
+                this.userData.characters = data.characters;
             }
             if (typeof data.chatLog != 'undefined'){
                 this.userData.chatLog = data.chatLog;
@@ -52,127 +42,63 @@ function User() {
             }
         },
         
-        soloGamePlayed: function(){
-            var ge = this.owner.gameEngine;
-            this.userData.stats.soloGamesPlayed += 1;
-            if (this.userData.userName != 'guest'){
-                ge.users[ge._userIndex[this.userData.userName]].stats.soloGamesPlayed += 1;
-            }
-        },
-        coopGamePlayed: function(){
-            var ge = this.owner.gameEngine;
-            this.userData.stats.coopGamesPlayed += 1;
-            if (this.userData.userName != 'guest'){
-                ge.users[ge._userIndex[this.userData.userName]].stats.coopGamesPlayed += 1;
-            }
-        },
-        vsGamePlayed: function(){
-            var ge = this.owner.gameEngine;
-            this.userData.stats.vsGamesPlayed += 1;
-            if (this.userData.userName != 'guest'){
-                ge.users[ge._userIndex[this.userData.userName]].stats.vsGamesPlayed += 1;
-            }
-        },
-        starGamePlayed: function(){
-            var ge = this.owner.gameEngine;
-            this.userData.stats.starsGamesPlayed += 1;
-            if (this.userData.userName != 'guest'){
-                ge.users[ge._userIndex[this.userData.userName]].stats.starsGamesPlayed += 1;
-            }
-        },
-        vsGameWon: function(){
-            var ge = this.owner.gameEngine;
-            this.userData.stats.vsGamesWon += 1;
-            if (this.userData.userName != 'guest'){
-                ge.users[ge._userIndex[this.userData.userName]].stats.vsGamesWon += 1;
-            }
-        },
-        checkSoloHighScore: function(s){
-            //check personal high score
-            var ge = this.owner.gameEngine;
-            if (this.userData.stats.soloHighScore < s){
-                this.userData.stats.soloHighScore = s;
-                if (this.userData.userName != 'guest'){
-                    ge.users[ge._userIndex[this.userData.userName]].stats.soloHighScore = s;
-                }
-            }
-            //then check global high score
-        },
-        checkCoopHighScore: function(s){
-            var ge = this.owner.gameEngine;
-            if (this.userData.stats.coopHighScore < s){
-                this.userData.stats.coopHighScore = s;
-                if (this.userData.userName != 'guest'){
-                    ge.users[ge._userIndex[this.userData.userName]].stats.coopHighScore = s;
-                }
-            }
-        },
-        checkCoopLevelRecord: function(s){
-            var ge = this.owner.gameEngine;
-            if (this.userData.stats.coopLevelRecord < s){
-                this.userData.stats.coopLevelRecord = s;
-                if (this.userData.userName != 'guest'){
-                    ge.users[ge._userIndex[this.userData.userName]].stats.coopLevelRecord = s;
-                }
-            }
-        },
-        checkStarsLongestGame: function(s){
-            var ge = this.owner.gameEngine;
-            if (this.userData.stats.starsLongestGame < s){
-                this.userData.stats.starsLongestGame = s;
-                if (this.userData.userName != 'guest'){
-                    ge.users[ge._userIndex[this.userData.userName]].stats.starsLongestGame = s;
-                }
-            }
-        },
-        checkSoloLevelRecord: function(s){
-            var ge = this.owner.gameEngine;
-            if (this.userData.stats.soloLevelRecord < s){
-                this.userData.stats.soloLevelRecord = s;
-                if (this.userData.userName != 'guest'){
-                    ge.users[ge._userIndex[this.userData.userName]].stats.soloLevelRecord = s;
-                }
-            }
-        },
-        addToChatLog: function(str){
+        setLastLogin: function(date){
+            //TODO this should change the actual mongodb lastLogin
             var ge = this.owner.gameEngine;
             if (this.userData.userName != 'guest'){
-                this.userData.chatLog.push(str);
-                ge.users[ge._userIndex[this.userData.userName]].chatLog.push(str);
+                ge.users[ge._userIndex[this.userData.userName]].lastLogin = date;
             }
         },
-        setLastLogin: function(t){
-            var ge = this.owner.gameEngine;
-            if (this.userData.userName != 'guest'){
-                //Player is not a guest - update last login Time
-                this.userData.lastLogin = t;
-                ge.users[ge._userIndex[this.userData.userName]].lastLogin = t;
-            }
-        },
-
         lock: function(){
+            //TODO this should change the actual mongodb lock
             var ge = this.owner.gameEngine;
             this.userData.lock = true;
             if (this.userData.userName != 'guest'){
                 ge.users[ge._userIndex[this.userData.userName]].lock = true;
+                try{
+                    var d = this.userData;
+                    mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                        db.collection('users').update({userName: d.userName},{$set: {
+                            lock: true,
+                        }});
+                        db.close();
+                    });
+                }catch(e){
+                    console.log("DB ERROR - Unable lock user");
+                    console.log(e);
+                }
             }
         },
         unlock: function(){
+            //TODO this should change the actual mongodb lock
             var ge = this.owner.gameEngine;
             this.userData.lock = false;
             if (this.userData.userName != 'guest'){
                 ge.users[ge._userIndex[this.userData.userName]].lock = false;
+                try{
+                    var d = this.userData;
+                    mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
+                        db.collection('users').update({userName: d.userName},{$set: {
+                            lock: false,
+                        }});
+                        db.close();
+                    });
+                }catch(e){
+                    console.log("DB ERROR - Unable lock user");
+                    console.log(e);
+                }
             }
         },
         updateDB: function(){
             var ge = this.owner.gameEngine;
             if (this.userData.userName != 'guest'){
-                //Player is not a guest - update last login Time
+                //Player is not a guest - update DB
                 try{
                     var d = this.userData;
-                    mongo.connect('mongodb://127.0.0.1/wisp', function(err, db) {
+                    mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
                         db.collection('users').update({userName: d.userName},{$set: {
-                            stats: d.stats,
+                            characters: d.characters,
+                            inventory: d.inventory,
                             chatLog: d.chatLog,
                             lastLogin: d.lastLogin
                         }});

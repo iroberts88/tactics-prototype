@@ -1,7 +1,8 @@
 //----------------------------------------------------------------
 //player.js
 //----------------------------------------------------------------
-var mongo = require('mongodb').MongoClient;
+var mongo = require('mongodb').MongoClient,
+    User = require('./user.js').User,
 
 Player = function(){
 
@@ -45,7 +46,17 @@ Player = function(){
                 //if the player is in a gameSession - deal with received data
                
             }else{
-               
+                if (data.logout){
+                    try{
+                        that.gameEngine.queuePlayer(that,'logout', {});
+                        that.user.unlock();
+                        that.user.updateDB();
+                        that.user = null;
+                    }catch(e){
+                        console.log('error - unable to logout user');
+                        console.log(e.stack);
+                    }
+                }
             }
         });
 
@@ -164,7 +175,7 @@ Player = function(){
         });
 
         this.socket.on('disconnect', function () {
-            /*
+        
             try{
                 that.gameEngine.playerCount -= 1;
                 that.user.unlock();
@@ -180,7 +191,7 @@ Player = function(){
                 }
             }catch(e){
                 console.log('error on disconnect ( will error out on guest or user = null)');
-            }*/
+            }
         });
 
         
@@ -197,7 +208,7 @@ Player = function(){
                         that.gameEngine.queuePlayer(that,"loggedIn", {name:that.user.userData.userName,stats:that.user.userData.stats});
                     }else if (data.sn && data.pw){
                         data.sn = data.sn.toLowerCase();
-                        if (!that.gameEngine.users[that.gameEngine._userIndex[data.sn.toLowerCase()]].lock){
+                        if (!that.gameEngine.users[that.gameEngine._userIndex[data.sn]].lock){
                             var url = 'mongodb://127.0.0.1/lithiumAve';
                             mongo.connect(url, function(err, db) {
                                 // ---- Attemp to find existing user ----

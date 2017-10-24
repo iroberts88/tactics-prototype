@@ -137,7 +137,7 @@ function init() {
 
     Graphics.showLoadingMessage(false);
     console.log('Loading Complete');
-    Acorn.changeState('mainMenu');
+    Acorn.changeState('loginScreen');
 
     Graphics.app.ticker.add(function update(){
         Settings.stats.begin();
@@ -169,3 +169,5 @@ function init() {
 
 //set up acorn game states
 AcornSetup.states();
+//set up acorn game states
+AcornSetup.input();

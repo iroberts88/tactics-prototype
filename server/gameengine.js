@@ -114,7 +114,6 @@ GameEngine.prototype.loadMaps = function(arr) {
 GameEngine.prototype.loadUsers = function(arr) {
     for (var i = 0;i < arr.length;i++){
         this.users[arr[i]._id] = arr[i];
-        this.users[arr[i]._id].lock = false;
         this._userIndex[arr[i].userName] = arr[i]._id;
     }
     console.log("loaded " + (i) + ' users from db');

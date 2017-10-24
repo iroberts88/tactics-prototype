@@ -24,6 +24,7 @@
         changeState: function(stateId){
             try{
                 this.currentState = stateId;
+                Graphics.clear();
                 this.states[stateId].init();
             }catch(e){
                 console.log('failed to change to state ' + stateId);

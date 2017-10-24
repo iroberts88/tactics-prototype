@@ -1,0 +1,203 @@
+{ 
+    "_id" : ObjectId("59ef76dc5e67e31684e32450"), 
+    "name" : "Medic", 
+    "attributes" : {
+        "str" : -1.0, 
+        "int" : 3.0, 
+        "end" : 2.0, 
+        "wil" : 3.0, 
+        "agi" : 1.0, 
+        "dex" : -1.0, 
+        "cha" : 3.0
+    }, 
+    "baseAttr" : {
+        "health" : 0.0, 
+        "energy" : 20.0, 
+        "move" : 0.0, 
+        "jump" : 0.0
+    }, 
+    "abilities" : [
+        {
+            "name" : "First Aid", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Resuscitate", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Healing Field", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Recovery", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Sprint", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Heroic Leap", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Cripple", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Shield Boost", 
+            "description" : ""
+        }, 
+        {
+            "name" : "HeatUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "PhysUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "ColdUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "AcidUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "PoisUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "ElecUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "PulsUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "GravUP", 
+            "description" : ""
+        }, 
+        {
+            "name" : "RadiUP", 
+            "description" : ""
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("59ef99d15e67e31684e32452"), 
+    "name" : "Scout", 
+    "attributes" : {
+        "str" : 2.0, 
+        "int" : 1.0, 
+        "end" : 1.0, 
+        "wil" : 2.0, 
+        "agi" : 3.0, 
+        "dex" : 2.0, 
+        "cha" : -1.0
+    }, 
+    "baseAttr" : {
+        "health" : -200.0, 
+        "energy" : 0.0, 
+        "move" : 1.0, 
+        "jump" : 1.0
+    }, 
+    "abilities" : [
+        {
+            "name" : "Scan", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Stealth", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Dodge", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Quick Attack", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Agitate", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Climber", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Momentum", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Counter Attack", 
+            "description" : ""
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("59efa3545e67e31684e32453"), 
+    "name" : "Soldier", 
+    "attributes" : {
+        "str" : 2.0, 
+        "int" : -1.0, 
+        "end" : 2.0, 
+        "wil" : 1.0, 
+        "agi" : 2.0, 
+        "dex" : 2.0, 
+        "cha" : 2.0
+    }, 
+    "baseAttr" : {
+        "health" : 200.0, 
+        "energy" : -20.0, 
+        "move" : 0.0, 
+        "jump" : 0.0
+    }, 
+    "abilities" : [
+        {
+            "name" : "Bolster", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Focus", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Heroic Leap", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Heroic Charge", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Power Attack", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Power Shot", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Hardy", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Vengeance", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Charge", 
+            "description" : ""
+        }, 
+        {
+            "name" : "Opportunity", 
+            "description" : ""
+        }
+    ]
+}

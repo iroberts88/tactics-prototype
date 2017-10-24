@@ -85,10 +85,23 @@
         },
         clear: function(){
             this.bgContainer.clear();
+            this.bgContainer.position.x = 0;
+            this.bgContainer.position.y = 0;
             this.worldContainer.removeChildren();
+            this.worldContainer.position.x = 0;
+            this.worldContainer.position.y = 0;
             this.worldPrimitives.clear();
+            this.worldPrimitives.position.x = 0;
+            this.worldPrimitives.position.y = 0;
             this.uiContainer.removeChildren();
+            this.uiContainer.position.x = 0;
+            this.uiContainer.position.y = 0;
             this.uiPrimitives.clear();
+            this.uiPrimitives.position.x = 0;
+            this.uiPrimitives.position.y = 0;
+            this.uiPrimitives2.clear();
+            this.uiPrimitives2.position.x = 0;
+            this.uiPrimitives2.position.y = 0;
             this.consoleContainer.removeChildren();
             this.drawBG();
             ChatConsole.reset();
@@ -222,27 +235,34 @@
                 console.log('-- Graphics resource not found' )
             }
 		},
-        drawBoxAround: function(sprite,g,color,size,ybuffer,xbuffer){
+        drawBoxAround: function(sprite,g,options){
             //draws a box around sprite in
             //g = graphics container
-            if (typeof ybuffer == 'undefined'){
-                ybuffer = 0;
+            if (typeof options.ybuffer == 'undefined'){
+                options.ybuffer = 0;
             }
-            if (typeof xbuffer == 'undefined'){
-                xbuffer = 0;
+            if (typeof options.xbuffer == 'undefined'){
+                options.xbuffer = 0;
             }
-            if (typeof color == 'undefined'){
-                color = '0xFFFFFF';
+            if (typeof options.color == 'undefined'){
+                options.color = '0xFFFFFF';
             }
-            if (typeof size == 'undefined'){
-                size = 2;
+            if (typeof options.size == 'undefined'){
+                options.size = 2;
             }
-            g.lineStyle(size,color,1);
-            g.moveTo(sprite.position.x - sprite.width/2 + xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
-            g.lineTo(sprite.position.x + sprite.width/2 - xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
-            g.lineTo(sprite.position.x + sprite.width/2 - xbuffer,sprite.position.y + sprite.height/2 - ybuffer);
-            g.lineTo(sprite.position.x - sprite.width/2 + xbuffer,sprite.position.y + sprite.height/2 - ybuffer);
-            g.lineTo(sprite.position.x - sprite.width/2 + xbuffer,sprite.position.y - sprite.height/2 + ybuffer);
+            var pos = {x: sprite.position.x,y: sprite.position.y};
+            if (typeof options.pos != 'undefined'){
+                pos = {
+                    x: options.pos[0],
+                    y: options.pos[1]
+                }
+            }
+            g.lineStyle(options.size,options.color,1);
+            g.moveTo(pos.x - sprite.width/2 + options.xbuffer,pos.y - sprite.height/2 + options.ybuffer);
+            g.lineTo(pos.x + sprite.width/2 - options.xbuffer,pos.y - sprite.height/2 + options.ybuffer);
+            g.lineTo(pos.x + sprite.width/2 - options.xbuffer,pos.y + sprite.height/2 - options.ybuffer);
+            g.lineTo(pos.x - sprite.width/2 + options.xbuffer,pos.y + sprite.height/2 - options.ybuffer);
+            g.lineTo(pos.x - sprite.width/2 + options.xbuffer,pos.y - sprite.height/2 + options.ybuffer);
         },
         setSlideBar: function(bar,func){
             bar.clicked = false;

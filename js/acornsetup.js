@@ -1,7 +1,22 @@
 (function(window) {
 
     AcornSetup = {
-    
+        
+        baseStyle: {
+            font: '64px Orbitron', 
+            fill: 'white', 
+            align: 'left', 
+            dropShadow: true,
+            dropShadowColor: '#000000',
+            stroke: '#000000',
+            strokeThickness: 5,
+            dropShadow: true,
+            dropShadowColor: '#000000',
+            dropShadowBlur: 4,
+            dropShadowAngle: Math.PI / 6,
+            dropShadowDistance: 6
+        },
+
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
               console.log('Connected to server: Info Received');
@@ -81,12 +96,151 @@
             //                              Game States (Acorn.states)
             //-----------------------------------------------------------------------------------------------|
 
+            //Initial State
+            Acorn.addState({
+                stateId: 'loginScreen',
+                init: function(){
+                    console.log('Initializing login screen');
+                    document.body.style.cursor = 'default';
+                    this.logo = AcornSetup.makeButton({
+                        text: 'Tactics Prototype',
+                        style: AcornSetup.baseStyle,
+                        position: [(Graphics.width / 2),(Graphics.height / 8)]
+                    });
+                    this.logo.style.fontSize = 100;
+                    Graphics.uiContainer.addChild(this.logo);
+
+                    this.guestText = AcornSetup.makeButton({
+                        text: 'PLAY AS GUEST',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [0,(Graphics.height * .75)],
+                        clickFunc: function onClick(){Acorn.Net.socket_.emit('loginAttempt',{guest: true});}
+                    });
+                    this.guestText.style.fontSize = 48;
+                    this.guestText.position.x = (Graphics.width / 2 - this.guestText.width);
+                    Graphics.uiContainer.addChild(this.guestText);
+
+                    this.loginText = AcornSetup.makeButton({
+                        text: '          LOGIN          ',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [0,(Graphics.height * .75)],
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['loginScreen'];
+                            Graphics.uiContainer.removeChild(state.newUser);
+                            Graphics.uiContainer.removeChild(state.loginText);
+                            Graphics.uiContainer.removeChild(state.guestText);
+                            Graphics.uiContainer.addChild(state.cancelButton);
+                            Graphics.uiContainer.addChild(state.submitButton);
+                            Settings.credentials.setType('login');
+                            Settings.toggleCredentials(true);
+                            state.loginClicked = true;
+                            document.getElementById('usrInput').focus();
+                        }
+                    });
+                    this.loginText.style.fontSize = 48;
+                    this.loginText.position.x = (Graphics.width / 2 + this.loginText.width);
+                    Graphics.uiContainer.addChild(this.loginText);
+
+                    this.newUser = AcornSetup.makeButton({
+                        text: '     New User     ',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [(Graphics.width / 2),(Graphics.height * .9)],
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['loginScreen'];
+                            Graphics.uiContainer.removeChild(state.newUser);
+                            Graphics.uiContainer.removeChild(state.loginText);
+                            Graphics.uiContainer.removeChild(state.guestText);
+                            Graphics.uiContainer.addChild(state.cancelButton);
+                            Graphics.uiContainer.addChild(state.submitButton);
+                            Settings.credentials.setType('new');
+                            Settings.toggleCredentials(true);
+                            state.loginClicked = true;
+                            document.getElementById('usrInput').focus();
+                        }
+                    });
+                    this.newUser.style.fontSize = 48;
+                    Graphics.uiContainer.addChild(this.newUser);
+
+                    this.loginErrorText = AcornSetup.makeButton({
+                        text: '',
+                        style: AcornSetup.baseStyle,
+                        position: [(Graphics.width / 2),(Graphics.height * .65)]
+                    });
+                    Graphics.uiContainer.addChild(this.loginErrorText);
+
+                    this.submitButton = AcornSetup.makeButton({
+                        text: '     Submit     ',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [(Graphics.width / 4),(Graphics.height * .75)],
+                        clickFunc: function onClick(){
+                            if (Settings.credentials.getType() == 'login'){
+                                Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                            }else if (Settings.credentials.getType() == 'new'){
+                                Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                            }
+                        }
+                    });
+                    this.submitButton.style.fontSize = 64;
+                    Graphics.uiContainer.addChild(this.submitButton);
+
+                    this.cancelButton = AcornSetup.makeButton({
+                        text: '     Cancel     ',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [(Graphics.width / 1.5),(Graphics.height * .75)],
+                        clickFunc: function onClick(){
+                            var state = Acorn.states['loginScreen'];
+                            Graphics.uiContainer.addChild(state.newUser);
+                            Graphics.uiContainer.addChild(state.loginText);
+                            Graphics.uiContainer.addChild(state.guestText);
+                            Graphics.uiContainer.removeChild(state.cancelButton);
+                            Graphics.uiContainer.removeChild(state.submitButton);
+                            Settings.toggleCredentials(false);
+                            state.loginClicked = false;
+                            state.loginErrorText.text = '';
+                        }
+                    });
+                    this.cancelButton.style.fontSize = 64;
+                    Graphics.uiContainer.addChild(this.cancelButton);
+
+                    this.loginClicked = false;
+                    Graphics.uiContainer.removeChild(this.submitButton);
+                    Graphics.uiContainer.removeChild(this.cancelButton);
+
+                },
+                update: function(dt){
+                    Graphics.worldPrimitives.clear();
+                    if (this.loginClicked){
+                        Graphics.drawBoxAround(this.cancelButton,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
+                        Graphics.drawBoxAround(this.submitButton,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
+                    }else{
+                        Graphics.drawBoxAround(this.loginText,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
+                        Graphics.drawBoxAround(this.newUser,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
+                        Graphics.drawBoxAround(this.guestText,Graphics.worldPrimitives,{ybuffer:-5});
+                    }
+                    if (Acorn.Input.isPressed(Acorn.Input.Key.BACKSPACE)){
+                        if (Settings.credentialsOn){
+                            if (document.activeElement.id == 'usrInput'){
+                                document.getElementById('usrInput').value = document.getElementById('usrInput').value.substring(0, document.getElementById('usrInput').value.length-1);
+                            }else if (document.activeElement.id == 'pwInput'){
+                                document.getElementById('pwInput').value = document.getElementById('pwInput').value.substring(0, document.getElementById('pwInput').value.length-1);
+                            }
+                        }
+                        Acorn.Input.setValue(Acorn.Input.Key.BACKSPACE, false);
+                    }
+                    ChatConsole.update(dt);
+                }
+            });
+
             Acorn.addState({
                 stateId: 'mainMenu',
                 init: function(){
                     console.log('Initializing main menu');
                     document.body.style.cursor = 'default';
-                    Graphics.clear();
                     Graphics.drawBG();
                     //The Main Menu Logo
                     this.logo = AcornSetup.makeButton({
@@ -111,8 +265,7 @@
                     this.loadMapButton = AcornSetup.makeButton({
                         text: 'Edit Map',
                         position: [(Graphics.width/5),(Graphics.height/1.2)],
-                        interactive: true,
-                        buttonMode: true,
+                        interactive: true,buttonMode: true,
                         clickFunc: function onClick(){
                             var s = "Enter map name: \n";
                             for (var i = 0;i < MapGen.mapNames.length;i++){
@@ -126,15 +279,62 @@
                     });
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
+                    this.userName = AcornSetup.makeButton({
+                        text: "Logged in as: \n" + Player.userData.name,
+                        style: AcornSetup.baseStyle,
+                        position: [10,10],
+                        anchor: [0,0]
+                    });
+                    this.userName.style.fontSize = 24;
+                    Graphics.uiContainer.addChild(this.userName);
+
+                    this.charButton = AcornSetup.makeButton({
+                        text: 'My Characters',
+                        style: AcornSetup.baseStyle,
+                        position: [10,this.userName.position.y + 10 + this.userName.height],
+                        anchor: [0,0],
+                        interactive: true,buttonMode: true,
+                    });
+                    this.charButton.style.fontSize = 32;
+                    Graphics.uiContainer.addChild(this.charButton);
+
+                    this.settingsButton = AcornSetup.makeButton({
+                        text: 'Settings',
+                        style: AcornSetup.baseStyle,
+                        position: [10,this.charButton.position.y + 10 + this.charButton.height],
+                        anchor: [0,0],
+                        interactive: true,buttonMode: true,
+                    });
+                    this.settingsButton.style.fontSize = 32;
+                    Graphics.uiContainer.addChild(this.settingsButton);
+
+                    this.logoutButton = AcornSetup.makeButton({
+                        text: 'Logout',
+                        style: AcornSetup.baseStyle,
+                        position: [10,this.settingsButton.position.y + 10 + this.settingsButton.height],
+                        anchor: [0,0],
+                        interactive: true,buttonMode: true,
+                        clickFunc: function onClick(){
+                            if (confirm('<' + Player.userData.name + '>, Are you sure you want to log out?') == true) {
+                                Acorn.Net.socket_.emit('playerUpdate',{logout: true});
+                            }
+                        }
+                    });
+                    this.logoutButton.style.fontSize = 32;
+                    Graphics.uiContainer.addChild(this.logoutButton);
+
                 },
                 update: function(dt){
+                    Graphics.worldPrimitives.clear();
+                    Graphics.drawBoxAround(this.logoutButton,Graphics.worldPrimitives,{pos: [this.logoutButton.position.x + this.logoutButton.width/2,this.logoutButton.position.y + this.logoutButton.height/2]});
+                    Graphics.drawBoxAround(this.settingsButton,Graphics.worldPrimitives,{pos: [this.settingsButton.position.x + this.settingsButton.width/2,this.settingsButton.position.y + this.settingsButton.height/2]});
+                    Graphics.drawBoxAround(this.charButton,Graphics.worldPrimitives,{pos: [this.charButton.position.x + this.charButton.width/2,this.charButton.position.y + this.charButton.height/2]});
                 }
             });
             Acorn.addState({
                 stateId: 'MapGen',
                 init: function(){
                     document.body.style.cursor = 'default';
-                    Graphics.clear();
                     MapGen.init();
                 },
                 update: function(dt){
@@ -146,7 +346,6 @@
                 init: function(){
                     console.log('Initializing Map Type Selection');
                     document.body.style.cursor = 'default';
-                    Graphics.clear();
                     var colors= [
                         'aqua', 'black', 'blue', 'fuchsia', 'green', 
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
@@ -351,8 +550,8 @@
                                                   this.sizePercent2*this.sizeBar2.width,
                                                   this.sizeBar2.height);
                         Graphics.worldPrimitives.endFill();
-                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0xFFFFFF',2);
-                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,'0x000000',2,-2,-2);
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,{});
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,{color: '0x000000',xbuffer:-2,ybuffer:-2});
                         var min = this.mapSizes[this.typeSelected].min;
                         var max = this.mapSizes[this.typeSelected].max;
                         this.sizeNum.text = Math.round(min + this.sizePercent*(max-min)) + ' x ' + Math.round(min + this.sizePercent2*(max-min));
@@ -375,8 +574,8 @@
                                               this.sizePercent*this.sizeBar.width,
                                               this.sizeBar.height);
                     Graphics.worldPrimitives.endFill();
-                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0xFFFFFF',2);
-                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,'0x000000',2,-2,-2);
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,{});
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,{color: '0x000000',xbuffer:-2,ybuffer:-2});
                 }
             });
 
@@ -384,7 +583,6 @@
                 stateId: 'game',
                 init: function(){
                     //document.body.style.cursor = 'none';
-                    Graphics.clear();
                     Map.init({width: 25,height: 25,startAt: 300,iso: 0,size: 10});
                 },
                 update: function(dt){
@@ -394,7 +592,9 @@
                     Map.update(dt);
                 }
             });
+        },
 
+        input: function(){
             Acorn.Input.onMouseClick(function(e) {
                 Acorn.Input.mouseDown = true;
             });
