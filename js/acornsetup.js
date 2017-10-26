@@ -49,6 +49,7 @@
 
             Acorn.Net.on('loggedIn', function (data) {
               Player.userData = data;
+              Player.init(data);
               Settings.toggleCredentials(false);
               Acorn.changeState('mainMenu');
             });
@@ -294,6 +295,9 @@
                         position: [10,this.userName.position.y + 10 + this.userName.height],
                         anchor: [0,0],
                         interactive: true,buttonMode: true,
+                        clickFunc: function onClick(){
+                            Acorn.changeState('charScreen');
+                        }
                     });
                     this.charButton.style.fontSize = 32;
                     Graphics.uiContainer.addChild(this.charButton);
@@ -339,6 +343,16 @@
                 },
                 update: function(dt){
                     MapGen.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'charScreen',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    Characters.init();
+                },
+                update: function(dt){
+                    Characters.update(dt);
                 }
             });
             Acorn.addState({

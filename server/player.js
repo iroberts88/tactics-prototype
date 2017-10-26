@@ -222,7 +222,7 @@ Player = function(){
                                         that.user.setOwner(that);
                                         that.user.lock();
                                         that.user.setLastLogin(Date.now());
-                                        that.gameEngine.queuePlayer(that,"loggedIn", {name:arr[0].userName,stats:arr[0].stats});
+                                        that.gameEngine.queuePlayer(that,"loggedIn", {name:arr[0].userName});
                                     }else{
                                         that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wp'});
                                     }
