@@ -1,37 +1,10 @@
 
 (function(window) {
     MapGen = {
-        TILE_SIZE: 17,
-        TILE_HEIGHT: 11,
         MAX_TOOL_SIZE: 10,
         MIN_SENSITIVITY: 1,
         MAX_SENSITIVITY: 15,
-        MAX_NODE_HEIGHT: 20,
         char_height: 2, //the height of LOS 'characters'
-
-        ZOOM_SETTINGS: [0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0],
-        currentZoomSetting: 5,
-
-        YSCALE_SETTINGS: [0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0],
-        currentYScaleSetting: 7,
-
-        type: null,
-        size: null,
-        maxSize: null,
-        // axial and cube maps
-        axialMap: null,
-        cubeMap: null,
-
-        currentMap: 0,
-        totalRotations: 12,
-
-        container: null, //container for all sprites
-        container2: null,
-
-        cAverages: null, //the average of all sprite locations (used for correct rotations)
-
-        rotateData: null,
-        currentRotation: 0,
 
         currentTool: 'height',
         toolSize: 1,
@@ -55,44 +28,40 @@
         mapNames: null,
         mapName: '',
 
+        size: null,
+        type: null,
+        data: null,
+
         init: function() {
             this.drawBG();
-            //create all of the tile textures!
-            this.tileTextures = {}
-            this.tileTypes = ['base','grass','dirt','ice','snow','sand'];
-            for (var i = 0; i < this.tileTypes.length;i++){
-                var t = this.tileTypes[i];
-                this.tileTextures[this.tileTypes[i]] = {1: [],2:[]};
-                for (var h = 0;h <= this.MAX_NODE_HEIGHT;h++){
-                    //create new texture
-                    var c = new PIXI.Container();
-                    var startingLoc = 32 + h*MapGen.TILE_HEIGHT;
-                    for (var j = 0; j <= h;j++){
-                        var s = Graphics.getSprite(t + '_tile1');
-                        s.anchor.x = 0.0;
-                        s.anchor.y = 0.5;
-                        s.position.x = 0;
-                        s.position.y = startingLoc + j*-MapGen.TILE_HEIGHT;
-                        c.addChild(s)
-                    }
-                    c._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(c.width,c.height);
-                    Graphics.app.renderer.render(c,texture);
-                    this.tileTextures[this.tileTypes[i]][1].push(texture);
-                    c.removeChildren();
-                    for (var j = 0; j <= h;j++){
-                        var s = Graphics.getSprite(t + '_tile2');
-                        s.anchor.x = 0.0;
-                        s.anchor.y = 0.5;
-                        s.position.x = 0;
-                        s.position.y = startingLoc + j*-MapGen.TILE_HEIGHT;
-                        c.addChild(s)
-                    }
-                    c._calculateBounds();
-                    var texture = new PIXI.RenderTexture.create(c.width,c.height);
-                    Graphics.app.renderer.render(c,texture);
-                    this.tileTextures[this.tileTypes[i]][2].push(texture);
+            //initialize the map
+            this.map = new Map();
+            if (!this.data){
+                if (this.type == 't'){
+                    this.map.maxSize = Math.round(this.size*1.5)
+                }else if (this.type == 'h'){
+                    this.map.maxSize = Math.round(this.size*2)
+                }else {
+                    this.map.maxSize = this.size[0] + this.size[1];
                 }
+                var data;
+                switch(this.type){
+                    case 'r':
+                        data = this.initRectangle();
+                        break;
+                    case 'rh':
+                        data = this.initRhombus();
+                        break;
+                    case 't':
+                        data = this.initTriangle();
+                        break;
+                    case 'h':
+                        data = this.initHexagon();
+                        break;
+                }
+                this.map.init(data);
+            }else{
+                this.map.init(this.data);
             }
 
             //create tool buttons
@@ -757,438 +726,60 @@
             this.deleteButton.position.y = Graphics.height - this.deleteButton.height/2;
             Graphics.uiContainer.addChild(this.deleteButton);
 
-            //set up some stuff
-            this.axialMap = {};
-            this.axialDirections = [
-                [1,0],[1,-1],[0,-1],
-                [-1,0],[-1,1],[0,1]
-            ];
-            this.cubeMap = {};
-            this.cubeDirections = [
-                [1,-1,0],[1,0,-1],[0,1,-1],
-                [-1,1,0],[-1,0,1],[0,-1,1]
-            ];
-            this.cubeDiagonals = [
-                [+2, -1, -1], [+1, +1, -2], [-1, +2, -1], 
-                [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
-            ];
-            this.allMaps = [];
-
-            if (typeof this.data == 'undefined'){
-                if (this.type == 't'){
-                    this.maxSize = Math.round(this.size*1.5)
-                }else if (this.type == 'h'){
-                    this.maxSize = Math.round(this.size*2)
-                }else {
-                    this.maxSize = this.size[0] + this.size[1];
-                }
-                switch(this.type){
-                    case 'r':
-                        this.initRectangle();
-                        break;
-                    case 'rh':
-                        this.initRhombus();
-                        break;
-                    case 't':
-                        this.initTriangle();
-                        break;
-                    case 'h':
-                        this.initHexagon();
-                        break;
-                }
-            }else{
-                try{
-                    var size = 0;
-                    var size2 = 0;
-                    for (var i in this.data.mapData){
-                        size += 1;
-                        size2 = 0;
-                        for (var j in this.data.mapData[i]){
-                            size2 += 1;
-                            if (typeof this.axialMap[i] == 'undefined'){
-                                this.axialMap[i] = {};
-                            }
-                            var node = this.getAxialNode(i,j);
-                            this.axialMap[i][j] = node;
-                            this.axialMap[i][j].h = this.data.mapData[i][j].h;
-                            this.axialMap[i][j].deleted = this.data.mapData[i][j].deleted;
-                            this.axialMap[i][j].tile = this.data.mapData[i][j].tile;
-                        }
-                    }
-                    this.maxSize = size + size2;
-                    this.initCubeMap();
-                    this.getHexContainer();
-                    for (var i in this.axialMap){
-                        for (var j in this.axialMap[i]){
-                            var a = this.axialMap[i][j]
-                            a.sprite1.texture = this.tileTextures[a.tile][1][a.h];
-                            a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                            a.sprite2.texture = this.tileTextures[a.tile][2][a.h];
-                            a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                            if (a.deleted){
-                                this.container1.removeChild(a.sprite1);
-                                this.container2.removeChild(a.sprite2);
-                                var cube = this.getCube(a);
-                                cube.deleted = true;
-                            }
-                        }
-                    }
-                    this.updateSprites(this.container1.children);
-                    this.updateSprites(this.container2.children);
-                    Graphics.worldContainer.addChild(this.container2);
-                }catch(e){
-                    console.log('Unable to initialize map');
-                    Graphics.showLoadingMessage(false);
-                    Acorn.changeState('mainMenu');
-                }
-            }
+            window.currentGameMap = this.map;
             Graphics.showLoadingMessage(false);
-        },
-        //returns a cube node when given an axial node
-        getCube: function(axialNode){
-            return MapGen.cubeMap[axialNode.q][-axialNode.q-axialNode.r][axialNode.r];
-        },
-        //returns an axial node when given a cube node
-        getAxial: function(cubeNode){
-            return MapGen.axialMap[cubeNode.x][cubeNode.z];
-        },
-        //finds the neighbor of a cube node in <dir> direction
-        getCubeNeighbor: function(cubeNode,direction){
-            var d = this.cubeDirections[direction];
-            try{
-                return MapGen.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
-            }catch(e){}
-            return null;
-        },
-        //finds the diagonal neighbor of a cube node in <dir> direction
-        getCubeDiagonalNeighbor: function(cubeNode,direction){
-            var d = this.cubeDiagonals[direction];
-            return MapGen.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
-        },
-        //finds the neighbor of an axial node in <dir> direction
-        getAxialNeighbor: function(axialNode,direction){
-            var d = this.axialDirections[direction];
-            return MapGen.axialMap[axialNode.x+d[0]][axialNode.y+d[1]];
-        },
-        cubeRing: function(center,radius){
-            //return a list of all nodes in a ring around a center node
-            if (!radius){return [[center.x,center.y,center.z]];}
-            var results = [];
-            var cubeNode = [center.x+this.cubeDirections[4][0]*radius,center.y+this.cubeDirections[4][1]*radius,center.z+this.cubeDirections[4][2]*radius];
-            for (var i = 0; i < 6;i++){
-                for (var j = 0; j < radius;j++){
-                    results.push(cubeNode);
-                    var d = this.cubeDirections[i];
-                    cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
-                }
-            }
-            return results;
-        },
-        cubeSpiral: function(center,radius){
-            var results = [];
-            for (var k = 0; k <= radius;k++){
-                var arr = MapGen.cubeRing(center,k);
-                for (var i = 0; i < arr.length;i++){
-                    try{
-                        var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                        results.push(arr[i]);
-                    }catch(e){}
-                }
-            }
-            return results;
-        },
-        cubeDistance: function(a,b){
-            return Math.round(Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y),Math.abs(a.z-b.z)));
-        },
-        cubeRound: function(cube){
-            var rx = Math.trunc(Math.round(cube.x));
-            var ry = Math.trunc(Math.round(cube.y));
-            var rz = Math.trunc(Math.round(cube.z));
-            var x_diff = Math.abs(rx - cube.x);
-            var y_diff = Math.abs(ry - cube.y);
-            var z_diff = Math.abs(rz - cube.z);
-            if (x_diff > y_diff && x_diff > z_diff){
-                rx = parseInt(-ry-rz);
-            }else if (y_diff > z_diff){
-                ry = parseInt(-rx-rz);
-            }else{
-                rz = parseInt(-rx-ry);
-            }
-            return {
-                x:rx,
-                y: ry,
-                z: rz
-            }
-        },
-        lerp: function(a,b,t){
-            return a + (b-a) * t;
-        },
-        cubeLerp: function(a,b,t){
-            return {
-                x: this.lerp(a.x,b.x,t),
-                y: this.lerp(a.y,b.y,t),
-                z: this.lerp(a.z,b.z,t)
-            }
-        },
-        cubeLineDraw: function(a,b){
-            var N = Math.max(1,this.cubeDistance(a,b));
-            var results = [];
-            for (var i = 0; i <=N;i++){
-                var cube = this.cubeRound(this.cubeLerp(a,b,1.0/N*i));
-                try{
-                    var c = this.cubeMap[cube.x][cube.y][cube.z];
-                    results.push(c);
-                }catch(e){}
-            }
-            return results;
-        },
-
-        initCubeMap: function(){
-            //Take an axial map and create its cube map counterpart
-            for (var i in this.axialMap){
-                for (var j in this.axialMap[i]){
-                    if (typeof this.cubeMap[i] == 'undefined'){
-                        this.cubeMap[i] = {}
-                    }
-                    var y = -i-j;
-                    if (typeof this.cubeMap[i][y] == 'undefined'){
-                        this.cubeMap[i][y] = {}
-                    }
-                    var node = {
-                        x: parseInt(i),
-                        y: parseInt(-i-j),
-                        z: parseInt(j),
-                        deleted:false
-                    }
-                    this.cubeMap[node.x][node.y][node.z] = node;
-                }
-            }
-        },
-        findPath: function(startNode,endNode,skip,maxJump){
-
-            //A* search
-            //start = starting axial node;
-            //end = ending axial node;
-            //skip - nodes to skip (for delete in map editor) TODO - the game version probably shouldnt have this
-            //maxJump - the maximum height diff for a neighboring node to be viable
-            //returns empty array if no path exists
-            //returns path array if path exists [node,node,node,...]
-
-            //Init the start node and the end node
-            startNode.f = 0;
-            startNode.g = 0;
-            startNode.h = 0;
-            startNode.parent = null;
-            endNode.f = 0;
-            endNode.g = 0;
-            endNode.h = 0;
-            endNode.parent = null;
-
-            if (typeof maxJump == 'undefined'){
-                maxJump = 99;
-            }
-
-            var openList   = [];
-            var closedList = [];
-            openList.push(startNode);
-
-            while(openList.length > 0) {
-                // Grab the lowest f(x) to process next
-                var lowInd = 0;
-                for(var i=0; i<openList.length; i++) {
-                    if(openList[i].f < openList[lowInd].f) { lowInd = i; }
-                }
-                var currentNode = openList[lowInd];
-
-                if(currentNode.x == endNode.x && currentNode.y == endNode.y && currentNode.z == endNode.z) {
-                    //Found the optimal path. Add all node parents to the result array and return
-                    var curr = currentNode;
-                    var ret = [];
-                    while(curr.parent) {
-                        ret.push(curr);
-                        curr = curr.parent;
-                    }
-                    var arr = ret.reverse();
-                    arr.unshift(startNode)
-                    return arr;
-                }
-
-                // Normal case -- move currentNode from open to closed, process each of its neighbors
-                this.removeGraphNode(openList,currentNode);
-                closedList.push(currentNode);
-                var currentAxial = this.getAxial(currentNode);
-
-                //process neighbors
-                /*
-                TODO -- eventually, this should also scan neighbors within jump distance 
-                (eg. in decreasing height at a higher distance)
-                */
-                for (var i = 0;i < 6;i++){
-                    var node = this.getCubeNeighbor(currentNode,i);
-                    //first check if the node exists
-                    if (node){
-                        var axial = this.getAxial(node);
-                        if(this.findGraphNode(closedList,node) || node == skip || node.deleted || axial.h - currentAxial.h > maxJump) {
-                            // not a valid node to process, skip to next neighbor
-                            continue;
-                        }
-                        var newNode = false;
-                        if(!this.findGraphNode(openList,node)) {
-                            //new node, initialize
-                            newNode = true;
-                            node.g = 0;
-                            node.h = 0;
-                            node.f = 0;
-                            node.parent = null;
-                        }
-
-                        // g score is the shortest distance from start to current node, check if the path we have arrived
-                        //at this neighbor is the shortest one we have seen yet
-                        var gScore = currentNode.g + 1; // 1 is the distance from a node to it's neighbor
-                        var gScoreIsBest = false;
-
-                        if(newNode) {
-                            // This the the first time we have arrived at this node, it must be the best
-                            gScoreIsBest = true;
-                            //take heuristic score
-                            //a small amount is added based on height diff 
-                            //to avoid paths with too much height variation when possible
-                            node.h = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
-                            openList.push(node);
-                        }else if(gScore < node.g) {
-                            // We have already seen the node, but last time it had a worse g (distance from start)
-                            gScoreIsBest = true;
-                        }
-
-                        if(gScoreIsBest) {
-                            // Found an optimal (so far) path to this node.  Store info on how we got here and how good it is
-                            node.parent = currentNode;
-                            node.g = gScore;
-                            node.f = node.g + node.h;
-                        }
-                    }
-                }
-            }
-
-            // No result was found -- empty array signifies failure to find path
-            return [];
-        }, 
-        removeGraphNode:  function(arr,node){
-            //for use in findPath
-            for (var i = 0;i < arr.length;i++){
-                if (arr[i] == node){
-                    arr.splice(i,1);
-                }
-            }
-        },
-        findGraphNode:  function(arr,node){
-            //for use in findPath
-            for (var i = 0;i < arr.length;i++){
-                if (arr[i] == node){
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        //sort a list of sprites to be added to a container
-        mergeSort: function(arr){
-            if (arr.length <= 1){
-                return arr;
-            }
-            var middle = parseInt(arr.length/2);
-            var left = arr.slice(0,middle);
-            var right = arr.slice(middle,arr.length);
-            return MapGen.merge(MapGen.mergeSort(left),MapGen.mergeSort(right));
-        },
-        merge: function(left,right){
-            var result = [];
-            while (left.length && right.length) {
-                if (left[0].position.y < right[0].position.y) {
-                    result.push(left.shift());
-                } else if (left[0].position.y == right[0].position.y) {
-                    //if they are at the same y position, sort by z direction (height)
-                    var leftNode = this.axialMap[left[0].axialCoords.q][left[0].axialCoords.r];
-                    var rightNode = this.axialMap[right[0].axialCoords.q][right[0].axialCoords.r];
-                    if (leftNode.h <= rightNode.h){
-                        result.push(left.shift());
-                    }else{
-                        result.push(right.shift());
-                    }
-                }else{
-                    result.push(right.shift());
-                }
-            }
-
-            while (left.length)
-                result.push(left.shift());
-
-            while (right.length)
-                result.push(right.shift());
-
-            return result;
         },
 
         initRectangle: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rectangle Map');
             //Generate the cube and axial coordinate systems
+            var m = {}
             for (var j = 0; j < this.size[1];j++){
                 for (var i = 0+(Math.ceil(-j/2)); i < this.size[0]+(Math.ceil(-j/2));i++){
-                    if (typeof this.axialMap[i] == 'undefined'){
-                        this.axialMap[i] = {}
+                    if (typeof m[i] == 'undefined'){
+                        m[i] = {};
                     }
                     var node = this.getAxialNode(i,j);
-                    this.axialMap[i][j] = node;
-                    this.tileCount += 1;
+                    m[i][j] = node;
                 }
             }
-            this.initCubeMap();
-            //set up the sprites for all 12 rotations
-            this.getHexContainer();
-            Graphics.worldContainer.addChild(this.container2);
+            return {mapData: m};
         },
         initRhombus: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
             //Generate the cube and axial coordinate systems
+            var m = {};
             for (var i = 0; i < this.size[0];i++){
                 var row = {};
                 for (var j = 0; j < this.size[1];j++){
                     var node = this.getAxialNode(i,j);
                     row[j] = node;
-                    this.tileCount += 1;
                 }
-                this.axialMap[i] = row;
+                m[i] = row;
             }
-            this.initCubeMap();
-            //set up the sprites for all 12 rotations
-            this.getHexContainer();
-            Graphics.worldContainer.addChild(this.container2);
+            return {mapData: m};
         },
         initTriangle: function(){
             console.log('Generating a ' + this.size + ' unit Triangle Map');
             //Generate the cube and axial coordinate systems
+            var m = {}
             for (var i = 0; i < this.size;i++){
-                if (typeof this.axialMap[i] == 'undefined'){
-                    this.axialMap[i] = {};
-                    this.tileCount += 1;
+                if (typeof m[i] == 'undefined'){
+                    this.map.axialMap[i] = {};
                 }
                 for (var j = 0; j < this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) < this.size){
                         var node = this.getAxialNode(i,j);
-                        this.axialMap[i][j] = node;
+                        m[i][j] = node;
                     }
                 }
             }
-            this.initCubeMap();
-            //set up the sprites for all 12 rotations
-            this.getHexContainer();
-            Graphics.worldContainer.addChild(this.container2);
+            return {mapData: m};
         },
         initHexagon: function(){
             console.log('Generating a ' + this.size + ' unit Hexagon Map');
             //Generate the cube and axial coordinate systems
+            var m = {};
             for (var i = this.size*-1; i <=this.size;i++){
                 var row = {};
                 for (var j = this.size*-1; j <=this.size;j++){
@@ -1198,368 +789,10 @@
                         this.tileCount += 1;
                     }
                 }
-                this.axialMap[i] = row;
+                m[i] = row;
             }
-            this.initCubeMap();
-            //set up the sprites for all 12 rotations
-            this.getHexContainer();
-            Graphics.worldContainer.addChild(this.container2);
+            return {mapData: m};
             
-        },
-        getHexContainer: function(){
-            this.container1 = new PIXI.Container();
-            this.container1.interactive = true;
-            this.container2 = new PIXI.Container();
-            this.container2.interactive = true;
-            var cAverages ={};
-
-            for (var i = 0; i <12;i++){
-                cAverages[i] = {};
-                for (var j = 0; j <this.ZOOM_SETTINGS.length;j++){
-                    cAverages[i][j] = {};
-                    for (var k = 0; k < this.YSCALE_SETTINGS.length;k++){
-                        cAverages[i][j][k] = {
-                            x: 0,
-                            y: 0
-                        }
-                    }
-                }
-            }
-            var totalNodes = 0;
-            for (var x in this.axialMap){
-                for (var y in this.axialMap[x]){
-                    totalNodes += 1;
-                    var node = this.axialMap[x][y];
-                    var yScale = this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting];
-                    var xScale = this.ZOOM_SETTINGS[this.currentZoomSetting];
-                    node.sprite2= Graphics.getSprite('base_tile2');
-                    node.sprite1= Graphics.getSprite('base_tile1');
-                    node.sprite1.scale.y = yScale;
-                    node.sprite2.scale.y = yScale;
-                    node.sprite1.scale.x = xScale;
-                    node.sprite2.scale.x = xScale;
-                    var cube = MapGen.getCube(node);
-                    //get all of the rotated positions!!
-                    node.sprite2.rotatedPositions = {};
-                    node.sprite2.position.x = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting] * 1.5 * cube.x;
-                    node.sprite2.position.y = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting] * Math.sqrt(3) * (cube.y+cube.x/2);
-                    node.sprite2.rotatedPositions[0] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[0][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[0][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * cube.x,
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (cube.y+cube.x/2)
-                            };
-                            cAverages[0][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * cube.x;
-                            cAverages[0][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (cube.y+cube.x/2);
-                        }
-                    }
-                    var newCube = [-cube.z,-cube.x,-cube.y];
-                    node.sprite2.rotatedPositions[2] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[2][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[2][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube[0],
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube[1]+newCube[0]/2)
-                            };
-                            cAverages[2][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube[0];
-                            cAverages[2][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube[1]+newCube[0]/2);
-                        }
-                    }
-                    var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                    node.sprite2.rotatedPositions[4] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[4][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[4][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube2[0],
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2)
-                            };
-                            cAverages[4][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube2[0];
-                            cAverages[4][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube2[1]+newCube2[0]/2);
-                        }
-                    }
-                    var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                    node.sprite2.rotatedPositions[6] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[6][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[6][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube3[0],
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2)
-                            };
-                            cAverages[6][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube3[0];
-                            cAverages[6][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube3[1]+newCube3[0]/2);
-                        }
-                    }
-                    var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                    node.sprite2.rotatedPositions[8] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[8][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[8][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube4[0],
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2)
-                            };
-                            cAverages[8][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube4[0];
-                            cAverages[8][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube4[1]+newCube4[0]/2);
-                        }
-                    }
-                    var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                    node.sprite2.rotatedPositions[10] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite2.rotatedPositions[10][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite2.rotatedPositions[10][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube5[0],
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2)
-                            };
-                            cAverages[10][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * 1.5 * newCube5[0];
-                            cAverages[10][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * Math.sqrt(3) * (newCube5[1]+newCube5[0]/2);
-                        }
-                    }
-                    node.sprite1.rotatedPositions = {};
-                    node.sprite1.position.y = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting]*this.YSCALE_SETTINGS[this.currentYScaleSetting] * 1.5 * cube.y;
-                    node.sprite1.position.x = MapGen.TILE_SIZE*this.ZOOM_SETTINGS[this.currentZoomSetting] * Math.sqrt(3) * (cube.x+cube.y/2);
-                    node.sprite1.rotatedPositions[1] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[1][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[1][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (cube.x+(cube.y/2)),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * this.YSCALE_SETTINGS[j] * 1.5 * cube.y
-                            };
-                            cAverages[1][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (cube.x+cube.y/2);
-                            cAverages[1][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * cube.y;
-                        }
-                    }
-                    var newCube = [-cube.z,-cube.x,-cube.y];
-                    node.sprite1.rotatedPositions[3] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[3][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[3][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube[0]+newCube[1]/2),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube[1]
-                            };
-                            cAverages[3][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube[0]+newCube[1]/2);
-                            cAverages[3][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube[1];
-                        }
-                    }
-                    var newCube2 = [-newCube[2],-newCube[0],-newCube[1]];
-                    node.sprite1.rotatedPositions[5] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[5][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[5][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube2[1]
-                            };
-                            cAverages[5][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube2[0]+newCube2[1]/2);
-                            cAverages[5][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube2[1];
-                        }
-                    }
-                    var newCube3 = [-newCube2[2],-newCube2[0],-newCube2[1]];
-                    node.sprite1.rotatedPositions[7]= {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[7][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[7][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube3[1]
-                            };
-                            cAverages[7][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube3[0]+newCube3[1]/2);
-                            cAverages[7][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube3[1];
-                        }
-                    }
-                    var newCube4 = [-newCube3[2],-newCube3[0],-newCube3[1]];
-                    node.sprite1.rotatedPositions[9] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[9][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[9][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube4[1]
-                            };
-                            cAverages[9][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube4[0]+newCube4[1]/2);
-                            cAverages[9][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube4[1];
-                        }
-                    }
-                    var newCube5 = [-newCube4[2],-newCube4[0],-newCube4[1]];
-                    node.sprite1.rotatedPositions[11] = {};
-                    for (var i = 0; i <this.ZOOM_SETTINGS.length;i++){
-                        node.sprite1.rotatedPositions[11][i] = {};
-                        for (var j = 0; j < this.YSCALE_SETTINGS.length;j++){
-                            node.sprite1.rotatedPositions[11][i][j] = {
-                                x:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2),
-                                y:MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube5[1]
-                            };
-                            cAverages[11][i][j].x += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i] * Math.sqrt(3) * (newCube5[0]+newCube5[1]/2);
-                            cAverages[11][i][j].y += MapGen.TILE_SIZE*this.ZOOM_SETTINGS[i]*this.YSCALE_SETTINGS[j] * 1.5 * newCube5[1];
-                        }
-                    }
-
-                    node.sprite1.anchor.x = .5;
-                    node.sprite1.anchor.y = .5;
-                    node.sprite1.axialCoords = {q:x,r:y};
-                    node.sprite1.cubeCoords = {x:x,y:-x-y,z:y};
-                    node.sprite1.interactive = true;
-                    node.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
-                    MapGen.setupEvents(node.sprite1);
-                    this.container1.addChild(node.sprite1);
-
-                    node.sprite2.anchor.x = .5;
-                    node.sprite2.anchor.y = .5;
-                    node.sprite2.axialCoords = {q:x,r:y};
-                    node.sprite2.cubeCoords = {x:x,y:-x-y,z:y};
-                    node.sprite2.interactive = true;
-                    node.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
-                    MapGen.setupEvents(node.sprite2);
-                    this.container2.addChild(node.sprite2);
-                }
-            }
-            for (var i in cAverages){
-                for (var j in cAverages[i]){
-                    for (var k in cAverages[i][j]){
-                        cAverages[i][j][k].x = cAverages[i][j][k].x/totalNodes;
-                        cAverages[i][j][k].y = cAverages[i][j][k].y/totalNodes;
-                    }
-                }
-            }
-            for (var x in this.axialMap){
-                for (var y in this.axialMap[x]){
-                    var node = this.axialMap[x][y];
-                    for (var i = 0;i < 12;i+=2){
-                        for(var j in node.sprite2.rotatedPositions[i]){
-                            for (var k in node.sprite2.rotatedPositions[i][j]){
-                                node.sprite2.rotatedPositions[i][j][k].x -= cAverages[i][j][k].x;
-                                node.sprite2.rotatedPositions[i][j][k].y -= cAverages[i][j][k].y;
-                            }
-                        }
-                    }
-                    for (var i = 1;i < 12;i+=2){
-                        for(var j in node.sprite1.rotatedPositions[i]){
-                            for (var k in node.sprite1.rotatedPositions[i][j]){
-                                node.sprite1.rotatedPositions[i][j][k].x -= cAverages[i][j][k].x;
-                                node.sprite1.rotatedPositions[i][j][k].y -= cAverages[i][j][k].y;
-                            }
-                        }
-                    }
-                }
-            }
-            this.container1.children = MapGen.mergeSort(this.container1.children);
-            this.container1.position.x = Graphics.width/2;
-            this.container1.position.y = Graphics.height/2;
-            this.container2.children = MapGen.mergeSort(this.container2.children);
-            this.container2.position.x = Graphics.width/2;
-            this.container2.position.y = Graphics.height/2;
-            Graphics.worldPrimitives.position.x = Graphics.width/2;
-            Graphics.worldPrimitives.position.y = Graphics.height/2;
-        },
-        updateSprites: function(arr, resetTint){
-            if (typeof resetTint == 'undefined'){
-                resetTint = false;
-            }
-            //updates sprite position in c.children arr after a rotation/zoom ect.
-            try{
-                for (var i = 0; i < arr.length;i++){
-                    arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
-                    arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
-                    arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
-                    arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
-                    if (resetTint){
-                        arr[i].tint = 0xFFFFFF;
-                    }
-                }
-            }catch(e){
-                console.log(this.currentRotation)
-                console.log(e);
-                console.log(i);
-                console.log(arr);
-            }
-            return MapGen.mergeSort(arr);
-        },
-        setupEvents: function(sprite){
-            //setup drag and click events for sprite
-            sprite.clicked = false;
-            sprite.on('pointerdown', function onClick(e){
-                if (e.data.button != 2){
-                    MapGen.dragStart = {x:Acorn.Input.mouse.X,y:Acorn.Input.mouse.Y};
-                }
-            });
-            sprite.on('pointerup', function onClick(e){
-                MapGen.dragStart = null;
-                try{
-                    if (MapGen.losToolData.losShown){
-                        for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
-                            MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
-                        }
-                        MapGen.losToolData.spritesAltered = [];
-                        MapGen.losToolData.losShown = false;
-                    }
-                }catch(e){}
-            });
-            sprite.on('pointerupoutside', function onClick(e){
-                MapGen.dragStart = null;
-                var cubeNode = MapGen.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
-                var arr = MapGen.cubeSpiral(cubeNode,MapGen.toolSize-1);
-                for (var i = 0;i < arr.length;i++){
-                    var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                    var a = MapGen.getAxial(c);
-                    var t = 1;
-                    if (!(MapGen.currentRotation%2)){t = 2}
-                    var s = a['sprite' + t];
-                    s.tint = 0xFFFFFF;
-                }
-                try{
-                    if (MapGen.losToolData.losShown){
-                        for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
-                            MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
-                        }
-                        MapGen.losToolData.spritesAltered = [];
-                        MapGen.losToolData.losShown = false;
-                    }
-                }catch(e){}
-            });
-            sprite.on('pointerover', function onMove(e){
-                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
-                    MapGen.setNewSelectedNode = sprite;
-                }
-                MapGen.currentlyMousedOver = sprite;
-            }); 
-            sprite.on('pointerout', function onMove(e){
-                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
-                    var cubeNode = MapGen.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
-                    var arr = MapGen.cubeSpiral(cubeNode,MapGen.toolSize-1);
-                    for (var i = 0;i < arr.length;i++){
-                        var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                        var a = MapGen.getAxial(c);
-                        var t = 1;
-                        if (!(MapGen.currentRotation%2)){t = 2}
-                        var s = a['sprite' + t];
-                        s.tint = 0xFFFFFF;
-                    }
-                }
-            });
-        },
-        getNewSpriteHeight: function(sprite,height){
-            //create new texture
-            var c = new PIXI.Container();
-            var startingLoc = 32 + height*MapGen.TILE_HEIGHT;
-            for (var i = 0; i <= height;i++){
-                var s = Graphics.getSprite(sprite);
-                s.anchor.x = 0.0;
-                s.anchor.y = 0.5;
-                s.position.x = 0;
-                s.position.y = startingLoc + i*-MapGen.TILE_HEIGHT;
-                c.addChild(s)
-            }
-            c._calculateBounds();
-            var texture = new PIXI.RenderTexture.create(c.width,c.height);
-            Graphics.app.renderer.render(c,texture);
-            return texture;
         },
         drawBG: function(){
             Graphics.bgContainer.clear();
@@ -1571,15 +804,8 @@
             Graphics.drawBG('blue', 'white');
 
         },
-        move: function(x,y){
-            this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
-            this.container2.position.x = this.container1.position.x;
-            this.container1.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
-            this.container2.position.y = this.container1.position.y;
-            Graphics.worldPrimitives.position.x = this.container1.position.x;
-            Graphics.worldPrimitives.position.y = this.container1.position.y;
-        },
         update: function(deltaTime){
+            this.map.update(deltaTime);
             if (this.removeDescText <= 0){
                 this.toolDescriptionText.visible = false;
             }else{
@@ -1639,41 +865,17 @@
                 this.dirtTile.visible = false;
             }
             Graphics.worldPrimitives.endFill();
-            if (this.rotateData){
-                //rotate the map if rotate data is given
-                if (typeof this.rotateData.swapped == 'undefined'){
-                    this.rotateData.swapped = false;
-                }
-
-                this.rotateData.t += deltaTime;
-                if (!this.rotateData.swapped){
-                    this.rotateData.extraRot = -this.rotateData.angle;
-                    this.rotateData.swapped = true;
-                    Graphics.worldContainer.removeChildren();
-                    var t = 1;
-                    if (!(this.currentRotation%2)){t = 2}
-                    Graphics.worldContainer.addChild(this['container' + t]);
-                    this['container' + t].children = this.updateSprites(this['container' + t].children,true);
-                }
-                this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
-                this.container2.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
-                if (this.rotateData.t >= this.rotateData.time){
-                    this.container1.rotation = 0;
-                    this.container2.rotation = 0;
-                    this.rotateData = null;
-                }
-
-            }else{
+            if (!this.map.rotateData){
                 //set the new currently selected node after mouseover
                 if (this.setNewSelectedNode){
                     this.selectedSprite = this.setNewSelectedNode;
-                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                    var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                    var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                    var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                     for (var i = 0;i < arr.length;i++){
-                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                        var a = this.getAxial(c);
+                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                        var a = this.map.getAxial(c);
                         var t = 1;
-                        if (!(this.currentRotation%2)){t = 2}
+                        if (!(this.map.currentRotation%2)){t = 2}
                         var s = a['sprite' + t];
                         s.tint = 0x999999;
                     }
@@ -1702,27 +904,27 @@
                             if (dragged === 1){
                                 //increase all of the lowest sprite heights
                                 var lowest = Infinity;
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                    var a = this.getAxial(c);
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.map.getAxial(c);
                                     if (a.h < lowest){
                                         lowest = a.h;
                                     }
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                        var a = this.getAxial(c);
-                                        if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
+                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.map.getAxial(c);
+                                        if (a.h == lowest && a.h < this.map.MAX_NODE_HEIGHT){
                                             //all the lowest nodes, increase height!
-                                            a.sprite1.texture = this.tileTextures[a.tile][1][lowest+1];
+                                            a.sprite1.texture = this.map.tileTextures[a.tile][1][lowest+1];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                            a.sprite2.texture = this.tileTextures[a.tile][2][lowest+1];
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.map.tileTextures[a.tile][2][lowest+1];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                             a.h += 1;
                                         }
                                     }catch(e){}
@@ -1732,27 +934,27 @@
                             if (dragged === -1){
                                 //decrease height
                                 var highest = 0;
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                    var a = this.getAxial(c);
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.map.getAxial(c);
                                     if (a.h > highest){
                                         highest = a.h;
                                     }
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                        var a = this.getAxial(c);
+                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.map.getAxial(c);
                                         if (a.h == highest && a.h > 0){
                                             //all the highest nodes, decrease height
-                                            a.sprite1.texture = this.tileTextures[a.tile][1][highest-1];
+                                            a.sprite1.texture = this.map.tileTextures[a.tile][1][highest-1];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                            a.sprite2.texture = this.tileTextures[a.tile][2][highest-1];
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.map.tileTextures[a.tile][2][highest-1];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                             a.h -= 1;
                                         }
                                     }catch(e){}
@@ -1764,39 +966,39 @@
                             if (dragged === 1){
                                 //increase all of the lowest sprite heights
                                 var lowest = Infinity;
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                    var a = this.getAxial(c);
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.map.getAxial(c);
                                     if (a.h < lowest){
                                         lowest = a.h;
                                     }
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                        var a = this.getAxial(c);
-                                        if (a.h == lowest && a.h < this.MAX_NODE_HEIGHT){
+                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.map.getAxial(c);
+                                        if (a.h == lowest && a.h < this.map.MAX_NODE_HEIGHT){
                                             //all the lowest nodes, increase height!
-                                            a.sprite1.texture = this.tileTextures[a.tile][1][lowest+1];
+                                            a.sprite1.texture = this.map.tileTextures[a.tile][1][lowest+1];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                            a.sprite2.texture = this.tileTextures[a.tile][2][lowest+1];
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.map.tileTextures[a.tile][2][lowest+1];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                             a.h += 1;
                                         }
                                     }catch(e){}
                                 }
                                 for (var j = 1; j <= this.dragStart.n;j++){
                                     var ringLowest = Infinity;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeRing(cubeNode,this.toolSize-1 + j);
+                                    var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var arr = this.map.cubeRing(cubeNode,this.toolSize-1 + j);
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
+                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.map.getAxial(c);
                                             if (a.h < ringLowest){
                                                 ringLowest = a.h;
                                             }
@@ -1804,16 +1006,16 @@
                                     }
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
-                                            if (a.h == ringLowest && a.h < this.MAX_NODE_HEIGHT && ringLowest < lowest){
+                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.map.getAxial(c);
+                                            if (a.h == ringLowest && a.h < this.map.MAX_NODE_HEIGHT && ringLowest < lowest){
                                                 //all the lowest nodes, increase height!
-                                                a.sprite1.texture = this.tileTextures[a.tile][1][ringLowest+1];
+                                                a.sprite1.texture = this.map.tileTextures[a.tile][1][ringLowest+1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures[a.tile][2][ringLowest+1];
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.texture = this.map.tileTextures[a.tile][2][ringLowest+1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                                 a.h += 1;
                                             }
                                         }catch(e){}
@@ -1827,39 +1029,39 @@
                             if (dragged === -1){
                                 //decrease height
                                 var highest = 0;
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                    var a = this.getAxial(c);
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.map.getAxial(c);
                                     if (a.h > highest){
                                         highest = a.h;
                                     }
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                        var a = this.getAxial(c);
+                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var a = this.map.getAxial(c);
                                         if (a.h == highest && a.h > 0){
                                             //all the highest nodes, decrease height
-                                            a.sprite1.texture = this.tileTextures[a.tile][1][highest-1];
+                                            a.sprite1.texture = this.map.tileTextures[a.tile][1][highest-1];
                                             a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                            a.sprite2.texture = this.tileTextures[a.tile][2][highest-1];
+                                            a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.texture = this.map.tileTextures[a.tile][2][highest-1];
                                             a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                            a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                             a.h -= 1;
                                         }
                                     }catch(e){}
                                 }
                                 for (var j = -1; j >= this.dragStart.n;j--){
                                     var ringHighest = 0;
-                                    var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var arr = this.cubeRing(cubeNode,this.toolSize-1 + (j*-1));
+                                    var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var arr = this.map.cubeRing(cubeNode,this.toolSize-1 + (j*-1));
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
+                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.map.getAxial(c);
                                             if (a.h > ringHighest){
                                                 ringHighest = a.h;
                                             }
@@ -1867,16 +1069,16 @@
                                     }
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                            var a = this.getAxial(c);
+                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var a = this.map.getAxial(c);
                                             if (a.h == ringHighest && a.h > 0 && ringHighest > highest){
                                                 //all the lowest nodes, decrease height!
-                                                a.sprite1.texture = this.tileTextures[a.tile][1][ringHighest-1];
+                                                a.sprite1.texture = this.map.tileTextures[a.tile][1][ringHighest-1];
                                                 a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                                a.sprite2.texture = this.tileTextures[a.tile][2][ringHighest-1];
+                                                a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.texture = this.map.tileTextures[a.tile][2][ringHighest-1];
                                                 a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                                a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                                 a.h -= 1;
                                             }
                                         }catch(e){}
@@ -1894,22 +1096,22 @@
                                 this.dragStart.time -= (this.sensitivity/10);
                                 //increase all of the lowest sprite heights
                                 var lowest = Infinity;
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                    var a = this.getAxial(c);
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var a = this.map.getAxial(c);
                                     var n = 1;
                                     if (Math.round(Math.random())){n = -1}
-                                    var newHeight = Math.min(this.MAX_NODE_HEIGHT,Math.max(a.h+n,0));
+                                    var newHeight = Math.min(this.map.MAX_NODE_HEIGHT,Math.max(a.h+n,0));
                                     if (newHeight){
                                         a.h = newHeight;
-                                        a.sprite1.texture = this.tileTextures[a.tile][1][newHeight];
+                                        a.sprite1.texture = this.map.tileTextures[a.tile][1][newHeight];
                                         a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                                        a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
-                                        a.sprite2.texture = this.tileTextures[a.tile][2][newHeight];
+                                        a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
+                                        a.sprite2.texture = this.map.tileTextures[a.tile][2][newHeight];
                                         a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
-                                        a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                                        a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.map.TILE_HEIGHT*(a.h+1),32,32+this.map.TILE_HEIGHT*(a.h+1));
                                     }
                                 }
                                 
@@ -1918,33 +1120,33 @@
                         case 'tiles':
 
                             //change sprite tile
-                            var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                            var arr = this.cubeSpiral(cubeNode,this.toolSize-1);
+                            var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                            var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                             for (var i = 0;i < arr.length;i++){
-                                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                var a = this.getAxial(c);
+                                var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                var a = this.map.getAxial(c);
                                 if (a.tile != this.currentTileType){
-                                    a.sprite1.texture = this.tileTextures[this.currentTileType][1][a.h];
-                                    a.sprite2.texture = this.tileTextures[this.currentTileType][2][a.h];
+                                    a.sprite1.texture = this.map.tileTextures[this.currentTileType][1][a.h];
+                                    a.sprite2.texture = this.map.tileTextures[this.currentTileType][2][a.h];
                                     a.tile = this.currentTileType;
                                 }
                             }
                             break;
                         case 'delete':
                             try{
-                                var node = this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
+                                var node = this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
                                 this.dragStart = null;
                                 //remove sprite
                                 //for each neighbor, make sure there is a path to the other another neighbors
                                 var isAPath = true;
                                 for (var i = 0; i < 6;i++){
-                                    var cube = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                    var neighbor = this.getCubeNeighbor(cube,i);
+                                    var cube = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                    var neighbor = this.map.getCubeNeighbor(cube,i);
                                     for (var j = 0; j < 6;j++){
-                                        var neighbor2 = this.getCubeNeighbor(cube,j);
+                                        var neighbor2 = this.map.getCubeNeighbor(cube,j);
                                         if (neighbor && neighbor2){
                                             if (!neighbor.deleted && !neighbor2.deleted){
-                                                var arr = this.findPath(neighbor,neighbor2,cube);
+                                                var arr = this.map.findPath(neighbor,neighbor2,cube);
                                                 if (arr.length == 0){
                                                     isAPath = false;
                                                 }
@@ -1953,11 +1155,11 @@
                                     }
                                 }
                                 if (isAPath){
-                                    this.container1.removeChild(node.sprite1);
-                                    this.container2.removeChild(node.sprite2);
-                                    this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].deleted = true;
-                                    this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].h = 0;
-                                    this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z].deleted = true;
+                                    this.map.container1.removeChild(node.sprite1);
+                                    this.map.container2.removeChild(node.sprite2);
+                                    this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].deleted = true;
+                                    this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r].h = 0;
+                                    this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z].deleted = true;
                                     this.selectedSprite = null;
                                 }
                             }catch(e){
@@ -1966,18 +1168,18 @@
                             }
                             break;
                         case 'add':
-                            var node = this.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
+                            var node = this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
                             this.dragStart = null;
                             //for each neighbor, make sure there is a path to the other another neighbors
                             var isAPath = true;
                             for (var i = 0; i < 6;i++){
-                                var cube = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var neighbor = this.getCubeNeighbor(cube,i);
+                                var cube = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var neighbor = this.map.getCubeNeighbor(cube,i);
                                 if (neighbor){
                                     if (neighbor.deleted){
-                                        var axial = this.getAxial(neighbor);
-                                        this.container1.addChild(axial.sprite1);
-                                        this.container2.addChild(axial.sprite2);
+                                        var axial = this.map.getAxial(neighbor);
+                                        this.map.container1.addChild(axial.sprite1);
+                                        this.map.container2.addChild(axial.sprite2);
                                         axial.deleted = false;
                                         neighbor.deleted = false;
                                     }
@@ -1985,23 +1187,23 @@
                             }
                             break;
                         case 'path':
-                            this.pathToolData.startNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                            if (this.pathToolData.endNode != this.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z]){
-                                this.pathToolData.endNode = this.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z];
+                            this.pathToolData.startNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                            if (this.pathToolData.endNode != this.map.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z]){
+                                this.pathToolData.endNode = this.map.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z];
                                 //get a new path
-                                this.pathToolData.currentPath = this.findPath(this.pathToolData.startNode,this.pathToolData.endNode,null,this.pathToolData.jumpHeight);
+                                this.pathToolData.currentPath = this.map.findPath(this.pathToolData.startNode,this.pathToolData.endNode,null,this.pathToolData.jumpHeight);
                             }
                             if (this.pathToolData.currentPath){
                                 if (this.pathToolData.currentPath.length > 0){  
                                     Graphics.worldPrimitives.lineStyle(3,0xFFFF00,1);
                                     var t = 1;
-                                    if (!(this.currentRotation%2)){t = 2}
+                                    if (!(this.map.currentRotation%2)){t = 2}
                                     var sp = 'sprite' + t;
-                                    var a = this.getAxial(this.pathToolData.currentPath[0]);
-                                    Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-this.TILE_HEIGHT*(a.h+1));
+                                    var a = this.map.getAxial(this.pathToolData.currentPath[0]);
+                                    Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*.8);
                                     for (var i = 1; i < this.pathToolData.currentPath.length;i++){
-                                        var a = this.getAxial(this.pathToolData.currentPath[i]);
-                                        Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.TILE_HEIGHT*(a.h+1));
+                                        var a = this.map.getAxial(this.pathToolData.currentPath[i]);
+                                        Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*.8);
                                     }
                                 }
                             }
@@ -2010,32 +1212,32 @@
 
                             //Un-Comment below to show lines drawn to each node
 
-                            /*var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                            var aNode = MapGen.getAxial(cubeNode);
-                            var arr = this.cubeSpiral(cubeNode,this.maxSize);
+                            /*var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                            var aNode = this.map.getAxial(cubeNode);
+                            var arr = this.map.cubeSpiral(cubeNode,this.map.maxSize);
                             for (var i = 0;i < arr.length;i++){
-                                var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
                                 var cPos = {
                                     x: c.x + 1e-6,
                                     y: c.y + 1e-6,
                                     z: c.z + -2e-6,
                                 }
-                                var r1 = this.cubeLineDraw(cubeNode,cPos);
-                                var a = MapGen.getAxial(r1[r1.length-1]);
+                                var r1 = this.map.cubeLineDraw(cubeNode,cPos);
+                                var a = this.map.getAxial(r1[r1.length-1]);
                                 var t = 1;
-                                    if (!(this.currentRotation%2)){t = 2}
+                                    if (!(this.map.currentRotation%2)){t = 2}
                                     var sp = 'sprite' + t;
                                 Graphics.worldPrimitives.lineStyle(3,0xFFFF00,1);
-                                Graphics.worldPrimitives.moveTo(aNode[sp].position.x,aNode[sp].position.y-this.TILE_HEIGHT*(aNode.h+1));
-                                Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.TILE_HEIGHT*(a.h+1));
+                                Graphics.worldPrimitives.moveTo(aNode[sp].position.x,aNode[sp].position.y-this.map.TILE_HEIGHT*(aNode.h+1));
+                                Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1));
                             }*/
                             if (this.dragStart && this.losToolData.losShown == false){
-                                var cubeNode = this.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                                var aNode = MapGen.getAxial(cubeNode);
+                                var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
+                                var aNode = this.map.getAxial(cubeNode);
                                 var aH = aNode.h + this.char_height;
-                                var arr = this.cubeSpiral(cubeNode,this.maxSize);
+                                var arr = this.map.cubeSpiral(cubeNode,this.map.maxSize);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = MapGen.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
                                     var cPos = {
                                         x: c.x + 1e-6,
                                         y: c.y + 1e-6,
@@ -2046,13 +1248,13 @@
                                         y: c.y + -1e-6,
                                         z: c.z + 2e-6,
                                     }
-                                    var r1 = this.cubeLineDraw(cubeNode,cPos);
-                                    var r2 = this.cubeLineDraw(cubeNode,cNeg);
+                                    var r1 = this.map.cubeLineDraw(cubeNode,cPos);
+                                    var r2 = this.map.cubeLineDraw(cubeNode,cNeg);
                                     var blocked1 = false;
                                     var blocked2 = false;
                                     var highestAngle = 0;
                                     for (var j = 1; j < r1.length;j++){
-                                        var a = MapGen.getAxial(r1[j]);
+                                        var a = this.map.getAxial(r1[j]);
                                         var h = (j==(r1.length-1)) ? (a.h+this.char_height) : a.h;
                                         var angle = 0;
                                         if (h > aH){
@@ -2075,7 +1277,7 @@
                                     }
                                     highestAngle = 0;
                                     for (var j = 1; j < r2.length;j++){
-                                        var a = MapGen.getAxial(r2[j]);
+                                        var a = this.map.getAxial(r2[j]);
                                         var h = (j==(r2.length-1)) ? (a.h+this.char_height): a.h;
                                         var angle = 0;
                                         if (h > aH){
@@ -2096,24 +1298,24 @@
                                             }
                                         }
                                     }
-                                    var a = MapGen.getAxial(c);
+                                    var a = this.map.getAxial(c);
                                     if (blocked1 && blocked2){
                                         var t = 1;
-                                        if (!(MapGen.currentRotation%2)){t = 2}
+                                        if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
                                         s.tint = 0xFF0000;
                                         this.losToolData.spritesAltered.push(s);
                                     }else if ((!blocked1 && !blocked2) == false){
                                         //partial cover
                                         var t = 1;
-                                        if (!(MapGen.currentRotation%2)){t = 2}
+                                        if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
                                         s.tint = 0xFFFF00;
                                         this.losToolData.spritesAltered.push(s);
                                     }else{
                                         //NO COVER
                                         var t = 1;
-                                        if (!(MapGen.currentRotation%2)){t = 2}
+                                        if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
                                         s.tint = 0x00FF00;
                                         this.losToolData.spritesAltered.push(s);
@@ -2128,8 +1330,8 @@
                         if (dragged){this.dragStart.y = Acorn.Input.mouse.Y;}
 
                         var t = 1;
-                        if (!(MapGen.currentRotation%2)){t = 2}
-                        MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                        if (!(this.map.currentRotation%2)){t = 2}
+                        this.map['container' + t].children = MapGen.updateSprites(this.map['container' + t].children);
                     }catch(e){}
                 }
             }

@@ -38,63 +38,64 @@
             this.currentRotation = 0;
         },
         zoom: function(dir){
-            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
+            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
                 if (dir == 'in'){
-                    MapGen.currentZoomSetting += 1;
-                    if (MapGen.currentZoomSetting == MapGen.ZOOM_SETTINGS.length){
-                        MapGen.currentZoomSetting = MapGen.ZOOM_SETTINGS.length-1;
+                    MapGen.map.currentZoomSetting += 1;
+                    if (MapGen.map.currentZoomSetting == MapGen.map.ZOOM_SETTINGS.length){
+                        MapGen.map.currentZoomSetting = MapGen.map.ZOOM_SETTINGS.length-1;
                     }
                 }else if (dir == 'out'){
-                    MapGen.currentZoomSetting -= 1;
-                    if (MapGen.currentZoomSetting == -1){
-                        MapGen.currentZoomSetting = 0;
+                    MapGen.map.currentZoomSetting -= 1;
+                    if (MapGen.map.currentZoomSetting == -1){
+                        MapGen.map.currentZoomSetting = 0;
                     }
                 }
                 var t = 1;
-                if (!(MapGen.currentRotation%2)){t = 2}
-                MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                if (!(MapGen.map.currentRotation%2)){t = 2}
+                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
             }
         },
         setYScale: function(dir){
-            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
+            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
                 if (dir == 'up'){
-                    MapGen.currentYScaleSetting += 1;
-                    if (MapGen.currentYScaleSetting == MapGen.YSCALE_SETTINGS.length){
-                        MapGen.currentYScaleSetting = MapGen.YSCALE_SETTINGS.length-1;
+                    MapGen.map.currentYScaleSetting += 1;
+                    if (MapGen.map.currentYScaleSetting == MapGen.map.YSCALE_SETTINGS.length){
+                        MapGen.map.currentYScaleSetting = MapGen.map.YSCALE_SETTINGS.length-1;
                     }
                 }else if (dir == 'down'){
-                    MapGen.currentYScaleSetting -= 1;
-                    if (MapGen.currentYScaleSetting == -1){
-                        MapGen.currentYScaleSetting = 0;
+                    MapGen.map.currentYScaleSetting -= 1;
+                    if (MapGen.map.currentYScaleSetting == -1){
+                        MapGen.map.currentYScaleSetting = 0;
                     }
                 }
                 var t = 1;
-                if (!(MapGen.currentRotation%2)){t = 2}
-                MapGen['container' + t].children = MapGen.updateSprites(MapGen['container' + t].children);
+                if (!(MapGen.map.currentRotation%2)){t = 2}
+                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
             }
         },
         rotateMap: function(dir){
-            if (!Map.rotateData && Acorn.currentState == 'MapGen'){
-                var c = MapGen.currentRotation;
+            
+            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
+                var c = MapGen.map.currentRotation;
                 var d = 1;
                 if (dir == 'right'){
-                    MapGen.currentRotation -= 1;
-                    if (MapGen.currentRotation == -1){
-                        MapGen.currentRotation = MapGen.totalRotations-1;
+                    MapGen.map.currentRotation -= 1;
+                    if (MapGen.map.currentRotation == -1){
+                        MapGen.map.currentRotation = MapGen.map.totalRotations-1;
                     }
                 }else if (dir == 'left'){
                     d = -1;
-                    MapGen.currentRotation += 1;
-                    if (MapGen.currentRotation == MapGen.totalRotations){
-                        MapGen.currentRotation = 0;
+                    MapGen.map.currentRotation += 1;
+                    if (MapGen.map.currentRotation == MapGen.map.totalRotations){
+                        MapGen.map.currentRotation = 0;
                     }
                 }
-                MapGen.rotateData = {
+                MapGen.map.rotateData = {
                     t: 0,
                     extraRot: 0,
                     time: 0.05,
                     dir: dir,
-                    angle: ((360/MapGen.totalRotations)*Math.PI/180)*d
+                    angle: ((360/MapGen.map.totalRotations)*Math.PI/180)*d
                 }
             }
         },

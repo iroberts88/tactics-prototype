@@ -547,6 +547,7 @@
                                 s = [Math.round(min + state.sizePercent*(max-min)), Math.round(min + state.sizePercent2*(max-min))];
                             }
                             MapGen.size = s;
+                            console.log(MapGen.size);
                             Acorn.changeState('MapGen');
                         }
                     });
@@ -629,7 +630,7 @@
                 if (Acorn.Input.buttons[2]){
                     var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                     var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
-                    MapGen.move(mX,mY);
+                    MapGen.map.move(mX,mY);
                 }
                 
             });
