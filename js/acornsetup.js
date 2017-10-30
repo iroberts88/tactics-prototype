@@ -103,7 +103,7 @@
                 init: function(){
                     console.log('Initializing login screen');
                     document.body.style.cursor = 'default';
-                    this.logo = AcornSetup.makeButton({
+                    this.logo = Graphics.makeUiElement({
                         text: 'Tactics Prototype',
                         style: AcornSetup.baseStyle,
                         position: [(Graphics.width / 2),(Graphics.height / 8)]
@@ -111,7 +111,7 @@
                     this.logo.style.fontSize = 100;
                     Graphics.uiContainer.addChild(this.logo);
 
-                    this.guestText = AcornSetup.makeButton({
+                    this.guestText = Graphics.makeUiElement({
                         text: 'PLAY AS GUEST',
                         style: AcornSetup.baseStyle,
                         interactive: true,buttonMode: true,
@@ -122,7 +122,7 @@
                     this.guestText.position.x = (Graphics.width / 2 - this.guestText.width);
                     Graphics.uiContainer.addChild(this.guestText);
 
-                    this.loginText = AcornSetup.makeButton({
+                    this.loginText = Graphics.makeUiElement({
                         text: '          LOGIN          ',
                         style: AcornSetup.baseStyle,
                         interactive: true,buttonMode: true,
@@ -144,7 +144,7 @@
                     this.loginText.position.x = (Graphics.width / 2 + this.loginText.width);
                     Graphics.uiContainer.addChild(this.loginText);
 
-                    this.newUser = AcornSetup.makeButton({
+                    this.newUser = Graphics.makeUiElement({
                         text: '     New User     ',
                         style: AcornSetup.baseStyle,
                         interactive: true,buttonMode: true,
@@ -165,14 +165,14 @@
                     this.newUser.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.newUser);
 
-                    this.loginErrorText = AcornSetup.makeButton({
+                    this.loginErrorText = Graphics.makeUiElement({
                         text: '',
                         style: AcornSetup.baseStyle,
                         position: [(Graphics.width / 2),(Graphics.height * .65)]
                     });
                     Graphics.uiContainer.addChild(this.loginErrorText);
 
-                    this.submitButton = AcornSetup.makeButton({
+                    this.submitButton = Graphics.makeUiElement({
                         text: '     Submit     ',
                         style: AcornSetup.baseStyle,
                         interactive: true,buttonMode: true,
@@ -188,7 +188,7 @@
                     this.submitButton.style.fontSize = 64;
                     Graphics.uiContainer.addChild(this.submitButton);
 
-                    this.cancelButton = AcornSetup.makeButton({
+                    this.cancelButton = Graphics.makeUiElement({
                         text: '     Cancel     ',
                         style: AcornSetup.baseStyle,
                         interactive: true,buttonMode: true,
@@ -244,14 +244,14 @@
                     document.body.style.cursor = 'default';
                     Graphics.drawBG();
                     //The Main Menu Logo
-                    this.logo = AcornSetup.makeButton({
+                    this.logo = Graphics.makeUiElement({
                         text: 'Tactics Prototype',
                         position: [(Graphics.width/2),(Graphics.height/6)],
                     });
                     this.logo.style.fontSize = 100;
                     Graphics.uiContainer.addChild(this.logo);
                     //create map button
-                    this.createButton = AcornSetup.makeButton({
+                    this.createButton = Graphics.makeUiElement({
                         text: 'Create New Map',
                         position: [(Graphics.width/5),(Graphics.height/1.5)],
                         interactive: true,
@@ -263,7 +263,7 @@
                     Graphics.uiContainer.addChild(this.createButton);
 
                     //create map button
-                    this.loadMapButton = AcornSetup.makeButton({
+                    this.loadMapButton = Graphics.makeUiElement({
                         text: 'Edit Map',
                         position: [(Graphics.width/5),(Graphics.height/1.2)],
                         interactive: true,buttonMode: true,
@@ -280,7 +280,7 @@
                     });
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
-                    this.userName = AcornSetup.makeButton({
+                    this.userName = Graphics.makeUiElement({
                         text: "Logged in as: \n" + Player.userData.name,
                         style: AcornSetup.baseStyle,
                         position: [10,10],
@@ -289,7 +289,7 @@
                     this.userName.style.fontSize = 24;
                     Graphics.uiContainer.addChild(this.userName);
 
-                    this.charButton = AcornSetup.makeButton({
+                    this.charButton = Graphics.makeUiElement({
                         text: 'My Characters',
                         style: AcornSetup.baseStyle,
                         position: [10,this.userName.position.y + 10 + this.userName.height],
@@ -302,7 +302,7 @@
                     this.charButton.style.fontSize = 32;
                     Graphics.uiContainer.addChild(this.charButton);
 
-                    this.settingsButton = AcornSetup.makeButton({
+                    this.settingsButton = Graphics.makeUiElement({
                         text: 'Settings',
                         style: AcornSetup.baseStyle,
                         position: [10,this.charButton.position.y + 10 + this.charButton.height],
@@ -312,7 +312,7 @@
                     this.settingsButton.style.fontSize = 32;
                     Graphics.uiContainer.addChild(this.settingsButton);
 
-                    this.logoutButton = AcornSetup.makeButton({
+                    this.logoutButton = Graphics.makeUiElement({
                         text: 'Logout',
                         style: AcornSetup.baseStyle,
                         position: [10,this.settingsButton.position.y + 10 + this.settingsButton.height],
@@ -392,7 +392,7 @@
                     this.sizePercent2 = 0;
 
                     //Select Map Type Text
-                    this.select = AcornSetup.makeButton({
+                    this.select = Graphics.makeUiElement({
                         text: 'Select Map Type',
                         style: style,
                         position: [(Graphics.width / 2),(Graphics.height / 8)]
@@ -400,7 +400,7 @@
                     Graphics.uiContainer.addChild(this.select);
 
                     //rectangle
-                    this.rectangle = AcornSetup.makeButton({
+                    this.rectangle = Graphics.makeUiElement({
                         text: 'Rectangle',
                         style: style,
                         position: [(Graphics.width/3),(Graphics.height/4)],
@@ -420,7 +420,7 @@
                     Graphics.uiContainer.addChild(this.rectangle);
 
                     //triangle
-                    this.triangle = AcornSetup.makeButton({
+                    this.triangle = Graphics.makeUiElement({
                         text: 'Triangle',
                         style: style,
                         position: [(Graphics.width*0.66),(Graphics.height/4)],
@@ -439,7 +439,7 @@
                     Graphics.uiContainer.addChild(this.triangle);
                     
                     //hexagon
-                    this.hexagon = AcornSetup.makeButton({
+                    this.hexagon = Graphics.makeUiElement({
                         text: 'Hexagon',
                         style: style,
                         position: [(Graphics.width/3),(Graphics.height/3)],
@@ -458,7 +458,7 @@
                     Graphics.uiContainer.addChild(this.hexagon);
 
                     //rhombus
-                    this.rhombus = AcornSetup.makeButton({
+                    this.rhombus = Graphics.makeUiElement({
                         text: 'Rhombus',
                         style: style,
                         position: [(Graphics.width*0.66),(Graphics.height/3)],
@@ -477,7 +477,7 @@
                     Graphics.uiContainer.addChild(this.rhombus);
 
                     var barStyle = {font: '50px Verdana', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'}
-                    this.sizeBar = AcornSetup.makeButton({
+                    this.sizeBar = Graphics.makeUiElement({
                         text: '____________________',
                         style: barStyle,
                         position: [(Graphics.width/2),(Graphics.height/2)],
@@ -490,7 +490,7 @@
                         state.sizePercent = p;
                     });
 
-                    this.sizeBar2 = AcornSetup.makeButton({
+                    this.sizeBar2 = Graphics.makeUiElement({
                         text: '____________________',
                         style: barStyle,
                         position: [(Graphics.width/2),(Graphics.height/2 + 75)],
@@ -504,7 +504,7 @@
                     });
 
                     //size text
-                    this.sizeText = AcornSetup.makeButton({
+                    this.sizeText = Graphics.makeUiElement({
                         text: 'Size :',
                         style: style,
                         position: [0,(Graphics.height / 2)],
@@ -513,7 +513,7 @@
                     this.sizeText.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.sizeText);
                     //size number next to bar 1
-                    this.sizeNum = AcornSetup.makeButton({
+                    this.sizeNum = Graphics.makeUiElement({
                         text: '0',
                         style: style,
                         position: [(Graphics.width / 2) + this.sizeBar.width/2 + 15,(Graphics.height / 2)],
@@ -522,7 +522,7 @@
                     this.sizeNum.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.sizeNum);
                     //create map button
-                    this.createButton = AcornSetup.makeButton({
+                    this.createButton = Graphics.makeUiElement({
                         text: 'Create',
                         style: style,
                         position: [(Graphics.width / 2),(Graphics.height - 150)],
@@ -645,75 +645,8 @@
                     Acorn.Net.socket_.emit('playerUpdate',{newMouseLoc: [position.x,position.y]});
                 }catch(e){}*/
             });
-        },
-        makeButton: function(data){
-            // OPTIONAL data.text - the text on the button
-            if (typeof data.text == 'undefined'){
-                data.text = ' ';
-            }
-            // OPTIONAL data.style style property for PIXI Text
-            if (typeof data.style == 'undefined'){
-                data.style  = {
-                    font: '48px Orbitron', 
-                    fill: 'white', 
-                    align: 'left',
-                    dropShadow: true,
-                    dropShadowColor: '#000000',
-                    stroke: '#000000',
-                    strokeThickness: 5,
-                    dropShadow: true,
-                    dropShadowColor: '#000000',
-                    dropShadowBlur: 4,
-                    dropShadowAngle: Math.PI / 6,
-                    dropShadowDistance: 6
-                }
-            }
-            // OPTIONAL data.position
-            if (typeof data.position == 'undefined'){
-                data.position = [0,0];
-            }
-            // OPTIONAL data.anchor
-            if (typeof data.anchor == 'undefined'){
-                data.anchor = [0.5,0.5];
-            }
-            if (typeof data.sprite != 'undefined'){
-                var button = Graphics.getSprite(data.sprite);
-                button.position.x = data.position[0];
-                button.position.y = data.position[1];
-                button.anchor.x = data.anchor[0];
-                button.anchor.y = data.anchor[1];
-            }else{
-                var button = new PIXI.Text(data.text,data.style)
-                button.position.x = data.position[0];
-                button.position.y = data.position[1];
-                button.anchor.x = data.anchor[0];
-                button.anchor.y = data.anchor[1];
-            }
-
-            // OPTIONAL data.interactive
-            if (typeof data.interactive != 'undefined'){
-                button.interactive = data.interactive;
-            }
-            // OPTIONAL data.buttonMode
-            if (typeof data.buttonMode != 'undefined'){
-                button.buttonMode = data.buttonMode;
-            }
-            // OPTIONAL data.clickFunc
-            if (typeof data.clickFunc != 'undefined'){
-                button.on('tap', data.clickFunc);
-                button.on('click', data.clickFunc);
-            }
-            if (typeof data.mOverFunc != 'undefined'){
-                button.on('pointerover', data.mOverFunc);
-                button.on('touchmove', data.mOverFunc);
-            }
-            if (typeof data.mOutFunc != 'undefined'){
-                button.on('touchend', data.mOutFunc);
-                button.on('touchendoutside', data.mOutFunc);
-                button.on('pointerout', data.mOutFunc);
-            }
-            return button
         }
+        
     }
     window.AcornSetup = AcornSetup;
 })(window);

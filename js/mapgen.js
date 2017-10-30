@@ -81,7 +81,7 @@
             };
 
             //Select Tool Text
-            this.toolText = AcornSetup.makeButton({
+            this.toolText = Graphics.makeUiElement({
                 text: 'Tool Selector',
                 style: style,
             });
@@ -90,7 +90,7 @@
             Graphics.uiContainer.addChild(this.toolText);
 
             
-            this.heightTool = AcornSetup.makeButton({
+            this.heightTool = Graphics.makeUiElement({
                 text: 'Height',
                 style: style,
                 interactive: true,
@@ -111,7 +111,7 @@
             this.heightTool.position.y = this.toolText.position.y + 50 + this.toolText.height/2 + 10;
             Graphics.uiContainer.addChild(this.heightTool);
 
-            this.landscapeTool = AcornSetup.makeButton({
+            this.landscapeTool = Graphics.makeUiElement({
                 text: 'Landscape',
                 style: style,
                 interactive: true,
@@ -132,7 +132,7 @@
             this.landscapeTool.position.y = this.toolText.position.y + 50 + this.toolText.height/2 + 10;
             Graphics.uiContainer.addChild(this.landscapeTool);
 
-            this.noiseTool = AcornSetup.makeButton({
+            this.noiseTool = Graphics.makeUiElement({
                 text: 'Noise',
                 style: style,
                 interactive: true,
@@ -153,7 +153,7 @@
             this.noiseTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2 + 10;
             Graphics.uiContainer.addChild(this.noiseTool);
 
-            this.tilesTool = AcornSetup.makeButton({
+            this.tilesTool = Graphics.makeUiElement({
                 text: 'Tiles',
                 style: style,
                 interactive: true,
@@ -180,7 +180,7 @@
             this.tilesTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2 + 10;
             Graphics.uiContainer.addChild(this.tilesTool);
 
-            this.pathTool = AcornSetup.makeButton({
+            this.pathTool = Graphics.makeUiElement({
                 text: 'Path',
                 style: style,
                 interactive: true,
@@ -212,7 +212,7 @@
             this.pathTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.pathTool.height/2 + 10;
             Graphics.uiContainer.addChild(this.pathTool);
 
-            this.deleteTool = AcornSetup.makeButton({
+            this.deleteTool = Graphics.makeUiElement({
                 text: 'Delete',
                 style: style,
                 interactive: true,
@@ -234,7 +234,7 @@
             this.deleteTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.deleteTool.height/2 + 10;
             Graphics.uiContainer.addChild(this.deleteTool);
 
-            this.addTool = AcornSetup.makeButton({
+            this.addTool = Graphics.makeUiElement({
                 text: 'Add',
                 style: style,
                 interactive: true,
@@ -256,7 +256,7 @@
             this.addTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.deleteTool.height/2 + 10;
             Graphics.uiContainer.addChild(this.addTool);
 
-            this.losTool = AcornSetup.makeButton({
+            this.losTool = Graphics.makeUiElement({
                 text: 'LOS',
                 style: style,
                 interactive: true,
@@ -287,7 +287,7 @@
             Graphics.uiContainer.addChild(this.losTool);
 
             //Select Tool Text
-            this.toolDescriptionText = AcornSetup.makeButton({
+            this.toolDescriptionText = Graphics.makeUiElement({
                 text: '',
                 style: style,
             });
@@ -300,7 +300,7 @@
             Graphics.uiContainer.addChild(this.toolDescriptionText);
 
             //back button
-            this.exitButton = AcornSetup.makeButton({
+            this.exitButton = Graphics.makeUiElement({
                 text: 'Exit',
                 style: style,
                 interactive: true,buttonMode: true,
@@ -313,7 +313,7 @@
             Graphics.uiContainer.addChild(this.exitButton);
 
             //create tiles tool options
-            this.toolOptionsText = AcornSetup.makeButton({
+            this.toolOptionsText = Graphics.makeUiElement({
                 text: 'Tool Options',
                 style: style
             });
@@ -321,7 +321,7 @@
             this.toolOptionsText.position.y = this.exitButton.position.y +  this.exitButton.height/2 + 25 + this.toolText.height/2;
             Graphics.uiContainer.addChild(this.toolOptionsText);
 
-            this.losDistance = AcornSetup.makeButton({
+            this.losDistance = Graphics.makeUiElement({
                 text: 'Unit Height: ',
                 interactive: true,
                 buttonMode: true,
@@ -330,7 +330,7 @@
             this.losDistance.position.x = this.toolOptionsText.position.x - this.losDistance.width/2;
             this.losDistance.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
             Graphics.uiContainer.addChild(this.losDistance);
-            this.losDistancePlus = AcornSetup.makeButton({
+            this.losDistancePlus = Graphics.makeUiElement({
                 text: '▲',
                 style: style,
                 interactive: true,
@@ -345,7 +345,7 @@
             this.losDistancePlus.position.x = this.losDistance.position.x + this.losDistance.width/2 + 50;
             this.losDistancePlus.position.y = this.losDistance.position.y - this.losDistancePlus.height/2;
             Graphics.uiContainer.addChild(this.losDistancePlus);
-            this.losDistanceMinus = AcornSetup.makeButton({
+            this.losDistanceMinus = Graphics.makeUiElement({
                 text: '▼',
                 style: style,
                 interactive: true,
@@ -361,7 +361,7 @@
             this.losDistanceMinus.position.y = this.losDistance.position.y + this.losDistanceMinus.height/2;
             Graphics.uiContainer.addChild(this.losDistanceMinus);
 
-            this.losDistanceNum = AcornSetup.makeButton({
+            this.losDistanceNum = Graphics.makeUiElement({
                 text: '0',
                 interactive: true,
                 buttonMode: true,
@@ -371,7 +371,7 @@
             this.losDistanceNum.position.y = this.losDistance.position.y + this.losDistance.height/2 + this.losDistanceNum.height/2;
             Graphics.uiContainer.addChild(this.losDistanceNum);
 
-            this.jumpHeight = AcornSetup.makeButton({
+            this.jumpHeight = Graphics.makeUiElement({
                 text: 'Max Jump Height: ',
                 interactive: true,
                 buttonMode: true,
@@ -380,7 +380,7 @@
             this.jumpHeight.position.x = this.toolOptionsText.position.x - this.jumpHeight.width/2;
             this.jumpHeight.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
             Graphics.uiContainer.addChild(this.jumpHeight);
-            this.jumpHeightPlus = AcornSetup.makeButton({
+            this.jumpHeightPlus = Graphics.makeUiElement({
                 text: '▲',
                 style: style,
                 interactive: true,
@@ -395,7 +395,7 @@
             this.jumpHeightPlus.position.x = this.jumpHeight.position.x + this.jumpHeight.width/2 + 50;
             this.jumpHeightPlus.position.y = this.jumpHeight.position.y - this.jumpHeightPlus.height/2;
             Graphics.uiContainer.addChild(this.jumpHeightPlus);
-            this.jumpHeightMinus = AcornSetup.makeButton({
+            this.jumpHeightMinus = Graphics.makeUiElement({
                 text: '▼',
                 style: style,
                 interactive: true,
@@ -411,7 +411,7 @@
             this.jumpHeightMinus.position.y = this.jumpHeight.position.y + this.jumpHeightMinus.height/2;
             Graphics.uiContainer.addChild(this.jumpHeightMinus);
 
-            this.jumpHeightNum = AcornSetup.makeButton({
+            this.jumpHeightNum = Graphics.makeUiElement({
                 text: '0',
                 interactive: true,
                 buttonMode: true,
@@ -421,7 +421,7 @@
             this.jumpHeightNum.position.y = this.jumpHeight.position.y + this.jumpHeight.height/2 + this.jumpHeightNum.height/2;
             Graphics.uiContainer.addChild(this.jumpHeightNum);
 
-            this.baseTile = AcornSetup.makeButton({
+            this.baseTile = Graphics.makeUiElement({
                 sprite: 'base_tile2',
                 interactive: true,
                 buttonMode: true,
@@ -432,7 +432,7 @@
             this.baseTile.position.x = this.toolOptionsText.position.x - this.baseTile.width/2;
             this.baseTile.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
             Graphics.uiContainer.addChild(this.baseTile);
-            this.dirtTile = AcornSetup.makeButton({
+            this.dirtTile = Graphics.makeUiElement({
                 sprite: 'dirt_tile2',
                 interactive: true,
                 buttonMode: true,
@@ -443,7 +443,7 @@
             this.dirtTile.position.x = this.toolOptionsText.position.x + this.dirtTile.width/2;
             this.dirtTile.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
             Graphics.uiContainer.addChild(this.dirtTile);
-            this.grassTile = AcornSetup.makeButton({
+            this.grassTile = Graphics.makeUiElement({
                 sprite: 'grass_tile2',
                 interactive: true,
                 buttonMode: true,
@@ -454,7 +454,7 @@
             this.grassTile.position.x = this.toolOptionsText.position.x - this.grassTile.width/2;
             this.grassTile.position.y = this.dirtTile.position.y + this.dirtTile.height;
             Graphics.uiContainer.addChild(this.grassTile);
-            this.snowTile = AcornSetup.makeButton({
+            this.snowTile = Graphics.makeUiElement({
                 sprite: 'snow_tile2',
                 interactive: true,
                 buttonMode: true,
@@ -465,7 +465,7 @@
             this.snowTile.position.x = this.toolOptionsText.position.x + this.snowTile.width/2;
             this.snowTile.position.y = this.dirtTile.position.y + this.dirtTile.height;
             Graphics.uiContainer.addChild(this.snowTile);
-            this.iceTile = AcornSetup.makeButton({
+            this.iceTile = Graphics.makeUiElement({
                 sprite: 'ice_tile2',
                 style: style,
                 interactive: true,
@@ -477,7 +477,7 @@
             this.iceTile.position.x = this.toolOptionsText.position.x - this.iceTile.width/2;
             this.iceTile.position.y = this.snowTile.position.y + this.snowTile.height;
             Graphics.uiContainer.addChild(this.iceTile);
-            this.sandTile = AcornSetup.makeButton({
+            this.sandTile = Graphics.makeUiElement({
                 sprite: 'sand_tile2',
                 style: style,
                 interactive: true,
@@ -492,7 +492,7 @@
 
 
             //create size buttons
-            this.sizeText = AcornSetup.makeButton({
+            this.sizeText = Graphics.makeUiElement({
                 text: 'Tool Size: 1',
                 style: style,
             });
@@ -501,7 +501,7 @@
             this.sizeText.position.y = Graphics.height - 200 - this.sizeText.height/2;
             Graphics.uiContainer.addChild(this.sizeText);
 
-            this.sizePlus = AcornSetup.makeButton({
+            this.sizePlus = Graphics.makeUiElement({
                 text: '▲',
                 style: style,
                 interactive: true,
@@ -516,7 +516,7 @@
             this.sizePlus.position.x = this.sizeText.position.x + this.sizeText.width/2 + 50;
             this.sizePlus.position.y = this.sizeText.position.y - this.sizePlus.height/2;
             Graphics.uiContainer.addChild(this.sizePlus);
-            this.sizeMinus = AcornSetup.makeButton({
+            this.sizeMinus = Graphics.makeUiElement({
                 text: '▼',
                 style: style,
                 interactive: true,
@@ -532,7 +532,7 @@
             this.sizeMinus.position.y = this.sizeText.position.y + this.sizeMinus.height/2;
             Graphics.uiContainer.addChild(this.sizeMinus);
 
-            this.rotateText = AcornSetup.makeButton({
+            this.rotateText = Graphics.makeUiElement({
                 text: 'Rotate (A,D)',
                 style: style,
             });
@@ -541,7 +541,7 @@
             this.rotateText.position.y = this.rotateText.height/2;
             Graphics.uiContainer.addChild(this.rotateText);
 
-            this.rotateLeft = AcornSetup.makeButton({
+            this.rotateLeft = Graphics.makeUiElement({
                 text: '◄',
                 style: style,
                 interactive: true,
@@ -554,7 +554,7 @@
             this.rotateLeft.position.x = Graphics.width/2 - this.rotateLeft.width/2;
             this.rotateLeft.position.y = this.rotateLeft.height/2 + this.rotateText.height/2+5;
             Graphics.uiContainer.addChild(this.rotateLeft);
-            this.rotateRight = AcornSetup.makeButton({
+            this.rotateRight = Graphics.makeUiElement({
                 text: '►',
                 style: style,
                 interactive: true,
@@ -568,7 +568,7 @@
             this.rotateRight.position.y = this.rotateRight.height/2 + this.rotateText.height/2+5;
             Graphics.uiContainer.addChild(this.rotateRight);
 
-            this.yScaleText = AcornSetup.makeButton({
+            this.yScaleText = Graphics.makeUiElement({
                 text: 'Vert Shift (W,S)',
                 style: style,
             });
@@ -577,7 +577,7 @@
             this.yScaleText.position.y = this.yScaleText.height/2;
             Graphics.uiContainer.addChild(this.yScaleText);
 
-            this.yScaleLeft = AcornSetup.makeButton({
+            this.yScaleLeft = Graphics.makeUiElement({
                 text: '▲',
                 style: style,
                 interactive: true,
@@ -590,7 +590,7 @@
             this.yScaleLeft.position.x = Graphics.width/3 - this.yScaleLeft.width/2;
             this.yScaleLeft.position.y = this.yScaleLeft.height/2 + this.yScaleText.height/2+5;
             Graphics.uiContainer.addChild(this.yScaleLeft);
-            this.yScaleRight = AcornSetup.makeButton({
+            this.yScaleRight = Graphics.makeUiElement({
                 text: '▼',
                 style: style,
                 interactive: true,
@@ -604,7 +604,7 @@
             this.yScaleRight.position.y = this.yScaleRight.height/2 + this.yScaleText.height/2+5;
             Graphics.uiContainer.addChild(this.yScaleRight);
 
-            this.zoomText = AcornSetup.makeButton({
+            this.zoomText = Graphics.makeUiElement({
                 text: 'Zoom (mwheel)',
                 style: style,
             });
@@ -613,7 +613,7 @@
             this.zoomText.position.y = this.zoomText.height/2;
             Graphics.uiContainer.addChild(this.zoomText);
 
-            this.zoomUp = AcornSetup.makeButton({
+            this.zoomUp = Graphics.makeUiElement({
                 text: '+',
                 style: style,
                 interactive: true,
@@ -626,7 +626,7 @@
             this.zoomUp.position.x = Graphics.width/1.5 - this.zoomUp.width/2 - 20;
             this.zoomUp.position.y = this.zoomUp.height/2 + this.zoomText.height/2+5;
             Graphics.uiContainer.addChild(this.zoomUp);
-            this.zoomDown = AcornSetup.makeButton({
+            this.zoomDown = Graphics.makeUiElement({
                 text: '-',
                 style: style,
                 interactive: true,
@@ -640,7 +640,7 @@
             this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
             Graphics.uiContainer.addChild(this.zoomDown);
 
-            this.sensitivityText = AcornSetup.makeButton({
+            this.sensitivityText = Graphics.makeUiElement({
                 text: 'Sensitivity: 4',
                 style: style,
             });
@@ -649,7 +649,7 @@
             this.sensitivityText.position.y = Graphics.height - 75 - this.sensitivityText.height/2;
             Graphics.uiContainer.addChild(this.sensitivityText);
 
-            this.sensitivityPlus = AcornSetup.makeButton({
+            this.sensitivityPlus = Graphics.makeUiElement({
                 text: '▲',
                 style: style,
                 interactive: true,
@@ -664,7 +664,7 @@
             this.sensitivityPlus.position.x = this.sensitivityText.position.x + this.sensitivityText.width/2 + 50;
             this.sensitivityPlus.position.y = this.sensitivityText.position.y - this.sensitivityPlus.height/2;
             Graphics.uiContainer.addChild(this.sensitivityPlus);
-            this.sensitivityMinus = AcornSetup.makeButton({
+            this.sensitivityMinus = Graphics.makeUiElement({
                 text: '▼',
                 style: style,
                 interactive: true,
@@ -680,7 +680,7 @@
             this.sensitivityMinus.position.y = this.sensitivityText.position.y + this.sensitivityMinus.height/2;
             Graphics.uiContainer.addChild(this.sensitivityMinus);
 
-            this.saveButton = AcornSetup.makeButton({
+            this.saveButton = Graphics.makeUiElement({
                 text: "Save Map",
                 style: style,
                 interactive: true,
@@ -710,7 +710,7 @@
             this.saveButton.position.y = Graphics.height - this.saveButton.height/2;
             Graphics.uiContainer.addChild(this.saveButton);
 
-            this.deleteButton = AcornSetup.makeButton({
+            this.deleteButton = Graphics.makeUiElement({
                 text: "Delete Map",
                 style: style,
                 interactive: true,

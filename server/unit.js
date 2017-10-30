@@ -1,4 +1,5 @@
-var Attribute = require('./attribute.js').Attribute;
+var Attribute = require('./attribute.js').Attribute,
+    Inventory = require('./inventory.js').Inventory;
 
 var Unit = function(){
     this.id = null;
@@ -38,6 +39,8 @@ var Unit = function(){
     this.classInfo = null;
     //game stats (games won; damage/healing done etc)
     this.gameInfo = null;
+
+    this.inventory = null;
 
     this.weapon = null;
     this.shield = null;
@@ -250,6 +253,11 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 100
     });
+
+    this.inventory = new Inventory();
+    this.inventory.init({
+        owner: this
+    })
 };
 
 Unit.prototype.update = function(dt) {

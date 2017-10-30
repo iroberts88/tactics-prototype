@@ -25,7 +25,7 @@
             this.sfxVolume = 1.0;
 
             this.autoFullScreen = false;
-
+            this.currentMap = null;
             this.stats = new Stats();
             this.stats.setMode(0);
             this.stats.domElement.style.position = 'absolute';
@@ -38,7 +38,7 @@
             this.currentRotation = 0;
         },
         zoom: function(dir){
-            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
+            if (Acorn.currentState == 'MapGen'){
                 if (dir == 'in'){
                     MapGen.map.currentZoomSetting += 1;
                     if (MapGen.map.currentZoomSetting == MapGen.map.ZOOM_SETTINGS.length){
@@ -56,7 +56,7 @@
             }
         },
         setYScale: function(dir){
-            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
+            if (Acorn.currentState == 'MapGen'){
                 if (dir == 'up'){
                     MapGen.map.currentYScaleSetting += 1;
                     if (MapGen.map.currentYScaleSetting == MapGen.map.YSCALE_SETTINGS.length){
@@ -75,7 +75,7 @@
         },
         rotateMap: function(dir){
             
-            if (!MapGen.map.rotateData && Acorn.currentState == 'MapGen'){
+            if (Acorn.currentState == 'MapGen'){
                 var c = MapGen.map.currentRotation;
                 var d = 1;
                 if (dir == 'right'){

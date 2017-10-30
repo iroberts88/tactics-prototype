@@ -493,7 +493,7 @@
             }
         });
     }
-
+    //returns a cube node when given an axial node
     Map.prototype.getCube = function(axialNode){
         return this.cubeMap[axialNode.q][-axialNode.q-axialNode.r][axialNode.r];
     }

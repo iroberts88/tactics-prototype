@@ -264,6 +264,74 @@
             g.lineTo(pos.x - sprite.width/2 + options.xbuffer,pos.y + sprite.height/2 - options.ybuffer);
             g.lineTo(pos.x - sprite.width/2 + options.xbuffer,pos.y - sprite.height/2 + options.ybuffer);
         },
+        makeUiElement: function(data){
+            // OPTIONAL data.text - the text on the button
+            if (typeof data.text == 'undefined'){
+                data.text = ' ';
+            }
+            // OPTIONAL data.style style property for PIXI Text
+            if (typeof data.style == 'undefined'){
+                data.style  = {
+                    font: '48px Orbitron', 
+                    fill: 'white', 
+                    align: 'left',
+                    dropShadow: true,
+                    dropShadowColor: '#000000',
+                    stroke: '#000000',
+                    strokeThickness: 5,
+                    dropShadow: true,
+                    dropShadowColor: '#000000',
+                    dropShadowBlur: 4,
+                    dropShadowAngle: Math.PI / 6,
+                    dropShadowDistance: 6
+                }
+            }
+            // OPTIONAL data.position
+            if (typeof data.position == 'undefined'){
+                data.position = [0,0];
+            }
+            // OPTIONAL data.anchor
+            if (typeof data.anchor == 'undefined'){
+                data.anchor = [0.5,0.5];
+            }
+            if (typeof data.sprite != 'undefined'){
+                var button = Graphics.getSprite(data.sprite);
+                button.position.x = data.position[0];
+                button.position.y = data.position[1];
+                button.anchor.x = data.anchor[0];
+                button.anchor.y = data.anchor[1];
+            }else{
+                var button = new PIXI.Text(data.text,data.style)
+                button.position.x = data.position[0];
+                button.position.y = data.position[1];
+                button.anchor.x = data.anchor[0];
+                button.anchor.y = data.anchor[1];
+            }
+
+            // OPTIONAL data.interactive
+            if (typeof data.interactive != 'undefined'){
+                button.interactive = data.interactive;
+            }
+            // OPTIONAL data.buttonMode
+            if (typeof data.buttonMode != 'undefined'){
+                button.buttonMode = data.buttonMode;
+            }
+            // OPTIONAL data.clickFunc
+            if (typeof data.clickFunc != 'undefined'){
+                button.on('tap', data.clickFunc);
+                button.on('click', data.clickFunc);
+            }
+            if (typeof data.mOverFunc != 'undefined'){
+                button.on('pointerover', data.mOverFunc);
+                button.on('touchmove', data.mOverFunc);
+            }
+            if (typeof data.mOutFunc != 'undefined'){
+                button.on('touchend', data.mOutFunc);
+                button.on('touchendoutside', data.mOutFunc);
+                button.on('pointerout', data.mOutFunc);
+            }
+            return button
+        },
         setSlideBar: function(bar,func){
             bar.clicked = false;
             bar.percent = 0;

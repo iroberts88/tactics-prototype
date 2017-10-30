@@ -129,7 +129,7 @@ GameEngine.prototype.newConnection = function(socket) {
     console.log('Socket ID: ' + socket.id);
     self.playerCount += 1;
     //Initialize new player and add to the proper session
-    var p = Player();
+    var p = new Player();
     p.id = self.getID();
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
