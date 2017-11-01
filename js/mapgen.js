@@ -94,7 +94,7 @@
                 text: 'Height',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'height';
                 },
@@ -115,7 +115,7 @@
                 text: 'Landscape',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'landscape';
                 },
@@ -136,7 +136,7 @@
                 text: 'Noise',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'noise';
                 },
@@ -157,7 +157,7 @@
                 text: 'Tiles',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'tiles';
                     MapGen.sandTile.visible = true;
@@ -184,7 +184,7 @@
                 text: 'Path',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'path';
                     MapGen.pathToolData = {
@@ -216,7 +216,7 @@
                 text: 'Delete',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'delete';
                     MapGen.toolSize = 1;
@@ -238,7 +238,7 @@
                 text: 'Add',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'add';
                     MapGen.toolSize = 1;
@@ -260,7 +260,7 @@
                 text: 'LOS',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTool = 'los';
                     MapGen.losToolData = {
@@ -303,7 +303,7 @@
             this.exitButton = Graphics.makeUiElement({
                 text: 'Exit',
                 style: style,
-                interactive: true,buttonMode: true,
+                interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.changeState('mainMenu');
                 }
@@ -324,7 +324,7 @@
             this.losDistance = Graphics.makeUiElement({
                 text: 'Unit Height: ',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
             });
             this.losDistance.style.fontSize = 24;
             this.losDistance.position.x = this.toolOptionsText.position.x - this.losDistance.width/2;
@@ -334,7 +334,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.char_height < 10){
                         MapGen.char_height += 1;
@@ -349,7 +349,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.char_height > 1){
                         MapGen.char_height -= 1;
@@ -364,7 +364,7 @@
             this.losDistanceNum = Graphics.makeUiElement({
                 text: '0',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
             });
             this.losDistanceNum.style.fontSize = 24;
             this.losDistanceNum.position.x = this.losDistance.position.x;
@@ -372,9 +372,7 @@
             Graphics.uiContainer.addChild(this.losDistanceNum);
 
             this.jumpHeight = Graphics.makeUiElement({
-                text: 'Max Jump Height: ',
-                interactive: true,
-                buttonMode: true,
+                text: 'Max Jump Height: '
             });
             this.jumpHeight.style.fontSize = 24;
             this.jumpHeight.position.x = this.toolOptionsText.position.x - this.jumpHeight.width/2;
@@ -384,7 +382,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.pathToolData.jumpHeight < 20){
                         MapGen.pathToolData.jumpHeight += 1;
@@ -399,7 +397,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.pathToolData.jumpHeight > 0){
                         MapGen.pathToolData.jumpHeight -= 1;
@@ -412,9 +410,7 @@
             Graphics.uiContainer.addChild(this.jumpHeightMinus);
 
             this.jumpHeightNum = Graphics.makeUiElement({
-                text: '0',
-                interactive: true,
-                buttonMode: true,
+                text: '0'
             });
             this.jumpHeightNum.style.fontSize = 24;
             this.jumpHeightNum.position.x = this.jumpHeight.position.x;
@@ -424,7 +420,7 @@
             this.baseTile = Graphics.makeUiElement({
                 sprite: 'base_tile2',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'base';
                 }
@@ -435,7 +431,7 @@
             this.dirtTile = Graphics.makeUiElement({
                 sprite: 'dirt_tile2',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'dirt';
                 }
@@ -446,7 +442,7 @@
             this.grassTile = Graphics.makeUiElement({
                 sprite: 'grass_tile2',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'grass';
                 }
@@ -457,7 +453,7 @@
             this.snowTile = Graphics.makeUiElement({
                 sprite: 'snow_tile2',
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'snow';
                 }
@@ -469,7 +465,7 @@
                 sprite: 'ice_tile2',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'ice';
                 }
@@ -481,7 +477,7 @@
                 sprite: 'sand_tile2',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'sand';
                 }
@@ -505,7 +501,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.toolSize < MapGen.MAX_TOOL_SIZE && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
                         MapGen.toolSize += 1;
@@ -520,7 +516,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.toolSize > 1 && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
                         MapGen.toolSize -= 1;
@@ -545,7 +541,7 @@
                 text: '◄',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.ROTATE1, true);
                 }
@@ -558,7 +554,7 @@
                 text: '►',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.ROTATE2, true);
                 }
@@ -581,7 +577,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.YSCALE1, true);
                 }
@@ -594,7 +590,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.YSCALE2, true);
                 }
@@ -617,7 +613,7 @@
                 text: '+',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Settings.zoom('in');
                 }
@@ -630,7 +626,7 @@
                 text: '-',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Settings.zoom('out');
                 }
@@ -653,7 +649,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.sensitivity < MapGen.MAX_SENSITIVITY){
                         MapGen.sensitivity += 1;
@@ -668,7 +664,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (MapGen.sensitivity > MapGen.MIN_SENSITIVITY){
                         MapGen.sensitivity -= 1;
@@ -684,7 +680,7 @@
                 text: "Save Map",
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     var name = prompt("Please enter a name for the map", MapGen.mapName);
                     var mapData = {};
@@ -714,7 +710,7 @@
                 text: "Delete Map",
                 style: style,
                 interactive: true,
-                buttonMode: true,
+                buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     if (confirm('Delete map "' + MapGen.mapName + '"?') == true) {
                         Acorn.Net.socket_.emit('deleteMap',{name:MapGen.mapName});
@@ -765,7 +761,7 @@
             var m = {}
             for (var i = 0; i < this.size;i++){
                 if (typeof m[i] == 'undefined'){
-                    this.map.axialMap[i] = {};
+                    m[i] = {};
                 }
                 for (var j = 0; j < this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) < this.size){
@@ -811,9 +807,12 @@
             }else{
                 this.removeDescText -= deltaTime;
             }
-            this.deleteButton.visible = this.name == '' ? false : true;
             Graphics.uiPrimitives2.clear();
             Graphics.worldPrimitives.clear();
+            if (this.mapName != ''){
+                this.deleteButton.visible = true;
+                Graphics.drawBoxAround(this.deleteButton,Graphics.uiPrimitives2,{});
+            }else{this.deleteButton.visible = false}
             this.sizeText.text = 'Tool Size: ' + this.toolSize;
             this.sensitivityText.text = 'Sensitivity: ' + this.sensitivity;
             Graphics.drawBoxAround(this.landscapeTool,Graphics.uiPrimitives2,{});
@@ -825,6 +824,7 @@
             Graphics.drawBoxAround(this.pathTool,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.losTool,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.exitButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.saveButton,Graphics.uiPrimitives2,{});
             Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
             Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
             Graphics.uiPrimitives2.drawRect(
@@ -864,7 +864,7 @@
                 this.snowTile.visible = false;
                 this.dirtTile.visible = false;
             }
-            Graphics.worldPrimitives.endFill();
+            Graphics.uiPrimitives2.endFill();
             if (!this.map.rotateData){
                 //set the new currently selected node after mouseover
                 if (this.setNewSelectedNode){
@@ -1227,9 +1227,9 @@
                                 var t = 1;
                                     if (!(this.map.currentRotation%2)){t = 2}
                                     var sp = 'sprite' + t;
-                                Graphics.worldPrimitives.lineStyle(3,0xFFFF00,1);
-                                Graphics.worldPrimitives.moveTo(aNode[sp].position.x,aNode[sp].position.y-this.map.TILE_HEIGHT*(aNode.h+1));
-                                Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1));
+                                Graphics.uiPrimitives2.lineStyle(3,0xFFFF00,1);
+                                Graphics.uiPrimitives2.moveTo(aNode[sp].position.x,aNode[sp].position.y-this.map.TILE_HEIGHT*(aNode.h+1));
+                                Graphics.uiPrimitives2.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1));
                             }*/
                             if (this.dragStart && this.losToolData.losShown == false){
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];

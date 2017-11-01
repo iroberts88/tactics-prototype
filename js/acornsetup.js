@@ -114,9 +114,11 @@
                     this.guestText = Graphics.makeUiElement({
                         text: 'PLAY AS GUEST',
                         style: AcornSetup.baseStyle,
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         position: [0,(Graphics.height * .75)],
-                        clickFunc: function onClick(){Acorn.Net.socket_.emit('loginAttempt',{guest: true});}
+                        clickFunc: function onClick(){
+                            Acorn.Net.socket_.emit('loginAttempt',{guest: true});
+                        }
                     });
                     this.guestText.style.fontSize = 48;
                     this.guestText.position.x = (Graphics.width / 2 - this.guestText.width);
@@ -125,7 +127,7 @@
                     this.loginText = Graphics.makeUiElement({
                         text: '          LOGIN          ',
                         style: AcornSetup.baseStyle,
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         position: [0,(Graphics.height * .75)],
                         clickFunc: function onClick(){
                             var state = Acorn.states['loginScreen'];
@@ -147,7 +149,7 @@
                     this.newUser = Graphics.makeUiElement({
                         text: '     New User     ',
                         style: AcornSetup.baseStyle,
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         position: [(Graphics.width / 2),(Graphics.height * .9)],
                         clickFunc: function onClick(){
                             var state = Acorn.states['loginScreen'];
@@ -175,7 +177,7 @@
                     this.submitButton = Graphics.makeUiElement({
                         text: '     Submit     ',
                         style: AcornSetup.baseStyle,
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         position: [(Graphics.width / 4),(Graphics.height * .75)],
                         clickFunc: function onClick(){
                             if (Settings.credentials.getType() == 'login'){
@@ -191,7 +193,7 @@
                     this.cancelButton = Graphics.makeUiElement({
                         text: '     Cancel     ',
                         style: AcornSetup.baseStyle,
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         position: [(Graphics.width / 1.5),(Graphics.height * .75)],
                         clickFunc: function onClick(){
                             var state = Acorn.states['loginScreen'];
@@ -214,14 +216,14 @@
 
                 },
                 update: function(dt){
-                    Graphics.worldPrimitives.clear();
+                    Graphics.uiPrimitives2.clear();
                     if (this.loginClicked){
-                        Graphics.drawBoxAround(this.cancelButton,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
-                        Graphics.drawBoxAround(this.submitButton,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
+                        Graphics.drawBoxAround(this.cancelButton,Graphics.uiPrimitives2,{});
+                        Graphics.drawBoxAround(this.submitButton,Graphics.uiPrimitives2,{});
                     }else{
-                        Graphics.drawBoxAround(this.loginText,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
-                        Graphics.drawBoxAround(this.newUser,Graphics.worldPrimitives,{xbuffer:5,ybuffer:-5});
-                        Graphics.drawBoxAround(this.guestText,Graphics.worldPrimitives,{ybuffer:-5});
+                        Graphics.drawBoxAround(this.loginText,Graphics.uiPrimitives2,{});
+                        Graphics.drawBoxAround(this.newUser,Graphics.uiPrimitives2,{});
+                        Graphics.drawBoxAround(this.guestText,Graphics.uiPrimitives2,{});
                     }
                     if (Acorn.Input.isPressed(Acorn.Input.Key.BACKSPACE)){
                         if (Settings.credentialsOn){
@@ -255,7 +257,7 @@
                         text: 'Create New Map',
                         position: [(Graphics.width/5),(Graphics.height/1.5)],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             Acorn.changeState('MapGenInit');
                         }
@@ -266,7 +268,7 @@
                     this.loadMapButton = Graphics.makeUiElement({
                         text: 'Edit Map',
                         position: [(Graphics.width/5),(Graphics.height/1.2)],
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var s = "Enter map name: \n";
                             for (var i = 0;i < MapGen.mapNames.length;i++){
@@ -281,7 +283,7 @@
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
                     this.userName = Graphics.makeUiElement({
-                        text: "Logged in as: \n" + Player.userData.name,
+                        text: "Welcome " + Player.userData.name + '!',
                         style: AcornSetup.baseStyle,
                         position: [10,10],
                         anchor: [0,0]
@@ -294,7 +296,7 @@
                         style: AcornSetup.baseStyle,
                         position: [10,this.userName.position.y + 10 + this.userName.height],
                         anchor: [0,0],
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             Acorn.changeState('charScreen');
                         }
@@ -307,7 +309,7 @@
                         style: AcornSetup.baseStyle,
                         position: [10,this.charButton.position.y + 10 + this.charButton.height],
                         anchor: [0,0],
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                     });
                     this.settingsButton.style.fontSize = 32;
                     Graphics.uiContainer.addChild(this.settingsButton);
@@ -317,7 +319,7 @@
                         style: AcornSetup.baseStyle,
                         position: [10,this.settingsButton.position.y + 10 + this.settingsButton.height],
                         anchor: [0,0],
-                        interactive: true,buttonMode: true,
+                        interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             if (confirm('<' + Player.userData.name + '>, Are you sure you want to log out?') == true) {
                                 Acorn.Net.socket_.emit('playerUpdate',{logout: true});
@@ -329,10 +331,12 @@
 
                 },
                 update: function(dt){
-                    Graphics.worldPrimitives.clear();
-                    Graphics.drawBoxAround(this.logoutButton,Graphics.worldPrimitives,{pos: [this.logoutButton.position.x + this.logoutButton.width/2,this.logoutButton.position.y + this.logoutButton.height/2]});
-                    Graphics.drawBoxAround(this.settingsButton,Graphics.worldPrimitives,{pos: [this.settingsButton.position.x + this.settingsButton.width/2,this.settingsButton.position.y + this.settingsButton.height/2]});
-                    Graphics.drawBoxAround(this.charButton,Graphics.worldPrimitives,{pos: [this.charButton.position.x + this.charButton.width/2,this.charButton.position.y + this.charButton.height/2]});
+                    Graphics.uiPrimitives2.clear();
+                    Graphics.drawBoxAround(this.logoutButton,Graphics.uiPrimitives2,{pos: [this.logoutButton.position.x + this.logoutButton.width/2,this.logoutButton.position.y + this.logoutButton.height/2]});
+                    Graphics.drawBoxAround(this.settingsButton,Graphics.uiPrimitives2,{pos: [this.settingsButton.position.x + this.settingsButton.width/2,this.settingsButton.position.y + this.settingsButton.height/2]});
+                    Graphics.drawBoxAround(this.charButton,Graphics.uiPrimitives2,{pos: [this.charButton.position.x + this.charButton.width/2,this.charButton.position.y + this.charButton.height/2]});
+                    Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.loadMapButton,Graphics.uiPrimitives2,{});
                 }
             });
             Acorn.addState({
@@ -405,7 +409,7 @@
                         style: style,
                         position: [(Graphics.width/3),(Graphics.height/4)],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'r';
@@ -425,7 +429,7 @@
                         style: style,
                         position: [(Graphics.width*0.66),(Graphics.height/4)],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 't';
@@ -444,7 +448,7 @@
                         style: style,
                         position: [(Graphics.width/3),(Graphics.height/3)],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'h';
@@ -463,7 +467,7 @@
                         style: style,
                         position: [(Graphics.width*0.66),(Graphics.height/3)],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'rh';
@@ -526,9 +530,9 @@
                         text: 'Create',
                         style: style,
                         position: [(Graphics.width / 2),(Graphics.height - 150)],
-                        anchor: [0,0.5],
+                        anchor: [0.5,0.5],
                         interactive: true,
-                        buttonMode: true,
+                        buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             var s;
@@ -556,17 +560,22 @@
 
                 },
                 update: function(dt){
-                    Graphics.worldPrimitives.clear();
+                    Graphics.uiPrimitives2.clear();
+                    Graphics.drawBoxAround(this.rectangle,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.triangle,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.hexagon,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.rhombus,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
                     if (this.typeSelected == 'r' || this.typeSelected == 'rh'){
                         this.sizeBar2.visible = true;
-                        Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
-                        Graphics.worldPrimitives.drawRect(this.sizeBar2.position.x - this.sizeBar2.width/2,
+                        Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
+                        Graphics.uiPrimitives2.drawRect(this.sizeBar2.position.x - this.sizeBar2.width/2,
                                                   this.sizeBar2.position.y - this.sizeBar2.height/2,
                                                   this.sizePercent2*this.sizeBar2.width,
                                                   this.sizeBar2.height);
-                        Graphics.worldPrimitives.endFill();
-                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,{});
-                        Graphics.drawBoxAround(this.sizeBar2,Graphics.worldPrimitives,{color: '0x000000',xbuffer:-2,ybuffer:-2});
+                        Graphics.uiPrimitives2.endFill();
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.uiPrimitives2,{});
+                        Graphics.drawBoxAround(this.sizeBar2,Graphics.uiPrimitives2,{color: '0x000000',xbuffer:-2,ybuffer:-2});
                         var min = this.mapSizes[this.typeSelected].min;
                         var max = this.mapSizes[this.typeSelected].max;
                         this.sizeNum.text = Math.round(min + this.sizePercent*(max-min)) + ' x ' + Math.round(min + this.sizePercent2*(max-min));
@@ -582,15 +591,15 @@
                         var max = this.mapSizes[this.typeSelected].max;
                         this.sizeNum.text = '' + Math.round(min + this.sizePercent*(max-min));
                     }
-                    Graphics.worldPrimitives.lineStyle(1,0xFFFFFF,0.6);
-                    Graphics.worldPrimitives.beginFill(0xFFFFFF,0.6);
-                    Graphics.worldPrimitives.drawRect(this.sizeBar.position.x - this.sizeBar.width/2,
+                    Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
+                    Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
+                    Graphics.uiPrimitives2.drawRect(this.sizeBar.position.x - this.sizeBar.width/2,
                                               this.sizeBar.position.y - this.sizeBar.height/2,
                                               this.sizePercent*this.sizeBar.width,
                                               this.sizeBar.height);
-                    Graphics.worldPrimitives.endFill();
-                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,{});
-                    Graphics.drawBoxAround(this.sizeBar,Graphics.worldPrimitives,{color: '0x000000',xbuffer:-2,ybuffer:-2});
+                    Graphics.uiPrimitives2.endFill();
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.uiPrimitives2,{});
+                    Graphics.drawBoxAround(this.sizeBar,Graphics.uiPrimitives2,{color: '0x000000',xbuffer:-2,ybuffer:-2});
                 }
             });
 

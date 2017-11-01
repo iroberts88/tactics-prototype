@@ -312,25 +312,138 @@
             if (typeof data.interactive != 'undefined'){
                 button.interactive = data.interactive;
             }
-            // OPTIONAL data.buttonMode
+            
+            // OPTIONAL click/mouse over-down-out functions
+            if (typeof data.clickFunc != 'undefined'){
+                button.clickFunc = data.clickFunc;
+            }
+            if (typeof data.mOverFunc != 'undefined'){
+                button.mOverFunc = data.mOverFunc;
+            }
+            if (typeof data.mDownFunc != 'undefined'){
+                button.mDownFunc = data.mDownFunc;
+            }
+            if (typeof data.mOutFunc != 'undefined'){
+                button.mOutFunc = data.mOutFunc;
+            }
+            // OPTIONAL data.buttonMode (glow)
             if (typeof data.buttonMode != 'undefined'){
                 button.buttonMode = data.buttonMode;
             }
-            // OPTIONAL data.clickFunc
-            if (typeof data.clickFunc != 'undefined'){
-                button.on('tap', data.clickFunc);
-                button.on('click', data.clickFunc);
-            }
-            if (typeof data.mOverFunc != 'undefined'){
-                button.on('pointerover', data.mOverFunc);
-                button.on('touchmove', data.mOverFunc);
-            }
-            if (typeof data.mOutFunc != 'undefined'){
-                button.on('touchend', data.mOutFunc);
-                button.on('touchendoutside', data.mOutFunc);
-                button.on('pointerout', data.mOutFunc);
+            if (typeof data.buttonGlow != 'undefined'){
+                var onClick = function(e){
+                    try{
+                        e.currentTarget.clickFunc();
+                    }catch(e){}
+                    Graphics.removeGlow(e.currentTarget);
+                }
+                button.on('tap', onClick);
+                button.on('click', onClick);
+                var mOverFunc = function(e){
+                    try{
+                        e.currentTarget.mOverFunc();
+                    }catch(e){}
+                    Graphics.buttonGlow(e.currentTarget);
+                }
+                button.on('pointerover', mOverFunc);
+                button.on('touchmove', mOverFunc);
+                var mDownFunc = function(e){
+                    try{
+                        e.currentTarget.mDownFunc();
+                    }catch(e){}
+                    Graphics.changeGlow(e.currentTarget);
+                }
+                button.on('pointerdown', mDownFunc);
+                button.on('touchstart', mDownFunc);
+                var mOutFunc = function(e){
+                    try{
+                        e.currentTarget.mOutFunc();
+                    }catch(e){}
+                    Graphics.removeGlow(e.currentTarget);
+                }
+                button.on('touchend', mOutFunc);
+                button.on('touchendoutside', mOutFunc);
+                button.on('pointerout', mOutFunc);
+            }else{
+                if (typeof data.clickFunc != 'undefined'){
+                    button.on('tap', button.clickFunc);
+                    button.on('click', button.clickFunc);
+                }
+                if (typeof data.mOverFunc != 'undefined'){
+                    button.on('pointerover', button.mOverFunc);
+                    button.on('touchmove', button.mOverFunc);
+                }
+                if (typeof data.mDownFunc != 'undefined'){
+                    button.on('pointerdown', button.mDownFunc);
+                    button.on('touchstart', button.mDownFunc);
+                }
+                if (typeof data.mOutFunc != 'undefined'){
+                    button.on('touchend', button.mOutFunc);
+                    button.on('touchendoutside', button.mOutFunc);
+                    button.on('pointerout', button.mOutFunc);
+                }
             }
             return button
+        },
+        buttonGlow: function(element,color1,color2,color3,color4){
+            if(!element.glowSprite){
+                if (typeof color1 == 'undefined'){
+                    color1 = 'hsla(300, 100%, 50%, 0.75)';
+                }
+                if (typeof color2 == 'undefined'){
+                    color2 = 'hsla(0, 100%, 100%, 0)';
+                }
+                if (typeof color3 == 'undefined'){
+                    color3 = 'hsla(0, 100%, 100%, 0.75)';
+                }
+                if (typeof color4 == 'undefined'){
+                    color4 = 'hsla(0, 100%, 100%, 0)';
+                }
+                var canvas = document.createElement('canvas');
+                canvas.width  = element.width;
+                canvas.height = element.height;
+                var ctx = canvas.getContext('2d');
+                var gradient = ctx.createLinearGradient(0, 0, element.width, 0);
+                gradient.addColorStop(0, color1);
+                gradient.addColorStop(1, color2);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0,0,element.width,element.height);
+                element.glowSprite1 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+                element.glowSprite1.position.x = element.position.x;
+                element.glowSprite1.position.y = element.position.y;
+                element.glowSprite1.anchor.x = element.anchor.x;
+                element.glowSprite1.anchor.y = element.anchor.y;
+                var canvas2 = document.createElement('canvas');
+                canvas2.width  = element.width;
+                canvas2.height = element.height;
+                var ctx2 = canvas2.getContext('2d');
+                var gradient2 = ctx2.createLinearGradient(0, 0, element.width, 0);
+                gradient2.addColorStop(0, color3);
+                gradient2.addColorStop(1, color4);
+                ctx2.fillStyle = gradient2;
+                ctx2.fillRect(0,0,element.width,element.height);
+                element.glowSprite2 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas2));
+                element.glowSprite2.position.x = element.position.x;
+                element.glowSprite2.position.y = element.position.y;
+                element.glowSprite2.anchor.x = element.anchor.x;
+                element.glowSprite2.anchor.y = element.anchor.y;
+            }
+            
+            this.uiContainer.addChildAt(element.glowSprite1,0);
+        },
+        removeGlow: function(element){
+            try{
+                this.uiContainer.removeChild(element.glowSprite1);
+                this.uiContainer.removeChild(element.glowSprite2);
+            }catch(e){}
+        },
+        changeGlow: function(element){
+            try{
+                this.uiContainer.removeChild(element.glowSprite1);
+                this.uiContainer.addChildAt(element.glowSprite2,0);
+            }catch(e){
+                console.log(e);
+            }
         },
         setSlideBar: function(bar,func){
             bar.clicked = false;
