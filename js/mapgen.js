@@ -32,10 +32,13 @@
         type: null,
         data: null,
 
+        changesMade: null,
+
         init: function() {
             this.drawBG();
             //initialize the map
             this.map = new Map();
+            this.changesMade = false;
             if (!this.data){
                 if (this.type == 't'){
                     this.map.maxSize = Math.round(this.size*1.5)
@@ -305,7 +308,16 @@
                 style: style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    Acorn.changeState('mainMenu');
+                    console.log(MapGen.changesMade)
+                    if (MapGen.changesMade){
+                        if (confirm('Exit and lose unsaved data?') == true) {
+                            MapGen.data = null;
+                            Acorn.changeState('mainMenu');
+                        }
+                    }else{
+                        MapGen.data = null;
+                        Acorn.changeState('mainMenu');
+                    }
                 }
             });
             this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
@@ -322,9 +334,7 @@
             Graphics.uiContainer.addChild(this.toolOptionsText);
 
             this.losDistance = Graphics.makeUiElement({
-                text: 'Unit Height: ',
-                interactive: true,
-                buttonMode: true,buttonGlow: true,
+                text: 'Unit Height: '
             });
             this.losDistance.style.fontSize = 24;
             this.losDistance.position.x = this.toolOptionsText.position.x - this.losDistance.width/2;
@@ -334,7 +344,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.char_height < 10){
                         MapGen.char_height += 1;
@@ -349,7 +359,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.char_height > 1){
                         MapGen.char_height -= 1;
@@ -362,9 +372,7 @@
             Graphics.uiContainer.addChild(this.losDistanceMinus);
 
             this.losDistanceNum = Graphics.makeUiElement({
-                text: '0',
-                interactive: true,
-                buttonMode: true,buttonGlow: true,
+                text: '0'
             });
             this.losDistanceNum.style.fontSize = 24;
             this.losDistanceNum.position.x = this.losDistance.position.x;
@@ -397,7 +405,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.pathToolData.jumpHeight > 0){
                         MapGen.pathToolData.jumpHeight -= 1;
@@ -420,7 +428,7 @@
             this.baseTile = Graphics.makeUiElement({
                 sprite: 'base_tile2',
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'base';
                 }
@@ -431,7 +439,7 @@
             this.dirtTile = Graphics.makeUiElement({
                 sprite: 'dirt_tile2',
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'dirt';
                 }
@@ -442,7 +450,7 @@
             this.grassTile = Graphics.makeUiElement({
                 sprite: 'grass_tile2',
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'grass';
                 }
@@ -453,7 +461,7 @@
             this.snowTile = Graphics.makeUiElement({
                 sprite: 'snow_tile2',
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'snow';
                 }
@@ -465,7 +473,7 @@
                 sprite: 'ice_tile2',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'ice';
                 }
@@ -477,7 +485,7 @@
                 sprite: 'sand_tile2',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     MapGen.currentTileType = 'sand';
                 }
@@ -501,7 +509,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.toolSize < MapGen.MAX_TOOL_SIZE && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
                         MapGen.toolSize += 1;
@@ -516,7 +524,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.toolSize > 1 && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
                         MapGen.toolSize -= 1;
@@ -541,7 +549,7 @@
                 text: '◄',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.ROTATE1, true);
                 }
@@ -554,7 +562,7 @@
                 text: '►',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.ROTATE2, true);
                 }
@@ -577,7 +585,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.YSCALE1, true);
                 }
@@ -590,7 +598,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Acorn.Input.setValue(Acorn.Input.Key.YSCALE2, true);
                 }
@@ -613,7 +621,7 @@
                 text: '+',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Settings.zoom('in');
                 }
@@ -626,7 +634,7 @@
                 text: '-',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     Settings.zoom('out');
                 }
@@ -649,7 +657,7 @@
                 text: '▲',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.sensitivity < MapGen.MAX_SENSITIVITY){
                         MapGen.sensitivity += 1;
@@ -664,7 +672,7 @@
                 text: '▼',
                 style: style,
                 interactive: true,
-                buttonMode: true,buttonGlow: true,
+                buttonMode: true,
                 clickFunc: function onClick(){
                     if (MapGen.sensitivity > MapGen.MIN_SENSITIVITY){
                         MapGen.sensitivity -= 1;
@@ -677,7 +685,7 @@
             Graphics.uiContainer.addChild(this.sensitivityMinus);
 
             this.saveButton = Graphics.makeUiElement({
-                text: "Save Map",
+                text: "Save",
                 style: style,
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
@@ -699,15 +707,16 @@
                             mapData[i][j] = node;
                         }
                     }
+                    MapGen.changesMade = false;
                     Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
                 }
             });
-            this.saveButton.position.x = Graphics.width - this.saveButton.width/2;
-            this.saveButton.position.y = Graphics.height - this.saveButton.height/2;
+            this.saveButton.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25- this.saveButton.width/2;
+            this.saveButton.position.y = this.exitButton.position.y;
             Graphics.uiContainer.addChild(this.saveButton);
 
             this.deleteButton = Graphics.makeUiElement({
-                text: "Delete Map",
+                text: "Delete",
                 style: style,
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
@@ -718,8 +727,8 @@
                     }
                 }
             });
-            this.deleteButton.position.x = Graphics.width - this.saveButton.width - this.deleteButton.width;
-            this.deleteButton.position.y = Graphics.height - this.deleteButton.height/2;
+            this.deleteButton.position.x = this.saveButton.position.x - this.saveButton.width/2 - 25- this.deleteButton.width/2;
+            this.deleteButton.position.y = this.exitButton.position.y;
             Graphics.uiContainer.addChild(this.deleteButton);
 
             window.currentGameMap = this.map;
@@ -809,7 +818,7 @@
             }
             Graphics.uiPrimitives2.clear();
             Graphics.worldPrimitives.clear();
-            if (this.mapName != ''){
+            if (this.mapName){
                 this.deleteButton.visible = true;
                 Graphics.drawBoxAround(this.deleteButton,Graphics.uiPrimitives2,{});
             }else{this.deleteButton.visible = false}
@@ -903,6 +912,7 @@
                         case 'height':
                             if (dragged === 1){
                                 //increase all of the lowest sprite heights
+                                MapGen.changesMade = true;
                                 var lowest = Infinity;
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
@@ -932,6 +942,7 @@
                                 
                             }
                             if (dragged === -1){
+                                MapGen.changesMade = true;
                                 //decrease height
                                 var highest = 0;
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
@@ -964,6 +975,7 @@
                             break;
                         case 'landscape':
                             if (dragged === 1){
+                                MapGen.changesMade = true;
                                 //increase all of the lowest sprite heights
                                 var lowest = Infinity;
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
@@ -1027,6 +1039,7 @@
                                 this.dragStart.n += 1;
                             }
                             if (dragged === -1){
+                                MapGen.changesMade = true;
                                 //decrease height
                                 var highest = 0;
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
@@ -1093,6 +1106,7 @@
                             break;
                         case 'noise':
                             if (this.dragStart.time >= this.sensitivity/10){
+                                MapGen.changesMade = true;
                                 this.dragStart.time -= (this.sensitivity/10);
                                 //increase all of the lowest sprite heights
                                 var lowest = Infinity;
@@ -1120,6 +1134,7 @@
                         case 'tiles':
 
                             //change sprite tile
+                            MapGen.changesMade = true;
                             var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                             var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                             for (var i = 0;i < arr.length;i++){
@@ -1134,6 +1149,7 @@
                             break;
                         case 'delete':
                             try{
+                                MapGen.changesMade = true;
                                 var node = this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
                                 this.dragStart = null;
                                 //remove sprite
@@ -1170,6 +1186,7 @@
                         case 'add':
                             var node = this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
                             this.dragStart = null;
+                            MapGen.changesMade = true;
                             //for each neighbor, make sure there is a path to the other another neighbors
                             var isAPath = true;
                             for (var i = 0; i < 6;i++){
