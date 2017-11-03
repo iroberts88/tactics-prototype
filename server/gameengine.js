@@ -17,6 +17,9 @@ var GameEngine = function() {
     this.players = {}; //List of players that do not have a gameSession
     this.openSessions = null;
     this.maps = [];
+    this.items = {};
+    this.buffs = {};
+    this.classes = {};
     this.playerCount = 0;
     //variables for ID's
     this.ids = {};
@@ -108,7 +111,28 @@ GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
         this.maps.push(arr[i].name);
     }
-    console.log('loaded Maps from db');
+    console.log('loaded ' + arr.length + ' Maps from db');
+}
+
+GameEngine.prototype.loadItems = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        this.items[arr[i]._dbIndex] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Items from db');
+}
+
+GameEngine.prototype.loadBuffs = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        this.buffs[arr[i]._dbIndex] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Buffs from db');
+}
+
+GameEngine.prototype.loadClasses = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        this.classes[arr[i]._dbIndex] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Classes from db');
 }
 
 GameEngine.prototype.loadUsers = function(arr) {

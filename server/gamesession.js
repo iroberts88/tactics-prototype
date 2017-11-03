@@ -2,15 +2,7 @@
 //gamesession.js
 //----------------------------------------------------------------
 
-var Player = require('./player.js').Player,
-    Enemy = require('./enemy.js').Enemy,
-    GameModeManager = require('./gamemodemanager.js').GameModeManager,
-    SAT = require('./SAT.js'); //SAT POLYGON COLLISSION1
-
-
-var V = SAT.Vector;
-var C = SAT.Circle;
-var P = SAT.Polygon;
+var Player = require('./player.js').Player
 
 var GameSession = function (engine) {
     this.engine = engine;

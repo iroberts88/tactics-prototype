@@ -58,6 +58,7 @@ var Unit = function(){
 
 Unit.prototype.init = function(data) {
     //Set up all stats and attributes
+    this.name = data.name;
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
         'id': 'maxHealth',
@@ -254,12 +255,20 @@ Unit.prototype.init = function(data) {
         'max': 100
     });
 
-    this.inventory = new Inventory();
+    /*this.inventory = new Inventory();
     this.inventory.init({
         owner: this
-    })
+    })*/
 };
 
+Unit.prototype.setClass = function(c){
+    try{
+
+    }catch(e){
+        console.log("unable to set class");
+        console.log(e);
+    }
+};
 Unit.prototype.update = function(dt) {
 
 }

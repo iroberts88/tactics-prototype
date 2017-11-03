@@ -19,7 +19,7 @@ function init() {
     var url = 'mongodb://127.0.0.1/lithiumAve';
     rc.ready();
     //TODO -- update to a new database
-    rc.require('dbMaps','dbUsers');
+    rc.require('dbMaps','dbUsers','dbItems','dbBuffs','dbClasses');
 
     // Use connect method to connect to the DB
     mongo.connect(url, function(err, db) {
@@ -31,6 +31,27 @@ function init() {
         mColl.find().toArray(function(err, arr) {
             ge.loadMaps(arr);
             rc.ready('dbMaps');
+        });
+
+        // ---- Load Items ----
+        var mColl = db.collection('tactics_items');
+        mColl.find().toArray(function(err, arr) {
+            ge.loadItems(arr);
+            rc.ready('dbItems');
+        });
+
+        // ---- Load Buffs ----
+        var mColl = db.collection('tactics_buffs');
+        mColl.find().toArray(function(err, arr) {
+            ge.loadBuffs(arr);
+            rc.ready('dbBuffs');
+        });
+
+        // ---- Load Classes ----
+        var mColl = db.collection('tactics_classes');
+        mColl.find().toArray(function(err, arr) {
+            ge.loadClasses(arr);
+            rc.ready('dbClasses');
         });
 
         // ---- Load Userbase ----

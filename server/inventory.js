@@ -24,7 +24,7 @@ Inventory.prototype.init = function(data){
             'value': 1,
             'min': 1,
             'max': 1000,
-            formula: function(){return (4+Math.floor(Math.pow(this.owner.strength.value,1.4)))*this.percentMod+this.numericMod;},
+            formula: function(){return Math.ceil((4+Math.floor(Math.pow(this.owner.strength.value,1.4)))*this.percentMod)+this.numericMod;},
             next: function(){this.owner.inventory.maxWeight.set();}
         });
     }else{

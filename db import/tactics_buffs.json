@@ -1,0 +1,13 @@
+{
+  "name" : "Bleed",
+  "description" : "Damage based on max health",
+  "duration": 3,
+  "actionsOnTurn" : [{
+      "action" : "alterHealthByMaxPercent",
+      "value" : 5
+    }],
+  "instant" : false,
+  "tags" : ["detrimental"],
+  "_dbIndex" : "buff_bleed"
+}
+

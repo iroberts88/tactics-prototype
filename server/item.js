@@ -32,7 +32,7 @@ Item.prototype.init = function(data) {
             break;
         case 'gun':
             this.stackable = false;
-            this.eqData = new Weapon();
+            this.eqData = new Gun();
             this.eqData.init(data.eqData);
             break;
         case 'shield':
@@ -50,8 +50,29 @@ Item.prototype.init = function(data) {
 
 exports.Item = Item;
 
+var Gun = function(){
+    this.rangeMin = null;
+    this.rangeMax = null,
+    this.damage = null;
+
+    this.onEquip = null;
+    this.onFire = null;
+    this.onHit = null;
+}
+
+Gun.prototype.init = function(data) {
+    this.rangeMin = data.rangeMin;
+    this.rangeMax = data.rangeMax;
+    this.damage = data.damage;
+
+    this.onEquip = data.onEquip;
+    this.onFire = data.onFire;
+    this.onHit = data.onHit;
+};
+
+exports.Weapon = Gun;
+
 var Weapon = function(){
-    this.range = null;
     this.damage = null;
 
     this.onEquip = null;
@@ -60,7 +81,6 @@ var Weapon = function(){
 }
 
 Weapon.prototype.init = function(data) {
-    this.range = data.range;
     this.damage = data.damage;
 
     this.onEquip = data.onEquip;

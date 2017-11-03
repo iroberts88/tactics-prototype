@@ -1,5 +1,6 @@
 { 
     "_id" : ObjectId("59ef76dc5e67e31684e32450"), 
+    "_dbIndex": "medic",
     "name" : "Medic",
     "attributes" : {
         "str" : -1.0, 
@@ -77,6 +78,7 @@
 }
 { 
     "name" : "Tech",
+    "_dbIndex": "tech",
     "attributes" : {
         "str" : 2.0, 
         "int" : 4.0, 
@@ -237,7 +239,8 @@
 }
 { 
     "_id" : ObjectId("59ef99d15e67e31684e32452"), 
-    "name" : "Scout", 
+    "name" : "Scout",
+    "_dbIndex": "scout",
     "attributes" : {
         "str" : 2.0, 
         "int" : 1.0, 
@@ -315,6 +318,7 @@
 { 
     "_id" : ObjectId("59efa3545e67e31684e32453"), 
     "name" : "Soldier", 
+    "_dbIndex": "soldier",
     "attributes" : {
         "str" : 2.0, 
         "int" : -1.0, 

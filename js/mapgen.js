@@ -312,10 +312,12 @@
                     if (MapGen.changesMade){
                         if (confirm('Exit and lose unsaved data?') == true) {
                             MapGen.data = null;
+                            MapGen.mapName = null;
                             Acorn.changeState('mainMenu');
                         }
                     }else{
                         MapGen.data = null;
+                        MapGen.mapName = null;
                         Acorn.changeState('mainMenu');
                     }
                 }
@@ -691,24 +693,28 @@
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     var name = prompt("Please enter a name for the map", MapGen.mapName);
-                    var mapData = {};
-                    for (var i in MapGen.axialMap){
-                        for (var j in MapGen.axialMap[i]){
-                            if (typeof mapData[i] == 'undefined'){
-                                mapData[i] = {};
+                    if (!name || name == ''){
+                        alert('Map not saved.');
+                    }else{
+                        var mapData = {};
+                        for (var i in MapGen.map.axialMap){
+                            for (var j in MapGen.map.axialMap[i]){
+                                if (typeof mapData[i] == 'undefined'){
+                                    mapData[i] = {};
+                                }
+                                var node = {
+                                    q: MapGen.map.axialMap[i][j].q,
+                                    r: MapGen.map.axialMap[i][j].r,
+                                    h: MapGen.map.axialMap[i][j].h,
+                                    deleted: MapGen.map.axialMap[i][j].deleted,
+                                    tile: MapGen.map.axialMap[i][j].tile
+                                }
+                                mapData[i][j] = node;
                             }
-                            var node = {
-                                q: MapGen.axialMap[i][j].q,
-                                r: MapGen.axialMap[i][j].r,
-                                h: MapGen.axialMap[i][j].h,
-                                deleted: MapGen.axialMap[i][j].deleted,
-                                tile: MapGen.axialMap[i][j].tile
-                            }
-                            mapData[i][j] = node;
                         }
+                        MapGen.changesMade = false;
+                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
                     }
-                    MapGen.changesMade = false;
-                    Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
                 }
             });
             this.saveButton.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25- this.saveButton.width/2;

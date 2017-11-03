@@ -4,8 +4,11 @@
 var mongo = require('mongodb').MongoClient,
     User = require('./user.js').User,
     Inventory = require('./inventory.js').Inventory;
+    Utils = require('./utils.js').Utils;
 
 var Player = function(){
+    this.MAX_UNITS = 30;
+    
     this.gameEngine = null;
     this.gameSession = null;
     this.user = null;
@@ -68,6 +71,27 @@ Player.prototype.setupSocket = function() {
         }
     });
 
+    this.socket.on('addRandomChar', function(data){
+        try{
+            var char = new Unit();
+            var sex = ['male','female'];
+            char.init({
+                name: Utils.generateName(Math.floor(Math.random()*sex.length))
+            });
+            var classes = ['soldier','medic','scout','tech'];
+            //randomize stats
+            var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
+            for (var i = 0;i < 20;i++){
+                var randStat = stats[Math.floor(Math.random()*stats.length)];
+                char[randStat].base += 1;
+            }
+            that.gameEngine.queuePlayer(that,'debug', {char: char.name});
+        }catch(e){
+            that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
+        }
+        //char.setClass(classes[Math.floor(Math.random()*classes.length)]);
+    });
+
     this.socket.on('confirmMapSave', function (data) {
         try{
             if (data.c){
@@ -98,7 +122,6 @@ Player.prototype.setupSocket = function() {
     this.socket.on('deleteMap', function (data) {
         try{
             mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
-                console.log("deleting map");
                 var query = { name: data.name };
                 var removed = db.collection('tactics_maps').remove(query);
                 db.close();
@@ -116,25 +139,22 @@ Player.prototype.setupSocket = function() {
     this.socket.on('createMap', function (data) {
         mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
             //see if map exists
-            var exists = false;
             var query = { name: data.name };
             db.collection('tactics_maps').find(query).toArray(function(err, arr) {
                 if (err) throw err;
                 if (arr.length == 1 ){
                     that.gameEngine.queuePlayer(that,"confirmMapSave", {name:data.name});
                     that.mapData = data;
-                    exists = true;
+                }else{
+                    db.collection('tactics_maps').insertOne({
+                        name: data.name,
+                        mapData: data.mapData
+                    });
+                    db.close();
+                    that.gameEngine.maps.push(data.name);
+                    that.gameEngine.queuePlayer(that,"mapSaved", {name:data.name});
                 }
             });
-            if (!exists){
-                db.collection('tactics_maps').insertOne({
-                    name: data.name,
-                    mapData: data.mapData
-                });
-                db.close();
-                that.gameEngine.maps.push(data.name);
-                that.gameEngine.queuePlayer(that,"mapSaved", {name:data.name});
-            }
         });
     });
 
