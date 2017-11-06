@@ -9,6 +9,7 @@ var Inventory = function () {
     this.currentWeight = 0;
     this.maxItemPile = 99;
     this.items = [];
+    this.maxWeight = null;
 }
     
 Inventory.prototype.init = function(data){
@@ -50,6 +51,7 @@ Inventory.prototype.changeWeight = function(amt,mult){
 Inventory.prototype.equipItem = function(index){
     
 }
+
 Inventory.prototype.addItem = function(item,amount){
     //function tries to add a number of any item
     //returns an array containing [amount added, amount not added]
@@ -125,4 +127,5 @@ Inventory.prototype.sortByType = function(dir){
    
 }
 
+console.log(Inventory);
 exports.Inventory = Inventory;

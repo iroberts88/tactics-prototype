@@ -1,9 +1,10 @@
-var Attribute = require('./attribute.js').Attribute,
-    Inventory = require('./inventory.js').Inventory;
+var Attribute = require('./attribute.js').Attribute;
 
 var Unit = function(){
     this.id = null;
-    
+    this.owner = null;
+    this.name = null;
+    this.sex = null;
     //Unit Stats
     //health
     this.currentHealth = null;
@@ -59,6 +60,13 @@ var Unit = function(){
 Unit.prototype.init = function(data) {
     //Set up all stats and attributes
     this.name = data.name;
+    this.sex = data.sex;
+    this.owner = data.owner;
+    this.id = data.id;
+
+    this.level = 1;
+    this.exp = 0;
+    
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
         'id': 'maxHealth',
@@ -255,10 +263,12 @@ Unit.prototype.init = function(data) {
         'max': 100
     });
 
-    /*this.inventory = new Inventory();
+    var Inventory = require('./inventory.js').Inventory;
+    console.log(Inventory);
+    this.inventory = new Inventory();
     this.inventory.init({
         owner: this
-    })*/
+    })
 };
 
 Unit.prototype.setClass = function(c){

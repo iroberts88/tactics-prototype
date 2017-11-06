@@ -3,8 +3,10 @@
 //----------------------------------------------------------------
 var mongo = require('mongodb').MongoClient,
     User = require('./user.js').User,
-    Inventory = require('./inventory.js').Inventory;
-    Utils = require('./utils.js').Utils;
+    Inventory = require('./inventory.js').Inventory,
+    Utils = require('./utils.js').Utils,
+    Attribute = require('./attribute.js').Attribute,
+    ClassInfo = require('./classinfo.js').ClassInfo;
 
 var Player = function(){
     this.MAX_UNITS = 30;
@@ -74,22 +76,54 @@ Player.prototype.setupSocket = function() {
     this.socket.on('addRandomChar', function(data){
         try{
             var char = new Unit();
-            var sex = ['male','female'];
+            var sexes = ['male','female'];
+            var sex = sexes[Math.floor(Math.random()*sexes.length)];
             char.init({
-                name: Utils.generateName(Math.floor(Math.random()*sex.length))
+                id: that.gameEngine.getId(),
+                owner: that,
+                name: '' + Utils.generateName(sex) + ' ' + Utils.generateName('last'),
+                sex: sex
             });
             var classes = ['soldier','medic','scout','tech'];
+            var cl = classes[Math.floor(Math.random()*classes.length)];
             //randomize stats
             var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
             for (var i = 0;i < 20;i++){
                 var randStat = stats[Math.floor(Math.random()*stats.length)];
                 char[randStat].base += 1;
+                char[randStat].set();
             }
-            that.gameEngine.queuePlayer(that,'debug', {char: char.name});
+            char.classInfo = new ClassInfo();
+            char.classInfo.init({unit: char});
+            char.classInfo.setBaseClass(cl);
+            char.classInfo.setClass(cl);
+            var Ch = {}
+            for (var a in char){
+                if (char[a] instanceof Attribute){
+                    Ch[a] = char[a].value;
+                }else{
+                    if (a != 'owner'){
+                        Ch[a] = char[a];
+                    }
+                }
+            }
+            Ch.name = char.name;
+            Ch.sex = char.sex
+            Ch.id = char.id;
+            Ch.classInfo = {};
+            for (var cI in char.classInfo){
+                if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
+            }
+            Ch.inventory = {};
+            Ch.inventory.currentWeight = char.inventory.currentWeight;
+            Ch.inventory.maxItemPile = char.inventory.maxItemPile;
+            Ch.inventory.items = char.inventory.items;
+            Ch.inventory.maxWeight = char.inventory.maxWeight.value;
+            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
+            that.characters.push(char);
         }catch(e){
             that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
         }
-        //char.setClass(classes[Math.floor(Math.random()*classes.length)]);
     });
 
     this.socket.on('confirmMapSave', function (data) {

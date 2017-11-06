@@ -1,409 +1,410 @@
 { 
     "_id" : ObjectId("59ef76dc5e67e31684e32450"), 
-    "_dbIndex": "medic",
-    "name" : "Medic",
+    "_dbIndex" : "medic", 
+    "name" : "Medic", 
     "attributes" : {
-        "str" : -1.0, 
-        "int" : 2.0, 
-        "end" : 2.0, 
-        "wil" : 3.0, 
-        "agi" : 1.0, 
-        "dex" : -1.0, 
-        "cha" : 4.0
+        "strength" : -1.0, 
+        "intelligence" : 2.0, 
+        "endurance" : 2.0, 
+        "willpower" : 3.0, 
+        "agility" : 1.0, 
+        "dexterity" : -1.0, 
+        "charisma" : 4.0
     }, 
     "baseAttr" : {
-        "health" : 0.0, 
-        "energy" : 20.0, 
         "move" : 0.0, 
-        "jump" : 0.0
+        "jump" : 0.0, 
+        "maximumHealth" : 0.0, 
+        "maximumEnergy" : 20.0
     }, 
     "abilities" : [
         {
             "name" : "First Aid", 
-            "description" : "Heal a unit in melee range for a small amount",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "firstAid"
+            "description" : "Heal a unit in melee range for a small amount", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "firstAid"
         }, 
         {
             "name" : "Resuscitate", 
-            "description" : "Bring a dead unit back to life. The target gains a speed bonus until their next turn",
-            "sCost": 5,
-            "ApCost": 80,
-            "id": "resuscitate"
+            "description" : "Bring a dead unit back to life. The target gains a speed bonus until their next turn", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(80), 
+            "id" : "resuscitate"
         }, 
         {
             "name" : "Healing Field", 
-            "description" : "Place a healing field bot. Every turn the field heals units in a radius",
-            "sCost": 10,
-            "ApCost": 100,
-            "id": "healingField"
+            "description" : "Place a healing field bot. Every turn the field heals units in a radius", 
+            "sCost" : NumberInt(10), 
+            "ApCost" : NumberInt(100), 
+            "id" : "healingField"
         }, 
         {
             "name" : "Recovery", 
-            "description" : "Recover HP at the end of each turn",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "recovery"
+            "description" : "Recover HP at the end of each turn", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "recovery"
         }, 
         {
             "name" : "Sprint", 
-            "description" : "Use your action to move additional units",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "sprint"
+            "description" : "Use your action to move additional units", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "sprint"
         }, 
         {
-            "name" : "Precision Strike", 
-            "description" : "Perform an attack with a melee weapon, striking a vital point to decrease the target’s healing received",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "precisionStrike"
+            "name" : "Precision strengthike", 
+            "description" : "Perform an attack with a melee weapon, strengthiking a vital point to decrease the target’s healing received", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "precisionstrengthike"
         }, 
         {
             "name" : "Cripple", 
-            "description" : "Perform an attack with a ranged weapon, striking a vital point to decrease the targets next movement",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "cirpple"
+            "description" : "Perform an attack with a ranged weapon, strengthiking a vital point to decrease the targets next movement", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "cirpple"
         }, 
         {
             "name" : "Shield Boost", 
-            "description" : "Upgrade an ally’s shield temporarily",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "shieldBoost"
+            "description" : "Upgrade an ally’s shield temporarily", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "shieldBoost"
         }
     ]
 }
 { 
-    "name" : "Tech",
-    "_dbIndex": "tech",
+    "_id" : ObjectId("59ff57e61194231ac0c22aa2"), 
+    "name" : "Tech", 
+    "_dbIndex" : "tech", 
     "attributes" : {
-        "str" : 2.0, 
-        "int" : 4.0, 
-        "end" : -1.0, 
-        "wil" : 3.0, 
-        "agi" : 2.0, 
-        "dex" : 1.0, 
-        "cha" : -1.0
+        "strength" : 2.0, 
+        "intelligence" : 4.0, 
+        "endurance" : -1.0, 
+        "willpower" : 3.0, 
+        "agility" : 2.0, 
+        "dexterity" : 1.0, 
+        "charisma" : -1.0
     }, 
     "baseAttr" : {
-        "health" : -200.0, 
-        "energy" : 40.0, 
         "move" : 0.0, 
-        "jump" : 0.0
+        "jump" : 0.0, 
+        "maximumHealth" : -200.0, 
+        "maximumEnergy" : 40.0
     }, 
     "abilities" : [
         {
             "name" : "Scan", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "scan"
-        },
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "scan"
+        }, 
         {
             "name" : "Repair", 
-            "description" : "Repair a mechanical unit",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "repair"
+            "description" : "Repair a mechanical unit", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "repair"
         }, 
         {
             "name" : "HeatUP", 
-            "description" : "All units gain heat damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "heatUp"
+            "description" : "All units gain heat damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "heatUp"
         }, 
         {
             "name" : "PhysUP", 
-            "description" : "All units gain physical damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "physUp"
+            "description" : "All units gain physical damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "physUp"
         }, 
         {
             "name" : "ColdUP", 
-            "description" : "All units gain cold damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "coldUp"
+            "description" : "All units gain cold damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "coldUp"
         }, 
         {
             "name" : "AcidUP", 
-            "description" : "All units gain acid damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "acidUp"
+            "description" : "All units gain acid damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "acidUp"
         }, 
         {
             "name" : "PoisUP", 
-            "description" : "All units gain poison damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "poisUp"
+            "description" : "All units gain poison damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "poisUp"
         }, 
         {
             "name" : "ElecUP", 
-            "description" : "All units gain elec damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "elecUp"
+            "description" : "All units gain elec damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "elecUp"
         }, 
         {
             "name" : "PulsUP", 
-            "description" : "All units gain pulse damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "pulsUp"
+            "description" : "All units gain pulse damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "pulsUp"
         }, 
         {
             "name" : "GravUP", 
-            "description" : "All units gain gravity damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "gravUp"
+            "description" : "All units gain gravity damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "gravUp"
         }, 
         {
             "name" : "RadiUP", 
-            "description" : "All units gain radiation damage resistance",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "radiUp"
-        },
+            "description" : "All units gain radiation damage resistance", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "radiUp"
+        }, 
         {
             "name" : "Flare Grenade", 
-            "description" : "Lob a grenade dealing heat damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "flareGrenade"
-        },
+            "description" : "Lob a grenade dealing heat damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "flareGrenade"
+        }, 
         {
             "name" : "Cryo Grenade", 
-            "description" : "Lob a grenade dealing cold damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "cryoGrenade"
-        },
+            "description" : "Lob a grenade dealing cold damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "cryoGrenade"
+        }, 
         {
             "name" : "Grenade", 
-            "description" : "Lob a grenade explosive damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "grenade"
-        },
+            "description" : "Lob a grenade explosive damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "grenade"
+        }, 
         {
             "name" : "Corrosive Grenade", 
-            "description" : "Lob a grenade dealing acid damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "corrosiveGrenade"
-        },
+            "description" : "Lob a grenade dealing acid damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "corrosiveGrenade"
+        }, 
         {
             "name" : "Toxic Grenade", 
-            "description" : "Lob a grenade dealing poison damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "poisonGrenade"
-        },
+            "description" : "Lob a grenade dealing poison damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "poisonGrenade"
+        }, 
         {
             "name" : "Flare Grenade", 
-            "description" : "Lob a grenade dealing heat damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "flareGrenade"
-        },
+            "description" : "Lob a grenade dealing heat damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "flareGrenade"
+        }, 
         {
             "name" : "EMP Grenade", 
-            "description" : "Lob a grenade dealing pulse damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "empGrenade"
-        },
+            "description" : "Lob a grenade dealing pulse damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "empGrenade"
+        }, 
         {
             "name" : "Uranium Grenade", 
-            "description" : "Lob a grenade dealing radiation damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "uraniumGrenade"
-        },
+            "description" : "Lob a grenade dealing radiation damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "uraniumGrenade"
+        }, 
         {
             "name" : "Void Grenade", 
-            "description" : "Lob a grenade dealing gravity damage",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "voidGrenade"
+            "description" : "Lob a grenade dealing gravity damage", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "voidGrenade"
         }
     ]
 }
 { 
     "_id" : ObjectId("59ef99d15e67e31684e32452"), 
-    "name" : "Scout",
-    "_dbIndex": "scout",
+    "name" : "Scout", 
+    "_dbIndex" : "scout", 
     "attributes" : {
-        "str" : 2.0, 
-        "int" : 1.0, 
-        "end" : 1.0, 
-        "wil" : 2.0, 
-        "agi" : 3.0, 
-        "dex" : 2.0, 
-        "cha" : -1.0
+        "strength" : 2.0, 
+        "intelligence" : 1.0, 
+        "endurance" : 1.0, 
+        "willpower" : 2.0, 
+        "agility" : 3.0, 
+        "dexterity" : 2.0, 
+        "charisma" : -1.0
     }, 
     "baseAttr" : {
-        "health" : -200.0, 
-        "energy" : 0.0, 
         "move" : 1.0, 
-        "jump" : 1.0
+        "jump" : 1.0, 
+        "maximumHealth" : -200.0, 
+        "maximumEnergy" : 0.0
     }, 
     "abilities" : [
         {
             "name" : "Flare", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "flare"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "flare"
         }, 
         {
             "name" : "Stealth", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "stealth"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "stealth"
         }, 
         {
             "name" : "Dodge", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "dodge"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "dodge"
         }, 
         {
             "name" : "Quick Attack", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "quickAttack"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "quickAttack"
         }, 
         {
             "name" : "Agitate", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "agitate"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "agitate"
         }, 
         {
             "name" : "Climber", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "climber"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "climber"
         }, 
         {
             "name" : "Momentum", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "momentum"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "momentum"
         }, 
         {
             "name" : "Counter Attack", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "counterAttack"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "counterAttack"
         }
     ]
 }
 { 
     "_id" : ObjectId("59efa3545e67e31684e32453"), 
     "name" : "Soldier", 
-    "_dbIndex": "soldier",
+    "_dbIndex" : "soldier", 
     "attributes" : {
-        "str" : 2.0, 
-        "int" : -1.0, 
-        "end" : 2.0, 
-        "wil" : 1.0, 
-        "agi" : 2.0, 
-        "dex" : 2.0, 
-        "cha" : 2.0
+        "strength" : 2.0, 
+        "intelligence" : -1.0, 
+        "endurance" : 2.0, 
+        "willpower" : 1.0, 
+        "agility" : 2.0, 
+        "dexterity" : 2.0, 
+        "charisma" : 2.0
     }, 
     "baseAttr" : {
-        "health" : 200.0, 
-        "energy" : -20.0, 
         "move" : 0.0, 
-        "jump" : 0.0
+        "jump" : 0.0, 
+        "maximumHealth" : 200.0, 
+        "maximumEnergy" : -20.0
     }, 
     "abilities" : [
         {
             "name" : "Bolster", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "bolster"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "bolster"
         }, 
         {
             "name" : "Focus", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "focus"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "focus"
         }, 
         {
             "name" : "Heroic Leap", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "heroicLeap"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "heroicLeap"
         }, 
         {
             "name" : "Heroic Charge", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "heroicCharge"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "heroicCharge"
         }, 
         {
             "name" : "Power Attack", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "powerAttack"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "powerAttack"
         }, 
         {
             "name" : "Power Shot", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "powerShot"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "powerShot"
         }, 
         {
             "name" : "Hardy", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "hardy"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "hardy"
         }, 
         {
             "name" : "Vengeance", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "vengeance"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "vengeance"
         }, 
         {
             "name" : "Charge", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "charge"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "charge"
         }, 
         {
             "name" : "Opportunity", 
-            "description" : "",
-            "sCost": 5,
-            "ApCost": 50,
-            "id": "opportunity"
+            "description" : "", 
+            "sCost" : NumberInt(5), 
+            "ApCost" : NumberInt(50), 
+            "id" : "opportunity"
         }
     ]
 }

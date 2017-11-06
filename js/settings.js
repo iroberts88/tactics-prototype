@@ -15,6 +15,7 @@
         currentRotation: null,
         credentials: null,
         credentialsOn: null,
+        charScrollSpeed: null,
 
         init: function() {
         	//Working
@@ -24,6 +25,7 @@
             this.musicVolume = 1.0;
             this.sfxVolume = 1.0;
 
+            this.charScrollSpeed = 30;
             this.autoFullScreen = false;
             this.currentMap = null;
             this.stats = new Stats();
@@ -48,6 +50,25 @@
                     MapGen.map.currentZoomSetting -= 1;
                     if (MapGen.map.currentZoomSetting == -1){
                         MapGen.map.currentZoomSetting = 0;
+                    }
+                }
+                var t = 1;
+                if (!(MapGen.map.currentRotation%2)){t = 2}
+                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
+            }else if (Acorn.currentState == 'charScreen'){
+                if (dir == 'in'){
+                    Graphics.uiPrimitives.position.y += this.charScrollSpeed;
+                    Graphics.worldContainer.position.y += this.charScrollSpeed;
+                    if (Graphics.uiPrimitives.position.y > 0){
+                        Graphics.uiPrimitives.position.y = 0;
+                        Graphics.worldContainer.position.y = 0;
+                    }
+                }else if (dir == 'out'){
+                    Graphics.uiPrimitives.position.y -= this.charScrollSpeed;
+                    Graphics.worldContainer.position.y -= this.charScrollSpeed;
+                    if (Graphics.uiPrimitives.position.y < Characters.bounds){
+                        Graphics.uiPrimitives.position.y = Characters.bounds;
+                        Graphics.worldContainer.position.y = Characters.bounds;
                     }
                 }
                 var t = 1;

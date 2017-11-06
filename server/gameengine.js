@@ -77,7 +77,7 @@ GameEngine.prototype.tick = function() {
             if (!openSession){
                 console.log('Creating a new ' + p.tryingToJoinGame + ' session');
                 var s = new GameSession(self);
-                s.init({ sid: self.getID(), gameMode: p.tryingToJoinGame });
+                s.init({ sid: self.getId(), gameMode: p.tryingToJoinGame });
                 console.log('session id: ' + s.id);
                 self.sessions[s.id] = s;
             }
@@ -89,7 +89,7 @@ GameEngine.prototype.tick = function() {
 }
 
 
-GameEngine.prototype.getID = function() {
+GameEngine.prototype.getId = function() {
     var id = '';
     for( var i=0; i < 6; i++ ){
         id += this.possibleIDChars.charAt(Math.floor(Math.random() * this.possibleIDChars.length));
@@ -98,7 +98,7 @@ GameEngine.prototype.getID = function() {
         this.ids[id] = 1;
         return id;
     }else{
-        return this.getID();
+        return this.getId();
     }
     return id;
 }
@@ -131,6 +131,11 @@ GameEngine.prototype.loadBuffs = function(arr) {
 GameEngine.prototype.loadClasses = function(arr) {
     for (var i = 0; i < arr.length;i++){
         this.classes[arr[i]._dbIndex] = arr[i];
+        //fill in the abiliy index for quick access
+        this.classes[arr[i]._dbIndex].abilityIndex = {};
+        for (var j = 0; j < this.classes[arr[i]._dbIndex].abilities.length;j++){
+            this.classes[arr[i]._dbIndex].abilityIndex[this.classes[arr[i]._dbIndex].abilities[j].id] = j;
+        }
     }
     console.log('loaded ' + arr.length + ' Classes from db');
 }
@@ -154,7 +159,7 @@ GameEngine.prototype.newConnection = function(socket) {
     self.playerCount += 1;
     //Initialize new player and add to the proper session
     var p = new Player();
-    p.id = self.getID();
+    p.id = self.getId();
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});

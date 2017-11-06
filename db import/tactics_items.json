@@ -1,157 +1,171 @@
-{
-  "name" : "Healing Compound",
-  "description": "Use to restore 300 health",
-  "value" : 50.0,
-  "weight" : 1.0,
-  "maxItemPile" : 99,
-  "type" : "compound",
-  "usable" : true,
-  "onUse": [
-    {
-      "name" : "alterHealth",
-      "value": 300
-    }
-  ],
-  "_dbIndex" : "item_compound_healing"
-},
-
-{
-  "name" : "Vigor Compound",
-  "description": "Use to restore 25 energy",
-  "value" : 300.0,
-  "weight" : 1.0,
-  "maxItemPile" : 99,
-  "type" : "compound",
-  "usable" : true,
-  "onUse": [
-    {
-      "name" : "alterEnergy",
-      "value": 25
-    }
-  ],
-  "_dbIndex" : "item_compound_vigor"
-}
-
-{
-  "name" : "Sidearm Pistol",
-  "description": "A simple, leightweight sidearm",
-  "value" : 200.0,
-  "weight" : 2.0,
-  "type" : "gun",
-  "usable" : false,
-  "eqData": {
-    "rangeMin": 2,
-    "rangeMax": 4,
-    "damage": 150,
-    "onEquip": [
-    ],
-    "onFire": [
-    ],
-    "onHit": [
-    ]
-  },
-  "_dbIndex" : "item_gun_sidearm"
-}
-
-{
-  "name" : "Chain Sword",
-  "description": "Use to rev up the chain blade",
-  "value" : 300.0,
-  "weight" : 6.0,
-  "type" : "weapon",
-  "usable" : true,
-  "onUse": [
-    {
-      "name": "addOnHit",
-      "data": [{
-        "name": "addBuff",
-        "buffData": {
-            "name" : "Bleeding",
-            "id": "buff_bleed",
-            "description" : "Bleeding 5% Max health for 3 turns",
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9b"), 
+    "name" : "Healing Compound", 
+    "description" : "Use to restore 300 health", 
+    "value" : 50.0, 
+    "weight" : 1.0, 
+    "maxItemPile" : NumberInt(99), 
+    "type" : "compound", 
+    "usable" : true, 
+    "onUse" : [
+        {
+            "name" : "alterHealth", 
+            "value" : NumberInt(300)
         }
-      }]
-    },
-    {
-      "name": "setUsable",
-      "value": "false"
-    }
-  ],
-  "eqData": {
-    "damage": 200,
-    "onEquip": [
-    ],
-    "onFire": [
-    ],
-    "onHit": [
-    ]
-  },
-  "_dbIndex" : "item_weapon_chainSword"
+    ], 
+    "_dbIndex" : "item_compound_healing"
 }
-
-{
-  "name" : "SMG",
-  "description": "Fires in short auto-bursts",
-  "value" : 200.0,
-  "weight" : 5.0,
-  "type" : "gun",
-  "usable" : false,
-  "eqData": {
-    "rangeMin": 2,
-    "rangeMax": 4,
-    "damage": 35,
-    "onEquip": [
-    ],
-    "onFire": [
-      {
-        "name": "burstShot",
-        "value": 5
-      }
-    ],
-    "onHit": [
-    ]
-  },
-  "_dbIndex" : "item_gun_smg"
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9c"), 
+    "name" : "Vigor Compound", 
+    "description" : "Use to restore 25 energy", 
+    "value" : 300.0, 
+    "weight" : 1.0, 
+    "maxItemPile" : NumberInt(99), 
+    "type" : "compound", 
+    "usable" : true, 
+    "onUse" : [
+        {
+            "name" : "alterEnergy", 
+            "value" : NumberInt(25)
+        }
+    ], 
+    "_dbIndex" : "item_compound_vigor"
 }
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9d"), 
+    "name" : "Sidearm Pistol", 
+    "description" : "A simple, leightweight sidearm", 
+    "value" : 200.0, 
+    "weight" : 2.0, 
+    "type" : "gun", 
+    "usable" : false, 
+    "eqData" : {
+        "rangeMin" : NumberInt(2), 
+        "rangeMax" : NumberInt(4), 
+        "damage" : NumberInt(150), 
+        "onEquip" : [
 
-{
-  "name" : "Cerebral Implant",
-  "description": "Increases INT and EXP gain",
-  "value" : 1000.0,
-  "weight" : 1.0,
-  "type" : "accessory",
-  "usable" : false,
-  "eqData": {
-    "onEquip": [
-      {
-      "name": "alterStat",
-      "stat": "int",
-      "value": 1
-      },
-      {
-      "name": "alterStat",
-      "stat": "expMod",
-      "value": 10
-      }
-    ]
-  },
-  "_dbIndex" : "item_accessory_cerebralImplant"
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_gun_sidearm"
 }
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9e"), 
+    "name" : "Chain Sword", 
+    "description" : "Use to rev up the chain blade", 
+    "value" : 300.0, 
+    "weight" : 6.0, 
+    "type" : "weapon", 
+    "usable" : true, 
+    "onUse" : [
+        {
+            "name" : "addOnHit", 
+            "data" : [
+                {
+                    "name" : "addBuff", 
+                    "buffData" : {
+                        "name" : "Bleeding", 
+                        "id" : "buff_bleed", 
+                        "description" : "Bleeding 5% Max health for 3 turns"
+                    }
+                }
+            ]
+        }, 
+        {
+            "name" : "setUsable", 
+            "value" : "false"
+        }
+    ], 
+    "eqData" : {
+        "damage" : NumberInt(200), 
+        "onEquip" : [
 
-{
-  "name" : "Shield",
-  "description": "A basic shield",
-  "value" : 350.0,
-  "weight" : 3.0,
-  "type" : "shield",
-  "usable" : false,
-  "eqData": {
-    "capacity": 200,
-    "rechargeRate": 50,
-    "rechargeDelay": 1,
+        ], 
+        "onFire" : [
 
-    "onEquip": [],
-    "onHit":  []
-  },
-  "_dbIndex" : "item_shield_shield"
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_weapon_chainSword"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9f"), 
+    "name" : "SMG", 
+    "description" : "Fires in short auto-bursts", 
+    "value" : 200.0, 
+    "weight" : 5.0, 
+    "type" : "gun", 
+    "usable" : false, 
+    "eqData" : {
+        "rangeMin" : NumberInt(2), 
+        "rangeMax" : NumberInt(4), 
+        "damage" : NumberInt(35), 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+            {
+                "name" : "burstShot", 
+                "value" : NumberInt(5)
+            }
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_gun_smg"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22aa0"), 
+    "name" : "Cerebral Implant", 
+    "description" : "Increases INT and EXP gain", 
+    "value" : 1000.0, 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "int", 
+                "value" : NumberInt(1)
+            }, 
+            {
+                "name" : "alterStat", 
+                "stat" : "expMod", 
+                "value" : NumberInt(10)
+            }
+        ]
+    }, 
+    "_dbIndex" : "item_accessory_cerebralImplant"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22aa1"), 
+    "name" : "Shield", 
+    "description" : "A basic shield", 
+    "value" : 350.0, 
+    "weight" : 3.0, 
+    "type" : "shield", 
+    "usable" : false, 
+    "eqData" : {
+        "capacity" : NumberInt(200), 
+        "rechargeRate" : NumberInt(50), 
+        "rechargeDelay" : NumberInt(1), 
+        "onEquip" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_shield_shield"
 }

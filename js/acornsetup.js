@@ -81,10 +81,14 @@
                 }
               }catch(e){}
             });
-
+            Acorn.Net.on('addNewUnit', function (data) {
+                console.log(data);
+                Player.addNewUnit(data);
+            });
             Acorn.Net.on('debug', function (data) {
               console.log(data);
             });
+
 
             Acorn.Net.on('ping', function (data) {
               Settings.stats.pingReturn();
@@ -140,6 +144,9 @@
                             Settings.toggleCredentials(true);
                             state.loginClicked = true;
                             document.getElementById('usrInput').focus();
+                            try{
+                                Graphics.uiContainer.removeChild(state.loginText.glowSprite2);
+                            }catch(e){}
                         }
                     });
                     this.loginText.style.fontSize = 48;
@@ -162,6 +169,9 @@
                             Settings.toggleCredentials(true);
                             state.loginClicked = true;
                             document.getElementById('usrInput').focus();
+                            try{
+                                Graphics.uiContainer.removeChild(state.newUser.glowSprite2);
+                            }catch(e){}
                         }
                     });
                     this.newUser.style.fontSize = 48;
@@ -205,6 +215,9 @@
                             Settings.toggleCredentials(false);
                             state.loginClicked = false;
                             state.loginErrorText.text = '';
+                            try{
+                                Graphics.uiContainer.removeChild(state.cancelButton.glowSprite2);
+                            }catch(e){}
                         }
                     });
                     this.cancelButton.style.fontSize = 64;

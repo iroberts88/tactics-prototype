@@ -1,0 +1,600 @@
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc46"), 
+    "className" : "The Destroyer", 
+    "_dbIndex" : "destroyer", 
+    "state" : "idle", 
+    "health" : NumberInt(80), 
+    "strength" : NumberInt(10), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(7), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(7), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "madRush", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc47"), 
+    "className" : "The Elder", 
+    "_dbIndex" : "elder", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(5), 
+    "endurance" : NumberInt(6), 
+    "agility" : NumberInt(10), 
+    "dexterity" : NumberInt(9), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(10), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_plasmaCaster", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "juxtapose", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc48"), 
+    "className" : "The Machinist", 
+    "_dbIndex" : "machinist", 
+    "state" : "idle", 
+    "health" : NumberInt(60), 
+    "strength" : NumberInt(9), 
+    "endurance" : NumberInt(9), 
+    "agility" : NumberInt(7), 
+    "dexterity" : NumberInt(7), 
+    "willpower" : NumberInt(6), 
+    "intelligence" : NumberInt(10), 
+    "speed" : NumberInt(72), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "contructTurret", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc49"), 
+    "className" : "The Myrmidon", 
+    "_dbIndex" : "myrmidon", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(12), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(12), 
+    "dexterity" : NumberInt(3), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(5), 
+    "speed" : NumberInt(80), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "wraithWalk", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4a"), 
+    "className" : "The Gaian", 
+    "_dbIndex" : "gaian", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(10), 
+    "intelligence" : NumberInt(6), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 1.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "gaianGuise", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4b"), 
+    "className" : "The Gypsy", 
+    "_dbIndex" : "gypsy", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(5), 
+    "endurance" : NumberInt(5), 
+    "agility" : NumberInt(13), 
+    "dexterity" : NumberInt(5), 
+    "willpower" : NumberInt(5), 
+    "intelligence" : NumberInt(5), 
+    "speed" : NumberInt(90), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "dazzle", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4c"), 
+    "className" : "The Hellion", 
+    "_dbIndex" : "hellion", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(10), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(10), 
+    "willpower" : NumberInt(6), 
+    "intelligence" : NumberInt(6), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 1.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "scorcher", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4d"), 
+    "className" : "The Kinetic", 
+    "_dbIndex" : "kinetic", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "polarityFlux", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4e"), 
+    "className" : "The Marksman", 
+    "_dbIndex" : "marksman", 
+    "state" : "idle", 
+    "health" : NumberInt(70), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(15), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(65), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "focus", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc4f"), 
+    "className" : "The Medicae", 
+    "_dbIndex" : "medicae", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "aetherLink", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc50"), 
+    "className" : "The Phalanx", 
+    "_dbIndex" : "phalanx", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(10), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "unleash", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc51"), 
+    "className" : "The Blackguard", 
+    "_dbIndex" : "blackguard", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "blackHunt", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc52"), 
+    "className" : "The Reaver", 
+    "_dbIndex" : "reaver", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "bulletHell", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc53"), 
+    "className" : "The Beastmaster", 
+    "_dbIndex" : "beastMaster", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_bmflak", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "tame", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d05d1046a3d080fcc54"), 
+    "className" : "The Something", 
+    "_dbIndex" : "something", 
+    "state" : "idle", 
+    "health" : NumberInt(500), 
+    "strength" : NumberInt(200), 
+    "endurance" : NumberInt(200), 
+    "agility" : NumberInt(200), 
+    "dexterity" : NumberInt(200), 
+    "willpower" : NumberInt(200), 
+    "intelligence" : NumberInt(200), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_swarmer", 
+    "weapon" : "item_weapon_occamsRazor", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 2.0, 
+        "cold" : 2.0, 
+        "shock" : 2.0, 
+        "acid" : 2.0, 
+        "gravity" : 2.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "something", 
+    "aType" : NumberInt(1)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc41"), 
+    "className" : "The Celestial", 
+    "_dbIndex" : "celestial", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(7), 
+    "endurance" : NumberInt(7), 
+    "agility" : NumberInt(10), 
+    "dexterity" : NumberInt(7), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(9), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "aetherWarp", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc42"), 
+    "className" : "The Chemist", 
+    "_dbIndex" : "chemist", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(7), 
+    "endurance" : NumberInt(7), 
+    "agility" : NumberInt(9), 
+    "dexterity" : NumberInt(7), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(9), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default2", 
+    "weapon" : "item_weapon_default2", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "rageSerum", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc43"), 
+    "className" : "The Chimera", 
+    "_dbIndex" : "chimera", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(6), 
+    "endurance" : NumberInt(7), 
+    "agility" : NumberInt(6), 
+    "dexterity" : NumberInt(10), 
+    "willpower" : NumberInt(9), 
+    "intelligence" : NumberInt(10), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "elementalStorm", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc44"), 
+    "className" : "The Commando", 
+    "_dbIndex" : "commando", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(8), 
+    "endurance" : NumberInt(8), 
+    "agility" : NumberInt(8), 
+    "dexterity" : NumberInt(8), 
+    "willpower" : NumberInt(8), 
+    "intelligence" : NumberInt(8), 
+    "speed" : NumberInt(75), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 0.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "battlecry", 
+    "aType" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("58863d04d1046a3d080fcc45"), 
+    "className" : "The Defiler", 
+    "_dbIndex" : "defiler", 
+    "state" : "idle", 
+    "health" : NumberInt(75), 
+    "strength" : NumberInt(7), 
+    "endurance" : NumberInt(9), 
+    "agility" : NumberInt(5), 
+    "dexterity" : NumberInt(7), 
+    "willpower" : NumberInt(11), 
+    "intelligence" : NumberInt(9), 
+    "speed" : NumberInt(70), 
+    "gun" : "item_gun_default1", 
+    "weapon" : "item_weapon_default1", 
+    "shield" : "item_shield_default1", 
+    "resistances" : {
+        "heat" : 0.0, 
+        "cold" : 0.0, 
+        "shock" : 0.0, 
+        "acid" : 1.0, 
+        "gravity" : 0.0
+    }, 
+    "animationSet" : "robot_", 
+    "moboInfo" : {
+
+    }, 
+    "ability" : "acidCloud", 
+    "aType" : NumberInt(0)
+}

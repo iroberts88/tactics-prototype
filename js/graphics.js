@@ -300,6 +300,12 @@
                 button.position.y = data.position[1];
                 button.anchor.x = data.anchor[0];
                 button.anchor.y = data.anchor[1];
+            }else if (typeof data.texture != 'undefined'){
+                var button = new PIXI.Sprite(data.texture);
+                button.position.x = data.position[0];
+                button.position.y = data.position[1];
+                button.anchor.x = data.anchor[0];
+                button.anchor.y = data.anchor[1];
             }else{
                 var button = new PIXI.Text(data.text,data.style)
                 button.position.x = data.position[0];
@@ -429,18 +435,18 @@
                 element.glowSprite2.anchor.y = element.anchor.y;
             }
             
-            this.uiContainer.addChildAt(element.glowSprite1,0);
+            element.parent.addChildAt(element.glowSprite1,0);
         },
         removeGlow: function(element){
             try{
-                this.uiContainer.removeChild(element.glowSprite1);
-                this.uiContainer.removeChild(element.glowSprite2);
+                element.parent.removeChild(element.glowSprite1);
+                element.parent.removeChild(element.glowSprite2);
             }catch(e){}
         },
         changeGlow: function(element){
             try{
-                this.uiContainer.removeChild(element.glowSprite1);
-                this.uiContainer.addChildAt(element.glowSprite2,0);
+                element.parent.removeChild(element.glowSprite1);
+                element.parent.addChildAt(element.glowSprite2,0);
             }catch(e){
                 console.log(e);
             }

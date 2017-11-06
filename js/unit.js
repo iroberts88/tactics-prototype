@@ -37,6 +37,8 @@ var Unit = function(){
 
     //all the information about the unit's class
     this.classInfo = null;
+    //the unit's current Inventory
+    this.inventory = null;
     //game stats (games won; damage/healing done etc)
     this.gameInfo = null;
 
