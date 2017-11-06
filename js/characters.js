@@ -25,17 +25,11 @@
                 font: '18px Arvo', 
                 fill: 'white', 
                 align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
                 stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
+                strokeThickness: 5
             };
-            var g = new PIXI.Graphics();            Graphics.uiContainer.addChild(g);
+            var g = new PIXI.Graphics();            
+            Graphics.uiContainer.addChild(g);
             this.noCharacters = Graphics.makeUiElement({
                 text: 'You need 5 units to play!',
                 position: [Graphics.width/2,35]

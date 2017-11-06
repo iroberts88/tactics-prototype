@@ -25,8 +25,8 @@ Inventory.prototype.init = function(data){
             'value': 1,
             'min': 1,
             'max': 1000,
-            formula: function(){return Math.ceil((4+Math.floor(Math.pow(this.owner.strength.value,1.4)))*this.percentMod)+this.numericMod;},
-            next: function(){this.owner.inventory.maxWeight.set();}
+            formula: function(){return Math.round(Math.max(4,Math.round(Math.pow(this.owner.strength.value,1.3)))*this.pMod+this.nMod);},
+            next: function(){}
         });
     }else{
         this.maxWeight.init({
@@ -38,6 +38,7 @@ Inventory.prototype.init = function(data){
             formula: function(){return 1000;}
         });
     }
+    this.maxWeight.set();
 }
 
 Inventory.prototype.changeWeight = function(amt,mult){
@@ -127,5 +128,4 @@ Inventory.prototype.sortByType = function(dir){
    
 }
 
-console.log(Inventory);
 exports.Inventory = Inventory;

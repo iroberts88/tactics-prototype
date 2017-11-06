@@ -139,7 +139,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 1,
         'min': 1,
-        'max': 20
+        'max': 20,
+        next: function(){
+            try{this.owner.inventory.maxWeight.set();}catch(e){}
+        }
     });
     this.endurance = new Attribute();
     this.endurance.init({
@@ -264,7 +267,6 @@ Unit.prototype.init = function(data) {
     });
 
     var Inventory = require('./inventory.js').Inventory;
-    console.log(Inventory);
     this.inventory = new Inventory();
     this.inventory.init({
         owner: this

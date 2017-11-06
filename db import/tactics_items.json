@@ -98,6 +98,92 @@
     "_dbIndex" : "item_weapon_chainSword"
 }
 { 
+    "name" : "Combat Knife", 
+    "description" : "", 
+    "value" : 200.0, 
+    "weight" : 2.0, 
+    "type" : "weapon", 
+    "usable" : false,
+    "eqData" : {
+        "damage" : NumberInt(150), 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_weapon_combatKnife"
+}
+{ 
+    "name" : "Rocket Sledge", 
+    "description" : "A powerful, heavy weapon. Lowers speed and movement while equipped", 
+    "value" : 1000.0, 
+    "weight" : 14.0, 
+    "type" : "weapon", 
+    "usable" : false,
+    "eqData" : {
+        "damage" : NumberInt(400), 
+        "onEquip" : [
+            {
+                "name" : "alterStat",
+                "stat": "speed", 
+                "value" : -20
+            },
+            {
+                "name" : "alterStat",
+                "stat": "move", 
+                "value" : -1
+            }
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "item_weapon_rocketSledge"
+}
+
+{ 
+    "name" : "Power Axe", 
+    "description" : "A powerful, heavy weapon.",
+    "value" : 700.0,
+    "weight" : 9.0,
+    "type" : "weapon", 
+    "usable" : false,
+    "eqData" : {
+        "damage" : NumberInt(300), 
+        "onEquip" : [
+            {
+                "name" : "alterStat",
+                "stat": "speed", 
+                "value" : -20
+            },
+            {
+                "name" : "alterStat",
+                "stat": "move", 
+                "value" : -1
+            }
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+            {
+                "name" : "breakShield",
+                "chance" : 50
+            },
+
+        ]
+    }, 
+    "_dbIndex" : "item_weapon_rocketSledge"
+}
+{ 
     "_id" : ObjectId("59ff57e61194231ac0c22a9f"), 
     "name" : "SMG", 
     "description" : "Fires in short auto-bursts", 
