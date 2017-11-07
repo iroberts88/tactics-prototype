@@ -25,7 +25,7 @@
             this.musicVolume = 1.0;
             this.sfxVolume = 1.0;
 
-            this.charScrollSpeed = 30;
+            this.charScrollSpeed = 100;
             this.autoFullScreen = false;
             this.currentMap = null;
             this.stats = new Stats();
@@ -58,17 +58,25 @@
             }else if (Acorn.currentState == 'charScreen'){
                 if (dir == 'in'){
                     Graphics.uiPrimitives.position.y += this.charScrollSpeed;
+                    Graphics.uiPrimitives2.position.y += this.charScrollSpeed;
                     Graphics.worldContainer.position.y += this.charScrollSpeed;
+                    Graphics.uiContainer.position.y += this.charScrollSpeed;
                     if (Graphics.uiPrimitives.position.y > 0){
                         Graphics.uiPrimitives.position.y = 0;
                         Graphics.worldContainer.position.y = 0;
+                        Graphics.uiPrimitives2.position.y = 0;
+                        Graphics.uiContainer.position.y = 0;
                     }
                 }else if (dir == 'out'){
                     Graphics.uiPrimitives.position.y -= this.charScrollSpeed;
                     Graphics.worldContainer.position.y -= this.charScrollSpeed;
+                    Graphics.uiPrimitives2.position.y -= this.charScrollSpeed;
+                    Graphics.uiContainer.position.y -= this.charScrollSpeed;
                     if (Graphics.uiPrimitives.position.y < Characters.bounds){
                         Graphics.uiPrimitives.position.y = Characters.bounds;
                         Graphics.worldContainer.position.y = Characters.bounds;
+                        Graphics.uiPrimitives2.position.y = Characters.bounds;
+                        Graphics.uiContainer.position.y = Characters.bounds;
                     }
                 }
                 var t = 1;

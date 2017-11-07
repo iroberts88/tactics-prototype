@@ -2,7 +2,6 @@
     "_id" : ObjectId("59ff57e61194231ac0c22a9b"), 
     "name" : "Healing Compound", 
     "description" : "Use to restore 300 health", 
-    "value" : 50.0, 
     "weight" : 1.0, 
     "maxItemPile" : NumberInt(99), 
     "type" : "compound", 
@@ -13,13 +12,12 @@
             "value" : NumberInt(300)
         }
     ], 
-    "_dbIndex" : "item_compound_healing"
+    "_dbIndex" : "compound_healing"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22a9c"), 
     "name" : "Vigor Compound", 
     "description" : "Use to restore 25 energy", 
-    "value" : 300.0, 
     "weight" : 1.0, 
     "maxItemPile" : NumberInt(99), 
     "type" : "compound", 
@@ -30,20 +28,18 @@
             "value" : NumberInt(25)
         }
     ], 
-    "_dbIndex" : "item_compound_vigor"
+    "_dbIndex" : "compound_vigor"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22a9d"), 
     "name" : "Sidearm Pistol", 
     "description" : "A simple, leightweight sidearm", 
-    "value" : 200.0, 
     "weight" : 2.0, 
     "type" : "gun", 
     "usable" : false, 
     "eqData" : {
         "rangeMin" : NumberInt(2), 
         "rangeMax" : NumberInt(4), 
-        "damage" : NumberInt(150), 
         "onEquip" : [
 
         ], 
@@ -54,13 +50,13 @@
 
         ]
     }, 
-    "_dbIndex" : "item_gun_sidearm"
+    "_dbIndex" : "gun_sidearm"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22a9e"), 
     "name" : "Chain Sword", 
     "description" : "Use to rev up the chain blade", 
-    "value" : 300.0, 
+    "valueMod" : 1.0, 
     "weight" : 6.0, 
     "type" : "weapon", 
     "usable" : true, 
@@ -84,7 +80,6 @@
         }
     ], 
     "eqData" : {
-        "damage" : NumberInt(200), 
         "onEquip" : [
 
         ], 
@@ -95,17 +90,16 @@
 
         ]
     }, 
-    "_dbIndex" : "item_weapon_chainSword"
+    "_dbIndex" : "weapon_chainSword"
 }
 { 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c68"), 
     "name" : "Combat Knife", 
     "description" : "", 
-    "value" : 200.0, 
     "weight" : 2.0, 
     "type" : "weapon", 
-    "usable" : false,
+    "usable" : false, 
     "eqData" : {
-        "damage" : NumberInt(150), 
         "onEquip" : [
 
         ], 
@@ -116,28 +110,18 @@
 
         ]
     }, 
-    "_dbIndex" : "item_weapon_combatKnife"
+    "_dbIndex" : "weapon_combatKnife"
 }
 { 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c69"), 
     "name" : "Rocket Sledge", 
     "description" : "A powerful, heavy weapon. Lowers speed and movement while equipped", 
-    "value" : 1000.0, 
     "weight" : 14.0, 
     "type" : "weapon", 
-    "usable" : false,
+    "usable" : false, 
     "eqData" : {
-        "damage" : NumberInt(400), 
         "onEquip" : [
-            {
-                "name" : "alterStat",
-                "stat": "speed", 
-                "value" : -20
-            },
-            {
-                "name" : "alterStat",
-                "stat": "move", 
-                "value" : -1
-            }
+
         ], 
         "onFire" : [
 
@@ -146,55 +130,42 @@
 
         ]
     }, 
-    "_dbIndex" : "item_weapon_rocketSledge"
+    "_dbIndex" : "weapon_rocketSledge"
 }
-
 { 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c6a"), 
     "name" : "Power Axe", 
-    "description" : "A powerful, heavy weapon.",
-    "value" : 700.0,
-    "weight" : 9.0,
+    "description" : "A powerful, heavy weapon.", 
+    "weight" : 9.0, 
+    "valueMod" : 2.0, 
     "type" : "weapon", 
-    "usable" : false,
+    "usable" : false, 
     "eqData" : {
-        "damage" : NumberInt(300), 
         "onEquip" : [
-            {
-                "name" : "alterStat",
-                "stat": "speed", 
-                "value" : -20
-            },
-            {
-                "name" : "alterStat",
-                "stat": "move", 
-                "value" : -1
-            }
+
         ], 
         "onFire" : [
 
         ], 
         "onHit" : [
             {
-                "name" : "breakShield",
-                "chance" : 50
-            },
-
+                "name" : "breakShield", 
+                "chance" : NumberInt(50)
+            }
         ]
     }, 
-    "_dbIndex" : "item_weapon_rocketSledge"
+    "_dbIndex" : "weapon_powerAxe"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22a9f"), 
     "name" : "SMG", 
     "description" : "Fires in short auto-bursts", 
-    "value" : 200.0, 
     "weight" : 5.0, 
     "type" : "gun", 
     "usable" : false, 
     "eqData" : {
         "rangeMin" : NumberInt(2), 
         "rangeMax" : NumberInt(4), 
-        "damage" : NumberInt(35), 
         "onEquip" : [
 
         ], 
@@ -208,13 +179,12 @@
 
         ]
     }, 
-    "_dbIndex" : "item_gun_smg"
+    "_dbIndex" : "gun_smg"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22aa0"), 
     "name" : "Cerebral Implant", 
     "description" : "Increases INT and EXP gain", 
-    "value" : 1000.0, 
     "weight" : 1.0, 
     "type" : "accessory", 
     "usable" : false, 
@@ -232,20 +202,16 @@
             }
         ]
     }, 
-    "_dbIndex" : "item_accessory_cerebralImplant"
+    "_dbIndex" : "accessory_cerebralImplant"
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22aa1"), 
     "name" : "Shield", 
     "description" : "A basic shield", 
-    "value" : 350.0, 
     "weight" : 3.0, 
     "type" : "shield", 
     "usable" : false, 
     "eqData" : {
-        "capacity" : NumberInt(200), 
-        "rechargeRate" : NumberInt(50), 
-        "rechargeDelay" : NumberInt(1), 
         "onEquip" : [
 
         ], 
@@ -253,5 +219,5 @@
 
         ]
     }, 
-    "_dbIndex" : "item_shield_shield"
+    "_dbIndex" : "shield_shield"
 }

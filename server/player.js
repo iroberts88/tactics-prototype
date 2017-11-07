@@ -55,6 +55,7 @@ Player.prototype.setupSocket = function() {
     var that = this;
 
     this.socket.on('playerUpdate', function (data) {
+        console.log(data);
         if (that.gameSession){
             //if the player is in a gameSession - deal with received data
            
@@ -69,60 +70,89 @@ Player.prototype.setupSocket = function() {
                     console.log('error - unable to logout user');
                     console.log(e.stack);
                 }
+            }else if(data.deleteChar){
+                try{
+                    //remove the character from the player's character list
+                    console.log(data);
+                    for (var i = 0; i < that.characters.length;i++){
+                        if (that.characters[i].id == data.deleteChar){
+                            console.log('deleting character: ' + that.characters[i].name);
+                            that.characters.splice(i,1);
+                            that.gameEngine.queuePlayer(that,'deleteUnit',{id: data.deleteChar});
+                            continue;
+                        }
+                    }
+                }catch(e){
+                    console.log('error - unable delete character');
+                    console.log(e.stack);
+                }
             }
         }
     });
 
     this.socket.on('addRandomChar', function(data){
-        try{
-            var char = new Unit();
-            var sexes = ['male','female'];
-            var sex = sexes[Math.floor(Math.random()*sexes.length)];
-            char.init({
-                id: that.gameEngine.getId(),
-                owner: that,
-                name: '' + Utils.generateName(sex) + ' ' + Utils.generateName('last'),
-                sex: sex
-            });
-            var classes = ['soldier','medic','scout','tech'];
-            var cl = classes[Math.floor(Math.random()*classes.length)];
-            //randomize stats
-            var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
-            for (var i = 0;i < 20;i++){
-                var randStat = stats[Math.floor(Math.random()*stats.length)];
-                char[randStat].base += 1;
-                char[randStat].set();
-            }
-            char.classInfo = new ClassInfo();
-            char.classInfo.init({unit: char});
-            char.classInfo.setBaseClass(cl);
-            char.classInfo.setClass(cl);
-            var Ch = {}
-            for (var a in char){
-                if (char[a] instanceof Attribute){
-                    Ch[a] = char[a].value;
-                }else{
-                    if (a != 'owner'){
-                        Ch[a] = char[a];
+        if (that.characters.length < 30){
+            try{
+                var char = new Unit();
+                var sexes = ['male','female'];
+                var sex = sexes[Math.floor(Math.random()*sexes.length)];
+                char.init({
+                    id: that.gameEngine.getId(),
+                    owner: that,
+                    name: '' + Utils.generateName(sex) + ' ' + Utils.generateName('last'),
+                    sex: sex
+                });
+                var classes = ['soldier','medic','scout','tech'];
+                var cl = classes[Math.floor(Math.random()*classes.length)];
+                //randomize stats
+                var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
+                for (var i = 0;i < 20;i++){
+                    var randStat = stats[Math.floor(Math.random()*stats.length)];
+                    char[randStat].base += 1;
+                    char[randStat].set();
+                }
+                char.classInfo = new ClassInfo();
+                char.classInfo.init({unit: char});
+                char.classInfo.setBaseClass(cl);
+                char.classInfo.setClass(cl);
+                char.inventory.addItem(that.gameEngine.items['gun_sidearm'],1)
+                char.inventory.addItem(that.gameEngine.items['weapon_combatKnife'],1)
+                var Ch = {}
+                for (var a in char){
+                    if (char[a] instanceof Attribute){
+                        Ch[a] = char[a].value;
+                    }else{
+                        if (a != 'owner'){
+                            Ch[a] = char[a];
+                        }
                     }
                 }
+                Ch.name = char.name;
+                Ch.sex = char.sex
+                Ch.id = char.id;
+                Ch.classInfo = {};
+                for (var cI in char.classInfo){
+                    if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
+                }
+                Ch.inventory = {};
+                Ch.inventory.items = [];
+                Ch.inventory.currentWeight = char.inventory.currentWeight;
+                Ch.inventory.maxItemPile = char.inventory.maxItemPile;
+                for (var i = 0; i < char.inventory.items.length;i++){
+                    var item = that.gameEngine.items[char.inventory.items[i][0]]
+                    Ch.inventory.items.push({
+                        "description": item['description'],
+                        "name": item['name'],
+                        "type": item['type'],
+                        "weight": item['weight']
+                    });
+                }
+                Ch.inventory.maxWeight = char.inventory.maxWeight.value;
+                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
+                that.characters.push(char);
+            }catch(e){
+                that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
             }
-            Ch.name = char.name;
-            Ch.sex = char.sex
-            Ch.id = char.id;
-            Ch.classInfo = {};
-            for (var cI in char.classInfo){
-                if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
-            }
-            Ch.inventory = {};
-            Ch.inventory.currentWeight = char.inventory.currentWeight;
-            Ch.inventory.maxItemPile = char.inventory.maxItemPile;
-            Ch.inventory.items = char.inventory.items;
-            Ch.inventory.maxWeight = char.inventory.maxWeight.value;
-            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
-            that.characters.push(char);
-        }catch(e){
-            that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
         }
     });
 

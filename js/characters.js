@@ -5,6 +5,7 @@
         
 
         init: function() {
+            Graphics.drawBG('navy', 'navy');
             //back button
             this.units = [];
             var style = {
@@ -22,14 +23,18 @@
                 dropShadowDistance: 6
             };
             this.style = {
-                font: '18px Arvo', 
+                font: '32px Sigmar One', 
                 fill: 'white', 
                 align: 'left', 
-                stroke: '#000000',
-                strokeThickness: 5
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 6
             };
-            var g = new PIXI.Graphics();            
-            Graphics.uiContainer.addChild(g);
+
             this.noCharacters = Graphics.makeUiElement({
                 text: 'You need 5 units to play!',
                 position: [Graphics.width/2,35]
@@ -48,10 +53,15 @@
             this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
             this.exitButton.position.y = 25 + this.exitButton.height/2;
             Graphics.uiContainer.addChild(this.exitButton);
-            g.beginFill('black',1);
-            g.lineStyle.color = 'black';
-            g.drawRect(0,0,Graphics.width,this.exitButton.position.y + this.exitButton.height/2 + 20);
-            g.endFill();
+
+            this.unitCount = Graphics.makeUiElement({
+                text: Player.units.length + '/30',
+                style: style
+            });
+            this.unitCount.style.fontSize = 60
+            this.unitCount.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25 - this.unitCount.width/2;
+            this.unitCount.position.y = 25 + this.exitButton.height/2;
+            Graphics.uiContainer.addChild(this.unitCount);
 
             this.newChar = Graphics.makeUiElement({
                 text: '+ New Unit',
@@ -92,14 +102,20 @@
             //check for new characters and make a UI element for each
             if (this.units.length != Player.units.length){
                 Graphics.uiPrimitives.clear();
+                Graphics.worldContainer.removeChildren();
                 this.startAt = {x: 20, y: this.exitButton.position.y + this.exitButton.height/2 + 20};
                 this.units = [];
                 for (var i = 0; i < Player.units.length;i++){
-                    var texture = this.createUnitInfoPane(Player.units[i].unit);
+                    var texture = this.createUnitInfoPane(Player.units[i]);
                     var unitInfoElement = Graphics.makeUiElement({
                         texture: texture,
-                        interactive: true,buttonMode: true,buttonGlow: true
+                        interactive: true,buttonMode: true,buttonGlow: true,
+                        clickFunc: function onClick(e){
+                            CharDisplay.charToDisplay = e.currentTarget.unit;
+                            Acorn.changeState('charDisplay')
+                        }
                     });
+                    unitInfoElement.unit = Player.units[i];
                     if (this.startAt.x + unitInfoElement.width >= Graphics.width){
                         this.startAt.x = 20;
                         this.startAt.y += unitInfoElement.height + 20;
@@ -110,14 +126,32 @@
                     unitInfoElement.anchor.y = 0;
                     this.units.push(unitInfoElement)
                     Graphics.worldContainer.addChild(unitInfoElement);
+                    var unitSprite = Graphics.getSprite('unit_base_dl_');
+                    unitSprite.position.x = unitInfoElement.position.x + unitInfoElement.width*0.8;
+                    unitSprite.position.y = unitInfoElement.position.y + unitInfoElement.height - 10;
+                    unitSprite.anchor.x = 0.5;
+                    unitSprite.anchor.y = 1.0;
+                    var colors = {
+                        'tech': 0xFFFF00,
+                        'soldier': 0xFF0000,
+                        'medic': 0x00FF00,
+                        'scout': 0x42f1f4
+                    };
+                    unitSprite.tint = colors[Player.units[i].classInfo.currentClass.toLowerCase()];
+                    Graphics.worldContainer.addChild(unitSprite);
                     this.startAt.x += unitInfoElement.width + 20;
                     if (unitInfoElement.position.y + unitInfoElement.height > Graphics.height){
-                        this.bounds = (unitInfoElement.position.y + unitInfoElement.height - Graphics.height) * -1;
+                        this.bounds = (unitInfoElement.position.y + unitInfoElement.height - Graphics.height) * -1 - 10;
                     }
                 }
-                
+                this.unitCount.text = Player.units.length + '/30';
+                this.unitCount.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25 - this.unitCount.width/2;
                 for (var u = 0; u <this.units.length;u++){
-                    Graphics.drawBoxAround(this.units[u],Graphics.uiPrimitives,{pos: [this.units[u].position.x + this.units[u].width/2,this.units[u].position.y + this.units[u].height/2]});
+                    Graphics.drawBoxAround(this.units[u],Graphics.uiPrimitives,{
+                        pos: [this.units[u].position.x + this.units[u].width/2,this.units[u].position.y + this.units[u].height/2],
+                        xbuffer: -5,
+                        ybuffer: -5,
+                    });
                 }
             }
         },
@@ -135,23 +169,26 @@
             name.anchor.y = 0;
             y += name.height;
             container.addChild(name);
-            var attr = [
-                ["Health:   ", unit.maximumHealth],
-                ["Energy:   ", unit.maximumEnergy],
-                ["Power:   ", unit.power],
-                ["Skill:   ", unit.skill],
-                ["Ability Slots:   ", unit.abilitySlots],
-                ["    ", ''],
-                ["Strength:   ", unit.strength],
-                ["Endurance:   ", unit.endurance],
-                ["Agility:   ", unit.agility],
-                ["Dexterity:   ", unit.dexterity],
-                ["Intelligence:   ", unit.intelligence],
-                ["Willpower:   ", unit.willpower],
-                ["Charisma:   ", unit.charisma],
-                ["    ", ''],
-                ["Move:   ", unit.move],
-                ["Jump:  ", unit.jump]
+            var attr1 = [
+                ["HP:   ", unit.maximumHealth],
+                ["E:   ", unit.maximumEnergy],
+                ["Pwr:   ", unit.power],
+                ["Skl:   ", unit.skill],
+                ["Slots:   ", unit.abilitySlots],
+            ];
+            var attr2 = [
+                ["Str:   ", unit.strength],
+                ["End:   ", unit.endurance],
+                ["Agi:   ", unit.agility],
+                ["Dex:   ", unit.dexterity],
+                ["Int:   ", unit.intelligence],
+                ["Wil:   ", unit.willpower],
+                ["Cha:   ", unit.charisma],
+            ];
+            var attr3 = [
+                ["Mov:   ", unit.move],
+                ["Jmp:  ", unit.jump],
+                ["Spd:  ", unit.speed]
             ];
             var level = new PIXI.Text('Level ' + unit.level + ' ' + unit.classInfo.currentClass + " (" + unit.sex.substring(0,1).toUpperCase() + ")",this.style);
             level.position.x = x;
@@ -160,26 +197,48 @@
             level.anchor.y = 0;
             y += level.height;
             container.addChild(level);
-            for (var j = 0; j < attr.length;j++){
-                var a = new PIXI.Text(attr[j][0] + attr[j][1],this.style);
-                a.style.fontSize = 12;
-                a.position.x = x;
-                a.position.y = y;
-                a.anchor.x = 0;
-                a.anchor.y = 0;
-                y += a.height
-                container.addChild(a);
-                if (a.width > maxWidth){
-                    maxWidth = a.width;
-                }
-            }
             if (level.width > maxWidth){
                 maxWidth = level.width;
             }
             if (name.width > maxWidth){
                 maxWidth = name.width;
             }
-            var tex = PIXI.RenderTexture.create(maxWidth,y);
+            var fSize = 12;
+            for (var j = 0; j < attr1.length;j++){
+                var a = new PIXI.Text(attr1[j][0] + attr1[j][1],this.style);
+                a.style.fontSize = fSize;
+                a.position.x = maxWidth*0.20;
+                a.position.y = y;
+                a.anchor.x = 0.5;
+                a.anchor.y = 0;
+                y += a.height
+                container.addChild(a);
+            }
+            y = level.height + level.position.y;
+            for (var j = 0; j < attr2.length;j++){
+                var a = new PIXI.Text(attr2[j][0] + attr2[j][1],this.style);
+                a.style.fontSize = fSize;
+                a.position.x = maxWidth/2;
+                a.position.y = y;
+                a.anchor.x = 0.5;
+                a.anchor.y = 0;
+                y += a.height
+                container.addChild(a);
+                maxHeight = a.position.y + a.height + 5;
+            }
+            y = level.height + level.position.y;
+            for (var j = 0; j < attr3.length;j++){
+                var a = new PIXI.Text(attr3[j][0] + attr3[j][1],this.style);
+                a.style.fontSize = fSize;
+                a.position.x = maxWidth*0.80;
+                a.position.y = y;
+                a.anchor.x = 0.5;
+                a.anchor.y = 0;
+                y += a.height
+                container.addChild(a);
+            }
+            var tex = PIXI.RenderTexture.create(maxWidth,maxHeight);
+            var renderer = new PIXI.CanvasRenderer();
             Graphics.app.renderer.render(container,tex);
             return tex;
         }

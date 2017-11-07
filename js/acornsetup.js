@@ -85,6 +85,10 @@
                 console.log(data);
                 Player.addNewUnit(data);
             });
+            Acorn.Net.on('deleteUnit', function (data) {
+                console.log(data);
+                Player.deleteUnit(data);
+            });
             Acorn.Net.on('debug', function (data) {
               console.log(data);
             });
@@ -370,6 +374,16 @@
                 },
                 update: function(dt){
                     Characters.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'charDisplay',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    CharDisplay.init();
+                },
+                update: function(dt){
+                    CharDisplay.update(dt);
                 }
             });
             Acorn.addState({

@@ -3,16 +3,16 @@
     "userName" : "faulken", 
     "password" : "Snarfed1", 
     "stats" : {
-        "soloGamesPlayed" : NumberInt(27), 
+        "soloGamesPlayed" : NumberInt(37), 
         "coopGamesPlayed" : NumberInt(4), 
         "coopLevelRecord" : NumberInt(4), 
         "vsGamesPlayed" : NumberInt(4), 
-        "starsGamesPlayed" : NumberInt(2), 
-        "soloHighScore" : NumberInt(375338), 
+        "starsGamesPlayed" : NumberInt(5), 
+        "soloHighScore" : NumberInt(403935), 
         "coopHighScore" : NumberInt(49), 
         "vsGamesWon" : NumberInt(3), 
         "starsLongestGame" : NumberInt(100), 
-        "soloLevelRecord" : NumberInt(67)
+        "soloLevelRecord" : NumberInt(80)
     }, 
     "chatLog" : [
         {
@@ -30,7 +30,14 @@
     ], 
     "admin" : true, 
     "createDate" : 1501013750032.0, 
-    "lastLogin" : 1503432390995.0
+    "lastLogin" : 1509559925966.0, 
+    "lock" : false, 
+    "characters" : [
+
+    ], 
+    "inventory" : [
+
+    ]
 }
 { 
     "_id" : ObjectId("597b7905532c0e51402b1333"), 
@@ -54,7 +61,7 @@
     "admin" : false, 
     "createDate" : 1501264133107.0, 
     "lastLogin" : 1501264155057.0, 
-    "lock" : true
+    "lock" : false
 }
 { 
     "_id" : ObjectId("597b795835fc825188a5ae61"), 
@@ -78,7 +85,7 @@
     "admin" : false, 
     "createDate" : 1501264216728.0, 
     "lastLogin" : 1501264216728.0, 
-    "lock" : true
+    "lock" : false
 }
 { 
     "_id" : ObjectId("597b89930ab7254af027990e"), 
@@ -102,5 +109,5 @@
     "admin" : false, 
     "createDate" : 1501268371791.0, 
     "lastLogin" : 1501268371791.0, 
-    "lock" : true
+    "lock" : false
 }

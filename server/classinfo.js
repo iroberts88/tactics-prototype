@@ -9,7 +9,12 @@ var ClassInfo = function(){
 	this.baseClass = null;
 	this.baseClassAbilities;
 
-	this.ap = null;
+	this.ap = {
+		'soldier': 0,
+		'tech': 0,
+		'scout': 0,
+		'medic': 0
+	};
 }
 
 ClassInfo.prototype.init = function(data){

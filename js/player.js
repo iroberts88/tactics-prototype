@@ -19,7 +19,16 @@
     	},
 
         addNewUnit: function(data){
-            this.units.push(data);
+            this.units.push(data.unit);
+        },
+        deleteUnit: function(data){
+            for(var i = 0; i < this.units.length;i++){
+                if (this.units[i].id == data.id){
+                    this.units.splice(i,1);
+                    Acorn.changeState('charScreen');
+                    continue;
+                }
+            }
         }
     }
     window.Player = Player;

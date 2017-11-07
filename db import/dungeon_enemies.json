@@ -2,23 +2,23 @@
     "_id" : ObjectId("572cb08ad1046a45d490252d"), 
     "hitData" : [
         [
-            NumberInt(-30), 
-            NumberInt(-20)
+            NumberInt(-14), 
+            NumberInt(-9)
         ], 
         [
-            NumberInt(-30), 
-            NumberInt(20)
+            NumberInt(-14), 
+            NumberInt(9)
         ], 
         [
-            NumberInt(30), 
-            NumberInt(20)
+            NumberInt(14), 
+            NumberInt(9)
         ], 
         [
-            NumberInt(30), 
-            NumberInt(-20)
+            NumberInt(14), 
+            NumberInt(-9)
         ]
     ], 
-    "name" : "Oval", 
+    "name" : "Corrosive Maggot", 
     "state" : "idle", 
     "health" : NumberInt(10), 
     "armor" : NumberInt(1), 
@@ -35,10 +35,7 @@
     "experience" : NumberInt(2), 
     "type" : NumberInt(2), 
     "description" : "", 
-    "scale" : {
-        "x" : 0.93, 
-        "y" : 0.62
-    }, 
+    "scale" : 0.38, 
     "mapCollide" : true, 
     "noTarget" : {
         "name" : "acidDrop"
@@ -58,12 +55,13 @@
         "acid" : 1.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "circle", 
+    "states" : {
+        "idle" : "maggot_", 
+        "moving" : "maggot_", 
+        "dying" : "maggot_"
+    }, 
     "clientBehaviours" : [
-        {
-            "name" : "tint", 
-            "color" : "0x23ad0d"
-        }
+
     ], 
     "dropChances" : NumberInt(1), 
     "drops" : {
@@ -115,23 +113,23 @@
     "_id" : ObjectId("56d7105dd1046a20a0f5aab5"), 
     "hitData" : [
         [
-            NumberInt(-25), 
-            NumberInt(-25)
+            NumberInt(-15), 
+            NumberInt(-15)
         ], 
         [
-            NumberInt(-25), 
-            NumberInt(25)
+            NumberInt(-15), 
+            NumberInt(15)
         ], 
         [
-            NumberInt(25), 
-            NumberInt(25)
+            NumberInt(15), 
+            NumberInt(15)
         ], 
         [
-            NumberInt(25), 
-            NumberInt(-25)
+            NumberInt(15), 
+            NumberInt(-15)
         ]
     ], 
-    "name" : "Circle?", 
+    "name" : "Robot", 
     "state" : "idle", 
     "health" : NumberInt(20), 
     "armor" : NumberInt(1), 
@@ -148,10 +146,7 @@
     "experience" : NumberInt(0), 
     "type" : NumberInt(2), 
     "description" : "A mini robot", 
-    "scale" : {
-        "x" : 0.78, 
-        "y" : 0.78
-    }, 
+    "scale" : 0.6, 
     "mapCollide" : true, 
     "noTarget" : {
         "name" : "moveAroundRoomRobot"
@@ -177,7 +172,12 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "circle", 
+    "states" : {
+        "idle" : "robot_idle", 
+        "moving" : "robot_walk", 
+        "dying" : "robot_walk", 
+        "attacking" : "robot_walk"
+    }, 
     "dropChances" : NumberInt(1), 
     "drops" : {
         "c" : {
@@ -253,7 +253,7 @@
             NumberInt(-15)
         ]
     ], 
-    "name" : "Dark Circle", 
+    "name" : "Dark Robot", 
     "state" : "idle", 
     "health" : NumberInt(20), 
     "armor" : NumberInt(1), 
@@ -270,10 +270,7 @@
     "experience" : NumberInt(3), 
     "type" : NumberInt(2), 
     "description" : "A mini robot", 
-    "scale" : {
-        "x" : 0.78, 
-        "y" : 0.78
-    }, 
+    "scale" : 0.6, 
     "mapCollide" : true, 
     "noTarget" : {
         "name" : "moveAroundRoom"
@@ -299,7 +296,11 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "circle", 
+    "states" : {
+        "idle" : "robot_idle", 
+        "moving" : "robot_walk", 
+        "dying" : "robot_walk"
+    }, 
     "dropChances" : NumberInt(1), 
     "drops" : {
         "c" : {
@@ -363,23 +364,23 @@
     "_id" : ObjectId("55196681d1046a170cd00731"), 
     "hitData" : [
         [
-            NumberInt(-15), 
-            NumberInt(-15)
+            NumberInt(-10), 
+            NumberInt(-10)
         ], 
         [
-            NumberInt(-15), 
-            NumberInt(15)
+            NumberInt(-10), 
+            NumberInt(10)
         ], 
         [
-            NumberInt(15), 
-            NumberInt(15)
+            NumberInt(10), 
+            NumberInt(10)
         ], 
         [
-            NumberInt(15), 
-            NumberInt(-15)
+            NumberInt(10), 
+            NumberInt(-10)
         ]
     ], 
-    "name" : "Floating Heart", 
+    "name" : "Red Bat", 
     "state" : "idle", 
     "health" : NumberInt(10), 
     "armor" : NumberInt(1), 
@@ -396,10 +397,7 @@
     "experience" : NumberInt(2), 
     "type" : NumberInt(0), 
     "description" : "It's a red bat", 
-    "scale" : {
-        "x" : 0.78, 
-        "y" : 0.78
-    }, 
+    "scale" : 0.75, 
     "mapCollide" : false, 
     "behaviours" : {
         "tier0" : {
@@ -426,10 +424,6 @@
                 {
                     "name" : "flying", 
                     "height" : NumberInt(35)
-                }, 
-                {
-                    "name" : "tint", 
-                    "color" : "0xf142f4"
                 }
             ]
         }, 
@@ -569,10 +563,11 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "heart", 
-    "clientBehaviours" : [
-
-    ]
+    "states" : {
+        "idle" : "redbat_moving", 
+        "moving" : "redbat_moving", 
+        "dying" : "redbat_dying"
+    }
 }
 { 
     "_id" : ObjectId("5519723bd1046a170cd00732"), 
@@ -611,10 +606,7 @@
     "experience" : NumberInt(4), 
     "type" : NumberInt(0), 
     "description" : "\"Absorbs fire damage. Weak to cold damage\"", 
-    "scale" : {
-        "x" : 0.5, 
-        "y" : 0.5
-    }, 
+    "scale" : 1.0, 
     "behaviours" : {
         "tier0" : {
 
@@ -634,10 +626,7 @@
                 "radius" : NumberInt(1250)
             }, 
             "client" : [
-                {
-                    "name" : "tint", 
-                    "color" : "0xf4b541"
-                }
+
             ]
         }, 
         "tier2" : {
@@ -716,10 +705,12 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "hexagon", 
-    "clientBehaviours" : [
-
-    ], 
+    "states" : {
+        "idle" : "blazer_idle", 
+        "moving" : "blazer_idle", 
+        "dying" : "blazer_dying", 
+        "attacking" : "blazer_attacking"
+    }, 
     "dropChances" : NumberInt(1), 
     "drops" : {
         "c" : {
@@ -783,23 +774,23 @@
     "_id" : ObjectId("55281faad1046a216c37ea26"), 
     "hitData" : [
         [
-            NumberInt(-30), 
-            NumberInt(-30)
+            NumberInt(-14), 
+            NumberInt(-17)
         ], 
         [
-            NumberInt(-30), 
-            NumberInt(30)
+            NumberInt(-14), 
+            NumberInt(17)
         ], 
         [
-            NumberInt(30), 
-            NumberInt(30)
+            NumberInt(14), 
+            NumberInt(17)
         ], 
         [
-            NumberInt(30), 
-            NumberInt(-30)
+            NumberInt(14), 
+            NumberInt(-17)
         ]
     ], 
-    "name" : "Staroid", 
+    "name" : "Monolith", 
     "state" : "attacking", 
     "health" : NumberInt(15), 
     "armor" : NumberInt(4), 
@@ -816,10 +807,7 @@
     "experience" : NumberInt(4), 
     "type" : NumberInt(0), 
     "description" : "\"High armor. Weak to acid attacks\"", 
-    "scale" : {
-        "x" : 0.39, 
-        "y" : 0.78
-    }, 
+    "scale" : 0.5, 
     "behaviours" : {
         "tier0" : {
             "hasTarget" : {
@@ -854,10 +842,6 @@
             "client" : [
                 {
                     "name" : "monolith"
-                }, 
-                {
-                    "name" : "tint", 
-                    "color" : "0x41f4c7"
                 }
             ]
         }, 
@@ -1013,32 +997,34 @@
         "acid" : -1.0, 
         "gravity" : 0.2
     }, 
-    "tex" : "star", 
-    "clientBehaviours" : [
-
-    ]
+    "states" : {
+        "idle" : "megalith_idle_d", 
+        "moving" : "megalith_attacking_d", 
+        "dying" : "megalith_dying_d", 
+        "attacking" : "megalith_attacking_d"
+    }
 }
 { 
     "_id" : ObjectId("560183153da59819dcf0346d"), 
     "hitData" : [
         [
-            NumberInt(-20), 
-            NumberInt(-20)
+            NumberInt(-15), 
+            NumberInt(-15)
         ], 
         [
-            NumberInt(-20), 
-            NumberInt(20)
+            NumberInt(-15), 
+            NumberInt(15)
         ], 
         [
-            NumberInt(20), 
-            NumberInt(20)
+            NumberInt(15), 
+            NumberInt(15)
         ], 
         [
-            NumberInt(20), 
-            NumberInt(-20)
+            NumberInt(15), 
+            NumberInt(-15)
         ]
     ], 
-    "name" : "Trixxer", 
+    "name" : "Frog", 
     "state" : "idle", 
     "health" : NumberInt(12), 
     "armor" : NumberInt(2), 
@@ -1055,10 +1041,7 @@
     "experience" : NumberInt(3), 
     "type" : NumberInt(0), 
     "description" : "Frog...with a gun...", 
-    "scale" : {
-        "x" : 0.625, 
-        "y" : 0.625
-    }, 
+    "scale" : 0.8, 
     "mapCollide" : true, 
     "behaviours" : {
         "tier0" : {
@@ -1092,10 +1075,6 @@
                 {
                     "name" : "pointWeapon", 
                     "texture" : "revolver"
-                }, 
-                {
-                    "name" : "tint", 
-                    "color" : "0x2eea10"
                 }
             ]
         }, 
@@ -1253,26 +1232,30 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "triangle"
+    "states" : {
+        "idle" : "walk_fish_idle", 
+        "moving" : "walk_fish", 
+        "dying" : "walk_fish"
+    }
 }
 { 
     "_id" : ObjectId("5674404a3da5980b84a7184f"), 
     "hitData" : [
         [
-            NumberInt(-64), 
-            NumberInt(-64)
+            NumberInt(-35), 
+            NumberInt(-40)
         ], 
         [
-            NumberInt(-64), 
-            NumberInt(64)
+            NumberInt(-35), 
+            NumberInt(40)
         ], 
         [
-            NumberInt(64), 
-            NumberInt(64)
+            NumberInt(35), 
+            NumberInt(40)
         ], 
         [
-            NumberInt(64), 
-            NumberInt(-64)
+            NumberInt(35), 
+            NumberInt(-40)
         ]
     ], 
     "name" : "Apocalypse", 
@@ -1292,10 +1275,7 @@
     "experience" : NumberInt(30), 
     "type" : NumberInt(1), 
     "description" : "big robot boss?", 
-    "scale" : {
-        "x" : 2.0, 
-        "y" : 2.0
-    }, 
+    "scale" : 1.0, 
     "mapCollide" : true, 
     "noTarget" : {
         "name" : "moveAroundRoom"
@@ -1328,7 +1308,12 @@
         "acid" : 0.5, 
         "gravity" : 0.5
     }, 
-    "tex" : "hexagon", 
+    "states" : {
+        "idle" : "apocalypse_standing_", 
+        "moving" : "apocalypse_walking_", 
+        "dying" : "apocalypse_dying_", 
+        "attacking" : "apocalypse_attacking_"
+    }, 
     "dropChances" : NumberInt(3), 
     "lootLevel" : [
         NumberInt(4), 
@@ -1410,10 +1395,7 @@
     }, 
     "level" : NumberInt(5), 
     "clientBehaviours" : [
-        {
-            "name" : "tint", 
-            "color" : "0x687275"
-        }
+
     ]
 }
 { 
@@ -1453,10 +1435,7 @@
     "experience" : NumberInt(3), 
     "type" : NumberInt(0), 
     "description" : "Red frog...with a gun...", 
-    "scale" : {
-        "x" : 0.468, 
-        "y" : 0.468
-    }, 
+    "scale" : 0.8, 
     "mapCollide" : true, 
     "behaviours" : {
         "tier0" : {
@@ -1627,5 +1606,9 @@
         "acid" : 0.0, 
         "gravity" : 0.0
     }, 
-    "tex" : "triangle"
+    "states" : {
+        "idle" : "walk_fish_idle", 
+        "moving" : "walk_fish", 
+        "dying" : "walk_fish"
+    }
 }

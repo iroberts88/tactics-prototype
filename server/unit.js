@@ -123,7 +123,17 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 100,
         'min': 0,
-        'max': 9999
+        'max': 999,
+        formula: function(){
+            //Speed is reduced by 10*
+            var mod = 1.0;
+            if (this.owner.inventory.currentWeight > this.owner.inventory.maxWeight.value){
+                for (var i = 0; i < this.owner.inventory.currentWeight-this.owner.inventory.maxWeight.value;i++){
+                    mod = mod*.9;
+                }
+            }
+            return Math.round((this.base*this.pMod*mod)+this.nMod);
+        }
     });
     this.abilitySlots = new Attribute();
     this.abilitySlots.init({

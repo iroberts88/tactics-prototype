@@ -158,18 +158,18 @@
 
             //Load all movie clips
             var animations = [
-                'unit_base_ul_', 9,
-                'unit_base_l_', 9,
-                'unit_base_u_', 9,
-                'unit_base_d_', 9,
-                'unit_base_dl_', 9
+                'unit_base_ul_', 8,
+                'unit_base_l_', 8,
+                'unit_base_u_', 8,
+                'unit_base_d_', 8,
+                'unit_base_dl_', 8
             ];
             Graphics.animationSpeeds = {
-                'unit_base_ul_': 0.25,
-                'unit_base_l_': 0.25,
-                'unit_base_u_': 0.25,
-                'unit_base_d_': 0.25,
-                'unit_base_dl_': 0.25
+                'unit_base_ul_': -0.15,
+                'unit_base_l_': -0.15,
+                'unit_base_u_': -0.15,
+                'unit_base_d_': -0.15,
+                'unit_base_dl_': -0.15
             };
 
             //add all movie clips to resources
@@ -227,11 +227,14 @@
     			var t = this.getResource(id);
     			if (t.constructor === Array){
     				var s = new PIXI.extras.MovieClip(t);
+                    s.animationSpeed = Graphics.animationSpeeds[id];
+                    s.gotoAndPlay(1)
     			}else{
     				var s = new PIXI.Sprite(t);
     			}
     			return s;
             }catch(e){
+                console.log(e);
                 console.log('-- Graphics resource not found' )
             }
 		},
@@ -339,7 +342,7 @@
             if (typeof data.buttonGlow != 'undefined'){
                 var onClick = function(e){
                     try{
-                        e.currentTarget.clickFunc();
+                        e.currentTarget.clickFunc(e);
                     }catch(e){}
                     Graphics.removeGlow(e.currentTarget);
                 }
@@ -347,7 +350,7 @@
                 button.on('click', onClick);
                 var mOverFunc = function(e){
                     try{
-                        e.currentTarget.mOverFunc();
+                        e.currentTarget.mOverFunc(e);
                     }catch(e){}
                     Graphics.buttonGlow(e.currentTarget);
                 }
@@ -355,7 +358,7 @@
                 button.on('touchmove', mOverFunc);
                 var mDownFunc = function(e){
                     try{
-                        e.currentTarget.mDownFunc();
+                        e.currentTarget.mDownFunc(e);
                     }catch(e){}
                     Graphics.changeGlow(e.currentTarget);
                 }
@@ -363,7 +366,7 @@
                 button.on('touchstart', mDownFunc);
                 var mOutFunc = function(e){
                     try{
-                        e.currentTarget.mOutFunc();
+                        e.currentTarget.mOutFunc(e);
                     }catch(e){}
                     Graphics.removeGlow(e.currentTarget);
                 }
