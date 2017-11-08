@@ -4,6 +4,7 @@
     	userData: null,
     	units: null,
     	inventory: null,
+        toolTip: null,
 
     	init: function(data){
     		if (typeof data.units != 'undefined'){
@@ -16,6 +17,7 @@
     		}else{
     			this.inventory = [];
     		}
+            
     	},
 
         addNewUnit: function(data){

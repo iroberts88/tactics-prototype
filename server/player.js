@@ -96,10 +96,13 @@ Player.prototype.setupSocket = function() {
                 var char = new Unit();
                 var sexes = ['male','female'];
                 var sex = sexes[Math.floor(Math.random()*sexes.length)];
+                var nT = sex;
+                var lastNT = 'last';
+                //if (sex == 'female'){nT = 'romanFemale';lastNT = 'romanLastF'}
                 char.init({
                     id: that.gameEngine.getId(),
                     owner: that,
-                    name: '' + Utils.generateName(sex) + ' ' + Utils.generateName('last'),
+                    name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
                     sex: sex
                 });
                 var classes = ['soldier','medic','scout','tech'];

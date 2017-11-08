@@ -18,6 +18,7 @@ var Unit = function(){
     this.power = null;
     this.skill = null;
     this.abilitySlots = null;
+    this.currentAbilitySlots = null;
     //shields
     this.currentShields = null;
     this.maximumShields = null;
@@ -66,6 +67,8 @@ Unit.prototype.init = function(data) {
 
     this.level = 1;
     this.exp = 0;
+
+    this.currentAbilitySlots = 0;
     
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({

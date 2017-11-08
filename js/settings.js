@@ -79,9 +79,6 @@
                         Graphics.uiContainer.position.y = Characters.bounds;
                     }
                 }
-                var t = 1;
-                if (!(MapGen.map.currentRotation%2)){t = 2}
-                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
             }
         },
         setYScale: function(dir){

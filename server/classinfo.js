@@ -24,11 +24,11 @@ ClassInfo.prototype.init = function(data){
 	}else{
 		this.learnedAbilities = [];
 	}
-	if (typeof data.ap != 'undefined'){
+	/*if (typeof data.ap != 'undefined'){
 		this.ap = data.ap;
 	}else{
 		this.ap = 0;
-	}
+	}*/
 }
 
 ClassInfo.prototype.setClass = function(c){
