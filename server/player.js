@@ -90,6 +90,68 @@ Player.prototype.setupSocket = function() {
         }
     });
 
+    this.socket.on('addUnit', function(data){
+        //TODO -- validate unit before creation
+        //check max characters
+        if (that.characters.length < 30){
+            try{
+                var char = new Unit();
+                char.init({
+                    id: that.gameEngine.getId(),
+                    owner: that,
+                    name: data.name,
+                    sex: data.sex
+                });
+                for (var i in data.stats){
+                    char[i].base = data.stats[i];
+                    char[i].set();
+                }
+                char.classInfo = new ClassInfo();
+                char.classInfo.init({unit: char});
+                char.classInfo.setBaseClass(data.class);
+                char.classInfo.setClass(data.class);
+                char.inventory.addItem(that.gameEngine.items['gun_sidearm'],1)
+                char.inventory.addItem(that.gameEngine.items['weapon_combatKnife'],1)
+                //create object to send to the client
+                var Ch = {}
+                for (var a in char){
+                    if (char[a] instanceof Attribute){
+                        Ch[a] = char[a].value;
+                    }else{
+                        if (a != 'owner'){
+                            Ch[a] = char[a];
+                        }
+                    }
+                }
+                Ch.name = char.name;
+                Ch.sex = char.sex
+                Ch.id = char.id;
+                Ch.classInfo = {};
+                for (var cI in char.classInfo){
+                    if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
+                }
+                Ch.inventory = {};
+                Ch.inventory.items = [];
+                Ch.inventory.currentWeight = char.inventory.currentWeight;
+                Ch.inventory.maxItemPile = char.inventory.maxItemPile;
+                for (var i = 0; i < char.inventory.items.length;i++){
+                    var item = that.gameEngine.items[char.inventory.items[i][0]]
+                    Ch.inventory.items.push({
+                        "description": item['description'],
+                        "name": item['name'],
+                        "type": item['type'],
+                        "weight": item['weight']
+                    });
+                }
+                Ch.inventory.maxWeight = char.inventory.maxWeight.value;
+                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
+                that.characters.push(char);
+            }catch(e){
+                that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
+            }
+        }
+    });
+
     this.socket.on('addRandomChar', function(data){
         if (that.characters.length < 30){
             try{

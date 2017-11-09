@@ -134,6 +134,10 @@ function Utils() {
 		      	if (idx < t) { return token; }
 		    }
 		    return '-';
+	  	},
+
+	  	checkUnit: function(data){
+	  		//check a unit object to make sure it is valid
 	  	}
 
 	 }

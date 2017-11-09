@@ -25,23 +25,25 @@
             var s = 50;
             var g1 = new PIXI.Graphics();
             var g2 = new PIXI.Graphics();
+            g1.lineStyle(3,0xFFFFFF,1);
+            g2.lineStyle(3,0xFFFFFF,1);
+            g1.moveTo(2,2);
+            g1.lineTo(s-2,2);
+            g1.lineTo(s-2,s-2);
+            g1.lineTo(2,s-2);
+            g1.lineTo(2,2);
             g1.lineStyle(5,0xFFFFFF,1);
-            g2.lineStyle(5,0xFFFFFF,1);
-            g1.moveTo(0,0);
-            g1.lineTo(s,0);
-            g1.lineTo(s,s);
-            g1.lineTo(0,s);
-            g1.lineTo(0,0);
             g1.moveTo(s*0.2,s*0.5);
             g1.lineTo(s*0.8,s*0.5);
             g1.moveTo(s*0.5,s*0.2);
             g1.lineTo(s*0.5,s*0.8);
 
-            g2.moveTo(0,0);
-            g2.lineTo(s,0);
-            g2.lineTo(s,s);
-            g2.lineTo(0,s);
-            g2.lineTo(0,0);
+            g2.moveTo(2,2);
+            g2.lineTo(s-2,2);
+            g2.lineTo(s-2,s-2);
+            g2.lineTo(2,s-2);
+            g2.lineTo(2,2);
+            g2.lineStyle(5,0xFFFFFF,1);
             g2.moveTo(s*0.2,s*0.5);
             g2.lineTo(s*0.8,s*0.5);
 
@@ -263,19 +265,20 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.checkAndCreate();
+                    CreateUnit.checkAndCreate()
                 }
             });
             this.createButton.style.fontSize = 64
             Graphics.uiContainer.addChild(this.createButton);
 
+            this.sex = 'male';
             this.unitSprite = Graphics.getSprite('unit_base_dl_');
-            this.unitSprite.position.x = Graphics.width*0.9;
-            this.unitSprite.position.y = Graphics.height*0.5;
+            this.unitSprite.position.x = Graphics.width*0.8;
+            this.unitSprite.position.y = Graphics.height*0.06;
             this.unitSprite.anchor.x = 0.5;
             this.unitSprite.anchor.y = 0.5;
-            this.unitSprite.scale.x = 3;
-            this.unitSprite.scale.y = 3;
+            this.unitSprite.scale.x = 1.5;
+            this.unitSprite.scale.y = 1.5;
             var colors = {
                 'tech': 0xFFFF00,
                 'soldier': 0xFF0000,
@@ -284,6 +287,33 @@
             };
             this.unitSprite.tint = 0xFF0000;
             Graphics.worldContainer.addChild(this.unitSprite);
+
+            this.maleButton = Graphics.makeUiElement({text: 'male',style: this.style2, 
+                interactive: true, buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.sex = 'male';
+                    CreateUnit.maleButton.style.fill = 'gray';
+                    CreateUnit.femaleButton.style.fill = 'white';
+                }
+            });
+            this.maleButton.position.x = this.unitSprite.position.x - this.unitSprite.width/2 - this.maleButton.width/2;
+            this.maleButton.position.y = this.unitSprite.position.y - this.maleButton.height/2;
+            this.maleButton.style.fill = 'gray';
+            this.maleButton.style.fontSize = 32;
+            Graphics.uiContainer.addChild(this.maleButton);
+
+            this.femaleButton = Graphics.makeUiElement({text: 'female',style: this.style2, 
+                interactive: true, buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.sex = 'female';
+                    CreateUnit.maleButton.style.fill = 'white';
+                    CreateUnit.femaleButton.style.fill = 'gray';
+                }
+            });
+            this.femaleButton.style.fontSize = 32;
+            this.femaleButton.position.x = this.maleButton.position.x;
+            this.femaleButton.position.y = this.unitSprite.position.y + this.femaleButton.height/2;
+            Graphics.uiContainer.addChild(this.femaleButton);
         },
         
         update: function(dt){
@@ -294,6 +324,8 @@
             Graphics.drawBoxAround(this.medicButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.techButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.femaleButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.maleButton,Graphics.uiPrimitives2,{});
 
             this.pointsText.text = 'Points: ' + this.points + '/20';
 
@@ -339,7 +371,7 @@
                 this.errorText.text = "Name can only have 1 space";
                 return;
             }
-            var invalidChars = {'!': 1,'@': 1,'#': 1,'$': 1,'%': 1,'^': 1,'&': 1,'*': 1,"(": 1,')': 1,'_': 1,'+': 1,'=': 1,'[': 1,']': 1,'{': 1,'}': 1,'|': 1,';': 1,':': 1,'"': 1,'<': 1,'>': 1,',': 1,'?': 1,'/': 1,'.': 1,'~': 1}
+            var invalidChars = {'!': 1,'@': 1,'#': 1,'$': 1,'%': 1,'^': 1,'&': 1,'*': 1,"(": 1,')': 1,'_': 1,'+': 1,'=': 1,'[': 1,']': 1,'{': 1,'}': 1,'|': 1,';': 1,':': 1,'"': 1,'<': 1,'>': 1,',': 1,'?': 1,'/': 1,'.': 1,'~': 1,'0':1,'1':1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1}
             for (var i = 0; i < name.length;i++){
                 if (invalidChars[name.charAt(i)]){
                     this.errorText.text = "Name contains an invalid character";
@@ -376,9 +408,20 @@
                 this.errorText.text = "Invalid class...";
                 return;
             }
+            //check if valid sex
+            if (this.sex != 'male' && this.sex != 'female'){
+                this.errorText.text = "Invalid sex...";
+                return;
+            }
             //send to server to create
-            console.log("Success!!! send to server to create!")
-            //remove name input?
+            console.log("Success!!! send to server to create!");
+            Acorn.Net.socket_.emit('addUnit',{name: name,
+                class: this.classSelected,
+                stats: this.statsAssigned,
+                sex: this.sex
+            });
+            document.body.removeChild( document.getElementById('nameInput'));
+            Acorn.changeState('charScreen');
         }
 
     }

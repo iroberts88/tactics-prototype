@@ -69,7 +69,9 @@
                 style: style,
                 interactive: true,buttonMode: true,buttonGlow: true,glowCont: Graphics.worldContainer,
                 clickFunc: function onClick(){
-                    Acorn.changeState('createUnit');
+                    if (Player.units.length < 30){
+                        Acorn.changeState('createUnit');
+                    }
                 }
             });
             this.newChar.position.x = 25 + this.newChar.width/2;
