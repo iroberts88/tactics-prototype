@@ -68,9 +68,9 @@ $(function() {
         var key = e.which;
         if (Settings.credentialsOn && key == 13){
             if (Settings.credentials.getType() == 'login'){
-                //Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
             }else if (Settings.credentials.getType() == 'new'){
-                //Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
             }
         }else{
             ChatConsole.keyDown(key);
@@ -143,10 +143,10 @@ function init() {
         Settings.stats.begin();
         Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
         Graphics.app.renderer.render(Graphics.app.stage);
-        if (Acorn.Input.isPressed(Acorn.Input.Key.TOGGLESTATS)){
-            Settings.toggleStats();
-            Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
-        }
+        //if (Acorn.Input.isPressed(Acorn.Input.Key.TOGGLESTATS)){
+        //    Settings.toggleStats();
+        //    Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
+        //}
         if (Acorn.Input.isPressed(Acorn.Input.Key.ROTATE1)){
             Settings.rotateMap('left');
             Acorn.Input.setValue(Acorn.Input.Key.ROTATE1, false);

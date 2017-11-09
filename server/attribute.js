@@ -40,7 +40,7 @@ Attribute.prototype.init = function(data){
     	this.next = data.next;
     }
 }
-Attribute.prototype.set = function(){
+Attribute.prototype.set = function(updateClient){
 	if (this.setBool){
 		//force value change
 		this.value = this.setValue;
@@ -60,6 +60,15 @@ Attribute.prototype.set = function(){
     	}
 	}
     try{this.next()}catch(e){}
+    try{
+        if (updateClient){
+            this.owner.owner.gameEngine.queuePlayer(this.owner.owner,'setUnitStat',{
+                'unit': this.owner.id,
+                'stat': this.id,
+                'amt': this.value
+            });
+        }
+    }catch(e){}
 }
 
 exports.Attribute = Attribute;

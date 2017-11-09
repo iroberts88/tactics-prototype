@@ -343,7 +343,8 @@
                 var onClick = function(e){
                     try{
                         e.currentTarget.clickFunc(e);
-                    }catch(e){}
+                    }catch(e){
+                        console.log(e);}
                     Graphics.removeGlow(e.currentTarget);
                 }
                 button.on('tap', onClick);
@@ -351,7 +352,9 @@
                 var mOverFunc = function(e){
                     try{
                         e.currentTarget.mOverFunc(e);
-                    }catch(e){}
+                    }catch(e){
+                        //console.log(e);
+                    }
                     Graphics.buttonGlow(e.currentTarget);
                 }
                 button.on('pointerover', mOverFunc);

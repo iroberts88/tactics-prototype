@@ -261,7 +261,38 @@ Player.prototype.setupSocket = function() {
             commands.push(c.substring(from,c.length));
             switch (commands[0]){
                 case 'say':
-                    
+                    break;
+                case '-setStat':
+                    try{
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == commands[1] && parseInt(commands[3])){
+                                that.characters[i].setStat(commands[2],parseInt(commands[3]));
+                            }
+                        }
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to set stat ' + commands[2] + ' to ' + commands[3]);
+                    }
+                    break;
+                case '-modStat':
+                    try{
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == commands[1] && parseInt(commands[3])){
+                                that.characters[i].modStat(commands[2],parseInt(commands[3]));
+                            }
+                        }
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to set stat ' + commands[2] + ' to ' + commands[3]);
+                    }
+                    break;
+                case '-setName':
+                    break;
+                case '-addAp':
+                    break;
+                case '-addItem':
+                    break;
+                case '-addUnitItem':
                     break;
             }
         }catch(e){

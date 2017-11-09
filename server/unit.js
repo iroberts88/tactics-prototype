@@ -72,7 +72,7 @@ Unit.prototype.init = function(data) {
     
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
-        'id': 'maxHealth',
+        'id': 'hp',
         'owner': this,
         'value': 1000,
         'min': 1,
@@ -80,7 +80,7 @@ Unit.prototype.init = function(data) {
     });
     this.maximumEnergy = new Attribute();
     this.maximumEnergy.init({
-        'id': 'maxEnergy',
+        'id': 'energy',
         'owner': this,
         'value': 100,
         'min': 1,
@@ -122,7 +122,7 @@ Unit.prototype.init = function(data) {
     });
     this.speed = new Attribute();
     this.speed.init({
-        'id': 'spe',
+        'id': 'spd',
         'owner': this,
         'value': 100,
         'min': 0,
@@ -208,7 +208,7 @@ Unit.prototype.init = function(data) {
 
     this.physicalRes = new Attribute();
     this.physicalRes.init({
-        'id': 'phyRes',
+        'id': 'pRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -216,7 +216,7 @@ Unit.prototype.init = function(data) {
     });
     this.heatRes = new Attribute();
     this.heatRes.init({
-        'id': 'heaRes',
+        'id': 'hRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -224,7 +224,7 @@ Unit.prototype.init = function(data) {
     });
     this.coldRes = new Attribute();
     this.coldRes.init({
-        'id': 'colRes',
+        'id': 'cRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -232,7 +232,7 @@ Unit.prototype.init = function(data) {
     });
     this.acidRes = new Attribute();
     this.acidRes.init({
-        'id': 'aciRes',
+        'id': 'aRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -240,7 +240,7 @@ Unit.prototype.init = function(data) {
     });
     this.poisonRes = new Attribute();
     this.poisonRes.init({
-        'id': 'poiRes',
+        'id': 'poRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -248,7 +248,7 @@ Unit.prototype.init = function(data) {
     });
     this.electricRes = new Attribute();
     this.electricRes.init({
-        'id': 'eleRes',
+        'id': 'eRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -256,7 +256,7 @@ Unit.prototype.init = function(data) {
     });
     this.pulseRes = new Attribute();
     this.pulseRes.init({
-        'id': 'pulRes',
+        'id': 'puRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -264,7 +264,7 @@ Unit.prototype.init = function(data) {
     });
     this.radiationRes = new Attribute();
     this.radiationRes.init({
-        'id': 'radRes',
+        'id': 'rRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -272,7 +272,7 @@ Unit.prototype.init = function(data) {
     });
     this.gravityRes = new Attribute();
     this.gravityRes.init({
-        'id': 'graRes',
+        'id': 'gRes',
         'owner': this,
         'value': 0,
         'min': 0,
@@ -291,6 +291,180 @@ Unit.prototype.setClass = function(c){
 
     }catch(e){
         console.log("unable to set class");
+        console.log(e);
+    }
+};
+
+Unit.prototype.setStat = function(id,amt){
+    try{
+        this.getStat(id).base = amt;
+        this.getStat(id).set(true);
+    }catch(e){
+        console.log("unable to set stat " + id);
+        console.log(e);
+    }
+};
+
+Unit.prototype.getStat = function(id){
+    try{
+        switch(id){
+            case 'strength':
+                return this.strength;
+                break;
+            case 'str':
+                return this.strength;
+                break;
+            case 'endurance':
+                return this.endurance;
+                break;
+            case 'end':
+                return this.endurance;
+                break;
+            case 'agility':
+                return this.agility;
+                break;
+            case 'agi':
+                return this.agility;
+                break;
+            case 'dexterity':
+                return this.dexterity;
+                break;
+            case 'dex':
+                return this.dexterity;
+                break;
+            case 'intelligence':
+                return this.intelligence;
+                break;
+            case 'int':
+                return this.intelligence;
+                break;
+            case 'willpower':
+                return this.willpower;
+                break;
+            case 'wil':
+                return this.willpower;
+                break;
+            case 'charisma':
+                return this.charisma;
+                break;
+            case 'char':
+                return this.charisma;
+                break;
+            case 'maximumHealth':
+                return this.maximumHealth;
+                break;
+            case 'hp':
+                return this.maximumHealth;
+                break;
+            case 'maximumEnergy':
+                return this.maximumEnergy;
+                break;
+            case 'energy':
+                return this.maximumEnergy;
+                break;
+            case 'power':
+                return this.power;
+                break;
+            case 'pwr':
+                return this.power;
+                break;
+            case 'skill':
+                return this.skill;
+                break;
+            case 'skl':
+                return this.skill;
+                break;
+            case 'move':
+                return this.move;
+                break;
+            case 'mov':
+                return this.move;
+                break;
+            case 'jump':
+                return this.jump;
+                break;
+            case 'jmp':
+                return this.jump;
+                break;
+            case 'speed':
+                return this.speed;
+                break;
+            case 'spd':
+                return this.speed;
+                break;
+            case 'physicalRes':
+                return this.physicalRes;
+                break;
+            case 'pRes':
+                return this.physicalRes;
+                break;
+            case 'heatRes':
+                return this.heatRes;
+                break;
+            case 'hres':
+                return this.heatRes;
+                break;
+            case 'coldRes':
+                return this.coldRes;
+                break;
+            case 'cRes':
+                return this.coldRes;
+                break;
+            case 'acidRes':
+                return this.acidRes;
+                break;
+            case 'aRes':
+                return this.acidRes;
+                break;
+            case 'electricRes':
+                return this.electricRes;
+                break;
+            case 'eRes':
+                return this.electricRes;
+                break;
+            case 'poisonRes':
+                return this.poisonRes;
+                break;
+            case 'poRes':
+                return this.poisonRes;
+                break;
+            case 'pulseRes':
+                return this.pulseRes;
+                break;
+            case 'puRes':
+                return this.pulseRes;
+                break;
+            case 'readiationRes':
+                return this.radiationRes;
+                break;
+            case 'rRes':
+                return this.radiationRes;
+                break;
+            case 'gravityRes':
+                return this.gravityRes;
+                break;
+            case 'gRes':
+                return this.gravityRes;
+                break;
+            case 'maxWeight':
+                return this.inventory.maxWeight;
+                break;
+            case 'wgt':
+                return this.inventory.maxWeight;
+                break;
+        }
+    }catch(e){
+        console.log("unable to get stat " + id);
+        console.log(e);
+    }
+};
+
+Unit.prototype.modStat = function(id,amt){
+    try{
+        this.getStat(id).base += amt;
+        this.getStat(id).set(true);
+    }catch(e){
+        console.log("unable to mod stat " + id);
         console.log(e);
     }
 };

@@ -83,11 +83,15 @@
             });
             Acorn.Net.on('addNewUnit', function (data) {
                 console.log(data);
-                Player.addNewUnit(data);
+                Player.addNewUnit(data.unit);
             });
             Acorn.Net.on('deleteUnit', function (data) {
                 console.log(data);
                 Player.deleteUnit(data);
+            });
+            Acorn.Net.on('setUnitStat', function (data) {
+                console.log(data);
+                Player.setUnitStat(data);
             });
             Acorn.Net.on('debug', function (data) {
               console.log(data);
@@ -384,6 +388,16 @@
                 },
                 update: function(dt){
                     CharDisplay.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'createUnit',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    CreateUnit.init();
+                },
+                update: function(dt){
+                    CreateUnit.update(dt);
                 }
             });
             Acorn.addState({

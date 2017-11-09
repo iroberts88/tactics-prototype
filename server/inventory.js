@@ -23,18 +23,18 @@ Inventory.prototype.init = function(data){
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
-            'id': 'maxWeight',
+            'id': 'wgt',
             'owner': this.owner,
             'value': 1,
             'min': 1,
             'max': 1000,
-            formula: function(){return Math.round(Math.max(4,Math.round(Math.pow(this.owner.strength.value,1.1)))*this.pMod+this.nMod);},
+            formula: function(){return Math.round(Math.round(3+Math.pow(this.owner.strength.value,1.4))*this.pMod+this.nMod);},
             next: function(){this.owner.speed.set()}
         });
     }else{
         this.maxItemPile = 99;
         this.maxWeight.init({
-            'id': 'maxWeight',
+            'id': 'wgt',
             'owner': this.owner,
             'value': 1,
             'min': 1,

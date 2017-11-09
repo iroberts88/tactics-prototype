@@ -1,0 +1,386 @@
+//Create Unit 
+
+(function(window) {
+    CreateUnit = {
+        charToDisplay: null,
+
+        init: function() {
+            Graphics.drawBG('navy', 'navy');
+            //back button
+            this.classSelected = 'soldier';
+            this.statsAssigned = {
+                'strength': 1,
+                'endurance': 1,
+                'agility': 1,
+                'dexterity': 1,
+                'intelligence': 1,
+                'willpower': 1,
+                'charisma': 1
+            };
+            this.points = 20;
+            this.max = 10;
+
+            this.name = 'Noname';
+            //create plus and minus textures
+            var s = 50;
+            var g1 = new PIXI.Graphics();
+            var g2 = new PIXI.Graphics();
+            g1.lineStyle(5,0xFFFFFF,1);
+            g2.lineStyle(5,0xFFFFFF,1);
+            g1.moveTo(0,0);
+            g1.lineTo(s,0);
+            g1.lineTo(s,s);
+            g1.lineTo(0,s);
+            g1.lineTo(0,0);
+            g1.moveTo(s*0.2,s*0.5);
+            g1.lineTo(s*0.8,s*0.5);
+            g1.moveTo(s*0.5,s*0.2);
+            g1.lineTo(s*0.5,s*0.8);
+
+            g2.moveTo(0,0);
+            g2.lineTo(s,0);
+            g2.lineTo(s,s);
+            g2.lineTo(0,s);
+            g2.lineTo(0,0);
+            g2.moveTo(s*0.2,s*0.5);
+            g2.lineTo(s*0.8,s*0.5);
+
+            var plusTex = PIXI.RenderTexture.create(s,s);
+            var minusTex = PIXI.RenderTexture.create(s,s);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(g1,plusTex);
+            Graphics.app.renderer.render(g2,minusTex);
+
+            this.style2 = {
+                font: '48px Orbitron', 
+                fill: 'white', 
+                align: 'left', 
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                stroke: '#000000',
+                strokeThickness: 5,
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 6
+            };
+            this.style1 = {
+                font: '48px Sigmar One', 
+                fill: 'white', 
+                align: 'left', 
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 6
+            };
+
+            this.exitButton = Graphics.makeUiElement({
+                text: 'Back',
+                style: this.style2,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    document.body.removeChild( document.getElementById('nameInput'));
+                    Acorn.changeState('charScreen');
+                }
+            });
+            this.exitButton.style.fontSize = 80
+            this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
+            this.exitButton.position.y = 25 + this.exitButton.height/2;
+            Graphics.uiContainer.addChild(this.exitButton);
+
+            var nameText = Graphics.makeUiElement({
+                text: 'Name: ',
+                style: this.style1,
+                position: [Graphics.width/9,this.exitButton.position.y]
+            });
+            Graphics.uiContainer.addChild(nameText);
+
+            var nameInput = document.createElement( 'input' );
+            nameInput.id = 'nameInput';
+            nameInput.type = 'text';
+            nameInput.name = 'userName';
+            nameInput.style.cssText = 'maxlength:30;top:5%;left:20%;opacity:1;position:absolute;width:300px;height:50px;background-color:#fff;font-size: 32px';
+            document.body.appendChild( nameInput );
+
+            var classText = Graphics.makeUiElement({
+                text: 'Pick a class',
+                style: this.style1,
+                position: [Graphics.width/9,this.exitButton.position.y + 25 + this.exitButton.height/2]
+            });
+            Graphics.uiContainer.addChild(classText);
+
+            this.soldierButton = Graphics.makeUiElement({
+                text: 'Soldier',
+                style: this.style2,
+                position: [Graphics.width/9,classText.position.y + 50 + classText.height/2],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.classSelected = 'soldier';
+                    CreateUnit.soldierButton.style.fill = 'gray';
+                    CreateUnit.techButton.style.fill = 'white';
+                    CreateUnit.scoutButton.style.fill = 'white';
+                    CreateUnit.medicButton.style.fill = 'white';
+                }
+            });
+            this.soldierButton.style.fill = 'gray';
+            Graphics.uiContainer.addChild(this.soldierButton);
+
+            this.medicButton = Graphics.makeUiElement({
+                text: 'Medic',
+                style: this.style2,
+                position: [Graphics.width/9,this.soldierButton.position.y + 20 + this.soldierButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.classSelected = 'medic';
+                    CreateUnit.medicButton.style.fill = 'gray';
+                    CreateUnit.techButton.style.fill = 'white';
+                    CreateUnit.scoutButton.style.fill = 'white';
+                    CreateUnit.soldierButton.style.fill = 'white';
+                }
+            });
+            Graphics.uiContainer.addChild(this.medicButton);
+
+            this.techButton = Graphics.makeUiElement({
+                text: 'Tech',
+                style: this.style2,
+                position: [Graphics.width/9,this.medicButton.position.y + 20 + this.medicButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.classSelected = 'tech';
+                    CreateUnit.techButton.style.fill = 'gray';
+                    CreateUnit.soldierButton.style.fill = 'white';
+                    CreateUnit.scoutButton.style.fill = 'white';
+                    CreateUnit.medicButton.style.fill = 'white';
+                }
+            });
+            Graphics.uiContainer.addChild(this.techButton);
+
+            this.scoutButton = Graphics.makeUiElement({
+                text: 'Scout',
+                style: this.style2,
+                position: [Graphics.width/9,this.techButton.position.y + 20 + this.techButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.classSelected = 'scout';
+                    CreateUnit.soldierButton.style.fill = 'white';
+                    CreateUnit.techButton.style.fill = 'white';
+                    CreateUnit.scoutButton.style.fill = 'gray';
+                    CreateUnit.medicButton.style.fill = 'white';
+                }
+            });
+            Graphics.uiContainer.addChild(this.scoutButton);
+
+            var statText = Graphics.makeUiElement({
+                text: 'Assign Stat Points',
+                style: this.style1,
+                position: [Graphics.width/2,this.exitButton.position.y + 25 + this.exitButton.height/2]
+            });
+            Graphics.uiContainer.addChild(statText);
+
+            var statNames = ['Strength:','Endurance:','Agility:','Dexterity:','Intelligence:','Willpower:','Charisma:'];
+            var stats = ['strength','endurance','agility','dexterity','intelligence','willpower','charisma'];
+            var h = 0;
+            for (var i = 0; i < stats.length;i++){
+                var t = Graphics.makeUiElement({
+                    text: statNames[i],
+                    style: this.style1,
+                });
+                if (i == 0){h = t.height;}
+                t.position.x = Graphics.width/2 - t.width/2;
+                t.position.y = statText.position.y + 75 + i*h;
+                Graphics.uiContainer.addChild(t);
+                this[stats[i]+'Num'] = Graphics.makeUiElement({
+                    text: 1,
+                    style: this.style1,
+                    position: [Graphics.width/2+50,statText.position.y + 75 + i*h]
+                });
+                Graphics.uiContainer.addChild(this[stats[i]+'Num']);
+
+                this[stats[i]+'Minus'] = Graphics.makeUiElement({
+                    texture: minusTex,
+                    position: [Graphics.width/2+150,statText.position.y + 75 + i*h],
+                    interactive: true,buttonMode: true,buttonGlow: true,
+                    clickFunc: function onClick(e){
+                        CreateUnit.statsAssigned[e.currentTarget.statToChange] -= 1;
+                        if (CreateUnit.statsAssigned[e.currentTarget.statToChange] < 1){
+                            CreateUnit.statsAssigned[e.currentTarget.statToChange] = 1;
+                        }else if (CreateUnit.points < 20){
+                            CreateUnit.points +=1;
+                        }
+                        CreateUnit[e.currentTarget.statToChange + 'Num'].text = CreateUnit.statsAssigned[e.currentTarget.statToChange];
+                    }
+                });
+                this[stats[i]+'Minus'].statToChange = stats[i];
+                Graphics.uiContainer.addChild(this[stats[i]+'Minus']);
+
+                this[stats[i]+'Plus'] = Graphics.makeUiElement({
+                    texture: plusTex,
+                    position: [Graphics.width/2+150+this[stats[i]+'Minus'].width*2,statText.position.y + 75 + i*h],
+                    interactive: true,buttonMode: true,buttonGlow: true,
+                    clickFunc: function onClick(e){
+                        if (CreateUnit.points > 0){
+                            CreateUnit.statsAssigned[e.currentTarget.statToChange] += 1;
+                            if (CreateUnit.statsAssigned[e.currentTarget.statToChange] > 10){
+                                CreateUnit.statsAssigned[e.currentTarget.statToChange] = 10;
+                                CreateUnit.errorText.text = 'Cannot raise a stat above 10';
+                            }else{
+                                CreateUnit.points -=1;
+                            }
+                        }
+                        CreateUnit[e.currentTarget.statToChange + 'Num'].text = CreateUnit.statsAssigned[e.currentTarget.statToChange];
+                    }
+                });
+                this[stats[i]+'Plus'].statToChange = stats[i];
+                Graphics.uiContainer.addChild(this[stats[i]+'Plus']);
+            }
+
+            this.pointsText = Graphics.makeUiElement({
+                text: 'Points: 20/20',
+                style: this.style1,
+                position: [Graphics.width/2,this.charismaNum.position.y + 100]
+            });
+            Graphics.uiContainer.addChild(this.pointsText);
+
+            this.errorText = Graphics.makeUiElement({
+                text: ' ',
+                style: this.style1,
+                position: [Graphics.width/2,Graphics.height * 0.8]
+            });
+            Graphics.uiContainer.addChild(this.errorText);
+
+            this.createButton = Graphics.makeUiElement({
+                text: 'Create Unit',
+                style: this.style2,
+                position: [Graphics.width/2,this.errorText.position.y + 20 + this.errorText.height*2],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.checkAndCreate();
+                }
+            });
+            this.createButton.style.fontSize = 64
+            Graphics.uiContainer.addChild(this.createButton);
+
+            this.unitSprite = Graphics.getSprite('unit_base_dl_');
+            this.unitSprite.position.x = Graphics.width*0.9;
+            this.unitSprite.position.y = Graphics.height*0.5;
+            this.unitSprite.anchor.x = 0.5;
+            this.unitSprite.anchor.y = 0.5;
+            this.unitSprite.scale.x = 3;
+            this.unitSprite.scale.y = 3;
+            var colors = {
+                'tech': 0xFFFF00,
+                'soldier': 0xFF0000,
+                'medic': 0x00FF00,
+                'scout': 0x42f1f4
+            };
+            this.unitSprite.tint = 0xFF0000;
+            Graphics.worldContainer.addChild(this.unitSprite);
+        },
+        
+        update: function(dt){
+            Graphics.uiPrimitives2.clear();
+            Graphics.drawBoxAround(this.exitButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.soldierButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.scoutButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.medicButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.techButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
+
+            this.pointsText.text = 'Points: ' + this.points + '/20';
+
+            var colors = {
+                'tech': 0xFFFF00,
+                'soldier': 0xFF0000,
+                'medic': 0x00FF00,
+                'scout': 0x42f1f4
+            };
+            this.unitSprite.tint = colors[this.classSelected];
+
+            if (Acorn.Input.isPressed(Acorn.Input.Key.BACKSPACE)){
+                if (document.activeElement.id == 'nameInput'){
+                    document.getElementById('nameInput').value = document.getElementById('nameInput').value.substring(0, document.getElementById('nameInput').value.length-1);
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.BACKSPACE, false);
+            }if (Acorn.Input.isPressed(Acorn.Input.Key.TOGGLESTATS)){
+                if (document.activeElement.id == 'nameInput'){
+                    document.getElementById('nameInput').value = document.getElementById('nameInput').value + ' ';
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
+            }
+        },
+
+        checkAndCreate: function(){
+            //check if valid name
+            var name = document.getElementById('nameInput').value;
+            if (name.length > 30){
+                this.errorText.text = "Name must be less than 30 characters";
+                return;
+            }
+            if (name.length < 3){
+                this.errorText.text = "Name must be 3 or more characters";
+                return;
+            }
+            var spaces = 0;
+            for (var i = 0; i < name.length;i++){
+                if (name.charAt(i) == ' '){
+                    spaces += 1;
+                }
+            }
+            if (spaces > 1){
+                this.errorText.text = "Name can only have 1 space";
+                return;
+            }
+            var invalidChars = {'!': 1,'@': 1,'#': 1,'$': 1,'%': 1,'^': 1,'&': 1,'*': 1,"(": 1,')': 1,'_': 1,'+': 1,'=': 1,'[': 1,']': 1,'{': 1,'}': 1,'|': 1,';': 1,':': 1,'"': 1,'<': 1,'>': 1,',': 1,'?': 1,'/': 1,'.': 1,'~': 1}
+            for (var i = 0; i < name.length;i++){
+                if (invalidChars[name.charAt(i)]){
+                    this.errorText.text = "Name contains an invalid character";
+                    return;
+                }
+            }
+            //check if valid stats
+            var p = 0;
+            for (var stats in this.statsAssigned){
+                p += this.statsAssigned[stats];
+                if (this.statsAssigned[stats] > 10 || this.statsAssigned[stats] < 1){
+                    this.errorText.text = "Invalid stat assignment...";
+                    return;
+                }
+            }
+            if (p < 27){
+                this.errorText.text = "You need to spend all of your stat points!";
+                return;
+            }else if (p > 27){
+                this.errorText.text = "Invalid stat assignment...";
+                return;
+            }
+            //check if valid class
+            var validClasses = {
+                'scout': 1,'soldier': 1,'medic': 1,'tech': 1
+            }
+            valid = false;
+            for (var i = 0; i < name.length;i++){
+                if (validClasses[CreateUnit.classSelected]){
+                    valid = true;
+                }
+            }
+            if (!valid){
+                this.errorText.text = "Invalid class...";
+                return;
+            }
+            //send to server to create
+            console.log("Success!!! send to server to create!")
+            //remove name input?
+        }
+
+    }
+    window.CreateUnit = CreateUnit;
+})(window);

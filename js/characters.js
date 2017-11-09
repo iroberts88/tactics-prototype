@@ -8,6 +8,7 @@
             Graphics.drawBG('navy', 'navy');
             //back button
             this.units = [];
+            this.refresh = false;
             var style = {
                 font: '32px Orbitron', 
                 fill: 'white', 
@@ -68,7 +69,7 @@
                 style: style,
                 interactive: true,buttonMode: true,buttonGlow: true,glowCont: Graphics.worldContainer,
                 clickFunc: function onClick(){
-                    console.log('Init char creation screen?');
+                    Acorn.changeState('createUnit');
                 }
             });
             this.newChar.position.x = 25 + this.newChar.width/2;
@@ -100,7 +101,7 @@
             Graphics.drawBoxAround(this.newRandChar,Graphics.uiPrimitives2,{});
             this.noCharacters.visible = (Player.units.length < 5) ? true : false;
             //check for new characters and make a UI element for each
-            if (this.units.length != Player.units.length){
+            if (this.units.length != Player.units.length || this.refresh){
                 Graphics.uiPrimitives.clear();
                 Graphics.worldContainer.removeChildren();
                 this.startAt = {x: 20, y: this.exitButton.position.y + this.exitButton.height/2 + 20};
@@ -153,6 +154,7 @@
                         ybuffer: -5,
                     });
                 }
+                this.refresh = false;
             }
         },
 
