@@ -158,6 +158,15 @@
                 }
                 this.refresh = false;
             }
+
+            if (Acorn.Input.isPressed(Acorn.Input.Key.SCROLLUP)){
+                Settings.zoom('in');
+                Acorn.Input.setValue(Acorn.Input.Key.SCROLLUP,false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.SCROLLDOWN)){
+                Settings.zoom('out');
+                Acorn.Input.setValue(Acorn.Input.Key.SCROLLDOWN,false);
+            }
         },
 
         createUnitInfoPane: function(unit){

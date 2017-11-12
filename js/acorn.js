@@ -55,7 +55,9 @@
             YSCALE2: 9,
             TOGGLEMAP: 10,
             TOGGLESTATS: 11,
-            BACKSPACE: 12
+            BACKSPACE: 12,
+            SCROLLUP: 13,
+            SCROLLDOWN: 14
         },
         keysPressed: [],
         keyBindings: [],
@@ -96,6 +98,8 @@
             this.keyBindings[65] = Acorn.Input.Key.ROTATE1; //default D
             this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
             this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
+            this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
+            this.keyBindings[40] = Acorn.Input.Key.SCROLLDOWN; //default M
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];

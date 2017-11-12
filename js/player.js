@@ -4,7 +4,6 @@
     	userData: null,
     	units: null,
     	inventory: null,
-        toolTip: null,
 
     	init: function(data){
     		if (typeof data.units != 'undefined'){
@@ -42,6 +41,7 @@
             }
             Characters.refresh = true;
         }
+
     }
     window.Player = Player;
 })(window);

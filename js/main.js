@@ -143,6 +143,9 @@ function init() {
         Settings.stats.begin();
         Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
         Graphics.app.renderer.render(Graphics.app.stage);
+
+        //TODO Put this stuff in the correct state!
+
         //if (Acorn.Input.isPressed(Acorn.Input.Key.TOGGLESTATS)){
         //    Settings.toggleStats();
         //    Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);

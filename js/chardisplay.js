@@ -109,15 +109,65 @@
                 ["Jump:  ", this.charToDisplay.jump],
                 ["Speed:  ", this.charToDisplay.speed]
             ];
+            var attrDesc = [
+                ["Max Health:   ", this.charToDisplay.maximumHealth],
+                ["Max Energy:   ", this.charToDisplay.maximumEnergy],
+                ["Power:   ", this.charToDisplay.power],
+                ["Skill:   ", this.charToDisplay.skill],
+                ["Ability Slots:   ", this.charToDisplay.abilitySlots],
+                ['',''],
+                ["Strength:   ", this.charToDisplay.strength],
+                ["Endurance:   ", this.charToDisplay.endurance],
+                ["Agility:   ", this.charToDisplay.agility],
+                ["Dexterity:   ", this.charToDisplay.dexterity],
+                ["Intelligence:   ", this.charToDisplay.intelligence],
+                ["Willpower:   ", this.charToDisplay.willpower],
+                ["Charisma:   ", this.charToDisplay.charisma],
+                ['',''],
+                ["Move:   ", this.charToDisplay.move],
+                ["Jump:  ", this.charToDisplay.jump],
+                ["Speed:  ", this.charToDisplay.speed]
+            ];
             var startY = unitStats.y + unitStats.height + 25;
             for (var j = 0; j < attr.length;j++){
                 var a = new PIXI.Text(attr[j][0] + attr[j][1],this.style1);
+                a.tooltip = new Tooltip();
+                a.tooltip.set({
+                    ttArray: [
+                        {
+                            text: attrDesc[j][0]
+                        }
+                    ]
+                });
+                a.tooltipAdded = false;
                 a.style.fontSize = 24;
                 a.position.x = 10;
                 a.position.y = startY;
                 startY += a.height + 10
                 a.anchor.x = 0;
                 a.anchor.y = 0;
+                a.interactive = true;
+                console.log(a);
+                var overFunc = function(e){
+                    console.log(e.currentTarget)
+                    if (!e.currentTarget.tooltipAdded){
+                        Graphics.uiContainer.addChild(e.currentTarget.tooltip.sprite);
+                        e.currentTarget.tooltipAdded = true;
+                    }
+                    e.currentTarget.tooltip.position.x = Graphics.width/2;
+                    e.currentTarget.tooltip.position.y = Graphics.height/2;
+                }
+                var outFunc = function(e){
+                    if (e.currentTarget.tooltipAdded){
+                        Graphics.uiContainer.removeChild(e.currentTarget.tooltip.sprite);
+                        e.currentTarget.tooltipAdded = false;
+                    }
+                }
+                a.on('pointerover',overFunc);
+                a.on('touchmove',overFunc);
+                a.on('touchend', outFunc);
+                a.on('touchendoutside', outFunc);
+                a.on('pointerout', outFunc);
                 Graphics.uiContainer.addChild(a);
             }
 
