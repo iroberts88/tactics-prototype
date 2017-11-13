@@ -1,11 +1,11 @@
 (function(window) {
     var Tooltip = function(){
-        this.maxWidth = 200;
+        this.maxWidth = 400;
         this.ttInfo = null;
         this.texture = null;
         this.sprite = null;
         this.style1 = {
-            font: '18px Sigmar One', 
+            font: '24px Sigmar One', 
             fill: 'white', 
             align: 'left',
             wordWrap: true,

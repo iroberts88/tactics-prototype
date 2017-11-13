@@ -76,6 +76,7 @@
             unitStats.anchor.x = 0.5;
             unitStats.anchor.y = 0;
             Graphics.uiContainer.addChild(unitStats);
+
             var unitAbilities = new PIXI.Text('Ability/Class Info',this.style1);
             unitAbilities.style.fontSize = 32;
             unitAbilities.position.x = this.charName.x;
@@ -83,13 +84,39 @@
             unitAbilities.anchor.x = 0.5;
             unitAbilities.anchor.y = 0;
             Graphics.uiContainer.addChild(unitAbilities);
-            var unitInventory = new PIXI.Text('Inventory',this.style1);
-            unitInventory.style.fontSize = 32;
-            unitInventory.position.x = this.exitButton.x;
-            unitInventory.position.y = this.deleteButton.y + this.deleteButton.height/2 + 50;
-            unitInventory.anchor.x = 0.5;
-            unitInventory.anchor.y = 0;
-            Graphics.uiContainer.addChild(unitInventory);
+            this.baseClass = Graphics.makeUiElement({
+                text: "Base Class: " + this.charToDisplay.classInfo.baseClass,
+                style: this.style1,
+                position: [Graphics.width/2,unitAbilities.position.y + 100]
+            })
+            Graphics.uiContainer.addChild(this.baseClass);
+            this.currentClass = Graphics.makeUiElement({
+                text: "Current Class: " + this.charToDisplay.classInfo.currentClass,
+                style: this.style1,
+                position: [Graphics.width/2,this.baseClass.position.y + 100]
+            })
+            Graphics.uiContainer.addChild(this.currentClass);
+            this.learnAbilities = Graphics.makeUiElement({
+                text: "Learn Abilities",
+                style: this.style1,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                position: [Graphics.width/2,this.currentClass.position.y + 100]
+            })
+            Graphics.uiContainer.addChild(this.learnAbilities);
+            this.equipAbilities = Graphics.makeUiElement({
+                text: "Equip Abilities",
+                style: this.style1,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                position: [Graphics.width/2,this.learnAbilities.position.y + 100]
+            })
+            Graphics.uiContainer.addChild(this.equipAbilities);
+            this.unitInventory = Graphics.makeUiElement({
+                text: "Inventory",
+                style: this.style1,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                position: [Graphics.width/2,this.equipAbilities.position.y + 100]
+            })
+            Graphics.uiContainer.addChild(this.unitInventory);
             var attr = [
                 ["Max Health:   ", this.charToDisplay.maximumHealth],
                 ["Max Energy:   ", this.charToDisplay.maximumEnergy],
@@ -150,7 +177,6 @@
                 a.interactive = true;
                 //a.hitArea = new PIXI.Rectangle(a.position.x,a.position.y,a.width,a.height)
                 var overFunc = function(e){
-                    console.log('what')
                     if (!e.currentTarget.tooltipAdded){
                         Graphics.uiContainer.addChild(e.currentTarget.tooltip.sprite);
                         e.currentTarget.tooltipAdded = true;
@@ -159,7 +185,6 @@
                     e.currentTarget.tooltip.sprite.position.y =  Graphics.height - e.currentTarget.tooltip.sprite.height - 5;
                 }
                 var outFunc = function(e){
-                    console.log('out...')
                     if (e.currentTarget.tooltipAdded){
                         Graphics.uiContainer.removeChild(e.currentTarget.tooltip.sprite);
                         e.currentTarget.tooltipAdded = false;
@@ -180,6 +205,9 @@
             Graphics.uiPrimitives2.clear();
             Graphics.drawBoxAround(this.exitButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.deleteButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.learnAbilities,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.equipAbilities,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.unitInventory,Graphics.uiPrimitives2,{});
         }
 
     }
