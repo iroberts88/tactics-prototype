@@ -1,6 +1,6 @@
 (function(window) {
     var Tooltip = function(){
-        this.maxWidth = 250;
+        this.maxWidth = 200;
         this.ttInfo = null;
         this.texture = null;
         this.sprite = null;
@@ -8,7 +8,7 @@
             font: '18px Sigmar One', 
             fill: 'white', 
             align: 'left',
-            wordwrap: true,
+            wordWrap: true,
             wordWrapWidth: this.maxWidth
         };
     };
@@ -28,7 +28,8 @@
         }
         var w = 0;
         var h = 0;
-        var hVar = 0;
+        var padding = 5;
+        var hVar = 5;
         var eHei = 5; //extra height to add after each text object
         //create a new container for the tooltip
         var scene = new PIXI.Container();
@@ -36,6 +37,7 @@
         var gfx = new PIXI.Graphics();
         gfx.beginFill(this.ttInfo.bgFill,this.ttInfo.alpha);
         gfx.drawRect(0,0,Graphics.width,Graphics.height);
+        gfx.endFill();
         scene.addChild(gfx);
         scene.addChild(cont);
         
@@ -52,7 +54,7 @@
             }
             text.anchor.x = 0.5;
             text.anchor.y = 0.5;
-            text.position.x = text.width/2;
+            text.position.x = text.width/2 + padding;
             text.position.y = text.height/2 + hVar;
             hVar += text.height + eHei;
             textObjects.push(text);
@@ -76,14 +78,14 @@
             }
         }
         //draw outline
-        gfx.lineStyle(3,'white',1);
+        gfx.lineStyle(3,0xFFFFFF,1);
         gfx.moveTo(2,2);
-        gfx.lineTo(w-2,2);
-        gfx.lineTo(w-2,h-2);
-        gfx.lineTo(2,h-2);
+        gfx.lineTo(w+padding*2-2,2);
+        gfx.lineTo(w+padding*2-2,h+padding*2-2);
+        gfx.lineTo(2,h+padding*2-2);
         gfx.lineTo(2,2);
         //create and render the texture and sprite
-        this.texture = PIXI.RenderTexture.create(w,h);
+        this.texture = PIXI.RenderTexture.create(w+padding*2,h+padding*2);
         var renderer = new PIXI.CanvasRenderer();
         Graphics.app.renderer.render(scene,this.texture);
         this.sprite = new PIXI.Sprite(this.texture);

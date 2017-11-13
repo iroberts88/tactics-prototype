@@ -189,12 +189,55 @@
 
             var statNames = ['Strength:','Endurance:','Agility:','Dexterity:','Intelligence:','Willpower:','Charisma:'];
             var stats = ['strength','endurance','agility','dexterity','intelligence','willpower','charisma'];
+            var attrDesc = [
+                "Strength increases power on levelup. It also increases max carry weight and effectiveness of strength based abilities",
+                "Endurance increases max health on levelup. It also increases effectiveness of endurance based abilities",
+                "Agility increases speed on levelup. It also increases effectiveness of agility based abilities",
+                "Dexterity increases skill on levelup. It also increases effectiveness of dexterity based abilities",
+                "Intelligence increases ability slots on levelup. It also increases effectiveness of intelligence based abilities",
+                "Willpower increases max energy on levelup. It also increases effectiveness of willpower based abilities",
+                "Charisma increases all stats slightly on levelup. It also increases effectiveness of charisma based abilities"
+            ];
+                
             var h = 0;
             for (var i = 0; i < stats.length;i++){
                 var t = Graphics.makeUiElement({
                     text: statNames[i],
                     style: this.style1,
                 });
+
+                //make tooltips
+                t.tooltip = new Tooltip();
+                t.tooltip.set({
+                    ttArray: [
+                        {
+                            text: attrDesc[i]
+                        }
+                    ],
+                    alpha: 0.5
+                });
+                t.tooltipAdded = false;
+                t.interactive = true;
+                var overFunc = function(e){
+                    if (!e.currentTarget.tooltipAdded){
+                        Graphics.uiContainer.addChild(e.currentTarget.tooltip.sprite);
+                        e.currentTarget.tooltipAdded = true;
+                    }
+                    e.currentTarget.tooltip.sprite.position.x =  Graphics.width - e.currentTarget.tooltip.sprite.width - 5;
+                    e.currentTarget.tooltip.sprite.position.y =  Graphics.height - e.currentTarget.tooltip.sprite.height - 5;
+                }
+                var outFunc = function(e){
+                    if (e.currentTarget.tooltipAdded){
+                        Graphics.uiContainer.removeChild(e.currentTarget.tooltip.sprite);
+                        e.currentTarget.tooltipAdded = false;
+                    }
+                }
+                t.on('pointerover',overFunc);
+                t.on('touchmove',overFunc);
+                t.on('touchend', outFunc);
+                t.on('touchendoutside', outFunc);
+                t.on('pointerout', outFunc);
+
                 if (i == 0){h = t.height;}
                 t.position.x = Graphics.width/2 - t.width/2;
                 t.position.y = statText.position.y + 75 + i*h;

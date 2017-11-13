@@ -110,34 +110,35 @@
                 ["Speed:  ", this.charToDisplay.speed]
             ];
             var attrDesc = [
-                ["Max Health:   ", this.charToDisplay.maximumHealth],
-                ["Max Energy:   ", this.charToDisplay.maximumEnergy],
-                ["Power:   ", this.charToDisplay.power],
-                ["Skill:   ", this.charToDisplay.skill],
-                ["Ability Slots:   ", this.charToDisplay.abilitySlots],
-                ['',''],
-                ["Strength:   ", this.charToDisplay.strength],
-                ["Endurance:   ", this.charToDisplay.endurance],
-                ["Agility:   ", this.charToDisplay.agility],
-                ["Dexterity:   ", this.charToDisplay.dexterity],
-                ["Intelligence:   ", this.charToDisplay.intelligence],
-                ["Willpower:   ", this.charToDisplay.willpower],
-                ["Charisma:   ", this.charToDisplay.charisma],
-                ['',''],
-                ["Move:   ", this.charToDisplay.move],
-                ["Jump:  ", this.charToDisplay.jump],
-                ["Speed:  ", this.charToDisplay.speed]
+                "Unit will faint when reduced to 0 health",
+                "Energy is the main resource for using abilities",
+                'Power directly increases melee weapon damage',
+                'Skill directly increases ranged gun damage',
+                "Ability Slots are used to equip abilites. An ability not from the unit's base or current class costs x3",
+                '',
+                "Strength increases power on levelup. It also increases max carry weight and effectiveness of strength based abilities",
+                "Endurance increases max health on levelup. It also increases effectiveness of endurance based abilities",
+                "Agility increases speed on levelup. It also increases effectiveness of agility based abilities",
+                "Dexterity increases skill on levelup. It also increases effectiveness of dexterity based abilities",
+                "Intelligence increases ability slots on levelup. It also increases effectiveness of intelligence based abilities",
+                "Willpower increases max energy on levelup. It also increases effectiveness of willpower based abilities",
+                "Charisma increases all stats slightly on levelup. It also increases effectiveness of charisma based abilities",
+                '',
+                "Number of hexes a unit can move during it's turn",
+                "Number of hexes a unit can jump while moving. Also effects fall damage",
+                "Speed effects the unit's position in the turn order"
             ];
             var startY = unitStats.y + unitStats.height + 25;
             for (var j = 0; j < attr.length;j++){
-                var a = new PIXI.Text(attr[j][0] + attr[j][1],this.style1);
+                var a = Graphics.makeUiElement({text: attr[j][0] + attr[j][1],style: this.style1,interactive: true});
                 a.tooltip = new Tooltip();
                 a.tooltip.set({
                     ttArray: [
                         {
-                            text: attrDesc[j][0]
+                            text: attrDesc[j]
                         }
-                    ]
+                    ],
+                    alpha: 0.5
                 });
                 a.tooltipAdded = false;
                 a.style.fontSize = 24;
@@ -147,17 +148,18 @@
                 a.anchor.x = 0;
                 a.anchor.y = 0;
                 a.interactive = true;
-                console.log(a);
+                //a.hitArea = new PIXI.Rectangle(a.position.x,a.position.y,a.width,a.height)
                 var overFunc = function(e){
-                    console.log(e.currentTarget)
+                    console.log('what')
                     if (!e.currentTarget.tooltipAdded){
                         Graphics.uiContainer.addChild(e.currentTarget.tooltip.sprite);
                         e.currentTarget.tooltipAdded = true;
                     }
-                    e.currentTarget.tooltip.position.x = Graphics.width/2;
-                    e.currentTarget.tooltip.position.y = Graphics.height/2;
+                    e.currentTarget.tooltip.sprite.position.x =  Graphics.width - e.currentTarget.tooltip.sprite.width - 5;
+                    e.currentTarget.tooltip.sprite.position.y =  Graphics.height - e.currentTarget.tooltip.sprite.height - 5;
                 }
                 var outFunc = function(e){
+                    console.log('out...')
                     if (e.currentTarget.tooltipAdded){
                         Graphics.uiContainer.removeChild(e.currentTarget.tooltip.sprite);
                         e.currentTarget.tooltipAdded = false;
