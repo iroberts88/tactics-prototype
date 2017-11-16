@@ -115,7 +115,7 @@
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(e){
                             CharDisplay.charToDisplay = e.currentTarget.unit;
-                            Acorn.changeState('charDisplay')
+                            Acorn.changeState('charDisplay');
                         }
                     });
                     unitInfoElement.unit = Player.units[i];

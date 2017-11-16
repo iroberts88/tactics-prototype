@@ -7,14 +7,9 @@ var ClassInfo = function(){
 	this.learnedAbilities = null;
 
 	this.baseClass = null;
-	this.baseClassAbilities;
+	this.baseClassAbilities = null;
 
-	this.ap = {
-		'soldier': 0,
-		'tech': 0,
-		'scout': 0,
-		'medic': 0
-	};
+	this.ap = null;
 }
 
 ClassInfo.prototype.init = function(data){
@@ -22,13 +17,13 @@ ClassInfo.prototype.init = function(data){
 	if (typeof data.learnedAbilities != 'undefined'){
 		this.learnedAbilities = data.learnedAbilities;
 	}else{
-		this.learnedAbilities = [];
+		this.learnedAbilities = {};
 	}
-	/*if (typeof data.ap != 'undefined'){
+	if (typeof data.ap != 'undefined'){
 		this.ap = data.ap;
 	}else{
-		this.ap = 0;
-	}*/
+		this.ap = {};
+	}
 }
 
 ClassInfo.prototype.setClass = function(c){
@@ -42,6 +37,10 @@ ClassInfo.prototype.setClass = function(c){
 			this.unit[stat].nMod += charClass.attributes[stat];
 			this.unit[stat].set();
 		}
+		if (typeof this.ap[charClass.name] == 'undefined'){
+			this.ap[charClass.name] = 0;
+		}
+		//TODO send new class info to the client
 	}catch(e){
 		console.log("ERROR: unable to set class");
 		console.log(e.stack);
@@ -56,6 +55,9 @@ ClassInfo.prototype.setBaseClass = function(c){
 		for (var stat in charClass.baseAttr){
 			this.unit[stat].base += charClass.baseAttr[stat];
 			this.unit[stat].set();
+		}
+		if (typeof this.ap[charClass.name] == 'undefined'){
+			this.ap[charClass.name] = 100;
 		}
 	}catch(e){
 		console.log("ERROR: unable to set base class");

@@ -401,6 +401,36 @@
                 }
             });
             Acorn.addState({
+                stateId: 'learnAbilitiesMenu',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    LearnAbilities.init();
+                },
+                update: function(dt){
+                    LearnAbilities.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'equipAbilitiesMenu',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    EquipAbilities.init();
+                },
+                update: function(dt){
+                    EquipAbilities.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'unitInventoryMenu',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    UnitInventory.init();
+                },
+                update: function(dt){
+                    UnitInventory.update(dt);
+                }
+            });
+            Acorn.addState({
                 stateId: 'MapGenInit',
                 init: function(){
                     console.log('Initializing Map Type Selection');

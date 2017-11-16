@@ -89,33 +89,50 @@
                 style: this.style1,
                 position: [Graphics.width/2,unitAbilities.position.y + 100]
             })
+            this.baseClass.style.fontSize = 24;
             Graphics.uiContainer.addChild(this.baseClass);
             this.currentClass = Graphics.makeUiElement({
                 text: "Current Class: " + this.charToDisplay.classInfo.currentClass,
                 style: this.style1,
-                position: [Graphics.width/2,this.baseClass.position.y + 100]
+                position: [Graphics.width/2,this.baseClass.position.y + 75]
             })
+            this.currentClass.style.fontSize = 24;
             Graphics.uiContainer.addChild(this.currentClass);
             this.learnAbilities = Graphics.makeUiElement({
                 text: "Learn Abilities",
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width/2,this.currentClass.position.y + 100]
+                position: [Graphics.width/2,this.currentClass.position.y + 75],
+                clickFunc: function onClick(e){
+                    LearnAbilities.unitInfo = CharDisplay.charToDisplay;
+                    Acorn.changeState('learnAbilitiesMenu');
+                }
             })
+            this.learnAbilities.style.fontSize = 32;
             Graphics.uiContainer.addChild(this.learnAbilities);
             this.equipAbilities = Graphics.makeUiElement({
                 text: "Equip Abilities",
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width/2,this.learnAbilities.position.y + 100]
+                position: [Graphics.width/2,this.learnAbilities.position.y + 75],
+                clickFunc: function onClick(e){
+                    EquipAbilities.unitInfo = CharDisplay.charToDisplay;
+                    Acorn.changeState('equipAbilitiesMenu');
+                }
             })
+            this.equipAbilities.style.fontSize = 32;
             Graphics.uiContainer.addChild(this.equipAbilities);
             this.unitInventory = Graphics.makeUiElement({
                 text: "Inventory",
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width/2,this.equipAbilities.position.y + 100]
+                position: [Graphics.width/2,this.equipAbilities.position.y + 75],
+                clickFunc: function onClick(e){
+                    UnitInventory.unitInfo = CharDisplay.charToDisplay;
+                    Acorn.changeState('unitInventoryMenu');
+                }
             })
+            this.unitInventory.style.fontSize = 32;
             Graphics.uiContainer.addChild(this.unitInventory);
             var attr = [
                 ["Max Health:   ", this.charToDisplay.maximumHealth],
