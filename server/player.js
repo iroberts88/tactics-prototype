@@ -58,37 +58,79 @@ Player.prototype.setupSocket = function() {
         console.log(data);
         if (that.gameSession){
             //if the player is in a gameSession - deal with received data
-           
+           switch(data.command){
+
+           }
         }else{
-            if (data.logout){
-                try{
-                    that.gameEngine.queuePlayer(that,'logout', {});
-                    that.user.unlock();
-                    that.user.updateDB();
-                    that.user = null;
-                }catch(e){
-                    console.log('error - unable to logout user');
-                    console.log(e.stack);
-                }
-            }else if(data.deleteChar){
-                try{
-                    //remove the character from the player's character list
-                    console.log(data);
-                    for (var i = 0; i < that.characters.length;i++){
-                        if (that.characters[i].id == data.deleteChar){
-                            console.log('deleting character: ' + that.characters[i].name);
-                            that.characters.splice(i,1);
-                            that.gameEngine.queuePlayer(that,'deleteUnit',{id: data.deleteChar});
-                            continue;
+            switch(data.command){
+                case 'learnAbility':
+                    try{
+                        //get the unit
+                        var cID = data['classID'];
+                        var aID = data['ablID'];
+                        var uID = data['unitID'];
+                        var unit;
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == uID){
+                                unit = that.characters[i];
+                                continue;
+                            }
                         }
+                        //get the ability
+                        var abl;
+                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                abl = unit.classInfo.allClassAbilities[cID][a];
+                            }
+                        }
+                        //check available AP
+                        if (unit.classInfo.ap[cID] < abl.ApCost){
+                            break;
+                        }
+                        //check if ability is already learned
+                        if (unit.classInfo.learnedAbilities[aID]){
+                            break;
+                        }
+                        //ability can be learned. reduce AP and add to learned abilities list
+                        unit.classInfo.ap[cID] -= abl.ApCost;
+                        unit.classInfo.learnedAbilities[aID] = true;
+                        //update client
+                        data.apCost = abl.ApCost;
+                        that.gameEngine.queuePlayer(that,'learnAbility',data);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'learnAbilityError', error: e.stack, lData: data});
                     }
-                }catch(e){
-                    console.log('error - unable delete character');
-                    console.log(e.stack);
-                }
+                    break;
+                case 'logout':
+                    try{
+                        that.gameEngine.queuePlayer(that,'logout', {});
+                        that.user.unlock();
+                        that.user.updateDB();
+                        that.user = null;
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
+                    }
+                    break;
+                case 'deleteChar':
+                    try{
+                        //remove the character from the player's character list
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == data['charToDelete']){
+                                console.log('deleting character: ' + that.characters[i].name);
+                                that.characters.splice(i,1);
+                                that.gameEngine.queuePlayer(that,'deleteUnit',{'id': data['charToDelete']});
+                                continue;
+                            }
+                        }
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'deleteCharError', error: e.stack, dData: data});
+                    }
+                    break;
             }
         }
     });
+
+    //TODO convert these to playerUpdates
 
     this.socket.on('addUnit', function(data){
         //TODO -- validate unit before creation
@@ -147,7 +189,7 @@ Player.prototype.setupSocket = function() {
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
                 that.characters.push(char);
             }catch(e){
-                that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
+                that.gameEngine.debug(that, {'id': 'addUnitError', 'error': e.stack});
             }
         }
     });
@@ -216,7 +258,7 @@ Player.prototype.setupSocket = function() {
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
                 that.characters.push(char);
             }catch(e){
-                that.gameEngine.queuePlayer(that,'debug', {error: e.stack});
+                that.gameEngine.debug(that, {'id': 'addRandomUnitError', 'error': e.stack});
             }
         }
     });
@@ -244,7 +286,7 @@ Player.prototype.setupSocket = function() {
                 that.mapData = null;
             }
         }catch(e){
-
+            that.gameEngine.debug(that, {'id': 'confirmMapSaveError', 'error': e.stack, cMapData: data});
         }
     });
 
@@ -261,7 +303,7 @@ Player.prototype.setupSocket = function() {
                 }
             }
         }catch(e){
-            console.log(e);
+            that.gameEngine.debug(that, {'id': 'deleteMapError', 'error': e.stack, dMapData: data});
         }
     });
 

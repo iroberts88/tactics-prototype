@@ -12,7 +12,7 @@ function init() {
     rc = new RequireCheck();
     ge = new GameEngine();
     rc.onReady(onReady);
-    io.settings.log = false; //enable node logging
+    //io.settings.log = false; //enable node logging
     // ----------------------------------------------------------
     // Start Database Connection
     // ----------------------------------------------------------

@@ -2,12 +2,14 @@
 
 var ClassInfo = function(){
 	this.unit = null; //the unit which owns this classInfo
-	this.currentClass = null;
-	this.classAbilities = null;
-	this.learnedAbilities = null;
 
+	this.currentClass = null;
 	this.baseClass = null;
-	this.baseClassAbilities = null;
+
+	this.allClassAbilities = null;
+
+	this.learnedAbilities = null;
+	this.equippedAbilities = null;
 
 	this.ap = null;
 }
@@ -18,6 +20,11 @@ ClassInfo.prototype.init = function(data){
 		this.learnedAbilities = data.learnedAbilities;
 	}else{
 		this.learnedAbilities = {};
+	}
+	if (typeof data.allClassAbilities != 'undefined'){
+		this.allClassAbilities = data.allClassAbilities;
+	}else{
+		this.allClassAbilities = {};
 	}
 	if (typeof data.ap != 'undefined'){
 		this.ap = data.ap;
@@ -32,14 +39,20 @@ ClassInfo.prototype.setClass = function(c){
 
 		var charClass = this.unit.owner.gameEngine.classes[c]
 		this.currentClass = charClass.name;
-		this.classAbilities = charClass.abilities;
 		for (var stat in charClass.attributes){
 			this.unit[stat].nMod += charClass.attributes[stat];
 			this.unit[stat].set();
 		}
 		if (typeof this.ap[charClass.name] == 'undefined'){
-			this.ap[charClass.name] = 0;
+			this.ap[charClass.name] = 100;
 		}
+		if (typeof this.allClassAbilities[charClass.name] == 'undefined'){
+			//changed to a new class, set abilities
+			this.allClassAbilities[charClass.name] = {
+				ablArray: charClass.abilities
+			}
+		}
+
 		//TODO send new class info to the client
 	}catch(e){
 		console.log("ERROR: unable to set class");
@@ -49,9 +62,9 @@ ClassInfo.prototype.setClass = function(c){
 
 ClassInfo.prototype.setBaseClass = function(c){
 	try{
-		var charClass = this.unit.owner.gameEngine.classes[c]
+		var charClass = this.unit.owner.gameEngine.classes[c];
 		this.baseClass = charClass.name;
-		this.baseClassAbilities = charClass.abilities;
+		this.allClassAbilities[charClass.name] = charClass.abilities;
 		for (var stat in charClass.baseAttr){
 			this.unit[stat].base += charClass.baseAttr[stat];
 			this.unit[stat].set();

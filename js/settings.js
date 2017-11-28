@@ -79,6 +79,30 @@
                         Graphics.uiContainer.position.y = Characters.bounds;
                     }
                 }
+            }else if (Acorn.currentState == 'learnAbilitiesMenu'){
+                if (dir == 'in'){
+                    Graphics.uiPrimitives.position.y += this.charScrollSpeed;
+                    Graphics.uiPrimitives2.position.y += this.charScrollSpeed;
+                    Graphics.worldContainer.position.y += this.charScrollSpeed;
+                    Graphics.uiContainer.position.y += this.charScrollSpeed;
+                    if (Graphics.uiPrimitives.position.y > 0){
+                        Graphics.uiPrimitives.position.y = 0;
+                        Graphics.worldContainer.position.y = 0;
+                        Graphics.uiPrimitives2.position.y = 0;
+                        Graphics.uiContainer.position.y = 0;
+                    }
+                }else if (dir == 'out'){
+                    Graphics.uiPrimitives.position.y -= this.charScrollSpeed;
+                    Graphics.worldContainer.position.y -= this.charScrollSpeed;
+                    Graphics.uiPrimitives2.position.y -= this.charScrollSpeed;
+                    Graphics.uiContainer.position.y -= this.charScrollSpeed;
+                    if (Graphics.uiPrimitives.position.y < LearnAbilities.bounds){
+                        Graphics.uiPrimitives.position.y = LearnAbilities.bounds;
+                        Graphics.worldContainer.position.y = LearnAbilities.bounds;
+                        Graphics.uiPrimitives2.position.y = LearnAbilities.bounds;
+                        Graphics.uiContainer.position.y = LearnAbilities.bounds;
+                    }
+                }
             }
         },
         setYScale: function(dir){

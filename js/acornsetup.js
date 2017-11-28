@@ -59,6 +59,10 @@
               Acorn.changeState('loginScreen');
             });
 
+            Acorn.Net.on('learnAbility', function (data) {
+                LearnAbilities.learnAbility(data);
+            });
+
             Acorn.Net.on('setLoginErrorText', function (data) {
               try{
                 var state = Acorn.states['loginScreen'];
@@ -343,7 +347,7 @@
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             if (confirm('<' + Player.userData.name + '>, Are you sure you want to log out?') == true) {
-                                Acorn.Net.socket_.emit('playerUpdate',{logout: true});
+                                Acorn.Net.socket_.emit('playerUpdate',{'command': 'logout'});
                             }
                         }
                     });

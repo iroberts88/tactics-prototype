@@ -25,6 +25,7 @@ var GameEngine = function() {
     this.ids = {};
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
+    this.debugList = {}; //avoid multiple debug chains
 }
 
 GameEngine.prototype.init = function () {
@@ -83,6 +84,16 @@ GameEngine.prototype.tick = function() {
             }
         }
     }*/
+    //update debug list
+    for (var i in self.debugList){
+        self.debugList[i].t -= deltaTime;
+        if (self.debugList[i].t <= -5.0){
+            //debug hasnt been updates in 5 seconds
+            //remove from debug list
+            console.log('deleting debug with id' + self.debugList[i].id);
+            delete self.debugList[i];
+        }
+    }
     self.emit();
     self.clearQueue();
     self.lastTime = now;
@@ -196,6 +207,29 @@ GameEngine.prototype.queueData = function(c, d) {
 GameEngine.prototype.queuePlayer = function(player, c, d) {
     var data = { call: c, data: d};
     player.netQueue.push(data);
+}
+
+//Queue DEBUG data to a specific player
+GameEngine.prototype.debug = function(player, d) {
+    var data = { call: 'debug', data: d};
+    if (typeof this.debugList[d.id] == 'undefined'){
+        //new debug error
+        //add to debug list and send to client
+        this.debugList[d.id] = {
+            id: data.id,
+            n: 1,
+            t: 1.0
+        }
+        data.data.n = 1;
+        player.netQueue.push(data);
+    }else{
+        this.debugList[d.id].n += 1;
+        data.data.n = this.debugList[d.id].n
+        if (this.debugList[d.id].t <= 0){
+            player.netQueue.push(data);
+            this.debugList[d.id].t = 1.0;
+        }
+    }
 }
 
 GameEngine.prototype.clearQueue = function() {

@@ -50,6 +50,10 @@
             this.uiContainer.position.x = 0;
             this.uiContainer.position.y = 0;
             this.ui.addChild(this.uiContainer); //ADD UI CONTAINER
+            this.uiContainer2 = new PIXI.Container();
+            this.uiContainer2.position.x = 0;
+            this.uiContainer2.position.y = 0;
+            this.ui.addChild(this.uiContainer2); //ADD UI CONTAINER
             this.uiPrimitives2 = new PIXI.Graphics();
             this.ui.addChild(this.uiPrimitives2); // ADD UI PRIMS
             this.consoleContainer = new PIXI.Container();
@@ -96,6 +100,9 @@
             this.uiContainer.removeChildren();
             this.uiContainer.position.x = 0;
             this.uiContainer.position.y = 0;
+            this.uiContainer2.removeChildren();
+            this.uiContainer2.position.x = 0;
+            this.uiContainer2.position.y = 0;
             this.uiPrimitives.clear();
             this.uiPrimitives.position.x = 0;
             this.uiPrimitives.position.y = 0;

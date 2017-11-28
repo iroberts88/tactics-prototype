@@ -18,7 +18,7 @@ var Unit = function(){
     this.power = null;
     this.skill = null;
     this.abilitySlots = null;
-    this.currentAbilitySlots = null;
+    this.usedAbilitySlots = null;
     //shields
     this.currentShields = null;
     this.maximumShields = null;
@@ -68,7 +68,7 @@ Unit.prototype.init = function(data) {
     this.level = 1;
     this.exp = 0;
 
-    this.currentAbilitySlots = 0;
+    this.usedAbilitySlots = 0;
     
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
@@ -308,6 +308,9 @@ Unit.prototype.setStat = function(id,amt){
 Unit.prototype.getStat = function(id){
     try{
         switch(id){
+            case 'absl':
+                return this.abilitySlots;
+                break;
             case 'strength':
                 return this.strength;
                 break;

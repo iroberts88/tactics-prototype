@@ -102,6 +102,9 @@
     Unit.prototype.setStat = function(id,amt){
         try{
             switch(id){
+                case 'absl':
+                    this.abilitySlots = amt;
+                    break;
                 case 'str':
                     this.strength = amt;
                     break;
