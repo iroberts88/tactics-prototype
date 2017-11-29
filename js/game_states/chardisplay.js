@@ -79,7 +79,7 @@
 
             var unitAbilities = new PIXI.Text('Ability/Class Info',this.style1);
             unitAbilities.style.fontSize = 32;
-            unitAbilities.position.x = this.charName.x;
+            unitAbilities.position.x = Graphics.width*0.66;
             unitAbilities.position.y = this.deleteButton.y + this.deleteButton.height/2 + 50;
             unitAbilities.anchor.x = 0.5;
             unitAbilities.anchor.y = 0;

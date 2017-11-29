@@ -133,7 +133,7 @@ function Utils() {
 		      	t += chain[key][token];
 		      	if (idx < t) { return token; }
 		    }
-		    return '-';
+		    return '';
 	  	}
 	 }
 }

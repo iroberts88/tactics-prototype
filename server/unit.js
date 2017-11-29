@@ -56,6 +56,9 @@ var Unit = function(){
     this.pulseRes = null;
     this.radiationRes = null;
     this.gravityRes = null;
+
+    this.mechanical = null; //a mechanical unit
+    this.human = null; //a human unit
 }
 
 Unit.prototype.init = function(data) {

@@ -5,7 +5,7 @@
         this.texture = null;
         this.sprite = null;
         this.style1 = {
-            font: '24px Sigmar One', 
+            font: '20px Sigmar One', 
             fill: 'white', 
             align: 'left',
             wordWrap: true,
@@ -57,8 +57,9 @@
                             t = t + text.charAt(c);
                             if (text.charAt(c) == '>' || text.charAt(c) == '}'){
                                 start = c+1;
+                                sI = c;
                                 var nextWord = new PIXI.Text(t,this.style1);
-                                continue;
+                                break;
                             }
                         }
                     }else{
