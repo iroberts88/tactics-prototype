@@ -55,7 +55,11 @@
                 var t = 1;
                 if (!(MapGen.map.currentRotation%2)){t = 2}
                 MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
-            }else if (Acorn.currentState == 'charScreen'){
+            }else{
+                var bounds;
+                if (Acorn.currentState == 'charScreen'){bounds = Characters.bounds}
+                if (Acorn.currentState == 'learnAbilitiesMenu'){bounds = LearnAbilities.bounds}
+                if (Acorn.currentState == 'equipAbilitiesMenu'){bounds = EquipAbilities.bounds}
                 if (dir == 'in'){
                     Graphics.uiPrimitives.position.y += this.charScrollSpeed;
                     Graphics.uiPrimitives2.position.y += this.charScrollSpeed;
@@ -72,35 +76,11 @@
                     Graphics.worldContainer.position.y -= this.charScrollSpeed;
                     Graphics.uiPrimitives2.position.y -= this.charScrollSpeed;
                     Graphics.uiContainer.position.y -= this.charScrollSpeed;
-                    if (Graphics.uiPrimitives.position.y < Characters.bounds){
-                        Graphics.uiPrimitives.position.y = Characters.bounds;
-                        Graphics.worldContainer.position.y = Characters.bounds;
-                        Graphics.uiPrimitives2.position.y = Characters.bounds;
-                        Graphics.uiContainer.position.y = Characters.bounds;
-                    }
-                }
-            }else if (Acorn.currentState == 'learnAbilitiesMenu'){
-                if (dir == 'in'){
-                    Graphics.uiPrimitives.position.y += this.charScrollSpeed;
-                    Graphics.uiPrimitives2.position.y += this.charScrollSpeed;
-                    Graphics.worldContainer.position.y += this.charScrollSpeed;
-                    Graphics.uiContainer.position.y += this.charScrollSpeed;
-                    if (Graphics.uiPrimitives.position.y > 0){
-                        Graphics.uiPrimitives.position.y = 0;
-                        Graphics.worldContainer.position.y = 0;
-                        Graphics.uiPrimitives2.position.y = 0;
-                        Graphics.uiContainer.position.y = 0;
-                    }
-                }else if (dir == 'out'){
-                    Graphics.uiPrimitives.position.y -= this.charScrollSpeed;
-                    Graphics.worldContainer.position.y -= this.charScrollSpeed;
-                    Graphics.uiPrimitives2.position.y -= this.charScrollSpeed;
-                    Graphics.uiContainer.position.y -= this.charScrollSpeed;
-                    if (Graphics.uiPrimitives.position.y < LearnAbilities.bounds){
-                        Graphics.uiPrimitives.position.y = LearnAbilities.bounds;
-                        Graphics.worldContainer.position.y = LearnAbilities.bounds;
-                        Graphics.uiPrimitives2.position.y = LearnAbilities.bounds;
-                        Graphics.uiContainer.position.y = LearnAbilities.bounds;
+                    if (Graphics.uiPrimitives.position.y < bounds){
+                        Graphics.uiPrimitives.position.y = bounds;
+                        Graphics.worldContainer.position.y = bounds;
+                        Graphics.uiPrimitives2.position.y = bounds;
+                        Graphics.uiContainer.position.y = bounds;
                     }
                 }
             }

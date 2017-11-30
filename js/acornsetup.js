@@ -97,6 +97,17 @@
                 console.log(data);
                 Player.setUnitStat(data);
             });
+            Acorn.Net.on('modAp', function (data) {
+                for (var i = 0; i < Player.units.length; i++){
+                    if (data['unitID'] == Player.units[i].id){
+                        for (var j in Player.units[i].classInfo.ap){
+                            if (j == data['classID']){
+                                Player.units[i].classInfo.ap[j] = data['value'];
+                            }
+                        }
+                    }
+                }
+            });
             Acorn.Net.on('debug', function (data) {
               console.log(data);
             });
@@ -710,13 +721,15 @@
             });
 
             Acorn.Input.onMouseMove(function(e) {
-                
-                if (Acorn.Input.buttons[2]){
-                    var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
-                    var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
-                    MapGen.map.move(mX,mY);
+                try{
+                    if (Acorn.Input.buttons[2]){
+                        var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
+                        var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
+                        MapGen.map.move(mX,mY);
+                    }
+                }catch(e){
+                    //TODO handle mousemove for all game states
                 }
-                
             });
 
             Acorn.Input.onTouchEvent(function(e) {

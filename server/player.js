@@ -392,7 +392,20 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-setName':
                     break;
-                case '-addAp':
+                case '-maxAp':
+                    try{
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == commands[1]){
+                                for (var j in that.characters[i].classInfo.ap){
+                                    that.characters[i].addAp(j,9999);
+                                }
+                            }
+                        }
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to set stat ' + commands[2] + ' to ' + commands[3]);
+                    }
+                    break;
                     break;
                 case '-addItem':
                     break;

@@ -105,20 +105,29 @@
                 Graphics.uiContainer.addChild(ap);
 
                 var numLearned = 0;
+                var total = 0
                 for (var j = 0; j < allAbl[i].length;j++){
                     try{
                         if (this.unitInfo.classInfo.learnedAbilities[allAbl[i][j].id]){
-                            console.log('learned!!')
                             numLearned += 1;
                         }
                     }catch(e){}
+                    total += 1;
                 }
                 var percent = Graphics.makeUiElement({
-                    text: Math.round((numLearned/(j+1))*100) + '%',
+                    text: Math.round((numLearned/(total))*100) + '%',
                     position: [Graphics.width*0.75,ypos]
                 })
                 percent.style.fontSize = 32;
                 Graphics.uiContainer.addChild(percent);
+
+                if (Math.round((numLearned/(total))*100) == 100){
+                    var star = Graphics.makeUiElement({
+                        texture: Graphics.starTexture,
+                        position: [Graphics.width*0.75 + 100,ypos]
+                    })
+                    Graphics.uiContainer.addChild(star);
+                } 
 
                 ypos += cName.height + 25;
             }

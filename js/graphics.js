@@ -7,6 +7,9 @@
         loader: null,
         resources: null,
         resourcesReady: null,
+        plusTexture: null,
+        minusTexture: null,
+        starTexture: null,
 
         init: function(w,h) {
 
@@ -64,6 +67,7 @@
             this.resources = {};
             this.resourcesReady = false;
             this.animationSpeeds = {};
+            this.createPlusMinusTextures();
         },
 
         drawBG: function(color1,color2){
@@ -521,6 +525,53 @@
                     func(percent);
                 }
             });
+        },
+        createPlusMinusTextures: function(){
+            //create plus and minus textures
+            var s = 50;
+            var g1 = new PIXI.Graphics();
+            var g2 = new PIXI.Graphics();
+            var g3 = new PIXI.Graphics();
+            g1.lineStyle(3,0xFFFFFF,1);
+            g2.lineStyle(3,0xFFFFFF,1);
+            g3.lineStyle(9,0xFFFF00,1);
+
+            g1.moveTo(2,2);
+            g1.lineTo(s-2,2);
+            g1.lineTo(s-2,s-2);
+            g1.lineTo(2,s-2);
+            g1.lineTo(2,2);
+            g1.lineStyle(5,0xFFFFFF,1);
+            g1.moveTo(s*0.2,s*0.5);
+            g1.lineTo(s*0.8,s*0.5);
+            g1.moveTo(s*0.5,s*0.2);
+            g1.lineTo(s*0.5,s*0.8);
+
+            g2.moveTo(2,2);
+            g2.lineTo(s-2,2);
+            g2.lineTo(s-2,s-2);
+            g2.lineTo(2,s-2);
+            g2.lineTo(2,2);
+            g2.lineStyle(5,0xFFFFFF,1);
+            g2.moveTo(s*0.2,s*0.5);
+            g2.lineTo(s*0.8,s*0.5);
+
+            var ss = 25;
+            var add = 15;
+            g3.moveTo(ss*.5+add,add);
+            g3.lineTo(ss*.8+add,ss*.9+add);
+            g3.lineTo(ss*.03+add,ss*.34375+add);
+            g3.lineTo(ss*.97+add,ss*.34375+add);
+            g3.lineTo(ss*.2+add,ss*.9+add);
+            g3.lineTo(ss*.5+add,add);
+
+            this.plusTexture = PIXI.RenderTexture.create(s,s);
+            this.minusTexture = PIXI.RenderTexture.create(s,s);
+            this.starTexture = PIXI.RenderTexture.create(ss+add*2,ss+add*2);
+            var renderer = new PIXI.CanvasRenderer();
+            this.app.renderer.render(g1,this.plusTexture);
+            this.app.renderer.render(g2,this.minusTexture);
+            this.app.renderer.render(g3,this.starTexture);
         }
     };
 

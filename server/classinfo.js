@@ -11,6 +11,8 @@ var ClassInfo = function(){
 	this.learnedAbilities = null;
 	this.equippedAbilities = null;
 
+	this.usedSlots = 0;
+
 	this.ap = null;
 }
 
@@ -20,6 +22,11 @@ ClassInfo.prototype.init = function(data){
 		this.learnedAbilities = data.learnedAbilities;
 	}else{
 		this.learnedAbilities = {};
+	}
+	if (typeof data.equippedAbilities != 'undefined'){
+		this.equippedAbilities = data.equippedAbilities;
+	}else{
+		this.equippedAbilities = {};
 	}
 	if (typeof data.allClassAbilities != 'undefined'){
 		this.allClassAbilities = data.allClassAbilities;

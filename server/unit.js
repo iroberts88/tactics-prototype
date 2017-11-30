@@ -145,7 +145,7 @@ Unit.prototype.init = function(data) {
     this.abilitySlots.init({
         'id': 'absl',
         'owner': this,
-        'value': 20,
+        'value': 50,
         'min': 0,
         'max': 999
     });
@@ -474,6 +474,22 @@ Unit.prototype.modStat = function(id,amt){
         console.log(e);
     }
 };
+Unit.prototype.addAp = function(classID,amt){
+    try{
+        this.classInfo.ap[classID] += amt;
+        if (this.classInfo.ap[classID] > 9999){
+            this.classInfo.ap[classID] = 9999;
+        }
+        this.owner.gameEngine.queuePlayer(this.owner,'modAp',{
+            'unitID': this.id,
+            'classID': classID,
+            'value': this.classInfo.ap[classID]
+        })
+    }catch(e){
+        console.log("unable to mod ap");
+        console.log(e);
+    }
+}
 Unit.prototype.update = function(dt) {
 
 }

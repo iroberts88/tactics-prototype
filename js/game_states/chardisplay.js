@@ -169,8 +169,8 @@
                 "<Charisma> increases all stats slightly on levelup. It also increases effectiveness of charisma based abilities",
                 '',
                 "Number of hexes a unit can move during it's turn",
-                "Number of hexes a unit can jump while moving. Also effects fall damage",
-                "Speed effects the unit's position in the turn order"
+                "Number of hexes a unit can jump while moving. Also affects fall damage",
+                "Speed affects the unit's position in the turn order"
             ];
             var startY = unitStats.y + unitStats.height + 25;
             for (var j = 0; j < attr.length;j++){

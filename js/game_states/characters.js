@@ -176,9 +176,8 @@
             var maxHeight = 0;
             var container = new PIXI.Container();
             var name = new PIXI.Text(unit.name,this.style);
-            name.position.x = x;
             name.position.y = y;
-            name.anchor.x = 0;
+            name.anchor.x = 0.5;
             name.anchor.y = 0;
             y += name.height;
             container.addChild(name);
@@ -203,7 +202,7 @@
                 ["Jmp:  ", unit.jump],
                 ["Spd:  ", unit.speed]
             ];
-            var level = new PIXI.Text('Level ' + unit.level + ' ' + unit.classInfo.currentClass + " (" + unit.sex.substring(0,1).toUpperCase() + ")",this.style);
+            var level = new PIXI.Text('  LvL  ' + unit.level + '        ' + unit.classInfo.currentClass + " (" + unit.sex.substring(0,1).toUpperCase() + ")",this.style);
             level.position.x = x;
             level.position.y = y;
             level.anchor.x = 0;
@@ -250,6 +249,7 @@
                 y += a.height
                 container.addChild(a);
             }
+            name.position.x = maxWidth/2;
             var tex = PIXI.RenderTexture.create(maxWidth,maxHeight);
             var renderer = new PIXI.CanvasRenderer();
             Graphics.app.renderer.render(container,tex);

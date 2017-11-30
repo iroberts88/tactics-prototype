@@ -21,37 +21,6 @@
             this.max = 10;
 
             this.name = 'Noname';
-            //create plus and minus textures
-            var s = 50;
-            var g1 = new PIXI.Graphics();
-            var g2 = new PIXI.Graphics();
-            g1.lineStyle(3,0xFFFFFF,1);
-            g2.lineStyle(3,0xFFFFFF,1);
-            g1.moveTo(2,2);
-            g1.lineTo(s-2,2);
-            g1.lineTo(s-2,s-2);
-            g1.lineTo(2,s-2);
-            g1.lineTo(2,2);
-            g1.lineStyle(5,0xFFFFFF,1);
-            g1.moveTo(s*0.2,s*0.5);
-            g1.lineTo(s*0.8,s*0.5);
-            g1.moveTo(s*0.5,s*0.2);
-            g1.lineTo(s*0.5,s*0.8);
-
-            g2.moveTo(2,2);
-            g2.lineTo(s-2,2);
-            g2.lineTo(s-2,s-2);
-            g2.lineTo(2,s-2);
-            g2.lineTo(2,2);
-            g2.lineStyle(5,0xFFFFFF,1);
-            g2.moveTo(s*0.2,s*0.5);
-            g2.lineTo(s*0.8,s*0.5);
-
-            var plusTex = PIXI.RenderTexture.create(s,s);
-            var minusTex = PIXI.RenderTexture.create(s,s);
-            var renderer = new PIXI.CanvasRenderer();
-            Graphics.app.renderer.render(g1,plusTex);
-            Graphics.app.renderer.render(g2,minusTex);
 
             this.style2 = {
                 font: '48px Orbitron', 
@@ -231,7 +200,7 @@
                 Graphics.uiContainer.addChild(this[stats[i]+'Num']);
 
                 this[stats[i]+'Minus'] = Graphics.makeUiElement({
-                    texture: minusTex,
+                    texture: Graphics.minusTexture,
                     position: [Graphics.width/2+150,statText.position.y + 75 + i*h],
                     interactive: true,buttonMode: true,buttonGlow: true,
                     clickFunc: function onClick(e){
@@ -248,7 +217,7 @@
                 Graphics.uiContainer.addChild(this[stats[i]+'Minus']);
 
                 this[stats[i]+'Plus'] = Graphics.makeUiElement({
-                    texture: plusTex,
+                    texture: Graphics.plusTexture,
                     position: [Graphics.width/2+150+this[stats[i]+'Minus'].width*2,statText.position.y + 75 + i*h],
                     interactive: true,buttonMode: true,buttonGlow: true,
                     clickFunc: function onClick(e){
