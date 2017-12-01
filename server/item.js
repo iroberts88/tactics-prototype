@@ -10,6 +10,8 @@ var Item = function(){
     this.stackable = null;
     this.amount = null;
     this.weight = null;
+    this.onUseText = null;
+    this.onHitText = null,
     this.eqData = {};
 }
 
@@ -74,7 +76,7 @@ exports.Weapon = Gun;
 
 var Weapon = function(){
     this.damage = null;
-
+    this.range = null;
     this.onEquip = null;
     this.onFire = null;
     this.onHit = null;
@@ -82,7 +84,7 @@ var Weapon = function(){
 
 Weapon.prototype.init = function(data) {
     this.damage = data.damage;
-
+    this.range = data.range;
     this.onEquip = data.onEquip;
     this.onFire = data.onFire;
     this.onHit = data.onHit;

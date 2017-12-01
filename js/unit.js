@@ -54,6 +54,8 @@
         this.pulseRes = null;
         this.radiationRes = null;
         this.gravityRes = null;
+
+        this.usedAbilitySlots = 0;
     };
 
     Unit.prototype.init = function(data) {

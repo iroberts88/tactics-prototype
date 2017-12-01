@@ -88,13 +88,14 @@
                     }
                 }
             });
+            this.clearButton.unitID = this.unitInfo.id;
             this.clearButton.style.fontSize = 80
             this.clearButton.position.x = 25 + this.clearButton.width/2;
             this.clearButton.position.y = 25 + this.clearButton.height/2;
             Graphics.uiContainer.addChild(this.clearButton);
             //TODO draw Available Slots
             this.slotDisplay = Graphics.makeUiElement({
-                text: this.unitInfo.classInfo.usedSlots + '/' + this.unitInfo.abilitySlots,
+                text: this.unitInfo.usedAbilitySlots + '/' + this.unitInfo.abilitySlots,
                 style: this.style1,
             });
             this.slotDisplay.style.fontSize = 64;
@@ -168,38 +169,57 @@
 
                 //draw AP cost
                 if (typeof this.unitInfo.classInfo.equippedAbilities[ability.id] != 'undefined'){
-                    var apCost = Graphics.makeUiElement({
-                        text: 'Learned!',
+                    var slots = Graphics.makeUiElement({
+                        text: ability.sCost + ' Slots (E)',
                         style: this.style1,
                         position: [Graphics.width/2,ypos]
                     });
-                    apCost.style.fontSize = 24;
-                    Graphics.uiContainer.addChild(apCost);
+                    slots.style.fontSize = 24;
+                    Graphics.uiContainer.addChild(slots);
                     var minus = Graphics.makeUiElement({
                         texture: Graphics.minusTexture,
                         position: [Graphics.width*0.66,ypos],
                         interactive: true,buttonMode: true,
-                        clickFunc: function onClick(){
-                            console.log('remove ability');
+                        clickFunc: function onClick(e){
+                            //check AP then send to client
+                            Acorn.Net.socket_.emit('playerUpdate',{
+                                'command': 'unEquipAbility',
+                                'unitID': EquipAbilities.unitInfo.id,
+                                'classID': EquipAbilities.fromClass,
+                                'ablID': e.currentTarget.abl.id
+                            });
                         }
                     });
+                    minus.abl = ability;
+                    minus.classID = this.fromClass;
+                    minus.tint = 0xFF0000;
                     Graphics.uiContainer.addChild(minus);
                 }else{
-                    var apCost = Graphics.makeUiElement({
+                    var slots = Graphics.makeUiElement({
                         text: ability.sCost + ' Slots',
                         style: this.style1,
                         position: [Graphics.width/2,ypos]
                     });
-                    apCost.style.fontSize = 24;
-                    Graphics.uiContainer.addChild(apCost);
+                    slots.style.fontSize = 24;
+                    Graphics.uiContainer.addChild(slots);
                     var plus = Graphics.makeUiElement({
                         texture: Graphics.plusTexture,
                         position: [Graphics.width*0.66,ypos],
                         interactive: true,buttonMode: true,
-                        clickFunc: function onClick(){
-                            console.log('add ability');
+                        clickFunc: function onClick(e){
+                            //check AP then send to client
+                            if (EquipAbilities.unitInfo.abilitySlots-EquipAbilities.unitInfo.usedAbilitySlots >= e.currentTarget.abl.sCost){
+                                Acorn.Net.socket_.emit('playerUpdate',{
+                                    'command': 'equipAbility',
+                                    'unitID': EquipAbilities.unitInfo.id,
+                                    'classID': EquipAbilities.fromClass,
+                                    'ablID': e.currentTarget.abl.id
+                                });
+                            }
                         }
                     });
+                    plus.abl = ability;
+                    plus.classID = this.fromClass;
                     Graphics.uiContainer.addChild(plus);
                 }
                 ypos += aName.height + 25;
@@ -215,8 +235,43 @@
                 }
                 Graphics.drawBoxAround(this.classNames[i],Graphics.uiPrimitives2,{pos: [this.classNames[i].position.x + this.classNames[i].width/2,this.classNames[i].position.y]});
             }
+        },
+        equipAbility: function(data){
+            var unit;
+            for (var i = 0; i < Player.units.length;i++){
+                if (Player.units[i].id == data['unitID']){
+                    unit = Player.units[i];
+                }
+            }
+            unit.classInfo.equippedAbilities[data['ablID']] = 1;
+            unit.usedAbilitySlots += data.sCost;
+            this.clear();
+            this.draw();
+        },
+        unEquipAbility: function(data){
+            var unit;
+            for (var i = 0; i < Player.units.length;i++){
+                if (Player.units[i].id == data['unitID']){
+                    unit = Player.units[i];
+                }
+            }
+            delete unit.classInfo.equippedAbilities[data['ablID']];
+            unit.usedAbilitySlots -= data.sCost;
+            this.clear();
+            this.draw();
+        },
+        clearAbilities: function(data){
+            var unit;
+            for (var i = 0; i < Player.units.length;i++){
+                if (Player.units[i].id == data['unitID']){
+                    unit = Player.units[i];
+                }
+            }
+            unit.classInfo.equippedAbilities = {};
+            unit.usedAbilitySlots = 0;
+            this.clear();
+            this.draw();
         }
-
     }
     window.EquipAbilities = EquipAbilities;
 })(window);

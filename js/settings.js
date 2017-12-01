@@ -56,7 +56,7 @@
                 if (!(MapGen.map.currentRotation%2)){t = 2}
                 MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
             }else{
-                var bounds;
+                var bounds = 0;
                 if (Acorn.currentState == 'charScreen'){bounds = Characters.bounds}
                 if (Acorn.currentState == 'learnAbilitiesMenu'){bounds = LearnAbilities.bounds}
                 if (Acorn.currentState == 'equipAbilitiesMenu'){bounds = EquipAbilities.bounds}

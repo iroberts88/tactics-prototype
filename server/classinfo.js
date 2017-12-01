@@ -10,9 +10,6 @@ var ClassInfo = function(){
 
 	this.learnedAbilities = null;
 	this.equippedAbilities = null;
-
-	this.usedSlots = 0;
-
 	this.ap = null;
 }
 

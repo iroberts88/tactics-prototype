@@ -139,7 +139,7 @@
                 ["Max Energy:   ", this.charToDisplay.maximumEnergy],
                 ["Power:   ", this.charToDisplay.power],
                 ["Skill:   ", this.charToDisplay.skill],
-                ["Ability Slots:   ", this.charToDisplay.abilitySlots],
+                ["Ability Slots:   ", this.charToDisplay.usedAbilitySlots + '/' + this.charToDisplay.abilitySlots],
                 ['',''],
                 ["Strength:   ", this.charToDisplay.strength],
                 ["Endurance:   ", this.charToDisplay.endurance],
@@ -154,7 +154,7 @@
                 ["Speed:  ", this.charToDisplay.speed]
             ];
             var attrDesc = [
-                "The maximum <Health> of the unit. Will faint when reduced to 0 health",
+                "The maximum <Health> of the unit. Will faint when reduced to 0 health. Will be killed when reduced to -50% health or when fainted for 5 turns",
                 "<Energy> is the main resource for using abilities",
                 '<Power> directly increases melee weapon damage',
                 '<Skill> directly increases ranged gun damage',

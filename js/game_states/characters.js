@@ -186,7 +186,7 @@
                 ["E:   ", unit.maximumEnergy],
                 ["Pwr:   ", unit.power],
                 ["Skl:   ", unit.skill],
-                ["Slots:   ", unit.abilitySlots],
+                ["Slots:   ", unit.usedAbilitySlots + '/' + unit.abilitySlots],
             ];
             var attr2 = [
                 ["Str:   ", unit.strength],

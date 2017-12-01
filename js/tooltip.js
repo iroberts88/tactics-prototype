@@ -76,10 +76,10 @@
                     }
                     if (nextWord.text.charAt(0) == '<'){
                         nextWord.style.fill = 0x42d7f4;
-                        nextWord.text = nextWord.text.slice(1,nextWord.text.length-1) + ' ';
+                        nextWord.text = nextWord.text.slice(1,nextWord.text.length-1) + '';
                     }else if (nextWord.text.charAt(0) == '{'){
                         nextWord.style.fill = 0x42f450;
-                        nextWord.text = nextWord.text.slice(1,nextWord.text.length-1) + ' ';
+                        nextWord.text = nextWord.text.slice(1,nextWord.text.length-1) + '';
                     }
                     if (typeof this.ttInfo.ttArray[i].color != 'undefined'){
                         nextWord.style.fill = this.ttInfo.ttArray[i].color;

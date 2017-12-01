@@ -63,6 +63,18 @@
                 LearnAbilities.learnAbility(data);
             });
 
+            Acorn.Net.on('equipAbility', function (data) {
+                EquipAbilities.equipAbility(data);
+            });
+
+            Acorn.Net.on('unEquipAbility', function (data) {
+                EquipAbilities.unEquipAbility(data);
+            });
+
+            Acorn.Net.on('clearAbilities', function (data) {
+                EquipAbilities.clearAbilities(data);
+            });
+
             Acorn.Net.on('setLoginErrorText', function (data) {
               try{
                 var state = Acorn.states['loginScreen'];

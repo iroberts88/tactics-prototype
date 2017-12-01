@@ -101,6 +101,97 @@ Player.prototype.setupSocket = function() {
                         that.gameEngine.debug(that,{id: 'learnAbilityError', error: e.stack, lData: data});
                     }
                     break;
+                case 'equipAbility':
+                    try{
+                        //get the unit
+                        var cID = data['classID'];
+                        var aID = data['ablID'];
+                        var uID = data['unitID'];
+                        var unit;
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == uID){
+                                unit = that.characters[i];
+                                continue;
+                            }
+                        }
+                        //get the ability
+                        var abl;
+                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                abl = unit.classInfo.allClassAbilities[cID][a];
+                            }
+                        }
+                        //check available SLOTS
+                        if (unit.abilitySlots.value - unit.usedAbilitySlots < abl.sCost){
+                            break;
+                        }
+                        //check if ability is already equipped
+                        if (unit.classInfo.equippedAbilities[aID]){
+                            break;
+                        }
+                        //ability can be equipped. add current slots and add to learned abilities list
+                        unit.usedAbilitySlots += abl.sCost;
+                        unit.classInfo.equippedAbilities[aID] = true;
+                        //update client
+                        data.sCost = abl.sCost;
+                        that.gameEngine.queuePlayer(that,'equipAbility',data);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'equipAbilityError', error: e.stack, lData: data});
+                    }
+                    break;
+                case 'unEquipAbility':
+                    try{
+                        //get the unit
+                        var cID = data['classID'];
+                        var aID = data['ablID'];
+                        var uID = data['unitID'];
+                        var unit;
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == uID){
+                                unit = that.characters[i];
+                                continue;
+                            }
+                        }
+                        //get the ability
+                        var abl;
+                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                abl = unit.classInfo.allClassAbilities[cID][a];
+                            }
+                        }
+                        //check if ability is already not equipped
+                        if (typeof unit.classInfo.equippedAbilities[aID] == 'undefined'){
+                            break;
+                        }
+                        //ability can be un-equipped.
+                        unit.usedAbilitySlots -= abl.sCost;
+                        delete unit.classInfo.equippedAbilities[aID];
+                        //update client
+                        data.sCost = abl.sCost;
+                        that.gameEngine.queuePlayer(that,'unEquipAbility',data);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'unEquipAbilityError', error: e.stack, lData: data});
+                    }
+                    break;
+                case 'clearAbilities':
+                    try{
+                        //get the unit
+                        var uID = data['unitID'];
+                        var unit;
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == uID){
+                                unit = that.characters[i];
+                                continue;
+                            }
+                        }
+                        unit.usedAbilitySlots = 0;
+                        unit.classInfo.equippedAbilities = {};
+                        //update client
+                        that.gameEngine.queuePlayer(that,'clearAbilities',data);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'clearAbilitiesError', error: e.stack, lData: data});
+                    }
+                    break;
                 case 'logout':
                     try{
                         that.gameEngine.queuePlayer(that,'logout', {});
