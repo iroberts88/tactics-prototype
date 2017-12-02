@@ -37,9 +37,11 @@
     "weight" : 2.0, 
     "type" : "gun", 
     "usable" : false, 
+    "classes" : "ALL", 
     "eqData" : {
         "rangeMin" : NumberInt(2), 
         "rangeMax" : NumberInt(4), 
+        "damage" : 220.0, 
         "onEquip" : [
 
         ], 
@@ -60,6 +62,10 @@
     "weight" : 6.0, 
     "type" : "weapon", 
     "usable" : true, 
+    "classes" : [
+        "Soldier"
+    ], 
+    "onUseText" : "Rev the chain blade. Next attack will cause the target to bleed for 5% health for 5 turns", 
     "onUse" : [
         {
             "name" : "addOnHit", 
@@ -80,6 +86,8 @@
         }
     ], 
     "eqData" : {
+        "damage" : 280.0, 
+        "range" : 1.0, 
         "onEquip" : [
 
         ], 
@@ -99,7 +107,9 @@
     "weight" : 2.0, 
     "type" : "weapon", 
     "usable" : false, 
+    "classes" : "ALL", 
     "eqData" : {
+        "damage" : 220.0, 
         "onEquip" : [
 
         ], 
@@ -115,11 +125,15 @@
 { 
     "_id" : ObjectId("5a01e7505e67e32bf05e7c69"), 
     "name" : "Rocket Sledge", 
-    "description" : "A powerful, heavy weapon. Lowers speed and movement while equipped", 
+    "description" : "A powerful, heavy weapon. ", 
     "weight" : 14.0, 
     "type" : "weapon", 
     "usable" : false, 
+    "classes" : [
+        "Soldier"
+    ], 
     "eqData" : {
+        "damage" : 480.0, 
         "onEquip" : [
 
         ], 
@@ -140,7 +154,13 @@
     "valueMod" : 2.0, 
     "type" : "weapon", 
     "usable" : false, 
+    "onHitText" : "50% chance to break the target's shield", 
+    "classes" : [
+        "Soldier", 
+        "Scout"
+    ], 
     "eqData" : {
+        "damage" : 330.0, 
         "onEquip" : [
 
         ], 
@@ -163,9 +183,11 @@
     "weight" : 5.0, 
     "type" : "gun", 
     "usable" : false, 
+    "classes" : "ALL", 
     "eqData" : {
         "rangeMin" : NumberInt(2), 
         "rangeMax" : NumberInt(4), 
+        "damage" : 60.0, 
         "onEquip" : [
 
         ], 
