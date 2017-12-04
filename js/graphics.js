@@ -411,16 +411,16 @@
         buttonGlow: function(element,color1,color2,color3,color4){
             if(!element.glowSprite){
                 if (typeof color1 == 'undefined'){
-                    color1 = 'hsla(300, 100%, 50%, 0.75)';
+                    color1 = 'hsla(294, 90%, 48%, 0.75)';
                 }
                 if (typeof color2 == 'undefined'){
-                    color2 = 'hsla(0, 100%, 100%, 0)';
+                    color2 = 'hsla(294, 90%, 48%, 0.75)';
                 }
                 if (typeof color3 == 'undefined'){
-                    color3 = 'hsla(0, 100%, 100%, 0.75)';
+                    color3 = 'hsla(294, 90%, 48%, 0.75)';
                 }
                 if (typeof color4 == 'undefined'){
-                    color4 = 'hsla(0, 100%, 100%, 0)';
+                    color4 = 'hsla(294, 90%, 48%, 0.75)';
                 }
                 var canvas = document.createElement('canvas');
                 canvas.width  = element.width;

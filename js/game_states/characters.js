@@ -5,36 +5,12 @@
         
 
         init: function() {
-            Graphics.drawBG('navy', 'navy');
+            Graphics.drawBG(AcornSetup.bgColor, AcornSetup.bgColor);
             //back button
             this.units = [];
             this.refresh = false;
-            var style = {
-                font: '32px Orbitron', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
-            this.style = {
-                font: '32px Sigmar One', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
+            this.style = AcornSetup.baseStyle;
+            this.style.font = '32px Sigmar One'
 
             this.noCharacters = Graphics.makeUiElement({
                 text: 'You need 5 units to play!',
@@ -44,7 +20,7 @@
 
             this.exitButton = Graphics.makeUiElement({
                 text: 'Exit',
-                style: style,
+                style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.changeState('mainMenu');
@@ -57,7 +33,7 @@
 
             this.unitCount = Graphics.makeUiElement({
                 text: Player.units.length + '/30',
-                style: style
+                style: this.style
             });
             this.unitCount.style.fontSize = 60
             this.unitCount.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25 - this.unitCount.width/2;
@@ -66,7 +42,7 @@
 
             this.newChar = Graphics.makeUiElement({
                 text: '+ New Unit',
-                style: style,
+                style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,glowCont: Graphics.worldContainer,
                 clickFunc: function onClick(){
                     if (Player.units.length < 30){
@@ -80,7 +56,7 @@
 
             this.newRandChar = Graphics.makeUiElement({
                 text: '+ Random New Unit',
-                style: style,
+                style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     Acorn.Net.socket_.emit('addRandomChar',{});
@@ -186,7 +162,7 @@
                 ["E:   ", unit.maximumEnergy],
                 ["Pwr:   ", unit.power],
                 ["Skl:   ", unit.skill],
-                ["Slots:   ", unit.usedAbilitySlots + '/' + unit.abilitySlots],
+                ["Slots:   ", unit.usedAbilitySlots + '/' + unit.abilitySlots]
             ];
             var attr2 = [
                 ["Str:   ", unit.strength],
@@ -195,7 +171,7 @@
                 ["Dex:   ", unit.dexterity],
                 ["Int:   ", unit.intelligence],
                 ["Wil:   ", unit.willpower],
-                ["Cha:   ", unit.charisma],
+                ["Cha:   ", unit.charisma]
             ];
             var attr3 = [
                 ["Mov:   ", unit.move],
@@ -215,7 +191,7 @@
             if (name.width > maxWidth){
                 maxWidth = name.width;
             }
-            var fSize = 12;
+            var fSize = 16;
             for (var j = 0; j < attr1.length;j++){
                 var a = new PIXI.Text(attr1[j][0] + attr1[j][1],this.style);
                 a.style.fontSize = fSize;
@@ -223,7 +199,7 @@
                 a.position.y = y;
                 a.anchor.x = 0.5;
                 a.anchor.y = 0;
-                y += a.height
+                y += a.height;
                 container.addChild(a);
             }
             y = level.height + level.position.y;
@@ -234,7 +210,7 @@
                 a.position.y = y;
                 a.anchor.x = 0.5;
                 a.anchor.y = 0;
-                y += a.height
+                y += a.height;
                 container.addChild(a);
                 maxHeight = a.position.y + a.height + 5;
             }
@@ -246,7 +222,7 @@
                 a.position.y = y;
                 a.anchor.x = 0.5;
                 a.anchor.y = 0;
-                y += a.height
+                y += a.height;
                 container.addChild(a);
             }
             name.position.x = maxWidth/2;

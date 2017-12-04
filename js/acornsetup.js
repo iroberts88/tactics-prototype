@@ -3,19 +3,13 @@
     AcornSetup = {
         
         baseStyle: {
-            font: '64px Orbitron', 
-            fill: 'white', 
-            align: 'left', 
-            dropShadow: true,
-            dropShadowColor: '#000000',
-            stroke: '#000000',
-            strokeThickness: 5,
-            dropShadow: true,
-            dropShadowColor: '#000000',
-            dropShadowBlur: 4,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 6
+            font: '64px Sigmar One',
+            fill: '#3500D3',
+            align: 'left'
         },
+
+        bgColor: '#0C0032',
+        bgColor2: '#282828',
 
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
@@ -37,7 +31,7 @@
             Acorn.Net.on('confirmMapSave', function (data) {
                 if (confirm('Overwrite map "' + data.name + '"?') == true) {
                     Acorn.Net.socket_.emit('confirmMapSave',{c:true});
-                } else {
+                }else{
                     Acorn.Net.socket_.emit('confirmMapSave',{c:false});
                 }
             });
