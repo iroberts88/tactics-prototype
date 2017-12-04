@@ -4,12 +4,18 @@
         
         baseStyle: {
             font: '64px Sigmar One',
-            fill: '#3500D3',
-            align: 'left'
+            fill: Graphics.pallette.color1,
+            align: 'left',
+            dropShadow: true,
+            dropShadowColor: '#000000',
+            stroke: '#000000',
+            strokeThickness: 3,
+            dropShadow: true,
+            dropShadowColor: '#000000',
+            dropShadowBlur: 2,
+            dropShadowAngle: Math.PI / 6,
+            dropShadowDistance: 4
         },
-
-        bgColor: '#0C0032',
-        bgColor2: '#282828',
 
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
@@ -134,6 +140,7 @@
             Acorn.addState({
                 stateId: 'loginScreen',
                 init: function(){
+                    Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
                     console.log('Initializing login screen');
                     document.body.style.cursor = 'default';
                     this.logo = Graphics.makeUiElement({
@@ -286,7 +293,7 @@
                 init: function(){
                     console.log('Initializing main menu');
                     document.body.style.cursor = 'default';
-                    Graphics.drawBG();
+                    Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
                     //The Main Menu Logo
                     this.logo = Graphics.makeUiElement({
                         text: 'Tactics Prototype',
@@ -461,21 +468,10 @@
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
                         'silver', 'teal', 'white', 'yellow'
                     ];
-                    Graphics.drawBG(colors[Math.floor(Math.random()*colors.length)], colors[Math.floor(Math.random()*colors.length)]);
-                    var style = {
-                        font: '100px Orbitron', 
-                        fill: 'white', 
-                        align: 'left', 
-                        dropShadow: true,
-                        dropShadowColor: '#000000',
-                        stroke: '#000000',
-                        strokeThickness: 5,
-                        dropShadow: true,
-                        dropShadowColor: '#000000',
-                        dropShadowBlur: 4,
-                        dropShadowAngle: Math.PI / 6,
-                        dropShadowDistance: 6
-                    };
+                    Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
+                    var style = AcornSetup.baseStyle;
+                    style.font = '100px Orbitron';
+                    
                     this.typeSelected = 'r';
                     this.mapSizes = {
                         'r': {min: 10, max: 60},

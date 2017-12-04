@@ -5,7 +5,7 @@
         
 
         init: function() {
-            Graphics.drawBG(AcornSetup.bgColor, AcornSetup.bgColor);
+            Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
             //back button
             this.units = [];
             this.refresh = false;
@@ -14,7 +14,7 @@
 
             this.noCharacters = Graphics.makeUiElement({
                 text: 'You need 5 units to play!',
-                position: [Graphics.width/2,35]
+                position: [Graphics.width/2 + 50,35]
             })
             Graphics.uiContainer.addChild(this.noCharacters);
 

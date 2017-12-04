@@ -5,7 +5,13 @@
         charToDisplay: null,
 
         init: function() {
-            Graphics.drawBG('navy', 'navy');
+            
+            Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
+            
+            this.style1 = AcornSetup.baseStyle;
+            this.style1.font = '48px Orbitron';
+            this.style2 = AcornSetup.baseStyle;
+            this.style2.font = '48px Sigmar One';
             //back button
             this.classSelected = 'soldier';
             this.statsAssigned = {
@@ -21,33 +27,6 @@
             this.max = 10;
 
             this.name = 'Noname';
-
-            this.style2 = {
-                font: '48px Orbitron', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
-            this.style1 = {
-                font: '48px Sigmar One', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
 
             this.exitButton = Graphics.makeUiElement({
                 text: 'Back',

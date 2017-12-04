@@ -5,34 +5,12 @@
         charToDisplay: null,
 
         init: function() {
-            Graphics.drawBG('navy', 'navy');
-            //back button
-            this.style2 = {
-                font: '32px Orbitron', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
-            this.style1 = {
-                font: '64px Sigmar One', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
+            Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
+            
+            this.style1 = AcornSetup.baseStyle;
+            this.style1.font = '48px Orbitron';
+            this.style2 = AcornSetup.baseStyle;
+            this.style2.font = '48px Sigmar One';
 
             this.exitButton = Graphics.makeUiElement({
                 text: 'Back',
@@ -53,7 +31,7 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
                     if (confirm("Delete unit: <" + CharDisplay.charToDisplay.name + '> ?')){
-                        Acorn.Net.socket_.emit('playerUpdate',{'command': 'deleteChar', 'charToDelete': CharDisplay.charToDisplay.id})
+                        Acorn.Net.socket_.emit('playerUpdate',{'command': 'deleteChar', 'charToDelete': CharDisplay.charToDisplay.id});
                     }
                 }
             });

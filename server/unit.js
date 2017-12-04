@@ -286,7 +286,8 @@ Unit.prototype.init = function(data) {
     this.inventory = new Inventory();
     this.inventory.init({
         owner: this
-    })
+    });
+    this.inventory.setGameEngine(this.owner.gameEngine);
 };
 
 Unit.prototype.setClass = function(c){

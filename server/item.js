@@ -7,19 +7,56 @@ var Item = function(){
     this.onUse = null;
     this.icon = null;
     this.type = null;
-    this.stackable = null;
     this.amount = null;
     this.weight = null;
     this.onUseText = null;
-    this.onHitText = null,
+    this.onFireText = null;
+    this.onEquipText = null;
+    this.onHitText = null;
+    this.constantEffectText = null;
+    this.classes = null;
     this.eqData = {};
+}
+
+Item.prototype.getClientData = function(){
+    var data = {};
+    data.itemID = this.itemID;
+    data.name = this.name;
+    data.description = this.description;
+    data.type = this.type;
+    data.amount = this.amount;
+    data.weight = this.weight;
+    data.classes = this.classes;
+    data.onUseText = this.onUseText;
+    data.onFireText = this.onFireText;
+    data.onEquipText = this.onEquipText;
+    data.onHitText = this.onHitText;
+    data.constantEffectText = this.constantEffectText;
+    data.eqData = {}
+    switch(this.type){
+        case 'weapon':
+            data.eqData.range = this.eqData.range;
+            data.eqData.damage = this.eqData.damage;
+            break;
+        case 'gun':
+            data.eqData.rangeMin = this.eqData.rangeMin;
+            data.eqData.rangeMax = this.eqData.rangeMax;
+            data.eqData.damage = this.eqData.damage;
+            break;
+        case 'shield':
+            data.eqData.capacity = this.eqData.capacity;
+            data.eqData.rechargeRate = this.eqData.rechargeRate;
+            data.eqData.rechargeDelay = this.eqData.rechargeDelay;
+            break;
+    }
+    return data;
 }
 
 Item.prototype.init = function(data) {
     this.itemID = data.itemID;
     this.name = data.name;
     this.description = data.description;
-    //on use function
+    this.classes = data.classes;
     this.onUse = data.onUse;
     this.icon = data.icon;
     this.type = data.type;
@@ -28,26 +65,27 @@ Item.prototype.init = function(data) {
 
     switch(this.type){
         case 'weapon':
-            this.stackable = false;
             this.eqData = new Weapon();
             this.eqData.init(data.eqData);
             break;
         case 'gun':
-            this.stackable = false;
             this.eqData = new Gun();
             this.eqData.init(data.eqData);
             break;
         case 'shield':
-            this.stackable = false;
             this.eqData = new Shield();
             this.eqData.init(data.eqData);
             break;
         case 'accessory':
-            this.stackable = false;
             this.eqData = new Accessory();
             this.eqData.init(data.eqData);
             break;
     }
+    this.onUseText = data.onUseText;
+    this.onFireText = data.onFireText;
+    this.onEquipText = data.onEquipText;
+    this.onHitText = data.onHitText;
+    this.constantEffectText = data.constantEffectText;
 };
 
 exports.Item = Item;
@@ -72,7 +110,7 @@ Gun.prototype.init = function(data) {
     this.onHit = data.onHit;
 };
 
-exports.Weapon = Gun;
+exports.Gun = Gun;
 
 var Weapon = function(){
     this.damage = null;

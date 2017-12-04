@@ -1,16 +1,17 @@
 // Inventory
-var Item = require('./item.js'),
+var Item = require('./item.js').Item,
     Attribute = require('./attribute.js').Attribute;
     Unit = require('./unit.js').Unit,
     Player = require('./player.js').Player
 
 
 var Inventory = function () {
+    this.gameEngine = null;
+    this.owner = null;
     this.currentWeight = 0;
     this.maxItemPile = 99;
     this.items = [];
     this.maxWeight = null;
-    this.duplicates = false
 }
     
 Inventory.prototype.init = function(data){
@@ -18,8 +19,9 @@ Inventory.prototype.init = function(data){
     this.maxWeight = new Attribute();
     //if unit inventory, maxWeight is based on strength
     //if its the main player inventory, it is 1000;
-    this.owner = data.owner;
     if (this.owner instanceof Unit){
+        //unit's inventory
+        this.owner = data.owner;
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
@@ -32,6 +34,8 @@ Inventory.prototype.init = function(data){
             next: function(){this.owner.speed.set()}
         });
     }else{
+        //the player's main inventory
+        this.owner = data.owner;
         this.maxItemPile = 99;
         this.maxWeight.init({
             'id': 'wgt',
@@ -57,35 +61,36 @@ Inventory.prototype.equipItem = function(index){
     
 }
 
-Inventory.prototype.addItem = function(item,amount){
+Inventory.prototype.addItem = function(id, amt){
     //function tries to add a number of any item
     //returns an array containing [amount added, amount not added]
     //pass "nostack" to amount to not stack the items
-    var id = item._dbIndex;
-    var amountToBeAdded = amount;
-    var amountNotAdded = 0;
-    var containsItem = this.contains(id);
-    if (!this.duplicates){
+    try{
+        var item = this.gameEngine.items[id];
+        var amountToBeAdded = amt;
+        var amountNotAdded = 0;
+        var containsItem = this.contains(id);
         if (containsItem[0]){
             if ((this.maxItemPile - this.items[containsItem[1]][1]) >= amountToBeAdded){
-                this.items[containsItem[1]][1] += amountToBeAdded;
+                this.items[containsItem[1]].amount += amountToBeAdded;
                 this.changeWeight(item.weight*amountToBeAdded);
             }else{
                 amountNotAdded = (amountToBeAdded - (this.maxItemPile - this.items[containsItem[1]][1]));
                 amountToBeAdded = (this.maxItemPile - this.items[containsItem[1]][1]);
-                this.items[containsItem[1]][1] = this.maxItemPile;
+                this.items[containsItem[1]].amount = this.maxItemPile;
                 this.changeWeight(item.weight*amountToBeAdded);
             }
         }else{
-            this.items.push([id, amountToBeAdded]);
+            var I = new Item();
+            I.init(item);
+            this.items.push(I);
             this.changeWeight(item.weight*amountToBeAdded);
         }
-    }else{
-        this.items.push([id, amountToBeAdded]);
-        this.changeWeight(item.weight*amountToBeAdded);
-    }
 
-    return [amountToBeAdded,amountNotAdded];
+        return [amountToBeAdded,amountNotAdded];
+    }catch(e){
+        this.gameEngine.debug(this.player,{'id': 'addItemError', 'error': e.stack, 'itemID': id});
+    }
 }
 
 
@@ -100,7 +105,7 @@ Inventory.prototype.contains = function(id){
     //returns an array [contains item,at index]
     var b = [false,0];
     for (var i = 0;i < this.items.length;i++){
-        if (this.items[i][0] === id){
+        if (this.items[i].itemID === id){
             b[0] = true;
             b[1] = i;
         }
@@ -110,6 +115,10 @@ Inventory.prototype.contains = function(id){
 
 Inventory.prototype.sortByType = function(dir){
    
+}
+
+Inventory.prototype.setGameEngine = function(ge){
+    this.gameEngine = ge;
 }
 
 exports.Inventory = Inventory;

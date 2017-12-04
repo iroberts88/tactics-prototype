@@ -4,11 +4,20 @@ var app = require('http').createServer(webResponse),
     io = require('socket.io').listen(app),
     GameEngine = require('./gameengine.js').GameEngine,
     RequireCheck = require('./requirecheck.js').RequireCheck;
+
+const crypto = require('crypto');
     
 var rc = null,
     ge = null;
 
 function init() {
+
+    //hash test - should use this for passwords
+    const secret = 'abcdefg';
+    const hash = crypto.createHmac('sha256', secret)
+                   .update('I love cupcakes');
+    console.log(hash.digest('hex'));
+
     rc = new RequireCheck();
     ge = new GameEngine();
     rc.onReady(onReady);

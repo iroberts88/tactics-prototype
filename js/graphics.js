@@ -11,6 +11,14 @@
         minusTexture: null,
         starTexture: null,
 
+        pallette: {
+            color1:'#AACCDD', // Font color
+            color2:'#000022', // BG color 
+            color3: 0x79A1F2, //outline color
+            color4: 'hsla(300, 82%, 71%, 0.5)', //button glow color
+            color5: 'hsla(300, 82%, 90%, 0.5)' //button clicked color
+        },
+
         init: function(w,h) {
 
             this.width = w;
@@ -259,7 +267,7 @@
                 options.xbuffer = 0;
             }
             if (typeof options.color == 'undefined'){
-                options.color = '0xFFFFFF';
+                options.color = Graphics.pallette.color3;
             }
             if (typeof options.size == 'undefined'){
                 options.size = 2;
@@ -287,7 +295,7 @@
             if (typeof data.style == 'undefined'){
                 data.style  = {
                     font: '48px Orbitron', 
-                    fill: 'white', 
+                    fill: Graphics.pallette.color1, 
                     align: 'left',
                     dropShadow: true,
                     dropShadowColor: '#000000',
@@ -408,27 +416,15 @@
             }
             return button
         },
-        buttonGlow: function(element,color1,color2,color3,color4){
+        buttonGlow: function(element){
             if(!element.glowSprite){
-                if (typeof color1 == 'undefined'){
-                    color1 = 'hsla(294, 90%, 48%, 0.75)';
-                }
-                if (typeof color2 == 'undefined'){
-                    color2 = 'hsla(294, 90%, 48%, 0.75)';
-                }
-                if (typeof color3 == 'undefined'){
-                    color3 = 'hsla(294, 90%, 48%, 0.75)';
-                }
-                if (typeof color4 == 'undefined'){
-                    color4 = 'hsla(294, 90%, 48%, 0.75)';
-                }
                 var canvas = document.createElement('canvas');
                 canvas.width  = element.width;
                 canvas.height = element.height;
                 var ctx = canvas.getContext('2d');
                 var gradient = ctx.createLinearGradient(0, 0, element.width, 0);
-                gradient.addColorStop(0, color1);
-                gradient.addColorStop(1, color2);
+                gradient.addColorStop(0, Graphics.pallette.color4);
+                gradient.addColorStop(1, Graphics.pallette.color4);
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0,0,element.width,element.height);
                 element.glowSprite1 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
@@ -441,8 +437,8 @@
                 canvas2.height = element.height;
                 var ctx2 = canvas2.getContext('2d');
                 var gradient2 = ctx2.createLinearGradient(0, 0, element.width, 0);
-                gradient2.addColorStop(0, color3);
-                gradient2.addColorStop(1, color4);
+                gradient2.addColorStop(0, Graphics.pallette.color5);
+                gradient2.addColorStop(1, Graphics.pallette.color5);
                 ctx2.fillStyle = gradient2;
                 ctx2.fillRect(0,0,element.width,element.height);
                 element.glowSprite2 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas2));
