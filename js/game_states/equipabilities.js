@@ -170,7 +170,7 @@
                     });
                     minus.abl = ability;
                     minus.classID = this.fromClass;
-                    minus.tint = 0xFF0000;
+                    minus.tint = Graphics.pallette.color7;
                     Graphics.uiContainer.addChild(minus);
                 }else{
                     var slots = Graphics.makeUiElement({

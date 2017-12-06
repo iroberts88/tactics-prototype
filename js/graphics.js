@@ -16,7 +16,9 @@
             color2:'#000022', // BG color 
             color3: 0x79A1F2, //outline color
             color4: 'hsla(300, 82%, 71%, 0.5)', //button glow color
-            color5: 'hsla(300, 82%, 90%, 0.5)' //button clicked color
+            color5: 'hsla(300, 82%, 90%, 0.5)', //button clicked color
+            color6: "#952547",
+            color7: 0x952547
         },
 
         init: function(w,h) {

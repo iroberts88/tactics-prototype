@@ -209,7 +209,7 @@
                         }
                     })
                     if (this.unitInfo.classInfo.ap[this.fromClass] < ablArr[i].ApCost){
-                        learnButton.style.fill = 'red';
+                        learnButton.style.fill = Graphics.pallette.color6;
                     }
                     learnButton.style.fontSize = 32;
                     learnButton.ablID = ablArr[i].id;
