@@ -11,6 +11,10 @@
             wordWrap: true,
             wordWrapWidth: this.maxWidth
         };
+        this.position = {
+            x: 0,
+            y: 0
+        }
     };
 
     Tooltip.prototype.set = function(data){
@@ -135,13 +139,16 @@
         this.sprite = new PIXI.Sprite(this.texture);
 
         data.owner.tooltipAdded = false;
+
+        this.position.x = Graphics.width - this.sprite.width - 5;
+        this.position.y = Graphics.height - this.sprite.height - 5;
         var overFunc = function(e){
             if (!e.currentTarget.tooltipAdded){
                 Graphics.uiContainer2.addChild(e.currentTarget.tooltip.sprite);
                 e.currentTarget.tooltipAdded = true;
             }
-            e.currentTarget.tooltip.sprite.position.x =  Graphics.width - e.currentTarget.tooltip.sprite.width - 5;
-            e.currentTarget.tooltip.sprite.position.y =  Graphics.height - e.currentTarget.tooltip.sprite.height - 5;
+            e.currentTarget.tooltip.sprite.position.x =  e.currentTarget.tooltip.position.x;
+            e.currentTarget.tooltip.sprite.position.y =  e.currentTarget.tooltip.position.y;
         }
         var outFunc = function(e){
             if (e.currentTarget.tooltipAdded){
@@ -149,7 +156,16 @@
                 e.currentTarget.tooltipAdded = false;
             }
         }
+        var moveFunc = function(e){
+            var x = Acorn.Input.mouse.X/Graphics.actualRatio[0];
+            var y = Acorn.Input.mouse.Y/Graphics.actualRatio[1];
+            if (x+e.currentTarget.tooltip.sprite.width > Graphics.width){x = Graphics.width - e.currentTarget.tooltip.sprite.width}
+            if (y+e.currentTarget.tooltip.sprite.height > Graphics.height){y = Graphics.height - e.currentTarget.tooltip.sprite.height}
+            e.currentTarget.tooltip.sprite.position.x =  x;
+            e.currentTarget.tooltip.sprite.position.y =  y;
+        }
         data.owner.on('pointerover',overFunc);
+        data.owner.on('pointermove',moveFunc);
         data.owner.on('touchmove',overFunc);
         data.owner.on('touchend', outFunc);
         data.owner.on('touchendoutside', outFunc);

@@ -8,6 +8,8 @@ var mongo = require('mongodb').MongoClient,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo;
 
+const crypto = require('crypto');
+
 var Player = function(){
     this.MAX_UNITS = 30;
     
@@ -537,7 +539,8 @@ Player.prototype.setupSocket = function() {
                             var query = { userName: data.sn };
                             db.collection('users').find(query).toArray(function(err, arr) {
                                 if (err) throw err;
-                                if (arr.length == 1 && data.pw == arr[0].password){
+                                const hash = crypto.createHmac('sha256', data.pw).update(that.gameEngine.hashSalt);
+                                if (arr.length == 1 && hash.digest('hex') == arr[0].password){
                                     //SET USER DATA TO EXISTING USER
                                     that.user = User();
                                     that.user.init(arr[0]);
@@ -568,7 +571,7 @@ Player.prototype.setupSocket = function() {
         try{
             data.sn = data.sn.toLowerCase();
             if (!that.gameSession && data.sn != 'guest' && data.pw){
-                var url = 'mongodb://127.0.0.1/wisp';
+                var url = 'mongodb://127.0.0.1/lithiumAve';
                 mongo.connect(url, function(err, db) {
                     
                     // ---- Attemp to create new user ----
@@ -579,9 +582,11 @@ Player.prototype.setupSocket = function() {
                         //SET USER DATA TO NEW USER
                         if (data.sn.length >= 3 && data.sn.length <= 16 && data.pw.length >= 8 && data.pw.length <= 16 && arr.length == 0){
                             console.log('valid account info - creating account');
+                            //hash the password
+                            const hash = crypto.createHmac('sha256', data.pw).update(that.gameEngine.hashSalt);
                             var u = {
                                 userName: data.sn,
-                                password: data.pw
+                                password: hash.digest('hex')
                             };
                             that.user = User();
                             that.user.init(u)

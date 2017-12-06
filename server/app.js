@@ -12,12 +12,6 @@ var rc = null,
 
 function init() {
 
-    //hash test - should use this for passwords
-    const secret = 'abcdefg';
-    const hash = crypto.createHmac('sha256', secret)
-                   .update('I love cupcakes');
-    console.log(hash.digest('hex'));
-
     rc = new RequireCheck();
     ge = new GameEngine();
     rc.onReady(onReady);

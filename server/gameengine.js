@@ -24,7 +24,7 @@ var GameEngine = function() {
     //variables for ID's
     this.ids = {};
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
+    this.hashSalt = 'Salt makes things taste better';
     this.debugList = {}; //avoid multiple debug chains
 }
 

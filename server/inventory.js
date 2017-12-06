@@ -12,6 +12,7 @@ var Inventory = function () {
     this.maxItemPile = 99;
     this.items = [];
     this.maxWeight = null;
+    this.stackable = null;
 }
     
 Inventory.prototype.init = function(data){
@@ -22,6 +23,7 @@ Inventory.prototype.init = function(data){
     if (this.owner instanceof Unit){
         //unit's inventory
         this.owner = data.owner;
+        this.stackable = false;
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
@@ -37,6 +39,7 @@ Inventory.prototype.init = function(data){
         //the player's main inventory
         this.owner = data.owner;
         this.maxItemPile = 99;
+        this.stackable = true;
         this.maxWeight.init({
             'id': 'wgt',
             'owner': this.owner,
