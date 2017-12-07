@@ -12,18 +12,17 @@ var Inventory = function () {
     this.maxItemPile = 99;
     this.items = [];
     this.maxWeight = null;
-    this.stackable = null;
+    this.maxUnitItems = 10;
 }
     
 Inventory.prototype.init = function(data){
     //this.items = data.items;
     this.maxWeight = new Attribute();
+    this.owner = data.owner
     //if unit inventory, maxWeight is based on strength
     //if its the main player inventory, it is 1000;
     if (this.owner instanceof Unit){
         //unit's inventory
-        this.owner = data.owner;
-        this.stackable = false;
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
@@ -37,9 +36,7 @@ Inventory.prototype.init = function(data){
         });
     }else{
         //the player's main inventory
-        this.owner = data.owner;
         this.maxItemPile = 99;
-        this.stackable = true;
         this.maxWeight.init({
             'id': 'wgt',
             'owner': this.owner,
@@ -52,6 +49,72 @@ Inventory.prototype.init = function(data){
     this.maxWeight.set();
 }
 
+Inventory.prototype.addItemUnit = function(id,amt,updateClient){
+    //function tries to add 1 of item (ID)
+    // TODO add amt?
+    try{
+        if (this.items.length < this.maxUnitItems){
+            if (typeof updateClient == 'undefined'){updateClient = false}
+            var item = this.gameEngine.items[id];
+
+            var I = new Item();
+            I.init(item);
+            this.items.push(I);
+            this.changeWeight(item.weight);
+
+            //send item data to client
+            if (updateClient){
+                this.gameEngine.queuePlayer(this.owner.owner,'addItemUnit',{unit: this.owner.id, item: I.getClientData(), w: this.currentWeight});
+            }
+        }else{
+            //TODO send a client error
+            console.log('Too many items!!')
+        }
+    }catch(e){
+        this.gameEngine.debug(this.owner.owner,{'id': 'addItemUnitError', 'error': e.stack, 'itemID': id});
+    }
+}
+
+Inventory.prototype.addItem = function(id, amt){
+    //function tries to add a number of any item to the player's iventory
+    //returns an array containing [amount added, amount not added]
+    //pass "nostack" to amount to not stack the items
+    if (typeof amt == 'undefined'){
+        amt = 1;
+    }
+    try{
+        var item = this.gameEngine.items[id];
+        var data = {};
+        var amountToBeAdded = amt;
+        var amountNotAdded = 0;
+        var containsItem = this.contains(id);
+        if (containsItem[0]){
+            //this is a player inventory
+            if ((this.maxItemPile - this.items[containsItem[1]].amount) >= amountToBeAdded){
+                this.items[containsItem[1]].amount += amountToBeAdded;
+            }else{
+                amountNotAdded = (amountToBeAdded - (this.maxItemPile - this.items[containsItem[1]].amount));
+                amountToBeAdded = (this.maxItemPile - this.items[containsItem[1]].amount);
+                this.items[containsItem[1]].amount = this.maxItemPile;
+            }
+            data.itemID = id;
+            data.amt = amountToBeAdded;
+        }else{
+            var I = new Item();
+            I.init(item);
+            I.amount = amt;
+            this.items.push(I);
+            data.item = I.getClientData();
+            data.item.amount = amountToBeAdded;
+        }
+        this.gameEngine.queuePlayer(this.owner,'addItem',data);
+    }catch(e){
+        this.gameEngine.debug(this.owner,{'id': 'addItemPlayerError', 'error': e.stack, 'itemID': id});
+    }
+}
+
+
+
 Inventory.prototype.changeWeight = function(amt,mult){
     //change the current weight
     if (typeof mult === 'undefined'){mult = 1;}
@@ -63,40 +126,6 @@ Inventory.prototype.changeWeight = function(amt,mult){
 Inventory.prototype.equipItem = function(index){
     
 }
-
-Inventory.prototype.addItem = function(id, amt){
-    //function tries to add a number of any item
-    //returns an array containing [amount added, amount not added]
-    //pass "nostack" to amount to not stack the items
-    try{
-        var item = this.gameEngine.items[id];
-        var amountToBeAdded = amt;
-        var amountNotAdded = 0;
-        var containsItem = this.contains(id);
-        if (containsItem[0]){
-            if ((this.maxItemPile - this.items[containsItem[1]][1]) >= amountToBeAdded){
-                this.items[containsItem[1]].amount += amountToBeAdded;
-                this.changeWeight(item.weight*amountToBeAdded);
-            }else{
-                amountNotAdded = (amountToBeAdded - (this.maxItemPile - this.items[containsItem[1]][1]));
-                amountToBeAdded = (this.maxItemPile - this.items[containsItem[1]][1]);
-                this.items[containsItem[1]].amount = this.maxItemPile;
-                this.changeWeight(item.weight*amountToBeAdded);
-            }
-        }else{
-            var I = new Item();
-            I.init(item);
-            this.items.push(I);
-            this.changeWeight(item.weight*amountToBeAdded);
-        }
-
-        return [amountToBeAdded,amountNotAdded];
-    }catch(e){
-        this.gameEngine.debug(this.player,{'id': 'addItemError', 'error': e.stack, 'itemID': id});
-    }
-}
-
-
 
 Inventory.prototype._removeItem = function(index){
     //remove Item and change equipped it necessary

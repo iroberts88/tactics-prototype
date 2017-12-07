@@ -46,6 +46,7 @@ var Unit = function(){
 
     this.weapon = null;
     this.shield = null;
+    this.accessory = null;
 
     this.physicalRes = null;
     this.heatRes = null;

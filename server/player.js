@@ -29,8 +29,8 @@ Player.prototype.init = function (data) {
     this.inventory = new Inventory();
     this.inventory.init({
         owner: this
-    })
-
+    });
+    this.inventory.setGameEngine(this.gameEngine);
     this.characters = [];
 
     if (typeof data.socket != 'undefined'){
@@ -245,8 +245,8 @@ Player.prototype.setupSocket = function() {
                 char.classInfo.init({unit: char});
                 char.classInfo.setBaseClass(data.class);
                 char.classInfo.setClass(data.class);
-                char.inventory.addItem('gun_sidearm',1)
-                char.inventory.addItem('weapon_combatKnife',1)
+                char.inventory.addItemUnit('gun_sidearm')
+                char.inventory.addItemUnit('weapon_combatKnife')
                 //create object to send to the client
                 var Ch = {}
                 for (var a in char){
@@ -309,8 +309,8 @@ Player.prototype.setupSocket = function() {
                 char.classInfo.init({unit: char});
                 char.classInfo.setBaseClass(cl);
                 char.classInfo.setClass(cl);
-                char.inventory.addItem('gun_sidearm',1)
-                char.inventory.addItem('weapon_combatKnife',1)
+                char.inventory.addItemUnit('gun_sidearm')
+                char.inventory.addItemUnit('weapon_combatKnife')
                 var Ch = {}
                 for (var a in char){
                     if (char[a] instanceof Attribute){
@@ -468,12 +468,13 @@ Player.prototype.setupSocket = function() {
                         }
                     }catch(e){
                         console.log(e);
-                        console.log('Unable to set stat ' + commands[2] + ' to ' + commands[3]);
                     }
                     break;
                 case '-setName':
                     break;
                 case '-maxAp':
+                    // max a character's AP
+                    // -maxAp <unitID>
                     try{
                         for (var i = 0; i < that.characters.length;i++){
                             if (that.characters[i].id == commands[1]){
@@ -484,13 +485,51 @@ Player.prototype.setupSocket = function() {
                         }
                     }catch(e){
                         console.log(e);
-                        console.log('Unable to set stat ' + commands[2] + ' to ' + commands[3]);
                     }
                     break;
-                    break;
                 case '-addItem':
+                    // attempt to add an item to player inventory
+                    // -addItem <itemID> <optional:amount>
+                    try{
+                        var amt = 1;
+                        if (typeof commands[2] != 'undefined'){
+                            amt = commands[2];
+                        }
+                        that.inventory.addItem(commands[1],amt, true);
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to add item ' + commands[2]);
+                    }
                     break;
-                case '-addUnitItem':
+                case '-addItemUnit':
+                    // attempt to add an item to unit inventory
+                    // -addItemUnit <unitID> <itemID> <optional:amount>
+                    try{
+                        var amt = 1;
+                        if (typeof commands[3] != 'undefined'){
+                            amt = commands[3];
+                        }
+                        for (var i = 0; i < that.characters.length;i++){
+                            if (that.characters[i].id == commands[1]){
+                                that.characters[i].inventory.addItemUnit(commands[2],amt,true);
+                            }
+                        }
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to add item ' + commands[2] + ' to ' + commands[1]);
+                    }
+                    break;
+                case '-addAll':
+                    // attempt to add ALL ITEMS to player inventory
+                    // -addAll
+                    try{
+                        for (var i in that.gameEngine.items){
+                            that.inventory.addItem(that.gameEngine.items[i]._dbIndex,1, true);
+                        }
+                    }catch(e){
+                        console.log(e);
+                        console.log('Unable to add item ' + commands[2]);
+                    }
                     break;
             }
         }catch(e){

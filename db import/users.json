@@ -1,7 +1,7 @@
 { 
     "_id" : ObjectId("5977a6f6dc1f980ae044ad20"), 
     "userName" : "faulken", 
-    "password" : "Snarfed1", 
+    "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
     "stats" : {
         "soloGamesPlayed" : NumberInt(37), 
         "coopGamesPlayed" : NumberInt(4), 
@@ -30,7 +30,7 @@
     ], 
     "admin" : true, 
     "createDate" : 1501013750032.0, 
-    "lastLogin" : 1509559925966.0, 
+    "lastLogin" : 1512577960411.0, 
     "lock" : false, 
     "characters" : [
 
@@ -40,33 +40,9 @@
     ]
 }
 { 
-    "_id" : ObjectId("597b7905532c0e51402b1333"), 
-    "userName" : "heythere", 
-    "password" : "wwwwwwww", 
-    "stats" : {
-        "soloGamesPlayed" : NumberInt(0), 
-        "coopGamesPlayed" : NumberInt(0), 
-        "coopLevelRecord" : NumberInt(0), 
-        "vsGamesPlayed" : NumberInt(0), 
-        "starsGamesPlayed" : NumberInt(0), 
-        "soloHighScore" : NumberInt(0), 
-        "coopHighScore" : NumberInt(0), 
-        "vsGamesWon" : NumberInt(0), 
-        "starsLongestGame" : NumberInt(0), 
-        "soloLevelRecord" : NumberInt(0)
-    }, 
-    "chatLog" : [
-
-    ], 
-    "admin" : false, 
-    "createDate" : 1501264133107.0, 
-    "lastLogin" : 1501264155057.0, 
-    "lock" : false
-}
-{ 
     "_id" : ObjectId("597b795835fc825188a5ae61"), 
     "userName" : "pppppppppppppppp", 
-    "password" : "Snarfed1", 
+    "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
     "stats" : {
         "soloGamesPlayed" : NumberInt(0), 
         "coopGamesPlayed" : NumberInt(0), 
@@ -88,26 +64,38 @@
     "lock" : false
 }
 { 
-    "_id" : ObjectId("597b89930ab7254af027990e"), 
-    "userName" : "pooper", 
-    "password" : "Scooooper", 
-    "stats" : {
-        "soloGamesPlayed" : NumberInt(0), 
-        "coopGamesPlayed" : NumberInt(0), 
-        "coopLevelRecord" : NumberInt(0), 
-        "vsGamesPlayed" : NumberInt(0), 
-        "starsGamesPlayed" : NumberInt(0), 
-        "soloHighScore" : NumberInt(0), 
-        "coopHighScore" : NumberInt(0), 
-        "vsGamesWon" : NumberInt(0), 
-        "starsLongestGame" : NumberInt(0), 
-        "soloLevelRecord" : NumberInt(0)
-    }, 
+    "_id" : ObjectId("5a281a924cd7b91dc0451927"), 
+    "userName" : "text1", 
+    "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
+    "characters" : [
+
+    ], 
+    "inventory" : [
+
+    ], 
     "chatLog" : [
 
     ], 
     "admin" : false, 
-    "createDate" : 1501268371791.0, 
-    "lastLogin" : 1501268371791.0, 
+    "createDate" : 1512577682159.0, 
+    "lastLogin" : 1512577682159.0, 
+    "lock" : false
+}
+{ 
+    "_id" : ObjectId("5a29b35539f7463994eb1b28"), 
+    "userName" : "test1", 
+    "password" : "598da44a72a3cdde511e3b00e5e7d5b2ff15ebcdf06857c30501ed7f511784ec", 
+    "characters" : [
+
+    ], 
+    "inventory" : [
+
+    ], 
+    "chatLog" : [
+
+    ], 
+    "admin" : false, 
+    "createDate" : 1512682325286.0, 
+    "lastLogin" : 1512682349743.0, 
     "lock" : false
 }

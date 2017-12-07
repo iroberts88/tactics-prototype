@@ -161,8 +161,8 @@
             var y = Acorn.Input.mouse.Y/Graphics.actualRatio[1];
             if (x+e.currentTarget.tooltip.sprite.width > Graphics.width){x = Graphics.width - e.currentTarget.tooltip.sprite.width}
             if (y+e.currentTarget.tooltip.sprite.height > Graphics.height){y = Graphics.height - e.currentTarget.tooltip.sprite.height}
-            e.currentTarget.tooltip.sprite.position.x =  x;
-            e.currentTarget.tooltip.sprite.position.y =  y;
+            e.currentTarget.tooltip.sprite.position.x =  x+30;
+            e.currentTarget.tooltip.sprite.position.y =  y+30;
         }
         data.owner.on('pointerover',overFunc);
         data.owner.on('pointermove',moveFunc);
@@ -170,6 +170,37 @@
         data.owner.on('touchend', outFunc);
         data.owner.on('touchendoutside', outFunc);
         data.owner.on('pointerout', outFunc);
+    }
+
+    Tooltip.prototype.getItemTooltip = function(element,item){
+        // element = the element containing the tooltip
+        //item = the item to work on
+
+        var ttArray = [{text: '<' + item.name + '>'}];
+        if (typeof item.description != 'undefined'){ttArray.push({text: item.description});}
+        if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + Math.round(item.eqData.damage/10)});}
+        if (typeof item.eqData.rangeMin != 'undefined'){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
+        if (typeof item.weight != 'undefined'){ttArray.push({text: '{Weight: }' + item.weight});}
+        if (typeof item.classes != 'undefined'){
+            var cText = '';
+            if (item.classes == 'ALL'){
+                cText = 'ALL';
+            }else{
+                for (var j = 0; j < item.classes.length;j++){
+                    if (j == item.classes.length-1){
+                        cText = cText + '<' + item.classes[j] + '>';
+                    }else{
+                        cText = cText + '<' + item.classes[j] + '> / ';
+                    }
+                }
+            }
+            ttArray.push({text: '{Classes: }' + cText});
+        }
+        element.tooltip.set({
+            owner: element,
+            ttArray: ttArray,
+            alpha: 0.5
+        });
     }
 
     window.Tooltip = Tooltip;

@@ -40,6 +40,14 @@
                 }
             }
             Characters.refresh = true;
+        },
+
+        addItem: function(data){
+
+        },
+
+        removeItem: function(data){
+
         }
 
     }

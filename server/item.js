@@ -53,7 +53,7 @@ Item.prototype.getClientData = function(){
 }
 
 Item.prototype.init = function(data) {
-    this.itemID = data.itemID;
+    this.itemID = data._dbIndex;
     this.name = data.name;
     this.description = data.description;
     this.classes = data.classes;

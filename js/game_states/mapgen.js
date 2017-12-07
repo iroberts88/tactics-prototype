@@ -1223,10 +1223,10 @@
                                     if (!(this.map.currentRotation%2)){t = 2}
                                     var sp = 'sprite' + t;
                                     var a = this.map.getAxial(this.pathToolData.currentPath[0]);
-                                    Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*.8);
+                                    Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting]);
                                     for (var i = 1; i < this.pathToolData.currentPath.length;i++){
                                         var a = this.map.getAxial(this.pathToolData.currentPath[i]);
-                                        Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*.8);
+                                        Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting]);
                                     }
                                 }
                             }

@@ -101,6 +101,30 @@
                 console.log(data);
                 Player.addNewUnit(data.unit);
             });
+            Acorn.Net.on('addItemUnit', function (data) {
+                //adds an item to unit inventory
+                console.log(data);
+                for (var i = 0; i < Player.units.length; i++){
+                    if (data['unit'] == Player.units[i].id){
+                        Player.units[i].inventory.items.push(data.item);
+                    }
+                }
+            });
+            Acorn.Net.on('addItem', function (data) {
+                //adds an item to player inventory
+                console.log(data);
+                if (data.item){
+                    //new item - add
+                    Player.inventory.push(data.item);
+                }else if (data.itemID){
+                    //existing item, find and add
+                    for (var i = 0; i < Player.inventory.length;i++){
+                        if (Player.inventory[i].itemID == data.itemID){
+                            Player.inventory[i].amount += data.amt;
+                        }
+                    }
+                }
+            });
             Acorn.Net.on('deleteUnit', function (data) {
                 console.log(data);
                 Player.deleteUnit(data);

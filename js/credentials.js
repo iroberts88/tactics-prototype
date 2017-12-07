@@ -5,7 +5,7 @@ var Credentials = function () {
     container.id = 'credentials';
     container.type = 'form';
     container.class = "modal-content";
-    container.style.cssText = 'margin: -120px 0 0 -170px;width:100%;top:50%;left:50%;opacity:0.9;overflow:auto;background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);position:absolute;';
+    container.style.cssText = 'margin: -120px 0 0 -170px;width:100%;top:50%;left:50%;opacity:0.9;overflow:auto;background-color: rgba(0,0,0,0.0);position:absolute;';
 
     var usrInputText = document.createElement( 'div' );
     usrInputText.id = 'usrInputText';
