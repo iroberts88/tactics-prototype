@@ -157,12 +157,12 @@
             }
         }
         var moveFunc = function(e){
-            var x = Acorn.Input.mouse.X/Graphics.actualRatio[0];
-            var y = Acorn.Input.mouse.Y/Graphics.actualRatio[1];
-            if (x+e.currentTarget.tooltip.sprite.width > Graphics.width){x = Graphics.width - e.currentTarget.tooltip.sprite.width}
-            if (y+e.currentTarget.tooltip.sprite.height > Graphics.height){y = Graphics.height - e.currentTarget.tooltip.sprite.height}
-            e.currentTarget.tooltip.sprite.position.x =  x+30;
-            e.currentTarget.tooltip.sprite.position.y =  y+30;
+            var x = Acorn.Input.mouse.X/Graphics.actualRatio[0]+30;
+            var y = Acorn.Input.mouse.Y/Graphics.actualRatio[1]+30;
+            if (x+e.currentTarget.tooltip.sprite.width > Graphics.width){x = Graphics.width - e.currentTarget.tooltip.sprite.width-5}
+            if (y+e.currentTarget.tooltip.sprite.height > Graphics.height){y = Graphics.height - e.currentTarget.tooltip.sprite.height-5}
+            e.currentTarget.tooltip.sprite.position.x =  x;
+            e.currentTarget.tooltip.sprite.position.y =  y;
         }
         data.owner.on('pointerover',overFunc);
         data.owner.on('pointermove',moveFunc);

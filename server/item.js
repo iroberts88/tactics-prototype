@@ -32,6 +32,7 @@ Item.prototype.getClientData = function(){
     data.onEquipText = this.onEquipText;
     data.onHitText = this.onHitText;
     data.constantEffectText = this.constantEffectText;
+    data.amount = this.amount;
     data.eqData = {}
     switch(this.type){
         case 'weapon':
@@ -62,6 +63,7 @@ Item.prototype.init = function(data) {
     this.type = data.type;
     this.amount = data.amount;
     this.weight = data.weight;
+    this.amount = 1;
 
     switch(this.type){
         case 'weapon':

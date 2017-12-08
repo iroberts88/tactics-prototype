@@ -27,6 +27,7 @@
             this.height = h;
             this.diameter = Math.sqrt(w*w+h*h);
 
+            this.buttonCD = 0;
             //create the PIXI stage
             this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xFFFFFF});
             this.filtersToApply = [];
@@ -363,9 +364,13 @@
             if (typeof data.buttonGlow != 'undefined'){
                 var onClick = function(e){
                     try{
-                        e.currentTarget.clickFunc(e);
+                        if (Player.globalCDTicker <=0){
+                            e.currentTarget.clickFunc(e);
+                            Player.globalCDTicker = Player.globalCD;
+                        }
                     }catch(e){
-                        console.log(e);}
+                        console.log(e);
+                    }
                     Graphics.removeGlow(e.currentTarget);
                 }
                 button.on('tap', onClick);

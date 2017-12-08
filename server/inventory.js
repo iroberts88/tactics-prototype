@@ -127,8 +127,33 @@ Inventory.prototype.equipItem = function(index){
     
 }
 
+Inventory.prototype.removeItemUnit = function(index,updateClient){
+    //remove Item by index
+    var item = this.items[index];
+    this.changeWeight(-1*item.weight,1);
+    this._removeItem(index);
+    //send item data to client
+    if (updateClient){
+        this.gameEngine.queuePlayer(this.owner.owner,'removeItemUnit',{'unit': this.owner.id, 'index': index, 'w': this.currentWeight});
+    }
+}
+
+Inventory.prototype.removeItem = function(index,amt,updateClient){
+    //remove Item by index
+    var item = this.items[index];
+    if (item.amount > amt){
+        item.amount -= amount;
+    }else{
+        this._removeItem(index);
+    }
+    //send item data to client
+    if (updateClient){
+        this.gameEngine.queuePlayer(this.owner.owner,'removeItem',{'index': index, 'amt': amt});
+    }
+}
+
 Inventory.prototype._removeItem = function(index){
-    //remove Item and change equipped it necessary
+    //remove Item and change equipped if necessary
     this.items.splice(index,1);
 }
 

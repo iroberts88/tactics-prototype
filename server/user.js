@@ -3,19 +3,20 @@
 //container for user info
 //----------------------------------------------------------------
 
-var mongo = require('mongodb').MongoClient;
+var mongo = require('mongodb').MongoClient,
+    Inventory = require('./inventory.js').Inventory;
 
 function User() {
     
     return {
         userData: null,
         owner: null,
+        characters: null,
+        inventory: null,
         init: function(data){
             this.userData = {
                 userName: 'guest',
                 password: 'guest',
-                characters: [],
-                inventory: [],
                 chatLog: [],
                 admin: false,
                 createDate: Date.now(),
@@ -28,9 +29,6 @@ function User() {
             if (typeof data.password != 'undefined'){
                 this.userData.password = data.password;
             }
-            if (typeof data.characters != 'undefined'){
-                this.userData.characters = data.characters;
-            }
             if (typeof data.chatLog != 'undefined'){
                 this.userData.chatLog = data.chatLog;
             }
@@ -39,6 +37,18 @@ function User() {
             }
             if (typeof data.createDate != 'undefined'){
                 this.userData.createDate = data.createDate;
+            }
+
+            this.inventory = new Inventory();
+            this.inventory.init({
+                owner: this.owner
+            });
+            this.inventory.setGameEngine(this.owner.gameEngine);
+        
+            if (typeof data.characters != 'undefined'){
+                this.characters = data.characters;
+            }else{
+                this.characters = [];
             }
         },
         

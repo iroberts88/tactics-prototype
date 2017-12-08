@@ -4,6 +4,8 @@
     	userData: null,
     	units: null,
     	inventory: null,
+        globalCD: 0.15,
+        globalCDTicker: 0,
 
     	init: function(data){
     		if (typeof data.units != 'undefined'){

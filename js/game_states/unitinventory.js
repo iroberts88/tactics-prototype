@@ -36,10 +36,11 @@
                     UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
-                position: [Graphics.width/11,y]
+                position: [Graphics.width/10,y]
             });
             this.compoundsButton.style.fill = 'gray';
             //tooltip setup
@@ -50,7 +51,6 @@
                 ttArray: ttArray,
                 alpha: 0.5
             });
-            Graphics.uiContainer.addChild(this.compoundsButton);
 
             this.weaponsButton = Graphics.makeUiElement({
                 text: 'W',
@@ -63,11 +63,13 @@
                     UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
-                position: [this.compoundsButton.position.x + padding,y]
+                position: [0,y]
             });
+            this.weaponsButton.position.x = this.compoundsButton.position.x + this.compoundsButton.width/2 + this.weaponsButton.width/2;
             //tooltip setup
             this.weaponsButton.tooltip = new Tooltip();
             var ttArray = [{text: 'Weapons'}];
@@ -76,7 +78,6 @@
                 ttArray: ttArray,
                 alpha: 0.5
             });
-            Graphics.uiContainer.addChild(this.weaponsButton);
 
             this.gunsButton = Graphics.makeUiElement({
                 text: 'G',
@@ -89,11 +90,13 @@
                     UnitInventory.gunsButton.style.fill = 'gray';
                     UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
-                position: [this.weaponsButton.position.x + padding,y]
+                position: [0,y]
             });
+            this.gunsButton.position.x = this.weaponsButton.position.x + this.weaponsButton.width/2 + this.gunsButton.width/2;
             //tooltip setup
             this.gunsButton.tooltip = new Tooltip();
             var ttArray = [{text: 'Guns'}];
@@ -102,7 +105,33 @@
                 ttArray: ttArray,
                 alpha: 0.5
             });
-            Graphics.uiContainer.addChild(this.gunsButton);
+
+            this.shieldsButton = Graphics.makeUiElement({
+                text: 'S',
+                style: this.style1,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(e){
+                    UnitInventory.currentPage = 'shield';
+                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.style.fill = 'gray';
+                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.clear();
+                    UnitInventory.draw();
+                },
+                position: [0,y]
+            });
+            this.shieldsButton.position.x = this.gunsButton.position.x + this.gunsButton.width/2 + this.shieldsButton.width/2;
+            //tooltip setup
+            this.shieldsButton.tooltip = new Tooltip();
+            var ttArray = [{text: 'Shields'}];
+            this.shieldsButton.tooltip.set({
+                owner: this.shieldsButton,
+                ttArray: ttArray,
+                alpha: 0.5
+            });
 
             this.accessoriesButton = Graphics.makeUiElement({
                 text: 'A',
@@ -115,11 +144,13 @@
                     UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.accessoriesButton.style.fill = 'gray';
                     UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
-                position: [this.gunsButton.position.x + padding,y]
+                position: [0,y]
             });
+            this.accessoriesButton.position.x = this.shieldsButton.position.x + this.shieldsButton.width/2 + this.accessoriesButton.width/2;
             //tooltip setup
             this.accessoriesButton.tooltip = new Tooltip();
             var ttArray = [{text: 'Accessories'}];
@@ -128,7 +159,6 @@
                 ttArray: ttArray,
                 alpha: 0.5
             });
-            Graphics.uiContainer.addChild(this.accessoriesButton);
 
             this.miscButton = Graphics.makeUiElement({
                 text: 'M',
@@ -144,8 +174,9 @@
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
-                position: [this.accessoriesButton.position.x + padding,y]
+                position: [0,y]
             });
+            this.miscButton.position.x = this.accessoriesButton.position.x + this.accessoriesButton.width/2 + this.miscButton.width/2;
             //tooltip setup
             this.miscButton.tooltip = new Tooltip();
             var ttArray = [{text: 'Misc. Items'}];
@@ -154,7 +185,6 @@
                 ttArray: ttArray,
                 alpha: 0.5
             });
-            Graphics.uiContainer.addChild(this.miscButton);
 
             this.clear();
             this.draw();
@@ -170,6 +200,7 @@
             Graphics.uiContainer.addChild(this.gunsButton);
             Graphics.uiContainer.addChild(this.accessoriesButton);
             Graphics.uiContainer.addChild(this.miscButton);
+            Graphics.uiContainer.addChild(this.shieldsButton);
             Graphics.worldPrimitives.clear();
         },
         draw: function(){
@@ -238,8 +269,18 @@
                 var moveButton = Graphics.makeUiElement({
                     text: '←',
                     style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
-                    position: [Graphics.width*(2/3),itemText.position.y]
+                    position: [Graphics.width*(2/3),itemText.position.y],
+                    clickFunc: function onClick(e){
+                        //attempt to move the item from unit inventory to player inventory
+                        Acorn.Net.socket_.emit('playerUpdate',{
+                            'command': 'itemToPlayer',
+                            'unitID': e.currentTarget.unitID,
+                            'itemIndex': e.currentTarget.itemIndex
+                        });
+                    }
                 })
+                moveButton.unitID = this.unitInfo.id;
+                moveButton.itemIndex = i;
                 moveButton.style.fontSize = 20;
                 moveButton.position.x -= moveButton.width;
                 //tooltip setup
@@ -257,8 +298,18 @@
                     var equipButton = Graphics.makeUiElement({
                         text: 'E',
                         style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
-                        position: [0,itemText.position.y]
+                        position: [0,itemText.position.y],
+                        clickFunc: function onClick(e){
+                            //attempt to move the item from unit inventory to player inventory
+                            Acorn.Net.socket_.emit('playerUpdate',{
+                                'command': 'equipItem',
+                                'unitID': e.currentTarget.unitID,
+                                'itemIndex': e.currentTarget.itemIndex
+                            });
+                        }
                     })
+                    equipButton.unitID = this.unitInfo.id;
+                    equipButton.itemIndex = i;
                     equipButton.style.fontSize = 20;
                     equipButton.position.x = moveButton.position.x - 40;
                     //tooltip setup
@@ -310,8 +361,18 @@
                 var moveButton = Graphics.makeUiElement({
                     text: '→',
                     style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
-                    position: [0,itemText.position.y]
+                    position: [0,itemText.position.y],
+                    clickFunc: function onClick(e){
+                        //attempt to move the item from unit inventory to player inventory
+                        Acorn.Net.socket_.emit('playerUpdate',{
+                            'command': 'itemToUnit',
+                            'unitID': e.currentTarget.unitID,
+                            'itemIndex': e.currentTarget.itemIndex
+                        });
+                    }
                 })
+                moveButton.unitID = this.unitInfo.id;
+                moveButton.itemIndex = i;
                 moveButton.style.fontSize = 20;
                 moveButton.position.x = amtText.position.x + amtText.width/2 + moveButton.width/2 + 5;
                 //tooltip setup
@@ -332,6 +393,7 @@
             Graphics.drawBoxAround(this.gunsButton,Graphics.worldPrimitives,{});
             Graphics.drawBoxAround(this.accessoriesButton,Graphics.worldPrimitives,{});
             Graphics.drawBoxAround(this.miscButton,Graphics.worldPrimitives,{});
+            Graphics.drawBoxAround(this.shieldsButton,Graphics.worldPrimitives,{});
             for (var i = 0; i < this.buttons.length;i++){
                 Graphics.drawBoxAround(this.buttons[i], Graphics.worldPrimitives,{});
             }

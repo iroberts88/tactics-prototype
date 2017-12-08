@@ -107,6 +107,7 @@
                 for (var i = 0; i < Player.units.length; i++){
                     if (data['unit'] == Player.units[i].id){
                         Player.units[i].inventory.items.push(data.item);
+                        Player.units[i].inventory.currentWeight = data.w;
                     }
                 }
             });
@@ -123,6 +124,33 @@
                             Player.inventory[i].amount += data.amt;
                         }
                     }
+                }
+            });
+            Acorn.Net.on('removeItemUnit', function (data) {
+                //adds an item to unit inventory
+                console.log(data);
+                for (var i = 0; i < Player.units.length; i++){
+                    if (data['unit'] == Player.units[i].id){
+                        Player.units[i].inventory.items.splice(data.index,1);
+                        Player.units[i].inventory.currentWeight = data.w;
+                    }
+                }
+                if (Acorn.currentState = 'unitInventoryMenu'){
+                    UnitInventory.clear();
+                    UnitInventory.draw();
+                }
+            });
+            Acorn.Net.on('removeItem', function (data) {
+                //adds an item to player inventory
+                console.log(data);
+                if (Player.inventory.items[data.index].amount > data.amt){
+                    Player.inventory.items[data.index].amount -= data.amt;
+                }else{
+                    Player.inventory.items.splice(data.index,1);
+                }
+                if (Acorn.currentState = 'unitInventoryMenu'){
+                    UnitInventory.clear();
+                    UnitInventory.draw();
                 }
             });
             Acorn.Net.on('deleteUnit', function (data) {

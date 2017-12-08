@@ -3,7 +3,6 @@
 //----------------------------------------------------------------
 var mongo = require('mongodb').MongoClient,
     User = require('./user.js').User,
-    Inventory = require('./inventory.js').Inventory,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo;
@@ -17,21 +16,12 @@ var Player = function(){
     this.gameSession = null;
     this.user = null;
     this.mapData = null;
-    this.characters = null;
-    this.inventory = null;
 };
 
 Player.prototype.init = function (data) {
     //init player specific variables
    
     this.netQueue = [];
-    
-    this.inventory = new Inventory();
-    this.inventory.init({
-        owner: this
-    });
-    this.inventory.setGameEngine(this.gameEngine);
-    this.characters = [];
 
     if (typeof data.socket != 'undefined'){
         this.socket = data.socket;
@@ -39,6 +29,15 @@ Player.prototype.init = function (data) {
     }
 };
     
+Player.prototype.getUnit = function(id){
+    //returns a unit with the given ID
+    for (var i = 0; i < this.user.characters.length;i++){
+        if (this.user.characters[i].id = id){
+            return this.user.characters[i];
+        }
+    }
+    return null;
+}
 Player.prototype.tick = function(deltaTime){
    
 };
@@ -64,6 +63,7 @@ Player.prototype.setupSocket = function() {
 
            }
         }else{
+            //player is not in a game currently - main menu commands
             switch(data.command){
                 case 'learnAbility':
                     try{
@@ -72,9 +72,9 @@ Player.prototype.setupSocket = function() {
                         var aID = data['ablID'];
                         var uID = data['unitID'];
                         var unit;
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == uID){
-                                unit = that.characters[i];
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == uID){
+                                unit = that.user.characters[i];
                                 continue;
                             }
                         }
@@ -110,9 +110,9 @@ Player.prototype.setupSocket = function() {
                         var aID = data['ablID'];
                         var uID = data['unitID'];
                         var unit;
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == uID){
-                                unit = that.characters[i];
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == uID){
+                                unit = that.user.characters[i];
                                 continue;
                             }
                         }
@@ -148,9 +148,9 @@ Player.prototype.setupSocket = function() {
                         var aID = data['ablID'];
                         var uID = data['unitID'];
                         var unit;
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == uID){
-                                unit = that.characters[i];
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == uID){
+                                unit = that.user.characters[i];
                                 continue;
                             }
                         }
@@ -180,9 +180,9 @@ Player.prototype.setupSocket = function() {
                         //get the unit
                         var uID = data['unitID'];
                         var unit;
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == uID){
-                                unit = that.characters[i];
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == uID){
+                                unit = that.user.characters[i];
                                 continue;
                             }
                         }
@@ -207,10 +207,10 @@ Player.prototype.setupSocket = function() {
                 case 'deleteChar':
                     try{
                         //remove the character from the player's character list
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == data['charToDelete']){
-                                console.log('deleting character: ' + that.characters[i].name);
-                                that.characters.splice(i,1);
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == data['charToDelete']){
+                                console.log('deleting character: ' + that.user.characters[i].name);
+                                that.user.characters.splice(i,1);
                                 that.gameEngine.queuePlayer(that,'deleteUnit',{'id': data['charToDelete']});
                                 continue;
                             }
@@ -219,16 +219,48 @@ Player.prototype.setupSocket = function() {
                         that.gameEngine.debug(that,{id: 'deleteCharError', error: e.stack, dData: data});
                     }
                     break;
+                case 'itemToUnit':
+                    console.log(data);
+                    try{
+                        //add item to unit
+
+                        //remove item from player
+
+                        //send to client
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'itemToUnitError', error: e.stack, dData: data});
+                    }
+                    break;
+                case 'itemToPlayer':
+                    console.log(data);
+                    try{
+                        var unit = that.getUnit(data.unitID);
+                        console.log(unit.name);
+                        //add item to player
+                        that.user.inventory.addItem(unit.inventory.items[data.itemIndex].itemID,1, true);
+                        //remove item from unit
+                        unit.inventory.removeItemUnit(data.itemIndex,true);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
+                    }
+                    break;
+                case 'equipItem':
+                    console.log(data);
+                    try{
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'equipItemError', error: e.stack, dData: data});
+                    }
+                    break;
             }
         }
     });
 
-    //TODO convert these to playerUpdates
+    //TODO convert these to playerUpdates if necessary
 
     this.socket.on('addUnit', function(data){
         //TODO -- validate unit before creation
         //check max characters
-        if (that.characters.length < 30){
+        if (that.user.characters.length < 30){
             try{
                 var char = new Unit();
                 char.init({
@@ -274,7 +306,7 @@ Player.prototype.setupSocket = function() {
                 }
                 Ch.inventory.maxWeight = char.inventory.maxWeight.value;
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
-                that.characters.push(char);
+                that.user.characters.push(char);
             }catch(e){
                 that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
             }
@@ -282,7 +314,7 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on('addRandomChar', function(data){
-        if (that.characters.length < 30){
+        if (that.user.characters.length < 30){
             try{
                 var char = new Unit();
                 var sexes = ['male','female'];
@@ -337,7 +369,7 @@ Player.prototype.setupSocket = function() {
                 }
                 Ch.inventory.maxWeight = char.inventory.maxWeight.value;
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
-                that.characters.push(char);
+                that.user.characters.push(char);
             }catch(e){
                 that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
             }
@@ -449,9 +481,9 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-setStat':
                     try{
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == commands[1] && parseInt(commands[3])){
-                                that.characters[i].setStat(commands[2],parseInt(commands[3]));
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == commands[1] && parseInt(commands[3])){
+                                that.user.characters[i].setStat(commands[2],parseInt(commands[3]));
                             }
                         }
                     }catch(e){
@@ -461,9 +493,9 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-modStat':
                     try{
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == commands[1] && parseInt(commands[3])){
-                                that.characters[i].modStat(commands[2],parseInt(commands[3]));
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == commands[1] && parseInt(commands[3])){
+                                that.user.characters[i].modStat(commands[2],parseInt(commands[3]));
                             }
                         }
                     }catch(e){
@@ -476,10 +508,10 @@ Player.prototype.setupSocket = function() {
                     // max a character's AP
                     // -maxAp <unitID>
                     try{
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == commands[1]){
-                                for (var j in that.characters[i].classInfo.ap){
-                                    that.characters[i].addAp(j,9999);
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == commands[1]){
+                                for (var j in that.user.characters[i].classInfo.ap){
+                                    that.user.characters[i].addAp(j,9999);
                                 }
                             }
                         }
@@ -495,7 +527,7 @@ Player.prototype.setupSocket = function() {
                         if (typeof commands[2] != 'undefined'){
                             amt = commands[2];
                         }
-                        that.inventory.addItem(commands[1],amt, true);
+                        that.user.inventory.addItem(commands[1],amt, true);
                     }catch(e){
                         console.log(e);
                         console.log('Unable to add item ' + commands[2]);
@@ -509,9 +541,9 @@ Player.prototype.setupSocket = function() {
                         if (typeof commands[3] != 'undefined'){
                             amt = commands[3];
                         }
-                        for (var i = 0; i < that.characters.length;i++){
-                            if (that.characters[i].id == commands[1]){
-                                that.characters[i].inventory.addItemUnit(commands[2],amt,true);
+                        for (var i = 0; i < that.user.characters.length;i++){
+                            if (that.user.characters[i].id == commands[1]){
+                                that.user.characters[i].inventory.addItemUnit(commands[2],amt,true);
                             }
                         }
                     }catch(e){
@@ -524,7 +556,7 @@ Player.prototype.setupSocket = function() {
                     // -addAll
                     try{
                         for (var i in that.gameEngine.items){
-                            that.inventory.addItem(that.gameEngine.items[i]._dbIndex,1, true);
+                            that.user.inventory.addItem(that.gameEngine.items[i]._dbIndex,1, true);
                         }
                     }catch(e){
                         console.log(e);
@@ -565,8 +597,8 @@ Player.prototype.setupSocket = function() {
                 if (data.guest){
                     //SET USER DATA TO GUEST
                     that.user = User();
-                    that.user.init({});
                     that.user.setOwner(that);
+                    that.user.init({});
                     that.user.setLastLogin(Date.now());
                     that.gameEngine.queuePlayer(that,"loggedIn", {name:that.user.userData.userName,stats:that.user.userData.stats});
                 }else if (data.sn && data.pw){
@@ -582,8 +614,8 @@ Player.prototype.setupSocket = function() {
                                 if (arr.length == 1 && hash.digest('hex') == arr[0].password){
                                     //SET USER DATA TO EXISTING USER
                                     that.user = User();
-                                    that.user.init(arr[0]);
                                     that.user.setOwner(that);
+                                    that.user.init(arr[0]);
                                     that.user.lock();
                                     that.user.setLastLogin(Date.now());
                                     that.gameEngine.queuePlayer(that,"loggedIn", {name:arr[0].userName});
@@ -628,8 +660,8 @@ Player.prototype.setupSocket = function() {
                                 password: hash.digest('hex')
                             };
                             that.user = User();
-                            that.user.init(u)
                             that.user.setOwner(that);
+                            that.user.init(u)
                             db.collection('users').insertOne(that.user.userData, function(err, res) {
                                 if (err) throw err;
                                 console.log("added user: " + data.sn);
