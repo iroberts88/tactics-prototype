@@ -34,6 +34,8 @@
 
         changesMade: null,
 
+        currentSZone: 1,
+
         init: function() {
             this.drawBG();
             //initialize the map
@@ -69,7 +71,7 @@
 
             //create tool buttons
             var style = {
-                font: '32px Orbitron', 
+                font: '24px Orbitron', 
                 fill: 'white', 
                 align: 'left', 
                 dropShadow: true,
@@ -99,7 +101,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'height';
+                    MapGen.changeCurrentTool('height');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -120,7 +122,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'landscape';
+                    MapGen.changeCurrentTool('landscape');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -131,8 +133,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.landscapeTool.position.x =  25 + this.heightTool.width/2 + 80 + this.landscapeTool.width/2;;
-            this.landscapeTool.position.y = this.toolText.position.y + 50 + this.toolText.height/2 + 10;
+            this.landscapeTool.position.x =  this.heightTool.position.x + this.heightTool.width/2 + this.landscapeTool.width/2 + 2;
+            this.landscapeTool.position.y = this.heightTool.position.y;
             Graphics.uiContainer.addChild(this.landscapeTool);
 
             this.noiseTool = Graphics.makeUiElement({
@@ -141,7 +143,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'noise';
+                    MapGen.changeCurrentTool('noise');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -152,8 +154,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.noiseTool.position.x = 25 + this.noiseTool.width/2;
-            this.noiseTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2 + 10;
+            this.noiseTool.position.x = this.landscapeTool.position.x + this.landscapeTool.width/2 + this.noiseTool.width/2 + 2;
+            this.noiseTool.position.y = this.heightTool.position.y;
             Graphics.uiContainer.addChild(this.noiseTool);
 
             this.tilesTool = Graphics.makeUiElement({
@@ -162,13 +164,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'tiles';
-                    MapGen.sandTile.visible = true;
-                    MapGen.baseTile.visible = true;
-                    MapGen.grassTile.visible = true;
-                    MapGen.iceTile.visible = true;
-                    MapGen.snowTile.visible = true;
-                    MapGen.dirtTile.visible = true;
+                    MapGen.changeCurrentTool('tiles');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -179,8 +175,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.tilesTool.position.x = 25 + this.noiseTool.width/2 + 75 + this.tilesTool.width/2;
-            this.tilesTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2 + 10;
+            this.tilesTool.position.x = 25 + this.tilesTool.width/2;
+            this.tilesTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.noiseTool.height/2 + 2;
             Graphics.uiContainer.addChild(this.tilesTool);
 
             this.pathTool = Graphics.makeUiElement({
@@ -189,18 +185,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'path';
-                    MapGen.pathToolData = {
-                        currentPath: null,
-                        startTile: null,
-                        jumpHeight: 3,
-                        endTile: null
-                    };
-                    MapGen.toolSize = 1;
-                    MapGen.jumpHeight.visible = true;
-                    MapGen.jumpHeightNum.visible = true;
-                    MapGen.jumpHeightPlus.visible = true;
-                    MapGen.jumpHeightMinus.visible = true;
+                    MapGen.changeCurrentTool('path');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -211,8 +196,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.pathTool.position.x = 25 + this.noiseTool.width/2 + 75 + this.tilesTool.width/2 + 75 + this.pathTool.width/2;
-            this.pathTool.position.y = this.landscapeTool.position.y + this.landscapeTool.height/2 + this.pathTool.height/2 + 10;
+            this.pathTool.position.x = this.tilesTool.position.x + this.tilesTool.width/2 + this.pathTool.width/2 + 2;
+            this.pathTool.position.y = this.tilesTool.position.y;
             Graphics.uiContainer.addChild(this.pathTool);
 
             this.deleteTool = Graphics.makeUiElement({
@@ -221,8 +206,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'delete';
-                    MapGen.toolSize = 1;
+                    MapGen.changeCurrentTool('delete');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -233,8 +217,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.deleteTool.position.x = 25 + this.deleteTool.width/2;
-            this.deleteTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.deleteTool.height/2 + 10;
+            this.deleteTool.position.x = this.pathTool.position.x + this.pathTool.width/2 + this.deleteTool.width/2 + 2;
+            this.deleteTool.position.y = this.tilesTool.position.y;
             Graphics.uiContainer.addChild(this.deleteTool);
 
             this.addTool = Graphics.makeUiElement({
@@ -243,8 +227,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'add';
-                    MapGen.toolSize = 1;
+                    MapGen.changeCurrentTool('add');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -255,8 +238,8 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.addTool.position.x = 25 + this.addTool.width/2 + 70 + this.deleteTool.width/2;
-            this.addTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.deleteTool.height/2 + 10;
+            this.addTool.position.x = this.deleteTool.position.x + this.deleteTool.width/2 + this.addTool.width/2 + 2;
+            this.addTool.position.y = this.tilesTool.position.y;
             Graphics.uiContainer.addChild(this.addTool);
 
             this.losTool = Graphics.makeUiElement({
@@ -265,16 +248,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentTool = 'los';
-                    MapGen.losToolData = {
-                        spritesAltered: [],
-                        losShown: false
-                    };
-                    MapGen.losDistance.visible = true;
-                    MapGen.losDistanceNum.visible = true;
-                    MapGen.losDistancePlus.visible = true;
-                    MapGen.losDistanceMinus.visible = true;
-                    MapGen.toolSize = 1;
+                    MapGen.changeCurrentTool('los');
                 },
                 mOverFunc: function onMOver(){
                     MapGen.toolDescriptionText.visible = true;
@@ -285,9 +259,30 @@
                     MapGen.removeDescText = 0.05;
                 }
             });
-            this.losTool.position.x = this.addTool.position.x + this.addTool.width/2 + 50 + this.losTool.width/2;
-            this.losTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.deleteTool.height/2 + 10;
+            this.losTool.position.x = 25 + this.losTool.width/2;
+            this.losTool.position.y = this.tilesTool.position.y + this.tilesTool.height/2 + this.tilesTool.height/2 + 2;
             Graphics.uiContainer.addChild(this.losTool);
+
+            this.sZoneTool = Graphics.makeUiElement({
+                text: 'Start Zone',
+                style: style,
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.changeCurrentTool('sZone');
+                },
+                mOverFunc: function onMOver(){
+                    MapGen.toolDescriptionText.visible = true;
+                    MapGen.toolDescriptionText.text = 'Add starting zones. Zones must be between 5-20 hexes. There must be 2 zones to create the map';
+                    MapGen.removeDescText = Infinity;
+                },
+                mOutFunc: function onMOut(){
+                    MapGen.removeDescText = 0.05;
+                }
+            });
+            this.sZoneTool.position.x = this.losTool.position.x + this.losTool.width/2 + this.sZoneTool.width/2 + 2;
+            this.sZoneTool.position.y = this.losTool.position.y;
+            Graphics.uiContainer.addChild(this.sZoneTool);
 
             //Select Tool Text
             this.toolDescriptionText = Graphics.makeUiElement({
@@ -334,6 +329,44 @@
             this.toolOptionsText.position.x = Graphics.width-25 - this.toolText.width/2;
             this.toolOptionsText.position.y = this.exitButton.position.y +  this.exitButton.height/2 + 25 + this.toolText.height/2;
             Graphics.uiContainer.addChild(this.toolOptionsText);
+
+            this.sZone1 = Graphics.makeUiElement({
+                text: 'Zone 1',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                buttonGlow: true,
+                clickFunc: function onClick(){
+                    if (MapGen.currentSZone != 1){
+                        MapGen.currentSZone = 1;
+                    }
+                    MapGen.sZone1.style.fill = 'gray';
+                    MapGen.sZone2.style.fill = 'white';
+                }
+            });
+            this.sZone1.style.fill = 'gray';
+            this.sZone1.style.fontSize = 24;
+            this.sZone1.position.x = this.toolOptionsText.position.x;
+            this.sZone1.position.y = this.toolOptionsText.position.y + this.toolOptionsText.height/2 + 50;
+            Graphics.uiContainer.addChild(this.sZone1);
+            this.sZone2 = Graphics.makeUiElement({
+                text: 'Zone 2',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                buttonGlow: true,
+                clickFunc: function onClick(){
+                    if (MapGen.currentSZone != 2){
+                        MapGen.currentSZone = 2;
+                    }
+                    MapGen.sZone2.style.fill = 'gray';
+                    MapGen.sZone1.style.fill = 'white';
+                }
+            });
+            this.sZone2.style.fontSize = 24;
+            this.sZone2.position.x = this.toolOptionsText.position.x;
+            this.sZone2.position.y = this.sZone1.position.y + this.sZone1.height/2 + 5 + this.sZone2.height/2;
+            Graphics.uiContainer.addChild(this.sZone2);
 
             this.losDistance = Graphics.makeUiElement({
                 text: 'Unit Height: '
@@ -513,7 +546,7 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    if (MapGen.toolSize < MapGen.MAX_TOOL_SIZE && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
+                    if (MapGen.toolSize < MapGen.MAX_TOOL_SIZE && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los' && MapGen.currentTool != 'sZone'){
                         MapGen.toolSize += 1;
                     }
                 }
@@ -528,7 +561,7 @@
                 interactive: true,
                 buttonMode: true,
                 clickFunc: function onClick(){
-                    if (MapGen.toolSize > 1 && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los'){
+                    if (MapGen.toolSize > 1 && MapGen.currentTool != 'add' && MapGen.currentTool != 'delete' && MapGen.currentTool != 'path' && MapGen.currentTool != 'los' && MapGen.currentTool != 'sZone'){
                         MapGen.toolSize -= 1;
                     }
                 }
@@ -697,6 +730,28 @@
                         alert('Map not saved.');
                     }else{
                         var mapData = {};
+                        var sz1 = [];
+                        var sz2 = [];
+                        for (var i = 0; i < MapGen.map.startZone1.length;i++){
+                            var node = {
+                                q: MapGen.map.startZone1[i].q,
+                                r: MapGen.map.startZone1[i].r,
+                                h: MapGen.map.startZone1[i].h,
+                                deleted: MapGen.map.startZone1[i].deleted,
+                                tile: MapGen.map.startZone1[i].tile
+                            }
+                            sz1.push(node);
+                        }
+                        for (var i = 0; i < MapGen.map.startZone2.length;i++){
+                            var node = {
+                                q: MapGen.map.startZone2[i].q,
+                                r: MapGen.map.startZone2[i].r,
+                                h: MapGen.map.startZone2[i].h,
+                                deleted: MapGen.map.startZone2[i].deleted,
+                                tile: MapGen.map.startZone2[i].tile
+                            }
+                            sz2.push(node);
+                        }
                         for (var i in MapGen.map.axialMap){
                             for (var j in MapGen.map.axialMap[i]){
                                 if (typeof mapData[i] == 'undefined'){
@@ -713,7 +768,7 @@
                             }
                         }
                         MapGen.changesMade = false;
-                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
+                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData,sz1: sz1,sz2:sz2});
                     }
                 }
             });
@@ -738,6 +793,7 @@
             Graphics.uiContainer.addChild(this.deleteButton);
 
             window.currentGameMap = this.map;
+            this.changeCurrentTool('height');
             Graphics.showLoadingMessage(false);
         },
 
@@ -815,6 +871,74 @@
             Graphics.drawBG('blue', 'white');
 
         },
+        changeCurrentTool: function(tool){
+            MapGen.currentTool = tool;
+
+            //set all options to not visible
+            MapGen.sandTile.visible = false;
+            MapGen.baseTile.visible = false;
+            MapGen.grassTile.visible = false;
+            MapGen.iceTile.visible = false;
+            MapGen.snowTile.visible = false;
+            MapGen.dirtTile.visible = false;
+            MapGen.jumpHeight.visible = false;
+            MapGen.jumpHeightNum.visible = false;
+            MapGen.jumpHeightPlus.visible = false;
+            MapGen.jumpHeightMinus.visible = false;
+            MapGen.losDistance.visible = false;
+            MapGen.losDistanceNum.visible = false;
+            MapGen.losDistancePlus.visible = false;
+            MapGen.losDistanceMinus.visible = false;
+            MapGen.sZone1.visible = false;
+            MapGen.sZone2.visible = false;
+            for (var i in this.map.axialMap){
+                for (j in this.map.axialMap[i]){
+                    this.map.axialMap[i][j].sprite1.tint = 0xFFFFFF;
+                    this.map.axialMap[i][j].sprite2.tint = 0xFFFFFF;
+                }
+            }
+            //set current options to visible
+            if (tool == 'tiles'){
+                MapGen.sandTile.visible = true;
+                MapGen.baseTile.visible = true;
+                MapGen.grassTile.visible = true;
+                MapGen.iceTile.visible = true;
+                MapGen.snowTile.visible = true;
+                MapGen.dirtTile.visible = true;
+            }else if (tool == 'path'){
+                MapGen.pathToolData = {
+                    currentPath: null,
+                    startTile: null,
+                    jumpHeight: 3,
+                    endTile: null
+                };
+                MapGen.toolSize = 1;
+                MapGen.jumpHeight.visible = true;
+                MapGen.jumpHeightNum.visible = true;
+                MapGen.jumpHeightPlus.visible = true;
+                MapGen.jumpHeightMinus.visible = true;
+            }else if (tool == 'add' || tool == 'delete'){
+                MapGen.toolSize = 1;
+            }else if (tool =='los'){
+                MapGen.losToolData = {
+                    spritesAltered: [],
+                    losShown: false
+                };
+                MapGen.losDistance.visible = true;
+                MapGen.losDistanceNum.visible = true;
+                MapGen.losDistancePlus.visible = true;
+                MapGen.losDistanceMinus.visible = true;
+                MapGen.toolSize = 1;
+            }else if (tool == 'sZone'){
+                MapGen.sZone1.visible = true;
+                MapGen.sZone2.visible = true;
+                MapGen.currentSZone = 1;
+                MapGen.toolSize = 1;
+            }
+        },
+        updatePrims: function(){
+
+        },
         update: function(deltaTime){
             this.map.update(deltaTime);
             if (this.removeDescText <= 0){
@@ -839,6 +963,7 @@
             Graphics.drawBoxAround(this.pathTool,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.losTool,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.exitButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.sZoneTool,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.saveButton,Graphics.uiPrimitives2,{});
             Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.6);
             Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.6);
@@ -848,20 +973,10 @@
                 this[MapGen.currentTool + 'Tool'].width,
                 this[MapGen.currentTool + 'Tool'].height
             );
-            if (MapGen.currentTool != 'path'){
-                this.jumpHeight.visible = false;
-                this.jumpHeightNum.visible = false;
-                this.jumpHeightPlus.visible = false;
-                this.jumpHeightMinus.visible = false;
-            }else{
+            if (MapGen.currentTool == 'path'){
                 this.jumpHeightNum.text = '' + this.pathToolData.jumpHeight;
             }
-            if (MapGen.currentTool != 'los'){
-                this.losDistance.visible = false;
-                this.losDistanceNum.visible = false;
-                this.losDistancePlus.visible = false;
-                this.losDistanceMinus.visible = false;
-            }else{
+            if (MapGen.currentTool == 'los'){
                 this.losDistanceNum.text = '' + this.char_height;
             }
             if (MapGen.currentTool == 'tiles'){
@@ -871,13 +986,16 @@
                     this[this.currentTileType + 'Tile'].width,
                     this[this.currentTileType + 'Tile'].height
                 );
-            }else{
-                this.sandTile.visible = false;
-                this.baseTile.visible = false;
-                this.grassTile.visible = false;
-                this.iceTile.visible = false;
-                this.snowTile.visible = false;
-                this.dirtTile.visible = false;
+            }
+            if (MapGen.currentTool == 'sZone'){
+                for (var i = 0; i < this.map.startZone1.length;i++){
+                    this.map.startZone1[i].sprite1.tint = 0xFF00FF;
+                    this.map.startZone1[i].sprite2.tint = 0xFF00FF;
+                }
+                for (var i = 0; i < this.map.startZone2.length;i++){
+                    this.map.startZone2[i].sprite1.tint = 0xFF0000;
+                    this.map.startZone2[i].sprite2.tint = 0xFF0000;
+                }
             }
             Graphics.uiPrimitives2.endFill();
             if (!this.map.rotateData){
@@ -1231,6 +1349,83 @@
                                 }
                             }
                             break;
+                        case 'sZone':
+                            var node = this.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
+                            var zoneArr = this.map['startZone' + this.currentSZone];
+                            this.dragStart = null;
+                            var otherZone = 1;
+                            var cont = true;
+                            if (this.currentSZone == 1){otherZone = 2;}
+                            //make sure the node isnt part of another starting zone
+                            if (this.nodeInArr(node,this.map['startZone' + otherZone])){
+                                cont = false;
+                            }
+                            //add the node if the current sZone is empty
+                            if (cont){
+                                if (zoneArr.length == 0){
+                                    zoneArr.push(node);
+                                    MapGen.changesMade = true;
+                                    cont = false;
+                                }else if (zoneArr.length >= 15){cont = false;}
+                            }
+
+                            //make sure the node is not already in the current sZone
+
+                            if (cont && this.nodeInArr(node,zoneArr)){
+                                console.log('wut')
+                                //if it is, make sure it doesnt create 2 distict zones then remove it
+                                var checked = 0; //number of nodes checked
+                                var checkedArr = [node]; //nodes already checked
+                                var checkingArr = []; //nodes currently being checked
+                                if (zoneArr[0] != node){checkingArr.push(zoneArr[0])}else{checkingArr.push(zoneArr[1])}
+                                while(checkingArr.length > 0){
+                                    var checkNode = checkingArr[0];
+                                    for (var j = 0; j < 6;j++){
+                                        var neighbor = this.map.getAxialNeighbor(checkNode,j);
+                                        if (neighbor){
+                                            if (this.nodeInArr(neighbor,checkedArr)){
+                                                continue;
+                                            }else if (this.nodeInArr(neighbor,zoneArr)){
+                                                checkingArr.push(neighbor);
+                                                checkedArr.push(neighbor);
+                                            }
+                                        }
+                                    }
+                                    checked += 1;
+                                    checkingArr.splice(0,1);
+                                }
+                                if (checked == zoneArr.length || zoneArr.length <=2){
+                                    //checked all nodes, remove current node
+                                    for (var i = 0;i < zoneArr.length;i++){
+                                        if (zoneArr[i] == node){
+                                            node.sprite1.tint = 0xFFFFFF;
+                                            node.sprite2.tint = 0xFFFFFF;
+                                            zoneArr.splice(i,1);
+                                        }
+                                    }
+                                }
+                                MapGen.changesMade = true;
+                                cont = false;
+                                break;
+                            }
+
+                            //make sure the node is adjacent to at least 1 of the nodes in the current sZone then add
+                            if (cont){
+                                var adj = false;
+                                for (var i = 0; i < 6;i++){
+                                    var neighbor = this.map.getAxialNeighbor(node,i);
+                                    if (neighbor){
+                                        if (this.nodeInArr(neighbor,zoneArr)){
+                                            //add the node;
+                                            zoneArr.push(node);
+                                            MapGen.changesMade = true;
+                                            i = 6;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                         case 'los':
 
                             //Un-Comment below to show lines drawn to each node
@@ -1368,6 +1563,15 @@
                 tile: 'base',
                 deleted: false
             }
+        },
+
+        nodeInArr: function(node,arr){
+            for (var j = 0; j < arr.length;j++){
+                if (arr[j] == node){
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

@@ -46,7 +46,7 @@ function User() {
             this.inventory.setGameEngine(this.owner.gameEngine);
         
             if (typeof data.characters != 'undefined'){
-                this.characters = data.characters;
+                this.characters = [];
             }else{
                 this.characters = [];
             }
@@ -104,11 +104,20 @@ function User() {
             if (this.userData.userName != 'guest'){
                 //Player is not a guest - update DB
                 try{
+
                     var d = this.userData;
+                    var c = [];
+                    for (var i = 0; i < this.characters.length;i++){
+                       c.push(this.characters[i].getDBObj());
+                    }
+                    var inv = [];
+                    for (var i = 0; i < this.inventory.items.length;i++){
+                       inv.push(this.inventory.items[i].getClientData());
+                    }
                     mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
                         db.collection('users').update({userName: d.userName},{$set: {
-                            characters: d.characters,
-                            inventory: d.inventory,
+                            characters: c,
+                            inventory: inv,
                             chatLog: d.chatLog,
                             lastLogin: d.lastLogin
                         }});

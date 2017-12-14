@@ -60,6 +60,8 @@ var Unit = function(){
 
     this.mechanical = null; //a mechanical unit
     this.human = null; //a human unit
+
+    this.usedAbilitySlots = null;
 }
 
 Unit.prototype.init = function(data) {
@@ -74,6 +76,9 @@ Unit.prototype.init = function(data) {
 
     this.usedAbilitySlots = 0;
     
+    this.mechanical = false;
+    this.human = true;
+
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
         'id': 'hp',
@@ -291,6 +296,66 @@ Unit.prototype.init = function(data) {
     this.inventory.setGameEngine(this.owner.gameEngine);
 };
 
+Unit.prototype.getDBObj = function(){
+    var dbObj = {};
+    dbObj.id = this.id;
+    dbObj.name = this.name;
+    dbObj.sex = this.sex;
+    dbObj.maximumHealth = this.maximumHealth.base;
+    dbObj.maximumEnergy = this.maximumEnergy.base;
+    dbObj.move = this.move.base;
+    dbObj.jump = this.jump.base;
+    dbObj.power = this.power.base;
+    dbObj.skill = this.skill.base;
+    dbObj.abilitySlots = this.abilitySlots.base;
+    dbObj.usedAbilitySlots = this.usedAbilitySlots;
+    //shields
+    dbObj.maximumShields = 'test';
+    dbObj.shieldDelay = 'test';
+    dbObj.shieldRecharge = 'test';
+    //attributes
+    dbObj.strength = this.strength.base;
+    dbObj.intelligence = this.strength.base;
+    dbObj.endurance = this.endurance.base;
+    dbObj.willpower = this.willpower.base;
+    dbObj.agility = this.agility.base;
+    dbObj.dexterity = this.dexterity.base;
+    dbObj.charisma = this.charisma.base;
+
+    //level and class stuff?
+    dbObj.level = this.level;
+    dbObj.exp = this.exp;
+
+    //all the information about the unit's class
+    dbObj.classInfo = this.classInfo.getDBObj();
+    //game stats (games won; damage/healing done etc)
+    dbObj.gameInfo = this.gameInfo;
+
+    dbObj.inventory = [];
+    for (var i = 0; i < this.inventory.items.length;i++){
+        dbObj.inventory.push(this.inventory.items[i].getClientData());
+    }
+
+    dbObj.weapon = 'test';
+    dbObj.shield = 'test';
+    dbObj.accessory = 'test';
+
+    dbObj.physicalRes = this.physicalRes.base;
+    dbObj.heatRes = this.heatRes.base;
+    dbObj.coldRes = this.coldRes.base;
+    dbObj.acidRes = this.acidRes.base;
+    dbObj.poisonRes = this.poisonRes.base;
+    dbObj.electricRes = this.electricRes.base;
+    dbObj.pulseRes = this.pulseRes.base;
+    dbObj.radiationRes = this.radiationRes.base;
+    dbObj.gravityRes = this.gravityRes.base;
+
+    dbObj.mechanical = this.mechanical; //a mechanical unit
+    dbObj.human = this.human; //a human unit
+
+    dbObj.usedAbilitySlots = this.usedAbilitySlots;
+    return dbObj
+}
 Unit.prototype.setClass = function(c){
     try{
 

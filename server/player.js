@@ -222,13 +222,14 @@ Player.prototype.setupSocket = function() {
                 case 'itemToUnit':
                     console.log(data);
                     try{
+                        var unit = that.getUnit(data.unitID);
+                        console.log(unit.name);
                         //add item to unit
-
+                        unit.inventory.addItemUnit(that.user.inventory.items[data.itemIndex].itemID,1, true);
                         //remove item from player
-
-                        //send to client
+                        that.user.inventory.removeItem(data.itemIndex,1,true);
                     }catch(e){
-                        that.gameEngine.debug(that,{id: 'itemToUnitError', error: e.stack, dData: data});
+                        that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
                     }
                     break;
                 case 'itemToPlayer':
@@ -387,7 +388,9 @@ Player.prototype.setupSocket = function() {
                         console.log("saving new map");
                         db.collection('tactics_maps').insertOne({
                             name: that.mapData.name,
-                            mapData: that.mapData.mapData
+                            mapData: that.mapData.mapData,
+                            sz1: that.mapData.sz1,
+                            sz2: that.mapData.sz2
                         });
                     }else{
                         console.log("Map doesn't exist? eh?");
@@ -432,7 +435,9 @@ Player.prototype.setupSocket = function() {
                 }else{
                     db.collection('tactics_maps').insertOne({
                         name: data.name,
-                        mapData: data.mapData
+                        mapData: data.mapData,
+                        sz1: data.sz1,
+                        sz2: data.sz2
                     });
                     db.close();
                     that.gameEngine.maps.push(data.name);
@@ -450,7 +455,7 @@ Player.prototype.setupSocket = function() {
             db.collection('tactics_maps').find(query).toArray(function(err, arr) {
                 if (err) throw err;
                 if (arr.length == 1 ){
-                    that.gameEngine.queuePlayer(that,"editMap", {found:true,name:arr[0].name,mapData:arr[0].mapData});
+                    that.gameEngine.queuePlayer(that,"editMap", {found:true,name:arr[0].name,mapData:arr[0].mapData,sz1: arr[0].sz1,sz2:arr[0].sz2});
                 }else{
                     console.log('No map named ' + data.name);
                     that.gameEngine.queuePlayer(that,"editMap", {found: false});

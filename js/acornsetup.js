@@ -26,6 +26,7 @@
             });
             
             Acorn.Net.on('editMap', function (data) {
+                console.log(data);
                 if (data.found){
                   MapGen.data = data;
                   Acorn.changeState('MapGen');
@@ -110,6 +111,10 @@
                         Player.units[i].inventory.currentWeight = data.w;
                     }
                 }
+                if (Acorn.currentState == 'unitInventoryMenu'){
+                    UnitInventory.clear();
+                    UnitInventory.draw();
+                }
             });
             Acorn.Net.on('addItem', function (data) {
                 //adds an item to player inventory
@@ -125,6 +130,10 @@
                         }
                     }
                 }
+                if (Acorn.currentState == 'unitInventoryMenu'){
+                    UnitInventory.clear();
+                    UnitInventory.draw();
+                }
             });
             Acorn.Net.on('removeItemUnit', function (data) {
                 //adds an item to unit inventory
@@ -135,7 +144,7 @@
                         Player.units[i].inventory.currentWeight = data.w;
                     }
                 }
-                if (Acorn.currentState = 'unitInventoryMenu'){
+                if (Acorn.currentState == 'unitInventoryMenu'){
                     UnitInventory.clear();
                     UnitInventory.draw();
                 }
@@ -143,12 +152,16 @@
             Acorn.Net.on('removeItem', function (data) {
                 //adds an item to player inventory
                 console.log(data);
-                if (Player.inventory.items[data.index].amount > data.amt){
-                    Player.inventory.items[data.index].amount -= data.amt;
+                if (Player.inventory[data.index].amount > data.amt){
+                    Player.inventory[data.index].amount -= data.amt;
                 }else{
-                    Player.inventory.items.splice(data.index,1);
+                    Player.inventory.splice(data.index,1);
                 }
                 if (Acorn.currentState = 'unitInventoryMenu'){
+                    UnitInventory.clear();
+                    UnitInventory.draw();
+                }
+                if (Acorn.currentState == 'unitInventoryMenu'){
                     UnitInventory.clear();
                     UnitInventory.draw();
                 }

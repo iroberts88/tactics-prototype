@@ -142,13 +142,13 @@ Inventory.prototype.removeItem = function(index,amt,updateClient){
     //remove Item by index
     var item = this.items[index];
     if (item.amount > amt){
-        item.amount -= amount;
+        item.amount -= amt;
     }else{
         this._removeItem(index);
     }
     //send item data to client
     if (updateClient){
-        this.gameEngine.queuePlayer(this.owner.owner,'removeItem',{'index': index, 'amt': amt});
+        this.gameEngine.queuePlayer(this.owner,'removeItem',{'index': index, 'amt': amt});
     }
 }
 

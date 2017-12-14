@@ -36,7 +36,18 @@ ClassInfo.prototype.init = function(data){
 		this.ap = {};
 	}
 }
+ClassInfo.prototype.getDBObj = function(){
+	dbObj = {};
+	dbObj.currentClass = this.currentClass;
+	dbObj.baseClass = this.baseClass;
 
+	dbObj.allClassAbilities = this.allClassAbilities;
+
+	dbObj.learnedAbilities = this.learnedAbilities;
+	dbObj.equippedAbilities = this.equippedAbilities;
+	dbObj.ap = this.ap;
+	return dbObj;
+}
 ClassInfo.prototype.setClass = function(c){
 	try{
 		//TODO reduce attributes from old class?

@@ -37,6 +37,9 @@
             [+2, -1, -1], [+1, +1, -2], [-1, +2, -1], 
             [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
         ];
+
+        this.startZone1 = [];
+        this.startZone2 = [];
     }
 
     Map.prototype.init = function(data){
@@ -127,6 +130,14 @@
             }
             this.updateSprites(this.container2.children);
             Graphics.worldContainer.addChild(this.container2);
+            if (data.sz1){
+                for (var i = 0; i < data.sz1.length;i++){
+                    this.startZone1.push(this.axialMap[data.sz1[i].q][data.sz1[i].r]);
+                }
+                for (var i = 0; i < data.sz2.length;i++){
+                    this.startZone2.push(this.axialMap[data.sz2[i].q][data.sz2[i].r]);
+                }
+            }
         }catch(e){
         	console.log(e);
             console.log('Unable to initialize map');
@@ -511,13 +522,21 @@
     }
     //finds the diagonal neighbor of a cube node in <dir> direction
     Map.prototype.getCubeDiagonalNeighbor = function(cubeNode,direction){
-        var d = this.cubeDiagonals[direction];
-        return this.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
+        try{
+            var d = this.cubeDiagonals[direction];
+            return this.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
+        }catch(e){
+            return false;
+        }
     },
     //finds the neighbor of an axial node in <dir> direction
     Map.prototype.getAxialNeighbor = function(axialNode,direction){
-        var d = this.axialDirections[direction];
-        return this.axialMap[axialNode.x+d[0]][axialNode.y+d[1]];
+        try{
+            var d = this.axialDirections[direction];
+            return this.axialMap[parseInt(axialNode.q)+d[0]][parseInt(axialNode.r)+d[1]];
+        }catch(e){
+            return false;
+        }
     }
     Map.prototype.cubeRing = function(center,radius){
         //return a list of all nodes in a ring around a center node

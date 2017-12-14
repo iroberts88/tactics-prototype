@@ -4,9 +4,10 @@
     UnitInventory = {
         unitInfo: null,
         buttons: null,
-        currentPage: 'compound',
+        currentPage: null,
 
         init: function() {
+            this.currentPage = 'compound';
             Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
             this.style1 = AcornSetup.baseStyle;
 
