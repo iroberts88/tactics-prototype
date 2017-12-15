@@ -112,7 +112,7 @@ function User() {
                     }
                     var inv = [];
                     for (var i = 0; i < this.inventory.items.length;i++){
-                       inv.push(this.inventory.items[i].getClientData());
+                       inv.push(this.inventory.items[i].itemID);
                     }
                     mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
                         db.collection('users').update({userName: d.userName},{$set: {

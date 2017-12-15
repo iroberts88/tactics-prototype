@@ -40,7 +40,7 @@ var Unit = function(){
     //all the information about the unit's class
     this.classInfo = null;
     //game stats (games won; damage/healing done etc)
-    this.gameInfo = null;
+    this.gameStats = null;
 
     this.inventory = null;
 
@@ -309,10 +309,6 @@ Unit.prototype.getDBObj = function(){
     dbObj.skill = this.skill.base;
     dbObj.abilitySlots = this.abilitySlots.base;
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
-    //shields
-    dbObj.maximumShields = 'test';
-    dbObj.shieldDelay = 'test';
-    dbObj.shieldRecharge = 'test';
     //attributes
     dbObj.strength = this.strength.base;
     dbObj.intelligence = this.strength.base;
@@ -329,16 +325,16 @@ Unit.prototype.getDBObj = function(){
     //all the information about the unit's class
     dbObj.classInfo = this.classInfo.getDBObj();
     //game stats (games won; damage/healing done etc)
-    dbObj.gameInfo = this.gameInfo;
+    dbObj.gameStats = this.gameStats;
 
     dbObj.inventory = [];
     for (var i = 0; i < this.inventory.items.length;i++){
-        dbObj.inventory.push(this.inventory.items[i].getClientData());
+        dbObj.inventory.push(this.inventory.items[i].itemID);
     }
 
-    dbObj.weapon = 'test';
-    dbObj.shield = 'test';
-    dbObj.accessory = 'test';
+    dbObj.weapon = 'None';
+    dbObj.shield = 'None';
+    dbObj.accessory = 'None';
 
     dbObj.physicalRes = this.physicalRes.base;
     dbObj.heatRes = this.heatRes.base;

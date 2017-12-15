@@ -41,8 +41,6 @@ ClassInfo.prototype.getDBObj = function(){
 	dbObj.currentClass = this.currentClass;
 	dbObj.baseClass = this.baseClass;
 
-	dbObj.allClassAbilities = this.allClassAbilities;
-
 	dbObj.learnedAbilities = this.learnedAbilities;
 	dbObj.equippedAbilities = this.equippedAbilities;
 	dbObj.ap = this.ap;
