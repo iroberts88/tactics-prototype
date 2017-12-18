@@ -71,13 +71,13 @@ Unit.prototype.init = function(data) {
     this.owner = data.owner;
     this.id = data.id;
 
-    this.level = 1;
-    this.exp = 0;
+    this.level = (typeof data.level == 'undefined') ? 1 : data.level;
+    this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
 
-    this.usedAbilitySlots = 0;
+    this.usedAbilitySlots = (typeof data.usedAbiliySlots == 'undefined') ? 0 : data.usedAbiliySlots;
     
-    this.mechanical = false;
-    this.human = true;
+    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
+    this.human = (typeof data.human == 'undefined') ? true : data.human;
 
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
@@ -287,7 +287,12 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 100
     });
-
+    for (var i in data){
+        if (this[i] instanceof Attribute){
+            this[i].base = data[i];
+            this[i].set();
+        }
+    }
     var Inventory = require('./inventory.js').Inventory;
     this.inventory = new Inventory();
     this.inventory.init({
@@ -298,7 +303,6 @@ Unit.prototype.init = function(data) {
 
 Unit.prototype.getDBObj = function(){
     var dbObj = {};
-    dbObj.id = this.id;
     dbObj.name = this.name;
     dbObj.sex = this.sex;
     dbObj.maximumHealth = this.maximumHealth.base;
@@ -351,6 +355,35 @@ Unit.prototype.getDBObj = function(){
 
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
     return dbObj
+}
+Unit.prototype.getClientData = function(){
+    //create object to send to the client
+    var data = {}
+    for (var a in this){
+        if (this[a] instanceof Attribute){
+            data[a] = this[a].value;
+        }else{
+            if (a != 'owner'){
+                data[a] = this[a];
+            }
+        }
+    }
+    data.name = this.name;
+    data.sex = this.sex
+    data.id = this.id;
+    data.classInfo = {};
+    for (var cI in this.classInfo){
+        if (cI != 'unit'){data.classInfo[cI] = this.classInfo[cI]}
+    }
+    data.inventory = {};
+    data.inventory.items = [];
+    data.inventory.currentWeight = this.inventory.currentWeight;
+    data.inventory.maxItemPile = this.inventory.maxItemPile;
+    for (var i = 0; i < this.inventory.items.length;i++){
+        data.inventory.items.push(this.inventory.items[i].getClientData());
+    }
+    data.inventory.maxWeight = this.inventory.maxWeight.value;
+    return data;
 }
 Unit.prototype.setClass = function(c){
     try{

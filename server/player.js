@@ -281,32 +281,7 @@ Player.prototype.setupSocket = function() {
                 char.inventory.addItemUnit('gun_sidearm')
                 char.inventory.addItemUnit('weapon_combatKnife')
                 //create object to send to the client
-                var Ch = {}
-                for (var a in char){
-                    if (char[a] instanceof Attribute){
-                        Ch[a] = char[a].value;
-                    }else{
-                        if (a != 'owner'){
-                            Ch[a] = char[a];
-                        }
-                    }
-                }
-                Ch.name = char.name;
-                Ch.sex = char.sex
-                Ch.id = char.id;
-                Ch.classInfo = {};
-                for (var cI in char.classInfo){
-                    if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
-                }
-                Ch.inventory = {};
-                Ch.inventory.items = [];
-                Ch.inventory.currentWeight = char.inventory.currentWeight;
-                Ch.inventory.maxItemPile = char.inventory.maxItemPile;
-                for (var i = 0; i < char.inventory.items.length;i++){
-                    Ch.inventory.items.push(char.inventory.items[i].getClientData());
-                }
-                Ch.inventory.maxWeight = char.inventory.maxWeight.value;
-                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
+                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                 that.user.characters.push(char);
             }catch(e){
                 that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
@@ -344,32 +319,8 @@ Player.prototype.setupSocket = function() {
                 char.classInfo.setClass(cl);
                 char.inventory.addItemUnit('gun_sidearm')
                 char.inventory.addItemUnit('weapon_combatKnife')
-                var Ch = {}
-                for (var a in char){
-                    if (char[a] instanceof Attribute){
-                        Ch[a] = char[a].value;
-                    }else{
-                        if (a != 'owner'){
-                            Ch[a] = char[a];
-                        }
-                    }
-                }
-                Ch.name = char.name;
-                Ch.sex = char.sex
-                Ch.id = char.id;
-                Ch.classInfo = {};
-                for (var cI in char.classInfo){
-                    if (cI != 'unit'){Ch.classInfo[cI] = char.classInfo[cI]}
-                }
-                Ch.inventory = {};
-                Ch.inventory.items = [];
-                Ch.inventory.currentWeight = char.inventory.currentWeight;
-                Ch.inventory.maxItemPile = char.inventory.maxItemPile;
-                for (var i = 0; i < char.inventory.items.length;i++){
-                    Ch.inventory.items.push(char.inventory.items[i].getClientData());
-                }
-                Ch.inventory.maxWeight = char.inventory.maxWeight.value;
-                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': Ch});
+               
+                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                 that.user.characters.push(char);
             }catch(e){
                 that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});

@@ -50,7 +50,6 @@
 
             Acorn.Net.on('loggedIn', function (data) {
               Player.userData = data;
-              Player.init(data);
               Settings.toggleCredentials(false);
               Acorn.changeState('mainMenu');
             });

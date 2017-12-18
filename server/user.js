@@ -4,7 +4,9 @@
 //----------------------------------------------------------------
 
 var mongo = require('mongodb').MongoClient,
-    Inventory = require('./inventory.js').Inventory;
+    Inventory = require('./inventory.js').Inventory,
+    Unit = require('./unit.js').Unit,
+    ClassInfo = require('./classinfo.js').ClassInfo;
 
 function User() {
     
@@ -44,11 +46,26 @@ function User() {
                 owner: this.owner
             });
             this.inventory.setGameEngine(this.owner.gameEngine);
-        
-            if (typeof data.characters != 'undefined'){
-                this.characters = [];
-            }else{
-                this.characters = [];
+            if (typeof data.tactics.inventory != 'undefined'){
+                for (var i = 0; i < data.tactics.inventory.length;i++){
+                    this.inventory.addItem(data.tactics.inventory[i][0],data.tactics.inventory[i][1],true);
+                }
+            }
+            this.characters = [];
+            if (typeof data.tactics.characters != 'undefined'){
+                for (var i = 0; i < data.tactics.characters.length; i++){
+                    var char = new Unit();
+                    //init unit
+                    data.tactics.characters[i].owner = this.owner;
+                    data.tactics.characters[i].id = this.owner.gameEngine.getId();
+                    //init classData
+                    //char.classInfo = new ClassInfo();
+                    //char.classInfo.init({unit: char, 
+                    //    learned: });
+                    //char.classInfo.setBaseClass();
+                    //char.classInfo.setClass();
+                    console.log(char);
+                }
             }
         },
         
@@ -112,12 +129,14 @@ function User() {
                     }
                     var inv = [];
                     for (var i = 0; i < this.inventory.items.length;i++){
-                       inv.push(this.inventory.items[i].itemID);
+                       inv.push([this.inventory.items[i].itemID,this.inventory.items[i].amount]);
                     }
                     mongo.connect('mongodb://127.0.0.1/lithiumAve', function(err, db) {
                         db.collection('users').update({userName: d.userName},{$set: {
-                            characters: c,
-                            inventory: inv,
+                            tactics: {
+                                characters: c,
+                                inventory: inv
+                            },
                             chatLog: d.chatLog,
                             lastLogin: d.lastLogin
                         }});
