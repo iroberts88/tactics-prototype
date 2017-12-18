@@ -45,27 +45,34 @@ function User() {
             this.inventory.init({
                 owner: this.owner
             });
-            this.inventory.setGameEngine(this.owner.gameEngine);
-            if (typeof data.tactics.inventory != 'undefined'){
-                for (var i = 0; i < data.tactics.inventory.length;i++){
-                    this.inventory.addItem(data.tactics.inventory[i][0],data.tactics.inventory[i][1],true);
-                }
-            }
             this.characters = [];
-            if (typeof data.tactics.characters != 'undefined'){
-                for (var i = 0; i < data.tactics.characters.length; i++){
-                    var char = new Unit();
-                    //init unit
-                    data.tactics.characters[i].owner = this.owner;
-                    data.tactics.characters[i].id = this.owner.gameEngine.getId();
-                    //init classData
-                    //char.classInfo = new ClassInfo();
-                    //char.classInfo.init({unit: char, 
-                    //    learned: });
-                    //char.classInfo.setBaseClass();
-                    //char.classInfo.setClass();
-                    console.log(char);
+            this.inventory.setGameEngine(this.owner.gameEngine);
+            try{
+                if (typeof data.tactics.inventory != 'undefined'){
+                    for (var i = 0; i < data.tactics.inventory.length;i++){
+                        this.inventory.addItem(data.tactics.inventory[i][0],data.tactics.inventory[i][1],true);
+                    }
                 }
+                if (typeof data.tactics.characters != 'undefined'){
+                    for (var i = 0; i < data.tactics.characters.length; i++){
+                        var char = new Unit();
+                        //init unit
+                        data.tactics.characters[i].owner = this.owner;
+                        data.tactics.characters[i].id = this.owner.gameEngine.getId();
+                        char.init(data.tactics.characters[i]);
+                        char.classInfo = new ClassInfo();
+                        char.classInfo.init({unit: char, 
+                            learned: data.tactics.characters[i].classInfo.learnedAbilities,
+                            equipped: data.tactics.characters[i].classInfo.equippedAbilities,
+                            ap: data.tactics.characters[i].classInfo.ap});
+                        char.classInfo.setBaseClass(data.tactics.characters[i].classInfo.baseId);
+                        char.classInfo.setClass(data.tactics.characters[i].classInfo.classId);
+                        this.owner.gameEngine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
+                        this.characters.push(char);
+                    }
+                }
+            }catch(e){
+                console.log(e);
             }
         },
         

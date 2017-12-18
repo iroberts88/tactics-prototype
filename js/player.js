@@ -2,11 +2,15 @@
 (function(window) {
     Player = {
     	userData: null,
-    	units: [],
-    	inventory: [],
+    	units: null,
+    	inventory: null,
         globalCD: 0.15,
         globalCDTicker: 0,
 
+        init: function(data){
+            this.units = [];
+            this.inventory = [];
+        },
         addNewUnit: function(data){
             var unit = new Unit();
             unit.init(data);

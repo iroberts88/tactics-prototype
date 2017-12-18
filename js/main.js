@@ -132,6 +132,7 @@ function init() {
     //Init Console
     ChatConsole.init();
 
+    Player.init();
     //Init Touch Events
     Graphics.app.stage.on('touchstart', Acorn.Input.handleTouchEvent).on('touchmove', Acorn.Input.handleTouchEvent);
 

@@ -5,7 +5,8 @@ var ClassInfo = function(){
 
 	this.currentClass = null;
 	this.baseClass = null;
-
+	this.baseId = null;
+	this.classId = null;
 	this.allClassAbilities = null;
 
 	this.learnedAbilities = null;
@@ -15,13 +16,13 @@ var ClassInfo = function(){
 
 ClassInfo.prototype.init = function(data){
 	this.unit = data.unit;
-	if (typeof data.learnedAbilities != 'undefined'){
-		this.learnedAbilities = data.learnedAbilities;
+	if (typeof data.learned != 'undefined'){
+		this.learnedAbilities = data.learned;
 	}else{
 		this.learnedAbilities = {};
 	}
-	if (typeof data.equippedAbilities != 'undefined'){
-		this.equippedAbilities = data.equippedAbilities;
+	if (typeof data.equipped != 'undefined'){
+		this.equippedAbilities = data.equipped;
 	}else{
 		this.equippedAbilities = {};
 	}
@@ -40,7 +41,8 @@ ClassInfo.prototype.getDBObj = function(){
 	dbObj = {};
 	dbObj.currentClass = this.currentClass;
 	dbObj.baseClass = this.baseClass;
-
+	dbObj.baseId = this.baseId;
+	dbObj.classId = this.classId;
 	dbObj.learnedAbilities = this.learnedAbilities;
 	dbObj.equippedAbilities = this.equippedAbilities;
 	dbObj.ap = this.ap;
@@ -51,6 +53,7 @@ ClassInfo.prototype.setClass = function(c){
 		//TODO reduce attributes from old class?
 
 		var charClass = this.unit.owner.gameEngine.classes[c]
+		this.classId = c;
 		this.currentClass = charClass.name;
 		for (var stat in charClass.attributes){
 			this.unit[stat].nMod += charClass.attributes[stat];
@@ -77,9 +80,10 @@ ClassInfo.prototype.setBaseClass = function(c){
 	try{
 		var charClass = this.unit.owner.gameEngine.classes[c];
 		this.baseClass = charClass.name;
+		this.baseId = c;
 		this.allClassAbilities[charClass.name] = charClass.abilities;
 		for (var stat in charClass.baseAttr){
-			this.unit[stat].base += charClass.baseAttr[stat];
+			this.unit[stat].nMod += charClass.baseAttr[stat];
 			this.unit[stat].set();
 		}
 		if (typeof this.ap[charClass.name] == 'undefined'){

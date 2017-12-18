@@ -98,11 +98,13 @@
               }catch(e){}
             });
             Acorn.Net.on('addNewUnit', function (data) {
+                console.log('adding new unit')
                 console.log(data);
                 Player.addNewUnit(data.unit);
             });
             Acorn.Net.on('addItemUnit', function (data) {
                 //adds an item to unit inventory
+                console.log('adding new item to unit inventory')
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
                     if (data['unit'] == Player.units[i].id){
@@ -117,6 +119,7 @@
             });
             Acorn.Net.on('addItem', function (data) {
                 //adds an item to player inventory
+                console.log('adding item to player inventory')
                 console.log(data);
                 if (data.item){
                     //new item - add
@@ -136,6 +139,7 @@
             });
             Acorn.Net.on('removeItemUnit', function (data) {
                 //adds an item to unit inventory
+                console.log('removing item from unit inventory')
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
                     if (data['unit'] == Player.units[i].id){
@@ -150,6 +154,7 @@
             });
             Acorn.Net.on('removeItem', function (data) {
                 //adds an item to player inventory
+                console.log('removing item from player inventory')
                 console.log(data);
                 if (Player.inventory[data.index].amount > data.amt){
                     Player.inventory[data.index].amount -= data.amt;
@@ -166,10 +171,12 @@
                 }
             });
             Acorn.Net.on('deleteUnit', function (data) {
+                console.log('deleting unit');
                 console.log(data);
                 Player.deleteUnit(data);
             });
             Acorn.Net.on('setUnitStat', function (data) {
+                console.log('setting unit stat');
                 console.log(data);
                 Player.setUnitStat(data);
             });
@@ -185,7 +192,8 @@
                 }
             });
             Acorn.Net.on('debug', function (data) {
-              console.log(data);
+                console.log('sever ERROR debug');
+                console.log(data);
             });
 
 
@@ -204,6 +212,7 @@
             Acorn.addState({
                 stateId: 'loginScreen',
                 init: function(){
+                    Player.init();
                     Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
                     console.log('Initializing login screen');
                     document.body.style.cursor = 'default';

@@ -32,7 +32,7 @@ Player.prototype.init = function (data) {
 Player.prototype.getUnit = function(id){
     //returns a unit with the given ID
     for (var i = 0; i < this.user.characters.length;i++){
-        if (this.user.characters[i].id = id){
+        if (this.user.characters[i].id == id){
             return this.user.characters[i];
         }
     }
@@ -56,7 +56,6 @@ Player.prototype.setupSocket = function() {
     var that = this;
 
     this.socket.on('playerUpdate', function (data) {
-        console.log(data);
         if (that.gameSession){
             //if the player is in a gameSession - deal with received data
            switch(data.command){
@@ -64,6 +63,7 @@ Player.prototype.setupSocket = function() {
            }
         }else{
             //player is not in a game currently - main menu commands
+            console.log(data);
             switch(data.command){
                 case 'learnAbility':
                     try{
@@ -220,12 +220,11 @@ Player.prototype.setupSocket = function() {
                     }
                     break;
                 case 'itemToUnit':
-                    console.log(data);
                     try{
                         var unit = that.getUnit(data.unitID);
-                        console.log(unit.name);
+                        var itemID = that.user.inventory.items[data.itemIndex].itemID;
                         //add item to unit
-                        unit.inventory.addItemUnit(that.user.inventory.items[data.itemIndex].itemID,1, true);
+                        unit.inventory.addItemUnit(itemID,1, true);
                         //remove item from player
                         that.user.inventory.removeItem(data.itemIndex,1,true);
                     }catch(e){
@@ -233,12 +232,13 @@ Player.prototype.setupSocket = function() {
                     }
                     break;
                 case 'itemToPlayer':
-                    console.log(data);
                     try{
                         var unit = that.getUnit(data.unitID);
-                        console.log(unit.name);
+                        console.log(unit.inventory.items.length);
+                        console.log(data.itemIndex);
+                        itemID = unit.inventory.items[data.itemIndex].itemID;
                         //add item to player
-                        that.user.inventory.addItem(unit.inventory.items[data.itemIndex].itemID,1, true);
+                        that.user.inventory.addItem(itemID,1, true);
                         //remove item from unit
                         unit.inventory.removeItemUnit(data.itemIndex,true);
                     }catch(e){
@@ -268,7 +268,8 @@ Player.prototype.setupSocket = function() {
                     id: that.gameEngine.getId(),
                     owner: that,
                     name: data.name,
-                    sex: data.sex
+                    sex: data.sex,
+                    inventory: ['gun_sidearm','weapon_combatKnife']
                 });
                 for (var i in data.stats){
                     char[i].base = data.stats[i];
@@ -278,8 +279,6 @@ Player.prototype.setupSocket = function() {
                 char.classInfo.init({unit: char});
                 char.classInfo.setBaseClass(data.class);
                 char.classInfo.setClass(data.class);
-                char.inventory.addItemUnit('gun_sidearm')
-                char.inventory.addItemUnit('weapon_combatKnife')
                 //create object to send to the client
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                 that.user.characters.push(char);
@@ -302,7 +301,8 @@ Player.prototype.setupSocket = function() {
                     id: that.gameEngine.getId(),
                     owner: that,
                     name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
-                    sex: sex
+                    sex: sex,
+                    inventory: ['gun_sidearm','weapon_combatKnife']
                 });
                 var classes = ['soldier','medic','scout','tech'];
                 var cl = classes[Math.floor(Math.random()*classes.length)];
@@ -317,8 +317,6 @@ Player.prototype.setupSocket = function() {
                 char.classInfo.init({unit: char});
                 char.classInfo.setBaseClass(cl);
                 char.classInfo.setClass(cl);
-                char.inventory.addItemUnit('gun_sidearm')
-                char.inventory.addItemUnit('weapon_combatKnife')
                
                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                 that.user.characters.push(char);

@@ -299,6 +299,9 @@ Unit.prototype.init = function(data) {
         owner: this
     });
     this.inventory.setGameEngine(this.owner.gameEngine);
+    for (var i = 0; i < data.inventory.length;i++){
+        this.inventory.addItemUnit(data.inventory[i]);
+    }
 };
 
 Unit.prototype.getDBObj = function(){
