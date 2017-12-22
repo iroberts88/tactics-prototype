@@ -234,8 +234,6 @@ Player.prototype.setupSocket = function() {
                 case 'itemToPlayer':
                     try{
                         var unit = that.getUnit(data.unitID);
-                        console.log(unit.inventory.items.length);
-                        console.log(data.itemIndex);
                         itemID = unit.inventory.items[data.itemIndex].itemID;
                         //add item to player
                         that.user.inventory.addItem(itemID,1, true);
@@ -248,8 +246,21 @@ Player.prototype.setupSocket = function() {
                 case 'equipItem':
                     console.log(data);
                     try{
+                        var unit = that.getUnit(data.unitID);
+                        //add item to player
+                        unit.inventory.equip(data.itemIndex, true);
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'equipItemError', error: e.stack, dData: data});
+                    }
+                    break;
+                case 'unEquipItem':
+                    console.log(data);
+                    try{
+                        var unit = that.getUnit(data.unitID);
+                        //add item to player
+                        unit.inventory.unEquip(data.itemIndex, true);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'unEquipItemError', error: e.stack, dData: data});
                     }
                     break;
             }

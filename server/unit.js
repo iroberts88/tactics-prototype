@@ -287,12 +287,16 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 100
     });
-    for (var i in data){
-        if (this[i] instanceof Attribute){
-            this[i].base = data[i];
-            this[i].set();
-        }
-    }
+
+    this.expMod = new Attribute();
+    this.expMod.init({
+        'id': 'expMod',
+        'owner': this,
+        'value': 1,
+        'min': 0,
+        'max': 10
+    });
+
     var Inventory = require('./inventory.js').Inventory;
     this.inventory = new Inventory();
     this.inventory.init({
@@ -302,6 +306,14 @@ Unit.prototype.init = function(data) {
     for (var i = 0; i < data.inventory.length;i++){
         this.inventory.addItemUnit(data.inventory[i]);
     }
+
+    for (var i in data){
+        if (this[i] instanceof Attribute){
+            this[i].base = data[i];
+            this[i].set();
+        }
+    }
+    this.inventory.maxWeight.set();
 };
 
 Unit.prototype.getDBObj = function(){
@@ -314,6 +326,7 @@ Unit.prototype.getDBObj = function(){
     dbObj.jump = this.jump.base;
     dbObj.power = this.power.base;
     dbObj.skill = this.skill.base;
+    dbObj.speed = this.speed.base;
     dbObj.abilitySlots = this.abilitySlots.base;
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
     //attributes
@@ -375,6 +388,9 @@ Unit.prototype.getClientData = function(){
     data.sex = this.sex
     data.id = this.id;
     data.classInfo = {};
+    data.weapon = this.weapon;
+    data.shield = this.shield;
+    data.accessory = this.accessory;
     for (var cI in this.classInfo){
         if (cI != 'unit'){data.classInfo[cI] = this.classInfo[cI]}
     }
@@ -557,6 +573,9 @@ Unit.prototype.getStat = function(id){
             case 'wgt':
                 return this.inventory.maxWeight;
                 break;
+            case 'expMod':
+                return this.expMod;
+                break;
         }
     }catch(e){
         console.log("unable to get stat " + id);
@@ -566,7 +585,7 @@ Unit.prototype.getStat = function(id){
 
 Unit.prototype.modStat = function(id,amt){
     try{
-        this.getStat(id).base += amt;
+        this.getStat(id).nMod += amt;
         this.getStat(id).set(true);
     }catch(e){
         console.log("unable to mod stat " + id);

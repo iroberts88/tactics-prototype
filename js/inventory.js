@@ -25,21 +25,6 @@
     }
 
 
-    Inventory.prototype.equipItem = function(index){
-        
-    }
-
-    Inventory.prototype.addItem = function(item,amount){
-        
-    }
-
-
-
-    Inventory.prototype._removeItem = function(index){
-        //remove Item and change equipped it necessary
-        //this.items.splice(index,1);
-    }
-
     Inventory.prototype.contains = function(id){
         //check if Inventory has item
         //returns an array [contains item,at index]
@@ -51,10 +36,6 @@
             }
         }
         return b;
-    }
-
-    Inventory.prototype.sortByType = function(dir){
-       
     }
 
     window.Inventory = Inventory;

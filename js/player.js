@@ -32,6 +32,22 @@
                 }
             }
             Characters.refresh = true;
+        },
+        equipItem: function(data){
+            for(var i = 0; i < this.units.length;i++){
+                if (this.units[i].id == data.unit){
+                    this.units[i].equip(data.index);
+                }
+            }
+            UnitInventory.refresh = true;
+        },
+        unEquipItem: function(data){
+            for(var i = 0; i < this.units.length;i++){
+                if (this.units[i].id == data.unit){
+                    this.units[i].unEquip(data.index);
+                }
+            }
+            UnitInventory.refresh = true;
         }
 
     }

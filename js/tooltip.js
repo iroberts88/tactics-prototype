@@ -177,10 +177,10 @@
         //item = the item to work on
 
         var ttArray = [{text: '<' + item.name + '>'}];
+        if (typeof item.weight != 'undefined'){ttArray.push({text: '{Weight: }' + item.weight});}
         if (typeof item.description != 'undefined'){ttArray.push({text: item.description});}
         if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + Math.round(item.eqData.damage/10)});}
         if (typeof item.eqData.rangeMin != 'undefined'){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
-        if (typeof item.weight != 'undefined'){ttArray.push({text: '{Weight: }' + item.weight});}
         if (typeof item.classes != 'undefined'){
             var cText = '';
             if (item.classes == 'ALL'){
@@ -195,6 +195,14 @@
                 }
             }
             ttArray.push({text: '{Classes: }' + cText});
+        }
+        if (typeof item.onUseText != 'undefined'){
+            ttArray.push({text: '{On use: }' + item.onUseText});
+        }
+        if (typeof item.onEquipText != 'undefined'){
+            for (var i = 0; i < item.onEquipText.length;i++){
+                ttArray.push({text: item.onEquipText[i]});
+            }
         }
         element.tooltip.set({
             owner: element,

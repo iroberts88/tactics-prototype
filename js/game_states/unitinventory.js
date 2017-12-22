@@ -5,6 +5,7 @@
         unitInfo: null,
         buttons: null,
         currentPage: null,
+        refresh: false,
 
         init: function() {
             this.currentPage = 'compound';
@@ -295,34 +296,65 @@
                 this.buttons.push(moveButton);
                 Graphics.uiContainer.addChild(moveButton);
                 //if type == gun/weapon/shield/accessory add an equip button
-                if (item.type == 'gun' || item.type == 'weapon' || item.type == 'accessory'){
-                    var equipButton = Graphics.makeUiElement({
-                        text: 'E',
-                        style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
-                        position: [0,itemText.position.y],
-                        clickFunc: function onClick(e){
-                            //attempt to move the item from unit inventory to player inventory
-                            Acorn.Net.socket_.emit('playerUpdate',{
-                                'command': 'equipItem',
-                                'unitID': e.currentTarget.unitID,
-                                'itemIndex': e.currentTarget.itemIndex
-                            });
-                        }
-                    })
-                    equipButton.unitID = this.unitInfo.id;
-                    equipButton.itemIndex = i;
-                    equipButton.style.fontSize = 20;
-                    equipButton.position.x = moveButton.position.x - 40;
-                    //tooltip setup
-                    equipButton.tooltip = new Tooltip();
-                    var ttArray = [{text: 'Equip the <' + item.name + '>'}];
-                    equipButton.tooltip.set({
-                        owner: equipButton,
-                        ttArray: ttArray,
-                        alpha: 0.5
-                    });
-                    this.buttons.push(equipButton);
-                    Graphics.uiContainer.addChild(equipButton);
+                if (item.type == 'shield' || item.type == 'weapon' || item.type == 'accessory' || item.type == 'gun' ){
+                    if (this.unitInfo.weapon == i || this.unitInfo.shield == i || this.unitInfo.accessory == i){
+                        itemText.style.fill = 'gray';
+                        var unEquipButton = Graphics.makeUiElement({
+                            text: 'X',
+                            style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
+                            position: [0,itemText.position.y],
+                            clickFunc: function onClick(e){
+                                //attempt to move the item from unit inventory to player inventory
+                                Acorn.Net.socket_.emit('playerUpdate',{
+                                    'command': 'unEquipItem',
+                                    'unitID': e.currentTarget.unitID,
+                                    'itemIndex': e.currentTarget.itemIndex
+                                });
+                            }
+                        })
+                        unEquipButton.unitID = this.unitInfo.id;
+                        unEquipButton.itemIndex = i;
+                        unEquipButton.style.fontSize = 20;
+                        unEquipButton.position.x = moveButton.position.x - 40;
+                        //tooltip setup
+                        unEquipButton.tooltip = new Tooltip();
+                        var ttArray = [{text: 'Un-Equip the <' + item.name + '>'}];
+                        unEquipButton.tooltip.set({
+                            owner: unEquipButton,
+                            ttArray: ttArray,
+                            alpha: 0.5
+                        });
+                        this.buttons.push(unEquipButton);
+                        Graphics.uiContainer.addChild(unEquipButton);
+                    }else{
+                        var equipButton = Graphics.makeUiElement({
+                            text: 'E',
+                            style: this.style1,interactive: true,buttonMode: true, buttonGlow: true,
+                            position: [0,itemText.position.y],
+                            clickFunc: function onClick(e){
+                                //attempt to move the item from unit inventory to player inventory
+                                Acorn.Net.socket_.emit('playerUpdate',{
+                                    'command': 'equipItem',
+                                    'unitID': e.currentTarget.unitID,
+                                    'itemIndex': e.currentTarget.itemIndex
+                                });
+                            }
+                        })
+                        equipButton.unitID = this.unitInfo.id;
+                        equipButton.itemIndex = i;
+                        equipButton.style.fontSize = 20;
+                        equipButton.position.x = moveButton.position.x - 40;
+                        //tooltip setup
+                        equipButton.tooltip = new Tooltip();
+                        var ttArray = [{text: 'Equip the <' + item.name + '>'}];
+                        equipButton.tooltip.set({
+                            owner: equipButton,
+                            ttArray: ttArray,
+                            alpha: 0.5
+                        });
+                        this.buttons.push(equipButton);
+                        Graphics.uiContainer.addChild(equipButton);
+                    }
                 }
             }
             //add text/buttons for all player items
@@ -401,6 +433,11 @@
             
         },
         update: function(dt){
+            if (this.refresh){
+                this.clear();
+                this.draw();
+                this.refresh = false;
+            }
         }
 
     }

@@ -2,7 +2,8 @@
 var Item = require('./item.js').Item,
     Attribute = require('./attribute.js').Attribute;
     Unit = require('./unit.js').Unit,
-    Player = require('./player.js').Player
+    Player = require('./player.js').Player,
+    Actions = require('./actions.js').Actions
 
 
 var Inventory = function () {
@@ -46,7 +47,6 @@ Inventory.prototype.init = function(data){
             formula: function(){return 999999;}
         });
     }
-    this.maxWeight.set();
 }
 
 Inventory.prototype.addItemUnit = function(id,amt,updateClient){
@@ -120,11 +120,150 @@ Inventory.prototype.changeWeight = function(amt,mult){
     if (typeof mult === 'undefined'){mult = 1;}
     var cf = 10;
     this.currentWeight = ((this.currentWeight*cf + (amt*cf)*mult) / cf);
+    this.owner.speed.set();
 }
 
 
-Inventory.prototype.equipItem = function(index){
+Inventory.prototype.equip = function(index,updateClient){
+    //attempts to equip the item at the given index
+    try{
+        var item = this.items[index];
+        if (item.type == 'weapon' || item.type == 'gun'){
+            try{
+                if (typeof this.owner.weapon == 'number'){
+                    var itemToUnequip = this.items[this.owner.weapon];
+                    for (var i = 0; i < itemToUnequip.eqData.onEquip.length;i++){
+                        itemToUnequip.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(itemToUnequip.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,itemToUnequip.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            try{
+                for (var i = 0; i < item.eqData.onEquip.length;i++){
+                    item.eqData.onEquip[i].reverse = false;
+                    var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                    onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'weaponEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            this.owner.weapon = index;
+        }else if (item.type == 'shield'){
+            try{
+                if (typeof this.owner.shield == 'number'){
+                    var itemToUnequip = this.items[this.owner.shield];
+                    for (var i = 0; i < itemToUnequip.eqData.onEquip.length;i++){
+                        itemToUnequip.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(itemToUnequip.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,itemToUnequip.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            try{
+                for (var i = 0; i < item.eqData.onEquip.length;i++){
+                    item.eqData.onEquip[i].reverse = false;
+                    var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                    onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'shieldEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            this.owner.shield = index;
+        }else if (item.type == 'accessory'){
+            try{
+                if (typeof this.owner.accessory == 'number'){
+                    var itemToUnequip = this.items[this.owner.accessory];
+                    for (var i = 0; i < itemToUnequip.eqData.onEquip.length;i++){
+                        itemToUnequip.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(itemToUnequip.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,itemToUnequip.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            try{
+                for (var i = 0; i < item.eqData.onEquip.length;i++){
+                    item.eqData.onEquip[i].reverse = false;
+                    var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                    onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryEquipActionError', error: e.stack, iterator: i,item: item,a: Actions});
+            }
+            this.owner.accessory = index;
+        }else{
+            return;
+        }
     
+    //update client
+        if (updateClient){
+            this.gameEngine.queuePlayer(this.owner.owner,'equipItem',{'unit': this.owner.id, 'index': index});
+        }
+    }catch(e){
+        this.gameEngine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+    }
+}
+
+Inventory.prototype.unEquip = function(index,updateClient){
+    //attempts to equip the item at the given index
+    try{
+        var item = this.items[index];
+        if (item.type == 'weapon' || item.type == 'gun'){
+            try{
+                if (typeof this.owner.weapon == 'number'){
+                    for (var i = 0; i < item.eqData.onEquip.length;i++){
+                        item.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            this.owner.weapon = null;
+        }else if (item.type == 'shield'){
+            try{
+                if (typeof this.owner.shield == 'number'){
+                    for (var i = 0; i < item.eqData.onEquip.length;i++){
+                        item.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            this.owner.shield = null;
+        }else if (item.type == 'accessory'){
+            try{
+                if (typeof this.owner.accessory == 'number'){
+                    for (var i = 0; i < item.eqData.onEquip.length;i++){
+                        item.eqData.onEquip[i].reverse = true;
+                        var onEquipFunc = Actions.getAction(item.eqData.onEquip[i].name);
+                        onEquipFunc(this.owner,item.eqData.onEquip[i]);
+                    }
+                }
+            }catch(e){
+                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+            }
+            this.owner.accessory = null;
+        }else{
+            return;
+        }
+    
+    //update client
+        if (updateClient){
+            this.gameEngine.queuePlayer(this.owner.owner,'unEquipItem',{'unit': this.owner.id, 'index': index});
+        }
+    }catch(e){
+        this.gameEngine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+    }
 }
 
 Inventory.prototype.removeItemUnit = function(index,updateClient){
@@ -135,6 +274,21 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
     //send item data to client
     if (updateClient){
         this.gameEngine.queuePlayer(this.owner.owner,'removeItemUnit',{'unit': this.owner.id, 'index': index, 'w': this.currentWeight});
+    }
+    if (this.owner.weapon > index){
+        this.owner.weapon -= 1;
+    }else if (this.owner.weapon == index){
+        this.owner.weapon = null;
+    }
+    if (this.owner.shield > index){
+        this.owner.shied -= 1;
+    }else if (this.owner.shield == index){
+        this.owner.shield = null;
+    }
+    if (this.owner.accessory > index){
+        this.owner.accessory -= 1;
+    }else if (this.owner.accessory == index){
+        this.owner.accessory = null;
     }
 }
 

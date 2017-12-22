@@ -99,8 +99,25 @@
         this.classInfo = data.classInfo;
     };
 
-    Unit.prototype.update = function(dt) {
-
+    Unit.prototype.equip = function(index) {
+        var item = this.inventory.items[index];
+        if (item.type == 'weapon' || item.type == 'gun'){
+            this.weapon = index;
+        }else if (item.type == 'shield'){
+            this.shield = index;
+        }else if (item.type == 'accessory'){
+            this.accessory = index;
+        }
+    };
+    Unit.prototype.unEquip = function(index) {
+        var item = this.inventory.items[index];
+        if (item.type == 'weapon' || item.type == 'gun'){
+            this.weapon = null;
+        }else if (item.type == 'shield'){
+            this.shield = null;
+        }else if (item.type == 'accessory'){
+            this.accessory = null;
+        }
     };
     Unit.prototype.setStat = function(id,amt){
         try{

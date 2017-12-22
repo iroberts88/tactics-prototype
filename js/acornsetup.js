@@ -143,8 +143,24 @@
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
                     if (data['unit'] == Player.units[i].id){
-                        Player.units[i].inventory.items.splice(data.index,1);
-                        Player.units[i].inventory.currentWeight = data.w;
+                        var unit = Player.units[i];
+                        unit.inventory.items.splice(data.index,1);
+                        unit.inventory.currentWeight = data.w;
+                        if (unit.weapon > data.index){
+                            unit.weapon -= 1;
+                        }else if (unit.weapon == data.index){
+                            unit.weapon = null;
+                        }
+                        if (unit.shield > data.index){
+                            unit.shield -= 1;
+                        }else if (unit.shield == data.index){
+                            unit.shield = null;
+                        }
+                        if (unit.accessory > data.index){
+                            unit.accessory -= 1;
+                        }else if (unit.accessory == data.index){
+                            unit.accessory = null;
+                        }
                     }
                 }
                 if (Acorn.currentState == 'unitInventoryMenu'){
@@ -169,6 +185,16 @@
                     UnitInventory.clear();
                     UnitInventory.draw();
                 }
+            });
+            Acorn.Net.on('equipItem', function(data) {
+                console.log('equipping item');
+                console.log(data);
+                Player.equipItem(data);
+            });
+            Acorn.Net.on('unEquipItem', function(data) {
+                console.log('Un-Equipping item');
+                console.log(data);
+                Player.unEquipItem(data);
             });
             Acorn.Net.on('deleteUnit', function (data) {
                 console.log('deleting unit');
@@ -205,7 +231,7 @@
         states: function(){
             //Set up all states
             //-----------------------------------------------------------------------------------------------|
-            //                              Game States (Acorn.states)
+            //                              Game States (Acorn.states)                                       |
             //-----------------------------------------------------------------------------------------------|
 
             //Initial State
