@@ -97,6 +97,12 @@
         this.level = data.level;
         this.exp = data.exp;
         this.classInfo = data.classInfo;
+
+        this.weapon = data.weapon;
+        this.shield = data.shield;
+        this.accessory = data.accessory;
+
+        this.usedAbilitySlots = data.usedAbilitySlots;
     };
 
     Unit.prototype.equip = function(index) {

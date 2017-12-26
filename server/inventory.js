@@ -66,9 +66,11 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
             if (updateClient){
                 this.gameEngine.queuePlayer(this.owner.owner,'addItemUnit',{unit: this.owner.id, item: I.getClientData(), w: this.currentWeight});
             }
+            return true;
         }else{
             //TODO send a client error
-            console.log('Too many items!!')
+            console.log('Too many items!!');
+            return false;
         }
     }catch(e){
         this.gameEngine.debug(this.owner.owner,{'id': 'addItemUnitError', 'error': e.stack, 'itemID': id});

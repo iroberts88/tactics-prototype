@@ -20,6 +20,7 @@ var GameEngine = function() {
     this.items = {};
     this.buffs = {};
     this.classes = {};
+    this.abilityIndex = {};
     this.playerCount = 0;
     //variables for ID's
     this.ids = {};
@@ -140,12 +141,12 @@ GameEngine.prototype.loadBuffs = function(arr) {
 }
 
 GameEngine.prototype.loadClasses = function(arr) {
+    this.abilityIndex = {};
     for (var i = 0; i < arr.length;i++){
         this.classes[arr[i]._dbIndex] = arr[i];
         //fill in the abiliy index for quick access
-        this.classes[arr[i]._dbIndex].abilityIndex = {};
         for (var j = 0; j < this.classes[arr[i]._dbIndex].abilities.length;j++){
-            this.classes[arr[i]._dbIndex].abilityIndex[this.classes[arr[i]._dbIndex].abilities[j].id] = j;
+            this.abilityIndex[this.classes[arr[i]._dbIndex].abilities[j].id] = [this.classes[arr[i]._dbIndex].name,j];
         }
     }
     console.log('loaded ' + arr.length + ' Classes from db');

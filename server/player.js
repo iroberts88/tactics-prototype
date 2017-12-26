@@ -132,8 +132,8 @@ Player.prototype.setupSocket = function() {
                             break;
                         }
                         //ability can be equipped. add current slots and add to learned abilities list
-                        unit.usedAbilitySlots += abl.sCost;
                         unit.classInfo.equippedAbilities[aID] = true;
+                        unit.setAbilitySlots();
                         //update client
                         data.sCost = abl.sCost;
                         that.gameEngine.queuePlayer(that,'equipAbility',data);
@@ -166,8 +166,8 @@ Player.prototype.setupSocket = function() {
                             break;
                         }
                         //ability can be un-equipped.
-                        unit.usedAbilitySlots -= abl.sCost;
                         delete unit.classInfo.equippedAbilities[aID];
+                        unit.setAbilitySlots();
                         //update client
                         data.sCost = abl.sCost;
                         that.gameEngine.queuePlayer(that,'unEquipAbility',data);
@@ -224,9 +224,10 @@ Player.prototype.setupSocket = function() {
                         var unit = that.getUnit(data.unitID);
                         var itemID = that.user.inventory.items[data.itemIndex].itemID;
                         //add item to unit
-                        unit.inventory.addItemUnit(itemID,1, true);
-                        //remove item from player
-                        that.user.inventory.removeItem(data.itemIndex,1,true);
+                        if (unit.inventory.addItemUnit(itemID,1, true)){
+                            //remove item from player
+                            that.user.inventory.removeItem(data.itemIndex,1,true);
+                        }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
                     }
@@ -473,10 +474,18 @@ Player.prototype.setupSocket = function() {
                     // max a character's AP
                     // -maxAp <unitID>
                     try{
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == commands[1]){
+                        if (commands[1] == 'all'){
+                            for (var i = 0; i < that.user.characters.length;i++){
                                 for (var j in that.user.characters[i].classInfo.ap){
                                     that.user.characters[i].addAp(j,9999);
+                                }
+                            }
+                        }else{
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == commands[1]){
+                                    for (var j in that.user.characters[i].classInfo.ap){
+                                        that.user.characters[i].addAp(j,9999);
+                                    }
                                 }
                             }
                         }

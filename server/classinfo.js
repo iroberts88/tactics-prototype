@@ -74,6 +74,7 @@ ClassInfo.prototype.setClass = function(c){
 		console.log("ERROR: unable to set class");
 		console.log(e.stack);
 	}
+	this.unit.setAbilitySlots();
 }
 
 ClassInfo.prototype.setBaseClass = function(c){

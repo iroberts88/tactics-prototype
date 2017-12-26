@@ -74,10 +74,14 @@ Unit.prototype.init = function(data) {
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
 
-    this.usedAbilitySlots = (typeof data.usedAbiliySlots == 'undefined') ? 0 : data.usedAbiliySlots;
+    this.usedAbilitySlots = (typeof data.usedAbilitySlots == 'undefined') ? 0 : data.usedAbiliySlots;
     
     this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
-    this.human = (typeof data.human == 'undefined') ? true : data.human;
+    this.human = (typeof data.human == 'undefined') ? true : data.human;;
+
+    this.weapon = data.weapon;
+    this.shield = data.shield;
+    this.accessory = data.accessory
 
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
@@ -352,9 +356,9 @@ Unit.prototype.getDBObj = function(){
         dbObj.inventory.push(this.inventory.items[i].itemID);
     }
 
-    dbObj.weapon = 'None';
-    dbObj.shield = 'None';
-    dbObj.accessory = 'None';
+    dbObj.weapon = this.weapon;
+    dbObj.shield = this.shield;
+    dbObj.accessory = this.accessory;
 
     dbObj.physicalRes = this.physicalRes.base;
     dbObj.heatRes = this.heatRes.base;
@@ -421,6 +425,17 @@ Unit.prototype.setStat = function(id,amt){
         console.log("unable to set stat " + id);
         console.log(e);
     }
+};
+
+Unit.prototype.setAbilitySlots = function(){
+    var s = 0;
+    for (var ability in this.classInfo.equippedAbilities){
+        var abArr = this.owner.gameEngine.abilityIndex[ability];
+        if (typeof this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost != 'undefined'){
+            s += this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost;
+        }
+    }
+    this.usedAbilitySlots = s;
 };
 
 Unit.prototype.getStat = function(id){

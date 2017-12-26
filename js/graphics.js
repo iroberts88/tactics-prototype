@@ -424,51 +424,58 @@
             return button
         },
         buttonGlow: function(element){
-            if(!element.glowSprite){
-                var canvas = document.createElement('canvas');
-                canvas.width  = element.width;
-                canvas.height = element.height;
-                var ctx = canvas.getContext('2d');
-                var gradient = ctx.createLinearGradient(0, 0, element.width, 0);
-                gradient.addColorStop(0, Graphics.pallette.color4);
-                gradient.addColorStop(1, Graphics.pallette.color4);
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0,0,element.width,element.height);
-                element.glowSprite1 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
-                element.glowSprite1.position.x = element.position.x;
-                element.glowSprite1.position.y = element.position.y;
-                element.glowSprite1.anchor.x = element.anchor.x;
-                element.glowSprite1.anchor.y = element.anchor.y;
-                var canvas2 = document.createElement('canvas');
-                canvas2.width  = element.width;
-                canvas2.height = element.height;
-                var ctx2 = canvas2.getContext('2d');
-                var gradient2 = ctx2.createLinearGradient(0, 0, element.width, 0);
-                gradient2.addColorStop(0, Graphics.pallette.color5);
-                gradient2.addColorStop(1, Graphics.pallette.color5);
-                ctx2.fillStyle = gradient2;
-                ctx2.fillRect(0,0,element.width,element.height);
-                element.glowSprite2 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas2));
-                element.glowSprite2.position.x = element.position.x;
-                element.glowSprite2.position.y = element.position.y;
-                element.glowSprite2.anchor.x = element.anchor.x;
-                element.glowSprite2.anchor.y = element.anchor.y;
+            try{
+                element.style.fill = Graphics.pallette.color4;
+            }catch(e){
+                if(!element.glowSprite){
+                    var canvas = document.createElement('canvas');
+                    canvas.width  = element.width;
+                    canvas.height = element.height;
+                    var ctx = canvas.getContext('2d');
+                    var gradient = ctx.createLinearGradient(0, 0, element.width, 0);
+                    gradient.addColorStop(0, Graphics.pallette.color4);
+                    gradient.addColorStop(1, Graphics.pallette.color4);
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0,0,element.width,element.height);
+                    element.glowSprite1 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+                    element.glowSprite1.position.x = element.position.x;
+                    element.glowSprite1.position.y = element.position.y;
+                    element.glowSprite1.anchor.x = element.anchor.x;
+                    element.glowSprite1.anchor.y = element.anchor.y;
+                    var canvas2 = document.createElement('canvas');
+                    canvas2.width  = element.width;
+                    canvas2.height = element.height;
+                    var ctx2 = canvas2.getContext('2d');
+                    var gradient2 = ctx2.createLinearGradient(0, 0, element.width, 0);
+                    gradient2.addColorStop(0, Graphics.pallette.color5);
+                    gradient2.addColorStop(1, Graphics.pallette.color5);
+                    ctx2.fillStyle = gradient2;
+                    ctx2.fillRect(0,0,element.width,element.height);
+                    element.glowSprite2 = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas2));
+                    element.glowSprite2.position.x = element.position.x;
+                    element.glowSprite2.position.y = element.position.y;
+                    element.glowSprite2.anchor.x = element.anchor.x;
+                    element.glowSprite2.anchor.y = element.anchor.y;
+                }
+                element.parent.addChildAt(element.glowSprite1,0);
             }
-            
-            element.parent.addChildAt(element.glowSprite1,0);
         },
         removeGlow: function(element){
             try{
-                element.parent.removeChild(element.glowSprite1);
-                element.parent.removeChild(element.glowSprite2);
-            }catch(e){}
+                element.style.fill = Graphics.pallette.color1;
+            }catch(e){
+                try{
+                    element.parent.removeChild(element.glowSprite1);
+                    element.parent.removeChild(element.glowSprite2);
+                }catch(e){}
+            }
         },
         changeGlow: function(element){
             try{
+                element.style.fill = Graphics.pallette.color5;
+            }catch(e){
                 element.parent.removeChild(element.glowSprite1);
                 element.parent.addChildAt(element.glowSprite2,0);
-            }catch(e){
-                console.log(e);
             }
         },
         setSlideBar: function(bar,func){

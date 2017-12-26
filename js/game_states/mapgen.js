@@ -35,6 +35,7 @@
         changesMade: null,
 
         currentSZone: 1,
+        sZoneMaxSize: 30,
 
         init: function() {
             this.drawBG();
@@ -1366,7 +1367,7 @@
                                     zoneArr.push(node);
                                     MapGen.changesMade = true;
                                     cont = false;
-                                }else if (zoneArr.length >= 15){cont = false;}
+                                }else if (zoneArr.length >= this.sZoneMaxSize){cont = false;}
                             }
 
                             //make sure the node is not already in the current sZone
