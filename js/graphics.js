@@ -425,6 +425,7 @@
         },
         buttonGlow: function(element){
             try{
+                element.defaultFill = element.style.fill;
                 element.style.fill = Graphics.pallette.color4;
             }catch(e){
                 if(!element.glowSprite){
@@ -462,7 +463,7 @@
         },
         removeGlow: function(element){
             try{
-                element.style.fill = Graphics.pallette.color1;
+                element.style.fill = element.defaultFill;
             }catch(e){
                 try{
                     element.parent.removeChild(element.glowSprite1);

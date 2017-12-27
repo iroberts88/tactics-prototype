@@ -157,7 +157,7 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 50,
         'min': 0,
-        'max': 999
+        'max': 999 //TODO should check if current absl are too high, possibly resetting abilities
     });
     this.strength = new Attribute();
     this.strength.init({
@@ -374,7 +374,7 @@ Unit.prototype.getDBObj = function(){
     dbObj.human = this.human; //a human unit
 
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
-    return dbObj
+    return dbObj;
 }
 Unit.prototype.getClientData = function(){
     //create object to send to the client

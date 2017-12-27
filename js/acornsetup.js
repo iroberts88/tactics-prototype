@@ -430,6 +430,16 @@
                     });
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
+                    this.joinButton = Graphics.makeUiElement({
+                        text: 'Join',
+                        position: [(Graphics.width*0.8),(Graphics.height/1.35)],
+                        interactive: true,buttonMode: true,buttonGlow: true,
+                        clickFunc: function onClick(){
+                            Acorn.Net.socket_.emit('playerUpdate',{command: 'testGame'});
+                        }
+                    });
+                    Graphics.uiContainer.addChild(this.joinButton);
+
                     this.userName = Graphics.makeUiElement({
                         text: "Welcome " + Player.userData.name + '!',
                         style: AcornSetup.baseStyle,
