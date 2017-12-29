@@ -57,7 +57,7 @@
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22a9e"), 
     "name" : "Chain Sword", 
-    "description" : "Use to rev up the chain blade", 
+    "description" : "Sword with a motorized chain blade.", 
     "valueMod" : 1.0, 
     "weight" : 6.0, 
     "type" : "weapon", 
@@ -224,7 +224,11 @@
             }
         ]
     }, 
-    "_dbIndex" : "accessory_cerebralImplant"
+    "_dbIndex" : "accessory_cerebralImplant", 
+    "onEquipText" : [
+        "<INT> + 1", 
+        "<EXP> + 10%"
+    ]
 }
 { 
     "_id" : ObjectId("59ff57e61194231ac0c22aa1"), 
@@ -242,4 +246,67 @@
         ]
     }, 
     "_dbIndex" : "shield_shield"
+}
+{ 
+    "_id" : ObjectId("5a3ac63fe4c7d303c489f5e3"), 
+    "name" : "Battle Boots", 
+    "description" : "Increases movement of the user", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "mov", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_battleBoots", 
+    "onEquipText" : [
+        "<MOVE> + 1"
+    ]
+}
+{ 
+    "_id" : ObjectId("5a3ac673e4c7d303c489f5e4"), 
+    "name" : "Focus", 
+    "description" : "Increases the user's focus", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "dex", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_focus", 
+    "onEquipText" : [
+        "<DEX> + 1"
+    ]
+}
+{ 
+    "_id" : ObjectId("5a3be12ae4c7d303c489f5f8"), 
+    "name" : "Enhancer", 
+    "description" : "Increases the user's strength", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "str", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_enhancer", 
+    "onEquipText" : [
+        "<STR> + 1"
+    ]
 }

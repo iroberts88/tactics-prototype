@@ -2,8 +2,8 @@
 //gameengine.js
 //----------------------------------------------------------------
 
-//var GameSession = require('./gamesession.js').GameSession,
-var mongo = require('mongodb').MongoClient,
+var GameSession = require('./gamesession.js').GameSession,
+    mongo = require('mongodb').MongoClient,
     Player = require('./player.js').Player;
 
 var self = null;
@@ -14,8 +14,11 @@ var GameEngine = function() {
     this.gameTickInterval = 20;
     this.lastTime = Date.now();
     this.sessions = {}; //List of currently active gameSessions
+    this.sessionList = [];
     this.players = {}; //List of players that do not have a gameSession
+    this.playersWaiting = [];
     this.openSessions = null;
+    //database objects
     this.maps = [];
     this.items = {};
     this.buffs = {};
@@ -23,10 +26,13 @@ var GameEngine = function() {
     this.abilityIndex = {};
     this.playerCount = 0;
     //variables for ID's
-    this.ids = {};
-    this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    this.idIterator = 0;
+    this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
+
+    //TODO this should be randomly generated for each new user
     this.hashSalt = 'Salt makes things taste better';
-    this.debugList = {}; //avoid multiple debug chains
+
+    this.debugList = {}; //avoid multiple debug chains -> update()
 }
 
 GameEngine.prototype.init = function () {
@@ -43,56 +49,29 @@ GameEngine.prototype.start = function () {
 GameEngine.prototype.tick = function() {
     var now = Date.now();
     var deltaTime = (now-self.lastTime) / 1000.0;
-    /*
-    //update all sessions
-    self.openSessions = [];
-    for(var i in self.sessions) {
+    
+    //update all game sessions
+    for (var i in self.sessions){
         self.sessions[i].tick(deltaTime);
-        if (self.sessions[i].playerCount < self.sessions[i].maxPlayers){
-            //this session is open
-            self.openSessions.push(self.sessions[i]);
-        }
-        if (self.sessions[i].playerCount + self.sessions[i].playersToAdd.length <= 0){
-            self.sessions[i].emptyFor += deltaTime;
-            if (self.sessions[i].emptyFor > 0.1){
-                console.log("deleting session " + self.sessions[i].id);
-                delete self.sessions[i];
-            }
-        }
     }
-    for (var player in self.players){
-        var p = self.players[player];
-        if(p.tryingToJoinGame){
-            var openSession = false;
-            for (var session = 0;session < self.openSessions.length;session++){
-                if (self.openSessions[session].gameModeManager.gameMode == p.tryingToJoinGame){
-                    //there is an open session of the correct type
-                    //add the player if it is between rounds!
-                    openSession = true;
-                    if (self.openSessions[session].gameModeManager.betweenEvents && self.openSessions[session].playerCount + self.openSessions[session].playersToAdd.length <= self.openSessions[session].maxPlayers){
-                        self.openSessions[session].playersToAdd.push(p);
-                        p.tryingToJoinGame = false;
-                        p.tryingToJoinSession = self.openSessions[session];
-                    }
-                }
-            }
-            if (!openSession){
-                console.log('Creating a new ' + p.tryingToJoinGame + ' session');
-                var s = new GameSession(self);
-                s.init({ sid: self.getId(), gameMode: p.tryingToJoinGame });
-                console.log('session id: ' + s.id);
-                self.sessions[s.id] = s;
-            }
-        }
-    }*/
+
+    //check waiting players
+    if (self.playersWaiting.length >= 2){
+        var s = self.createSession();
+        self.joinSession(s.id,self.players[self.playersWaiting[0]]);
+        self.playersWaiting.splice(0,1);
+        self.joinSession(s.id,self.players[self.playersWaiting[0]]);
+        self.playersWaiting.splice(0,1);
+        self.sessions[s.id].gameStart();
+    }
     //update debug list
-    for (var i in self.debugList){
-        self.debugList[i].t -= deltaTime;
-        if (self.debugList[i].t <= -5.0){
-            //debug hasnt been updates in 5 seconds
+    for (var k in self.debugList){
+        self.debugList[k].t -= deltaTime;
+        if (self.debugList[k].t <= -5.0){
+            //debug hasnt been updated in 5 seconds
             //remove from debug list
-            console.log('deleting debug with id ' + self.debugList[i].id);
-            delete self.debugList[i];
+            console.log('deleting debug with id ' + self.debugList[k].id);
+            delete self.debugList[k];
         }
     }
     self.emit();
@@ -100,23 +79,17 @@ GameEngine.prototype.tick = function() {
     self.lastTime = now;
 }
 
-
 GameEngine.prototype.getId = function() {
-    var id = '';
-    for( var i=0; i < 6; i++ ){
+    var id = this.idIterator + 'x';
+    for( var i=0; i < 3; i++ ){
         id += this.possibleIDChars.charAt(Math.floor(Math.random() * this.possibleIDChars.length));
     }
-    if (!this.ids[id]){
-        this.ids[id] = 1;
-        return id;
-    }else{
-        return this.getId();
-    }
+    this.idIterator += 1;
     return id;
 }
 
 // ----------------------------------------------------------
-// Data loading functions (from db etc)
+// Database loading functions
 // ----------------------------------------------------------
 
 GameEngine.prototype.loadMaps = function(arr) {
@@ -161,6 +134,46 @@ GameEngine.prototype.loadUsers = function(arr) {
     console.log("loaded " + (i) + ' users from db');
 }
 
+// ----------------------------------------------------------
+// Session Functions
+// ----------------------------------------------------------
+
+GameEngine.prototype.createSession = function(){
+    var session = new GameSession(this);
+    session.init({
+        sid: this.getId()
+    });
+    this.sessions[session.id] = session;
+    this.sessionList.push(session.id);
+    return session;
+}
+
+GameEngine.prototype.joinSession = function(id,p) {
+    //join a player <p> to a session and remove from session
+    this.sessions[id].addPlayer(p);
+    this.removePlayer(p);
+}
+
+GameEngine.prototype.leaveSession = function(id,p) {
+    //remove a player <p> from a session and add back to engine
+    this.addPlayer(p);
+    this.sessions[id].addPlayer(p);
+}
+
+GameEngine.prototype.removeSession = function(id) {
+    //delete session with <id>
+    delete this.sessions[id];
+}
+
+GameEngine.prototype.addPlayer = function(p){
+    this.players[p.id] = p;
+    this.playerCount += 1;
+}
+
+GameEngine.prototype.removePlayer = function(p){
+    delete this.players[p.id];
+    this.playerCount -= 1;
+}
 
 // ----------------------------------------------------------
 // Socket Functions
@@ -169,21 +182,19 @@ GameEngine.prototype.loadUsers = function(arr) {
 GameEngine.prototype.newConnection = function(socket) {
     console.log('New Player Connected');
     console.log('Socket ID: ' + socket.id);
-    self.playerCount += 1;
-    //Initialize new player and add to the proper session
+    //Initialize new player
     var p = new Player();
     p.id = self.getId();
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
     self.queuePlayer(p,'connInfo', {mapNames: self.maps});
-    self.players[p.id] = p;
+    self.addPlayer(p);
 }
 
 GameEngine.prototype.emit = function() {
-    var i;
     try{
-        for(i in this.players) {
+        for(var i in this.players) {
             if (this.players[i].netQueue.length > 0){
                 this.players[i].socket.emit('serverUpdate', this.players[i].netQueue);
             }
@@ -196,15 +207,19 @@ GameEngine.prototype.emit = function() {
         console.log(i);
     }
 }
-//Queue data to all players in the session
-GameEngine.prototype.queueData = function(c, d) {
-    var data = { call: c, data: d};
-    var i;
-    for(i in this.players) {
-        this.players[i].netQueue.push(data);
+GameEngine.prototype.clearQueue = function() {
+    for(var i in this.players) {
+        this.players[i].netQueue = [];
     }
 }
 
+//Queue data to all players in the session
+GameEngine.prototype.queueData = function(c, d) {
+    var data = { call: c, data: d};
+    for(var i in this.players) {
+        this.players[i].netQueue.push(data);
+    }
+}
 //Queue data to a specific player
 GameEngine.prototype.queuePlayer = function(player, c, d) {
     var data = { call: c, data: d};
@@ -231,14 +246,6 @@ GameEngine.prototype.debug = function(player, d) {
             player.netQueue.push(data);
             this.debugList[d.id].t = 1.0;
         }
-    }
-}
-
-GameEngine.prototype.clearQueue = function() {
-    //this.queue = [];
-    var i;
-    for(i in this.players) {
-        this.players[i].netQueue = [];
     }
 }
 

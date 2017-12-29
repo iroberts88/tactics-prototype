@@ -72,7 +72,6 @@ function User() {
                     }
                 }
             }catch(e){
-                console.log(e);
             }
         },
         

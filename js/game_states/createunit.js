@@ -387,7 +387,8 @@
             }
             //send to server to create
             console.log("Success!!! send to server to create!");
-            Acorn.Net.socket_.emit('addUnit',{name: name,
+            Acorn.Net.socket_.emit('playerUpdate',{command: 'addUnit',
+                name: name,
                 class: this.classSelected,
                 stats: this.statsAssigned,
                 sex: this.sex

@@ -50,6 +50,10 @@ Player.prototype.setGameEngine = function(ge){
     this.gameEngine = ge;
 };
 
+Player.prototype.setGameSession = function(gs){
+    this.gameSession = gs;
+};
+
 Player.prototype.setupSocket = function() {
 
     // On playerUpdate event
@@ -59,7 +63,13 @@ Player.prototype.setupSocket = function() {
         if (that.gameSession){
             //if the player is in a gameSession - deal with received data
            switch(data.command){
-
+                case 'exitGame':
+                    try{
+                        that.gameSession.handleDisconnect(that,true);
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'exitGameError', error: e.stack, data: data});
+                    }
+                    break;
            }
         }else{
             //player is not in a game currently - main menu commands
@@ -264,76 +274,75 @@ Player.prototype.setupSocket = function() {
                         that.gameEngine.debug(that,{id: 'unEquipItemError', error: e.stack, dData: data});
                     }
                     break;
-            }
-        }
-    });
-
-    //TODO convert these to playerUpdates if necessary
-
-    this.socket.on('addUnit', function(data){
-        //TODO -- validate unit before creation
-        //check max characters
-        if (that.user.characters.length < 30){
-            try{
-                var char = new Unit();
-                char.init({
-                    id: that.gameEngine.getId(),
-                    owner: that,
-                    name: data.name,
-                    sex: data.sex,
-                    inventory: ['gun_sidearm','weapon_combatKnife']
-                });
-                for (var i in data.stats){
-                    char[i].base = data.stats[i];
-                    char[i].set();
-                }
-                char.classInfo = new ClassInfo();
-                char.classInfo.init({unit: char});
-                char.classInfo.setBaseClass(data.class);
-                char.classInfo.setClass(data.class);
-                //create object to send to the client
-                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
-                that.user.characters.push(char);
-            }catch(e){
-                that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
-            }
-        }
-    });
-
-    this.socket.on('addRandomChar', function(data){
-        if (that.user.characters.length < 30){
-            try{
-                var char = new Unit();
-                var sexes = ['male','female'];
-                var sex = sexes[Math.floor(Math.random()*sexes.length)];
-                var nT = sex;
-                var lastNT = 'last';
-                //if (sex == 'female'){nT = 'romanFemale';lastNT = 'romanLastF'}
-                char.init({
-                    id: that.gameEngine.getId(),
-                    owner: that,
-                    name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
-                    sex: sex,
-                    inventory: ['gun_sidearm','weapon_combatKnife']
-                });
-                var classes = ['soldier','medic','scout','tech'];
-                var cl = classes[Math.floor(Math.random()*classes.length)];
-                //randomize stats
-                var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
-                for (var i = 0;i < 20;i++){
-                    var randStat = stats[Math.floor(Math.random()*stats.length)];
-                    char[randStat].base += 1;
-                    char[randStat].set();
-                }
-                char.classInfo = new ClassInfo();
-                char.classInfo.init({unit: char});
-                char.classInfo.setBaseClass(cl);
-                char.classInfo.setClass(cl);
-               
-                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
-                that.user.characters.push(char);
-            }catch(e){
-                that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
+                case 'addUnit':
+                    //TODO -- validate unit before creation
+                    //check max characters
+                    if (that.user.characters.length < 30){
+                        try{
+                            var char = new Unit();
+                            char.init({
+                                id: that.gameEngine.getId(),
+                                owner: that,
+                                name: data.name,
+                                sex: data.sex,
+                                inventory: ['gun_sidearm','weapon_combatKnife']
+                            });
+                            for (var i in data.stats){
+                                char[i].base = data.stats[i];
+                                char[i].set();
+                            }
+                            char.classInfo = new ClassInfo();
+                            char.classInfo.init({unit: char});
+                            char.classInfo.setBaseClass(data.class);
+                            char.classInfo.setClass(data.class);
+                            //create object to send to the client
+                            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
+                            that.user.characters.push(char);
+                        }catch(e){
+                            that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
+                        }
+                    }
+                    break;
+                case 'addRandomChar':
+                    if (that.user.characters.length < 30){
+                        try{
+                            var char = new Unit();
+                            var sexes = ['male','female'];
+                            var sex = sexes[Math.floor(Math.random()*sexes.length)];
+                            var nT = sex;
+                            var lastNT = 'last';
+                            //if (sex == 'female'){nT = 'romanFemale';lastNT = 'romanLastF'}
+                            char.init({
+                                id: that.gameEngine.getId(),
+                                owner: that,
+                                name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
+                                sex: sex,
+                                inventory: ['gun_sidearm','weapon_combatKnife']
+                            });
+                            var classes = ['soldier','medic','scout','tech'];
+                            var cl = classes[Math.floor(Math.random()*classes.length)];
+                            //randomize stats
+                            var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
+                            for (var i = 0;i < 20;i++){
+                                var randStat = stats[Math.floor(Math.random()*stats.length)];
+                                char[randStat].base += 1;
+                                char[randStat].set();
+                            }
+                            char.classInfo = new ClassInfo();
+                            char.classInfo.init({unit: char});
+                            char.classInfo.setBaseClass(cl);
+                            char.classInfo.setClass(cl);
+                           
+                            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
+                            that.user.characters.push(char);
+                        }catch(e){
+                            that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
+                        }
+                    }
+                    break;
+                case 'testGame':
+                    that.gameEngine.playersWaiting.push(that.id);
+                    break;
             }
         }
     });
@@ -544,15 +553,14 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on('disconnect', function () {
-    
         try{
-            that.gameEngine.playerCount -= 1;
             that.user.unlock();
             console.log('Player ' + that.id + ' (' + that.user.userData.userName + ') has disconnected.');
             that.user.updateDB();
             if (that.gameSession){
-                that.gameSession.queueData('removePlayer', that.id);
-                that.gameSession.removePlayer(that);
+                that.gameSession.handleDisconnect(that,false);
+            }else{
+                that.gameEngine.removePlayer(that);
             }
             // If callback exists, call it
             if(that.onDisconnectHandler != null && typeof that.onDisconnectHandler == 'function' ) {

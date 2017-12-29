@@ -3,7 +3,7 @@
     "userName" : "faulken", 
     "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
     "stats" : {
-        "soloGamesPlayed" : NumberInt(37), 
+        "soloGamesPlayed" : NumberInt(39), 
         "coopGamesPlayed" : NumberInt(4), 
         "coopLevelRecord" : NumberInt(4), 
         "vsGamesPlayed" : NumberInt(4), 
@@ -30,72 +30,900 @@
     ], 
     "admin" : true, 
     "createDate" : 1501013750032.0, 
-    "lastLogin" : 1512577960411.0, 
+    "lastLogin" : 1514558492332.0, 
     "lock" : false, 
-    "characters" : [
+    "tactics" : {
+        "characters" : [
+            {
+                "name" : "Ian", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(6), 
+                "intelligence" : NumberInt(6), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(2), 
+                "agility" : NumberInt(9), 
+                "dexterity" : NumberInt(1), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Scout", 
+                    "baseClass" : "Scout", 
+                    "baseId" : "scout", 
+                    "classId" : "scout", 
+                    "learnedAbilities" : {
+                        "stealth" : true, 
+                        "flare" : true, 
+                        "dodge" : true, 
+                        "evasion" : true, 
+                        "quickAttack" : true, 
+                        "agitate" : true, 
+                        "climber" : true, 
+                        "momentum" : true, 
+                        "counterAttack" : true, 
+                        "guile" : true, 
+                        "poisonWeapon" : true, 
+                        "interrupt" : true
+                    }, 
+                    "equippedAbilities" : {
 
-    ], 
-    "inventory" : [
+                    }, 
+                    "ap" : {
+                        "Scout" : NumberInt(7189)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "weapon_powerAxe", 
+                    "shield_shield", 
+                    "accessory_enhancer", 
+                    "compound_healing", 
+                    "compound_vigor", 
+                    "compound_healing", 
+                    "compound_healing"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(1), 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Marissa", 
+                "sex" : "female", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(3), 
+                "intelligence" : NumberInt(3), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(3), 
+                "agility" : NumberInt(3), 
+                "dexterity" : NumberInt(4), 
+                "charisma" : NumberInt(10), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Medic", 
+                    "baseClass" : "Medic", 
+                    "baseId" : "medic", 
+                    "classId" : "medic", 
+                    "learnedAbilities" : {
+                        "firstAid" : true, 
+                        "resuscitate" : true, 
+                        "healingField" : true, 
+                        "recovery" : true, 
+                        "sprint" : true, 
+                        "precisionStrike" : true, 
+                        "cripple" : true, 
+                        "shieldBoost" : true, 
+                        "concentrate" : true
+                    }, 
+                    "equippedAbilities" : {
 
-    ]
+                    }, 
+                    "ap" : {
+                        "Medic" : NumberInt(8884)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "accessory_battleBoots", 
+                    "shield_shield", 
+                    "compound_vigor", 
+                    "compound_vigor", 
+                    "compound_vigor"
+                ], 
+                "weapon" : "None", 
+                "shield" : "None", 
+                "accessory" : "None", 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Beleim Amaely", 
+                "sex" : "female", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(3), 
+                "intelligence" : NumberInt(3), 
+                "endurance" : NumberInt(4), 
+                "willpower" : NumberInt(6), 
+                "agility" : NumberInt(3), 
+                "dexterity" : NumberInt(4), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Soldier", 
+                    "baseClass" : "Soldier", 
+                    "baseId" : "soldier", 
+                    "classId" : "soldier", 
+                    "learnedAbilities" : {
+                        "bolster" : true, 
+                        "focus" : true, 
+                        "heroicLeap" : true, 
+                        "heroicCharge" : true, 
+                        "powerAttack" : true, 
+                        "powerShot" : true, 
+                        "hardy" : true, 
+                        "vengeance" : true, 
+                        "reversal" : true, 
+                        "charge" : true, 
+                        "opportunity" : true, 
+                        "quickDraw" : true
+                    }, 
+                    "equippedAbilities" : {
+
+                    }, 
+                    "ap" : {
+                        "Soldier" : NumberInt(8554)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_enhancer"
+                ], 
+                "weapon" : NumberInt(1), 
+                "shield" : "None", 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Aetisti Sahnck", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(5), 
+                "intelligence" : NumberInt(5), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(2), 
+                "agility" : NumberInt(1), 
+                "dexterity" : NumberInt(6), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Tech", 
+                    "baseClass" : "Tech", 
+                    "baseId" : "tech", 
+                    "classId" : "tech", 
+                    "learnedAbilities" : {
+                        "grenade" : true, 
+                        "scan" : true, 
+                        "repair" : true, 
+                        "resUp" : true, 
+                        "mechCloak" : true, 
+                        "flareGrenade" : true, 
+                        "cryoGrenade" : true, 
+                        "shockGrenade" : true, 
+                        "corrosiveGrenade" : true, 
+                        "poisonGrenade" : true, 
+                        "empGrenade" : true, 
+                        "uraniumGrenade" : true, 
+                        "voidGrenade" : true, 
+                        "cybLegs" : true, 
+                        "cybArms" : true, 
+                        "cybBrain" : true, 
+                        "cybEyes" : true, 
+                        "cybLungs" : true, 
+                        "cybHeart" : true
+                    }, 
+                    "equippedAbilities" : {
+
+                    }, 
+                    "ap" : {
+                        "Tech" : NumberInt(6724)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_cerebralImplant", 
+                    "shield_shield"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(3), 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Daerin Byaver", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(2), 
+                "intelligence" : NumberInt(2), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(4), 
+                "agility" : NumberInt(5), 
+                "dexterity" : NumberInt(5), 
+                "charisma" : NumberInt(5), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Soldier", 
+                    "baseClass" : "Soldier", 
+                    "baseId" : "soldier", 
+                    "classId" : "soldier", 
+                    "learnedAbilities" : {
+                        "powerShot" : true, 
+                        "powerAttack" : true, 
+                        "bolster" : true, 
+                        "focus" : true, 
+                        "heroicLeap" : true, 
+                        "heroicCharge" : true, 
+                        "hardy" : true, 
+                        "vengeance" : true, 
+                        "reversal" : true, 
+                        "charge" : true, 
+                        "opportunity" : true, 
+                        "quickDraw" : true
+                    }, 
+                    "equippedAbilities" : {
+
+                    }, 
+                    "ap" : {
+                        "Soldier" : NumberInt(8579)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_focus"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : "None", 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Jandeno Tinae", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(0), 
+                "strength" : NumberInt(2), 
+                "intelligence" : NumberInt(2), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(5), 
+                "agility" : NumberInt(8), 
+                "dexterity" : NumberInt(2), 
+                "charisma" : NumberInt(4), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Scout", 
+                    "baseClass" : "Scout", 
+                    "baseId" : "scout", 
+                    "classId" : "scout", 
+                    "learnedAbilities" : {
+                        "agitate" : true
+                    }, 
+                    "equippedAbilities" : {
+
+                    }, 
+                    "ap" : {
+                        "Scout" : NumberInt(9999)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "shield_shield", 
+                    "accessory_cerebralImplant"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(2), 
+                "accessory" : NumberInt(3), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }
+        ], 
+        "inventory" : [
+            [
+                "weapon_combatKnife", 
+                NumberInt(11)
+            ], 
+            [
+                "compound_healing", 
+                NumberInt(1)
+            ], 
+            [
+                "weapon_chainSword", 
+                NumberInt(4)
+            ], 
+            [
+                "weapon_rocketSledge", 
+                NumberInt(4)
+            ], 
+            [
+                "accessory_cerebralImplant", 
+                NumberInt(1)
+            ], 
+            [
+                "weapon_powerAxe", 
+                NumberInt(3)
+            ], 
+            [
+                "accessory_focus", 
+                NumberInt(2)
+            ], 
+            [
+                "accessory_battleBoots", 
+                NumberInt(1)
+            ], 
+            [
+                "accessory_enhancer", 
+                NumberInt(1)
+            ], 
+            [
+                "gun_sidearm", 
+                NumberInt(10)
+            ]
+        ]
+    }
 }
 { 
-    "_id" : ObjectId("597b795835fc825188a5ae61"), 
-    "userName" : "pppppppppppppppp", 
+    "_id" : ObjectId("5a427d6983899d3c8c690004"), 
+    "userName" : "ian", 
     "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
-    "stats" : {
-        "soloGamesPlayed" : NumberInt(0), 
-        "coopGamesPlayed" : NumberInt(0), 
-        "coopLevelRecord" : NumberInt(0), 
-        "vsGamesPlayed" : NumberInt(0), 
-        "starsGamesPlayed" : NumberInt(0), 
-        "soloHighScore" : NumberInt(0), 
-        "coopHighScore" : NumberInt(0), 
-        "vsGamesWon" : NumberInt(0), 
-        "starsLongestGame" : NumberInt(0), 
-        "soloLevelRecord" : NumberInt(0)
-    }, 
     "chatLog" : [
 
     ], 
     "admin" : false, 
-    "createDate" : 1501264216728.0, 
-    "lastLogin" : 1501264216728.0, 
-    "lock" : false
-}
-{ 
-    "_id" : ObjectId("5a281a924cd7b91dc0451927"), 
-    "userName" : "text1", 
-    "password" : "00930c0bb8d37cf1183f8741e2eb347c4a01431cec164b62dfb9e3b3623b4579", 
-    "characters" : [
+    "createDate" : 1514306921820.0, 
+    "lastLogin" : 1514308757550.0, 
+    "lock" : false, 
+    "tactics" : {
+        "characters" : [
+            {
+                "name" : "Ian 2", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(49), 
+                "strength" : NumberInt(6), 
+                "intelligence" : NumberInt(6), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(2), 
+                "agility" : NumberInt(9), 
+                "dexterity" : NumberInt(1), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Scout", 
+                    "baseClass" : "Scout", 
+                    "baseId" : "scout", 
+                    "classId" : "scout", 
+                    "learnedAbilities" : {
+                        "stealth" : true, 
+                        "flare" : true, 
+                        "dodge" : true, 
+                        "evasion" : true, 
+                        "quickAttack" : true, 
+                        "agitate" : true, 
+                        "climber" : true, 
+                        "momentum" : true, 
+                        "counterAttack" : true, 
+                        "guile" : true, 
+                        "poisonWeapon" : true, 
+                        "interrupt" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "stealth" : true, 
+                        "flare" : true, 
+                        "dodge" : true, 
+                        "evasion" : true, 
+                        "counterAttack" : true
+                    }, 
+                    "ap" : {
+                        "Scout" : NumberInt(7189)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "weapon_powerAxe", 
+                    "shield_shield", 
+                    "accessory_enhancer", 
+                    "compound_healing", 
+                    "compound_vigor", 
+                    "compound_healing", 
+                    "compound_healing"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(1), 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Marissa 2", 
+                "sex" : "female", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(43), 
+                "strength" : NumberInt(3), 
+                "intelligence" : NumberInt(3), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(3), 
+                "agility" : NumberInt(3), 
+                "dexterity" : NumberInt(4), 
+                "charisma" : NumberInt(10), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Medic", 
+                    "baseClass" : "Medic", 
+                    "baseId" : "medic", 
+                    "classId" : "medic", 
+                    "learnedAbilities" : {
+                        "firstAid" : true, 
+                        "resuscitate" : true, 
+                        "healingField" : true, 
+                        "recovery" : true, 
+                        "sprint" : true, 
+                        "precisionStrike" : true, 
+                        "cripple" : true, 
+                        "shieldBoost" : true, 
+                        "concentrate" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "firstAid" : true, 
+                        "resuscitate" : true, 
+                        "recovery" : true, 
+                        "sprint" : true, 
+                        "precisionStrike" : true
+                    }, 
+                    "ap" : {
+                        "Medic" : NumberInt(8884)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "accessory_battleBoots", 
+                    "shield_shield", 
+                    "compound_vigor", 
+                    "compound_vigor", 
+                    "compound_vigor"
+                ], 
+                "weapon" : "None", 
+                "shield" : "None", 
+                "accessory" : "None", 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Beleim Amaely 2", 
+                "sex" : "female", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(45), 
+                "strength" : NumberInt(3), 
+                "intelligence" : NumberInt(3), 
+                "endurance" : NumberInt(4), 
+                "willpower" : NumberInt(6), 
+                "agility" : NumberInt(3), 
+                "dexterity" : NumberInt(4), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Soldier", 
+                    "baseClass" : "Soldier", 
+                    "baseId" : "soldier", 
+                    "classId" : "soldier", 
+                    "learnedAbilities" : {
+                        "bolster" : true, 
+                        "focus" : true, 
+                        "heroicLeap" : true, 
+                        "heroicCharge" : true, 
+                        "powerAttack" : true, 
+                        "powerShot" : true, 
+                        "hardy" : true, 
+                        "vengeance" : true, 
+                        "reversal" : true, 
+                        "charge" : true, 
+                        "opportunity" : true, 
+                        "quickDraw" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "bolster" : true, 
+                        "focus" : true, 
+                        "heroicLeap" : true, 
+                        "powerShot" : true, 
+                        "vengeance" : true, 
+                        "quickDraw" : true, 
+                        "reversal" : true
+                    }, 
+                    "ap" : {
+                        "Soldier" : NumberInt(8554)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_enhancer"
+                ], 
+                "weapon" : NumberInt(1), 
+                "shield" : "None", 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Aetisti Sahnck 2", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(48), 
+                "strength" : NumberInt(5), 
+                "intelligence" : NumberInt(5), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(2), 
+                "agility" : NumberInt(1), 
+                "dexterity" : NumberInt(6), 
+                "charisma" : NumberInt(3), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Tech", 
+                    "baseClass" : "Tech", 
+                    "baseId" : "tech", 
+                    "classId" : "tech", 
+                    "learnedAbilities" : {
+                        "grenade" : true, 
+                        "scan" : true, 
+                        "repair" : true, 
+                        "resUp" : true, 
+                        "mechCloak" : true, 
+                        "flareGrenade" : true, 
+                        "cryoGrenade" : true, 
+                        "shockGrenade" : true, 
+                        "corrosiveGrenade" : true, 
+                        "poisonGrenade" : true, 
+                        "empGrenade" : true, 
+                        "uraniumGrenade" : true, 
+                        "voidGrenade" : true, 
+                        "cybLegs" : true, 
+                        "cybArms" : true, 
+                        "cybBrain" : true, 
+                        "cybEyes" : true, 
+                        "cybLungs" : true, 
+                        "cybHeart" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "grenade" : true, 
+                        "repair" : true, 
+                        "scan" : true, 
+                        "mechCloak" : true, 
+                        "cybBrain" : true
+                    }, 
+                    "ap" : {
+                        "Tech" : NumberInt(6724)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_cerebralImplant", 
+                    "shield_shield"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(3), 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Daerin Byaver 2", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(10), 
+                "strength" : NumberInt(2), 
+                "intelligence" : NumberInt(2), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(4), 
+                "agility" : NumberInt(5), 
+                "dexterity" : NumberInt(5), 
+                "charisma" : NumberInt(5), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Soldier", 
+                    "baseClass" : "Soldier", 
+                    "baseId" : "soldier", 
+                    "classId" : "soldier", 
+                    "learnedAbilities" : {
+                        "powerShot" : true, 
+                        "powerAttack" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "powerAttack" : true, 
+                        "powerShot" : true
+                    }, 
+                    "ap" : {
+                        "Soldier" : NumberInt(9999)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "accessory_focus"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : "None", 
+                "accessory" : NumberInt(2), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }, 
+            {
+                "name" : "Jandeno Tinae 2", 
+                "sex" : "male", 
+                "maximumHealth" : NumberInt(1000), 
+                "maximumEnergy" : NumberInt(100), 
+                "move" : NumberInt(3), 
+                "jump" : NumberInt(2), 
+                "power" : NumberInt(10), 
+                "skill" : NumberInt(10), 
+                "speed" : NumberInt(100), 
+                "abilitySlots" : NumberInt(150), 
+                "usedAbilitySlots" : NumberInt(7), 
+                "strength" : NumberInt(2), 
+                "intelligence" : NumberInt(2), 
+                "endurance" : NumberInt(3), 
+                "willpower" : NumberInt(5), 
+                "agility" : NumberInt(8), 
+                "dexterity" : NumberInt(2), 
+                "charisma" : NumberInt(4), 
+                "level" : NumberInt(1), 
+                "exp" : NumberInt(0), 
+                "classInfo" : {
+                    "currentClass" : "Scout", 
+                    "baseClass" : "Scout", 
+                    "baseId" : "scout", 
+                    "classId" : "scout", 
+                    "learnedAbilities" : {
+                        "agitate" : true
+                    }, 
+                    "equippedAbilities" : {
+                        "agitate" : true
+                    }, 
+                    "ap" : {
+                        "Scout" : NumberInt(9999)
+                    }
+                }, 
+                "gameStats" : null, 
+                "inventory" : [
+                    "gun_sidearm", 
+                    "weapon_combatKnife", 
+                    "shield_shield", 
+                    "accessory_cerebralImplant"
+                ], 
+                "weapon" : NumberInt(0), 
+                "shield" : NumberInt(2), 
+                "accessory" : NumberInt(3), 
+                "physicalRes" : NumberInt(0), 
+                "heatRes" : NumberInt(0), 
+                "coldRes" : NumberInt(0), 
+                "acidRes" : NumberInt(0), 
+                "poisonRes" : NumberInt(0), 
+                "electricRes" : NumberInt(0), 
+                "pulseRes" : NumberInt(0), 
+                "radiationRes" : NumberInt(0), 
+                "gravityRes" : NumberInt(0), 
+                "mechanical" : false, 
+                "human" : true
+            }
+        ], 
+        "inventory" : [
 
-    ], 
-    "inventory" : [
-
-    ], 
-    "chatLog" : [
-
-    ], 
-    "admin" : false, 
-    "createDate" : 1512577682159.0, 
-    "lastLogin" : 1512577682159.0, 
-    "lock" : false
-}
-{ 
-    "_id" : ObjectId("5a29b35539f7463994eb1b28"), 
-    "userName" : "test1", 
-    "password" : "598da44a72a3cdde511e3b00e5e7d5b2ff15ebcdf06857c30501ed7f511784ec", 
-    "characters" : [
-
-    ], 
-    "inventory" : [
-
-    ], 
-    "chatLog" : [
-
-    ], 
-    "admin" : false, 
-    "createDate" : 1512682325286.0, 
-    "lastLogin" : 1512682349743.0, 
-    "lock" : false
+        ]
+    }
 }

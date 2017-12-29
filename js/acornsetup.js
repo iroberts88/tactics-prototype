@@ -436,6 +436,7 @@
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             Acorn.Net.socket_.emit('playerUpdate',{command: 'testGame'});
+                            Acorn.changeState('loader');
                         }
                     });
                     Graphics.uiContainer.addChild(this.joinButton);
@@ -565,6 +566,16 @@
                 },
                 update: function(dt){
                     UnitInventory.update(dt);
+                }
+            });
+            Acorn.addState({
+                stateId: 'loader',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    Loader.init();
+                },
+                update: function(dt){
+                    Loader.update(dt);
                 }
             });
             Acorn.addState({

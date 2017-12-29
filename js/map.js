@@ -23,7 +23,6 @@
         this.cAverages = null; //the average of all sprite locations (used for correct rotations)
         this.rotateData = null;
         this.currentRotation = null;
-        this.maxSize = null;
 
         this.axialDirections = [
             [1,0],[1,-1],[0,-1],
@@ -91,11 +90,7 @@
         this.cubeMap = {};
 
         try{
-            var size = 0;
-            var size2 = 0;
             for (var i in data.mapData){
-                size += 1;
-                size2 = 0;
                 for (var j in data.mapData[i]){
                     size2 += 1;
                     if (typeof this.axialMap[i] == 'undefined'){
@@ -108,7 +103,6 @@
                     this.axialMap[i][j].tile = data.mapData[i][j].tile;
                 }
             }
-            this.maxSize = size + size2;
             this.initCubeMap();
             this.getHexContainer();
             for (var i in this.axialMap){

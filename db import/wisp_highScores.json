@@ -2,9 +2,9 @@
     "_id" : ObjectId("597b71bd79a10148080db675"), 
     "solo" : [
         {
-            "name" : "pppppppppppppppp", 
-            "score" : 3887100000.0, 
-            "level" : NumberInt(20)
+            "name" : "faulken", 
+            "score" : 517008.0, 
+            "level" : NumberInt(92)
         }, 
         {
             "name" : "faulken", 

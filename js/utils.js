@@ -64,6 +64,9 @@
                     }
                     break;
             }
+            data.color1 = '0x' + Utils.componentToHex(Math.round(data.r)) + Utils.componentToHex(Math.round(data.g)) + Utils.componentToHex(Math.round(data.b));
+            parseInt(data.color1);
+            data.color2 = '#' + Utils.componentToHex(Math.round(data.r)) + Utils.componentToHex(Math.round(data.g)) + Utils.componentToHex(Math.round(data.b));
         },
         colorShifter2: function(data){
             switch(data.phase){
