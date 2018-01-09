@@ -36,7 +36,7 @@
             [+2, -1, -1], [+1, +1, -2], [-1, +2, -1], 
             [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
         ];
-
+        this.maxSize = 0;
         this.startZone1 = [];
         this.startZone2 = [];
     }
@@ -92,7 +92,6 @@
         try{
             for (var i in data.mapData){
                 for (var j in data.mapData[i]){
-                    size2 += 1;
                     if (typeof this.axialMap[i] == 'undefined'){
                         this.axialMap[i] = {};
                     }
@@ -120,8 +119,11 @@
                         var cube = this.getCube(a);
                         cube.deleted = true;
                     }
+                    if (Math.abs(j) > this.maxSize){this.maxSize = Math.abs(j)}
                 }
+                if (Math.abs(i) > this.maxSize){this.maxSize = Math.abs(i)}
             }
+            this.maxSize = this.maxSize*2;
             this.updateSprites(this.container2.children);
             Graphics.worldContainer.addChild(this.container2);
             if (data.sz1){
@@ -449,6 +451,7 @@
                 if (MapGen.losToolData.losShown){
                     for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
                         MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
+                        MapGen.losToolData.spritesAltered[i].alpha = 1.0;
                     }
                     MapGen.losToolData.spritesAltered = [];
                     MapGen.losToolData.losShown = false;
@@ -471,6 +474,7 @@
                 if (MapGen.losToolData.losShown){
                     for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
                         MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
+                        MapGen.losToolData.spritesAltered[i].alpha = 1.0;
                     }
                     MapGen.losToolData.spritesAltered = [];
                     MapGen.losToolData.losShown = false;

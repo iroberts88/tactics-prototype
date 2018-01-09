@@ -73,15 +73,9 @@ Unit.prototype.init = function(data) {
 
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
-
-    this.usedAbilitySlots = (typeof data.usedAbilitySlots == 'undefined') ? 0 : data.usedAbiliySlots;
     
     this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
     this.human = (typeof data.human == 'undefined') ? true : data.human;;
-
-    this.weapon = data.weapon;
-    this.shield = data.shield;
-    this.accessory = data.accessory
 
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
@@ -311,6 +305,10 @@ Unit.prototype.init = function(data) {
         this.inventory.addItemUnit(data.inventory[i]);
     }
 
+    this.inventory.equip(data.weapon);
+    this.inventory.equip(data.shield);
+    this.inventory.equip(data.accessory);
+
     for (var i in data){
         if (this[i] instanceof Attribute){
             this[i].base = data[i];
@@ -332,7 +330,6 @@ Unit.prototype.getDBObj = function(){
     dbObj.skill = this.skill.base;
     dbObj.speed = this.speed.base;
     dbObj.abilitySlots = this.abilitySlots.base;
-    dbObj.usedAbilitySlots = this.usedAbilitySlots;
     //attributes
     dbObj.strength = this.strength.base;
     dbObj.intelligence = this.strength.base;
@@ -410,7 +407,7 @@ Unit.prototype.getClientData = function(){
 }
 Unit.prototype.setClass = function(c){
     try{
-
+        this.setAbilitySlots();
     }catch(e){
         console.log("unable to set class");
         console.log(e);

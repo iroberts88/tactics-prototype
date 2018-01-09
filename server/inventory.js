@@ -122,12 +122,14 @@ Inventory.prototype.changeWeight = function(amt,mult){
     if (typeof mult === 'undefined'){mult = 1;}
     var cf = 10;
     this.currentWeight = ((this.currentWeight*cf + (amt*cf)*mult) / cf);
-    this.owner.speed.set();
+    this.owner.speed.set(true);
 }
 
 
 Inventory.prototype.equip = function(index,updateClient){
     //attempts to equip the item at the given index
+    if (typeof index != 'number'){return;}
+
     try{
         var item = this.items[index];
         if (item.type == 'weapon' || item.type == 'gun'){

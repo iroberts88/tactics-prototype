@@ -244,6 +244,7 @@
                     document.body.style.cursor = 'default';
                     this.logo = Graphics.makeUiElement({
                         text: 'Tactics Prototype',
+                        style: this.baseStyle,
                         style: AcornSetup.baseStyle,
                         position: [(Graphics.width / 2),(Graphics.height / 8)]
                     });
@@ -396,6 +397,7 @@
                     //The Main Menu Logo
                     this.logo = Graphics.makeUiElement({
                         text: 'Tactics Prototype',
+                        style: AcornSetup.baseStyle,
                         position: [(Graphics.width/2),(Graphics.height/6)],
                     });
                     this.logo.style.fontSize = 100;
@@ -403,6 +405,7 @@
                     //create map button
                     this.createButton = Graphics.makeUiElement({
                         text: 'Create New Map',
+                        style: AcornSetup.baseStyle,
                         position: [(Graphics.width/5),(Graphics.height/1.5)],
                         interactive: true,
                         buttonMode: true,buttonGlow: true,
@@ -410,11 +413,13 @@
                             Acorn.changeState('MapGenInit');
                         }
                     });
+                    this.createButton.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.createButton);
 
                     //create map button
                     this.loadMapButton = Graphics.makeUiElement({
                         text: 'Edit Map',
+                        style: AcornSetup.baseStyle,
                         position: [(Graphics.width/5),(Graphics.height/1.2)],
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
@@ -428,10 +433,12 @@
                             Graphics.showLoadingMessage(true);
                         }
                     });
+                    this.loadMapButton.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
                     this.joinButton = Graphics.makeUiElement({
-                        text: 'Join',
+                        text: 'Join (Test)',
+                        style: AcornSetup.baseStyle,
                         position: [(Graphics.width*0.8),(Graphics.height/1.35)],
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
@@ -439,6 +446,7 @@
                             Acorn.changeState('loader');
                         }
                     });
+                    this.joinButton.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.joinButton);
 
                     this.userName = Graphics.makeUiElement({
@@ -590,7 +598,7 @@
                     ];
                     Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
                     var style = AcornSetup.baseStyle;
-                    style.font = '100px Orbitron';
+                    style.fontsize = 100;
                     
                     this.typeSelected = 'r';
                     this.mapSizes = {

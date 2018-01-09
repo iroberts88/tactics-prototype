@@ -206,6 +206,7 @@ Player.prototype.setupSocket = function() {
                     break;
                 case 'logout':
                     try{
+                        that.gameEngine.playerLogout(that);
                         that.gameEngine.queuePlayer(that,'logout', {});
                         that.user.unlock();
                         that.user.updateDB();
@@ -342,6 +343,9 @@ Player.prototype.setupSocket = function() {
                     break;
                 case 'testGame':
                     that.gameEngine.playersWaiting.push(that.id);
+                    break;
+                case 'cancelSearch':
+                    that.gameEngine.playerCancelSearch(that);
                     break;
             }
         }
@@ -580,7 +584,7 @@ Player.prototype.setupSocket = function() {
                     //SET USER DATA TO GUEST
                     that.user = User();
                     that.user.setOwner(that);
-                    that.user.init({});
+                    that.user.init({guest: true});
                     that.user.setLastLogin(Date.now());
                     that.gameEngine.queuePlayer(that,"loggedIn", {name:that.user.userData.userName,stats:that.user.userData.stats});
                 }else if (data.sn && data.pw){

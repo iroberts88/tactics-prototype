@@ -70,11 +70,9 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'soldier';
-                    CreateUnit.soldierButton.style.fill = 'gray';
-                    CreateUnit.techButton.style.fill = 'white';
-                    CreateUnit.scoutButton.style.fill = 'white';
-                    CreateUnit.medicButton.style.fill = 'white';
+                    CreateUnit.soldierButton.defaultFill = 'gray';
                 }
             });
             this.soldierButton.style.fill = 'gray';
@@ -87,11 +85,9 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'medic';
-                    CreateUnit.medicButton.style.fill = 'gray';
-                    CreateUnit.techButton.style.fill = 'white';
-                    CreateUnit.scoutButton.style.fill = 'white';
-                    CreateUnit.soldierButton.style.fill = 'white';
+                    CreateUnit.medicButton.defaultFill = 'gray';
                 }
             });
             Graphics.uiContainer.addChild(this.medicButton);
@@ -103,11 +99,9 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'tech';
-                    CreateUnit.techButton.style.fill = 'gray';
-                    CreateUnit.soldierButton.style.fill = 'white';
-                    CreateUnit.scoutButton.style.fill = 'white';
-                    CreateUnit.medicButton.style.fill = 'white';
+                    CreateUnit.techButton.defaultFill = 'gray';
                 }
             });
             Graphics.uiContainer.addChild(this.techButton);
@@ -119,11 +113,9 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'scout';
-                    CreateUnit.soldierButton.style.fill = 'white';
-                    CreateUnit.techButton.style.fill = 'white';
-                    CreateUnit.scoutButton.style.fill = 'gray';
-                    CreateUnit.medicButton.style.fill = 'white';
+                    CreateUnit.scoutButton.defaultFill = 'gray';
                 }
             });
             Graphics.uiContainer.addChild(this.scoutButton);
@@ -263,9 +255,9 @@
             this.maleButton = Graphics.makeUiElement({text: 'male',style: this.style2, 
                 interactive: true, buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.sex = 'male';
-                    CreateUnit.maleButton.style.fill = 'gray';
-                    CreateUnit.femaleButton.style.fill = 'white';
+                    CreateUnit.maleButton.defaultFill = 'gray';
                 }
             });
             this.maleButton.position.x = this.unitSprite.position.x - this.unitSprite.width/2 - this.maleButton.width/2;
@@ -277,9 +269,9 @@
             this.femaleButton = Graphics.makeUiElement({text: 'female',style: this.style2, 
                 interactive: true, buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
+                    CreateUnit.resetColors();
                     CreateUnit.sex = 'female';
-                    CreateUnit.maleButton.style.fill = 'white';
-                    CreateUnit.femaleButton.style.fill = 'gray';
+                    CreateUnit.femaleButton.defaultFill = 'gray';
                 }
             });
             this.femaleButton.style.fontSize = 32;
@@ -321,7 +313,22 @@
                 Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
             }
         },
+        resetColors: function(){
+            CreateUnit.soldierButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.techButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.scoutButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.medicButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.soldierButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.techButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.scoutButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.medicButton.style.fill = Graphics.pallette.color1;
 
+            CreateUnit.maleButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.femaleButton.defaultFill = Graphics.pallette.color1;
+            CreateUnit.maleButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.femaleButton.style.fill = Graphics.pallette.color1;
+
+        },
         checkAndCreate: function(){
             //check if valid name
             var name = document.getElementById('nameInput').value;

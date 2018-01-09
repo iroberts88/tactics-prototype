@@ -71,20 +71,8 @@
             }
 
             //create tool buttons
-            var style = {
-                font: '24px Orbitron', 
-                fill: 'white', 
-                align: 'left', 
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                stroke: '#000000',
-                strokeThickness: 5,
-                dropShadow: true,
-                dropShadowColor: '#000000',
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-                dropShadowDistance: 6
-            };
+            var style = AcornSetup.baseStyle;
+            style.fontSize = 24;
 
             //Select Tool Text
             this.toolText = Graphics.makeUiElement({
@@ -341,8 +329,12 @@
                     if (MapGen.currentSZone != 1){
                         MapGen.currentSZone = 1;
                     }
-                    MapGen.sZone1.style.fill = 'gray';
-                    MapGen.sZone2.style.fill = 'white';
+                    MapGen.resetColors();
+                    MapGen.sZone1.defaultFill = 'gray';
+                    for (var i = 0; i < MapGen.map.startZone2.length;i++){
+                        MapGen.map.startZone2[i].sprite1.alpha = 0.2;
+                        MapGen.map.startZone2[i].sprite2.alpha = 0.2;
+                    }
                 }
             });
             this.sZone1.style.fill = 'gray';
@@ -360,8 +352,12 @@
                     if (MapGen.currentSZone != 2){
                         MapGen.currentSZone = 2;
                     }
-                    MapGen.sZone2.style.fill = 'gray';
-                    MapGen.sZone1.style.fill = 'white';
+                    MapGen.resetColors();
+                    MapGen.sZone2.defaultFill = 'gray';
+                    for (var i = 0; i < MapGen.map.startZone1.length;i++){
+                        MapGen.map.startZone1[i].sprite1.alpha = 0.2;
+                        MapGen.map.startZone1[i].sprite2.alpha = 0.2;
+                    }
                 }
             });
             this.sZone2.style.fontSize = 24;
@@ -896,6 +892,8 @@
                 for (j in this.map.axialMap[i]){
                     this.map.axialMap[i][j].sprite1.tint = 0xFFFFFF;
                     this.map.axialMap[i][j].sprite2.tint = 0xFFFFFF;
+                    this.map.axialMap[i][j].sprite1.alpha = 1;
+                    this.map.axialMap[i][j].sprite2.alpha = 1;
                 }
             }
             //set current options to visible
@@ -935,6 +933,12 @@
                 MapGen.sZone2.visible = true;
                 MapGen.currentSZone = 1;
                 MapGen.toolSize = 1;
+                for (var i in this.map.axialMap){
+                    for (j in this.map.axialMap[i]){
+                        this.map.axialMap[i][j].sprite1.alpha = 0.2;
+                        this.map.axialMap[i][j].sprite2.alpha = 0.2;
+                    }
+                }
             }
         },
         updatePrims: function(){
@@ -974,6 +978,7 @@
                 this[MapGen.currentTool + 'Tool'].width,
                 this[MapGen.currentTool + 'Tool'].height
             );
+            Graphics.uiPrimitives2.endFill();
             if (MapGen.currentTool == 'path'){
                 this.jumpHeightNum.text = '' + this.pathToolData.jumpHeight;
             }
@@ -989,16 +994,19 @@
                 );
             }
             if (MapGen.currentTool == 'sZone'){
-                for (var i = 0; i < this.map.startZone1.length;i++){
-                    this.map.startZone1[i].sprite1.tint = 0xFF00FF;
-                    this.map.startZone1[i].sprite2.tint = 0xFF00FF;
+                if (this.currentSZone == 1){
+                    for (var i = 0; i < this.map.startZone1.length;i++){
+                        this.map.startZone1[i].sprite1.alpha = 1;
+                        this.map.startZone1[i].sprite2.alpha = 1;
+                    }
                 }
-                for (var i = 0; i < this.map.startZone2.length;i++){
-                    this.map.startZone2[i].sprite1.tint = 0xFF0000;
-                    this.map.startZone2[i].sprite2.tint = 0xFF0000;
+                if (this.currentSZone == 2){
+                    for (var i = 0; i < this.map.startZone2.length;i++){
+                        this.map.startZone2[i].sprite1.alpha = 1;
+                        this.map.startZone2[i].sprite2.alpha = 1;
+                    }
                 }
             }
-            Graphics.uiPrimitives2.endFill();
             if (!this.map.rotateData){
                 //set the new currently selected node after mouseover
                 if (this.setNewSelectedNode){
@@ -1327,6 +1335,8 @@
                                     }
                                 }
                             }
+                            this.map.container1.children = this.map.updateSprites(this.map.container1.children);
+                            this.map.container2.children = this.map.updateSprites(this.map.container2.children);
                             break;
                         case 'path':
                             this.pathToolData.startNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
@@ -1373,7 +1383,6 @@
                             //make sure the node is not already in the current sZone
 
                             if (cont && this.nodeInArr(node,zoneArr)){
-                                console.log('wut')
                                 //if it is, make sure it doesnt create 2 distict zones then remove it
                                 var checked = 0; //number of nodes checked
                                 var checkedArr = [node]; //nodes already checked
@@ -1399,8 +1408,8 @@
                                     //checked all nodes, remove current node
                                     for (var i = 0;i < zoneArr.length;i++){
                                         if (zoneArr[i] == node){
-                                            node.sprite1.tint = 0xFFFFFF;
-                                            node.sprite2.tint = 0xFFFFFF;
+                                            node.sprite1.alpha = 0.2;
+                                            node.sprite2.alpha = 0.2;
                                             zoneArr.splice(i,1);
                                         }
                                     }
@@ -1428,7 +1437,6 @@
                             }
                             break;
                         case 'los':
-
                             //Un-Comment below to show lines drawn to each node
 
                             /*var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
@@ -1522,21 +1530,21 @@
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0xFF0000;
+                                        s.alpha = 0.05;
                                         this.losToolData.spritesAltered.push(s);
                                     }else if ((!blocked1 && !blocked2) == false){
                                         //partial cover
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0xFFFF00;
+                                        s.alpha = 0.5;
                                         this.losToolData.spritesAltered.push(s);
                                     }else{
                                         //NO COVER
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0x00FF00;
+                                        s.alpha = 1.0;
                                         this.losToolData.spritesAltered.push(s);
                                     }
                                 }
@@ -1573,8 +1581,14 @@
                 }
             }
             return false;
-        }
+        },
 
+        resetColors: function(){
+            MapGen.sZone1.defaultFill = Graphics.pallette.color1;
+            MapGen.sZone2.defaultFill = Graphics.pallette.color1;
+            MapGen.sZone1.style.fill = Graphics.pallette.color1;
+            MapGen.sZone2.style.fill = Graphics.pallette.color1;
+        }
     }
     window.MapGen = MapGen;
 })(window);

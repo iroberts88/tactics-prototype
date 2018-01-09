@@ -73,6 +73,76 @@ function User() {
                 }
             }catch(e){
             }
+
+            try{
+                if (data.guest){
+                    //add random units
+                    var classes = ['medic','tech','soldier','scout'];
+                    for (var i = 0; i < 5; i++){
+                        var char = new Unit();
+                        //init unit
+                        var sexes = ['male','female'];
+                        char.init({
+                            owner: this.owner,
+                            id: this.owner.gameEngine.getId(),
+                            abilitySlots: 999,
+                            name: 'Test Character ' + (i+1),
+                            sex: sexes[Math.floor(Math.random()*sexes.length)],
+                            inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield'],
+                            weapon: Math.floor(Math.random()*2),
+                            shield: 3,
+                            accessory: 2
+                        });
+                        var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
+                        for (var j = 0;j < 20;j++){
+                            var randStat = stats[Math.floor(Math.random()*stats.length)];
+                            char[randStat].base += 1;
+                            char[randStat].set();
+                        }
+                        var unitClass = classes[i];
+                        if (i == 4){
+                            unitClass = classes[Math.floor(Math.random()*classes.length)];
+                        }
+                        var learned = {};
+                        var equipped = {}; 
+                        var ap = {};
+                        switch(unitClass){
+                            case 'medic':
+                                learned = { "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
+                                equipped = { "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
+                                ap = {'Medic': 9999};
+                                break;
+                            case 'tech':
+                                learned = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "uraniumGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                equipped = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "uraniumGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                ap = {'Tech': 9999};
+                                break;
+                            case 'soldier':
+                                learned = { "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
+                                equipped = { "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
+                                ap = {'Soldier': 9999};
+                                break;
+                            case 'scout':
+                                learned = { "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "momentum" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
+                                equipped = { "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "momentum" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
+                                ap = {'Scout': 9999}
+                                break;
+                        }
+                        char.classInfo = new ClassInfo();
+                        char.classInfo.init({unit: char, 
+                            learned: learned,
+                            equipped: equipped,
+                            ap: ap});
+                        char.classInfo.setBaseClass(unitClass);
+                        char.classInfo.setClass(unitClass);
+                        this.owner.gameEngine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
+                        this.characters.push(char);
+                    }
+                }
+            }catch(e){
+                console.log(e);
+            }
+
         },
         
         setLastLogin: function(date){

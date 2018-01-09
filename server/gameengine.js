@@ -29,10 +29,10 @@ var GameEngine = function() {
     this.idIterator = 0;
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
 
-    //TODO this should be randomly generated for each new user
+    //TODO this should be randomly generated for each new user?
     this.hashSalt = 'Salt makes things taste better';
 
-    this.debugList = {}; //avoid multiple debug chains -> update()
+    this.debugList = {}; //used avoid multiple debug chains in tick()
 }
 
 GameEngine.prototype.init = function () {
@@ -55,15 +55,14 @@ GameEngine.prototype.tick = function() {
         self.sessions[i].tick(deltaTime);
     }
 
-    //check waiting players
+    //check waiting players and join new sessions
     if (self.playersWaiting.length >= 2){
         var s = self.createSession();
         self.joinSession(s.id,self.players[self.playersWaiting[0]]);
-        self.playersWaiting.splice(0,1);
         self.joinSession(s.id,self.players[self.playersWaiting[0]]);
-        self.playersWaiting.splice(0,1);
         self.sessions[s.id].gameStart();
     }
+
     //update debug list
     for (var k in self.debugList){
         self.debugList[k].t -= deltaTime;
@@ -81,7 +80,7 @@ GameEngine.prototype.tick = function() {
 
 GameEngine.prototype.getId = function() {
     var id = this.idIterator + 'x';
-    for( var i=0; i < 3; i++ ){
+    for(var i=0; i<3; i++){
         id += this.possibleIDChars.charAt(Math.floor(Math.random() * this.possibleIDChars.length));
     }
     this.idIterator += 1;
@@ -157,7 +156,7 @@ GameEngine.prototype.joinSession = function(id,p) {
 GameEngine.prototype.leaveSession = function(id,p) {
     //remove a player <p> from a session and add back to engine
     this.addPlayer(p);
-    this.sessions[id].addPlayer(p);
+    this.sessions[id].removePlayer(p);
 }
 
 GameEngine.prototype.removeSession = function(id) {
@@ -171,9 +170,21 @@ GameEngine.prototype.addPlayer = function(p){
 }
 
 GameEngine.prototype.removePlayer = function(p){
+    this.playerLogout(p);
     delete this.players[p.id];
     this.playerCount -= 1;
 }
+
+GameEngine.prototype.playerLogout = function(p){
+    this.playerCancelSearch(p);
+}
+GameEngine.prototype.playerCancelSearch = function(p){
+    for (var i = 0; i < this.playersWaiting.length; i++){
+        if (this.playersWaiting[i] == p.id){
+            this.playersWaiting.splice(i,1);
+        }
+    }
+}  
 
 // ----------------------------------------------------------
 // Socket Functions

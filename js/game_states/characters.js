@@ -10,7 +10,7 @@
             this.units = [];
             this.refresh = false;
             this.style = AcornSetup.baseStyle;
-            this.style.font = '32px Sigmar One'
+            this.style.fontSize = 32;
 
             this.noCharacters = Graphics.makeUiElement({
                 text: 'You need 5 units to play!',

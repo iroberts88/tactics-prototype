@@ -54,7 +54,6 @@ HexMap.prototype.init = function(data){
     	console.log(e);
         console.log('Unable to initialize map');
     }
-    console.log(this);
 }
 HexMap.prototype.initCubeMap = function(){
     //Take an axial map and create its cube map counterpart

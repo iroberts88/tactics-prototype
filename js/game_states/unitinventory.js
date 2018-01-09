@@ -32,13 +32,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'compound';
-                    UnitInventory.compoundsButton.style.fill = 'gray';
-                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.compoundsButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -59,13 +55,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'weapon';
-                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.weaponsButton.style.fill = 'gray';
-                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.weaponsButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -86,13 +78,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'gun';
-                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.gunsButton.style.fill = 'gray';
-                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.gunsButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -113,13 +101,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'shield';
-                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.shieldsButton.style.fill = 'gray';
-                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.shieldsButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -140,13 +124,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'accessory';
-                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.accessoriesButton.style.fill = 'gray';
-                    UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
+                    UnitInventory.accessoriesButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -167,12 +147,9 @@
                 style: this.style1,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
+                    UnitInventory.resetColors();
                     UnitInventory.currentPage = 'misc';
-                    UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
-                    UnitInventory.miscButton.style.fill = 'gray';
+                    UnitInventory.miscButton.defaultFill = 'gray';
                     UnitInventory.clear();
                     UnitInventory.draw();
                 },
@@ -438,6 +415,21 @@
                 this.draw();
                 this.refresh = false;
             }
+        },
+        resetColors: function(){
+            UnitInventory.compoundsButton.defaultFill = Graphics.pallette.color1;
+            UnitInventory.weaponsButton.defaultFill = Graphics.pallette.color1;
+            UnitInventory.gunsButton.defaultFill = Graphics.pallette.color1;
+            UnitInventory.accessoriesButton.defaultFill = Graphics.pallette.color1;
+            UnitInventory.miscButton.defaultFill = Graphics.pallette.color1;
+            UnitInventory.shieldsButton.defaultFill = Graphics.pallette.color1;
+
+            UnitInventory.compoundsButton.style.fill = Graphics.pallette.color1;
+            UnitInventory.weaponsButton.style.fill = Graphics.pallette.color1;
+            UnitInventory.gunsButton.style.fill = Graphics.pallette.color1;
+            UnitInventory.accessoriesButton.style.fill = Graphics.pallette.color1;
+            UnitInventory.miscButton.style.fill = Graphics.pallette.color1;
+            UnitInventory.shieldsButton.style.fill = Graphics.pallette.color1;
         }
 
     }
