@@ -630,9 +630,12 @@
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'r';
                             state.rectangle.style.fill = 'gray';
-                            state.hexagon.style.fill = 'white';
-                            state.triangle.style.fill = 'white';
-                            state.rhombus.style.fill = 'white';
+                            state.hexagon.style.fill = Graphics.pallette.color1;
+                            state.triangle.style.fill = Graphics.pallette.color1;
+                            state.rhombus.style.fill = Graphics.pallette.color1;
+                            state.hexagon.defaultFill = Graphics.pallette.color1;
+                            state.triangle.defaultFill = Graphics.pallette.color1;
+                            state.rhombus.defaultFill = Graphics.pallette.color1;
                         }
                     });
                     this.rectangle.style.fontSize = 64;
@@ -649,10 +652,13 @@
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 't';
-                            state.rectangle.style.fill = 'white';
-                            state.hexagon.style.fill = 'white';
+                            state.hexagon.style.fill = Graphics.pallette.color1;
+                            state.rectangle.style.fill = Graphics.pallette.color1;
+                            state.rhombus.style.fill = Graphics.pallette.color1;
+                            state.hexagon.defaultFill = Graphics.pallette.color1;
+                            state.rectangle.defaultFill = Graphics.pallette.color1;
+                            state.rhombus.defaultFill = Graphics.pallette.color1;
                             state.triangle.style.fill = 'gray';
-                            state.rhombus.style.fill = 'white';
                         }
                     });
                     this.triangle.style.fontSize = 64;
@@ -668,10 +674,13 @@
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'h';
-                            state.rectangle.style.fill = 'white';
                             state.hexagon.style.fill = 'gray';
-                            state.triangle.style.fill = 'white';
-                            state.rhombus.style.fill = 'white';
+                            state.rectangle.style.fill = Graphics.pallette.color1;
+                            state.triangle.style.fill = Graphics.pallette.color1;
+                            state.rhombus.style.fill = Graphics.pallette.color1;
+                            state.rectangle.defaultFill = Graphics.pallette.color1;
+                            state.triangle.defaultFill = Graphics.pallette.color1;
+                            state.rhombus.defaultFill = Graphics.pallette.color1;
                         }
                     });
                     this.hexagon.style.fontSize = 64;
@@ -687,9 +696,12 @@
                         clickFunc: function onClick(){
                             var state = Acorn.states['MapGenInit'];
                             state.typeSelected = 'rh';
-                            state.rectangle.style.fill = 'white';
-                            state.hexagon.style.fill = 'white';
-                            state.triangle.style.fill = 'white';
+                            state.hexagon.style.fill = Graphics.pallette.color1;
+                            state.triangle.style.fill = Graphics.pallette.color1;
+                            state.rectangle.style.fill = Graphics.pallette.color1;
+                            state.hexagon.defaultFill = Graphics.pallette.color1;
+                            state.triangle.defaultFill = Graphics.pallette.color1;
+                            state.rectangle.defaultFill = Graphics.pallette.color1;
                             state.rhombus.style.fill = 'gray';
                         }
                     });
@@ -725,12 +737,12 @@
 
                     //size text
                     this.sizeText = Graphics.makeUiElement({
-                        text: 'Size :',
+                        text: 'Size: ',
                         style: style,
                         position: [0,(Graphics.height / 2)],
                     });
-                    this.sizeText.position.x = (Graphics.width / 2) - this.sizeBar.width/2 - this.sizeText.width/2;
                     this.sizeText.style.fontSize = 48;
+                    this.sizeText.position.x = (Graphics.width / 2) - this.sizeBar.width/2 - this.sizeText.width/2;
                     Graphics.uiContainer.addChild(this.sizeText);
                     //size number next to bar 1
                     this.sizeNum = Graphics.makeUiElement({
