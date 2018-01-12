@@ -1,6 +1,6 @@
 var app = require('http').createServer(webResponse),
     fs = require('fs'),
-    mongo = require('mongodb').MongoClient,
+    AWS = require("aws-sdk"),
     io = require('socket.io').listen(app),
     GameEngine = require('./gameengine.js').GameEngine,
     RequireCheck = require('./requirecheck.js').RequireCheck;
@@ -10,63 +10,81 @@ const crypto = require('crypto');
 var rc = null,
     ge = null;
 
+//{endpoint: "https://dynamodb.us-west-1.amazonaws.com"}
+AWS.config.update({
+  region: "us-east-1",
+  endpoint: "https://dynamodb.us-east-1.amazonaws.com"
+});
+
 function init() {
+
+    var docClient = new AWS.DynamoDB.DocumentClient();
 
     rc = new RequireCheck();
     ge = new GameEngine();
     rc.onReady(onReady);
-    //io.settings.log = false; //enable node logging
+
     // ----------------------------------------------------------
     // Start Database Connection
     // ----------------------------------------------------------
-    var url = 'mongodb://127.0.0.1/lithiumAve';
+
     rc.ready();
-    //TODO -- update to a new database
     rc.require('dbMaps','dbUsers','dbItems','dbBuffs','dbClasses');
 
-    // Use connect method to connect to the DB
-    mongo.connect(url, function(err, db) {
-        console.log("Connected to db");
-        console.log("DB errors: " + err);
-        
-        // ---- Load Maps ----
-        var mColl = db.collection('tactics_maps');
-        mColl.find().toArray(function(err, arr) {
-            ge.loadMaps(arr);
+    // ---- Load Maps ----
+    docClient.scan({TableName: 'tactics_maps'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Loading maps... " + data.Items.length + ' found');
+            ge.loadMaps(data.Items);
             rc.ready('dbMaps');
-        });
-
-        // ---- Load Items ----
-        var mColl = db.collection('tactics_items');
-        mColl.find().toArray(function(err, arr) {
-            ge.loadItems(arr);
-            rc.ready('dbItems');
-        });
-
-        // ---- Load Buffs ----
-        var mColl = db.collection('tactics_buffs');
-        mColl.find().toArray(function(err, arr) {
-            ge.loadBuffs(arr);
-            rc.ready('dbBuffs');
-        });
-
-        // ---- Load Classes ----
-        var mColl = db.collection('tactics_classes');
-        mColl.find().toArray(function(err, arr) {
-            ge.loadClasses(arr);
-            rc.ready('dbClasses');
-        });
-
-        // ---- Load Userbase ----
-        var usersColl = db.collection('users');
-        usersColl.find().toArray(function(err, arr) {
-            ge.loadUsers(arr);
-            rc.ready('dbUsers');
-        });
-        db.close();
+        }
     });
-}
+    // ---- Load Items ----
+    docClient.scan({TableName: 'tactics_items'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Loading items... " + data.Items.length + ' found');
+            ge.loadItems(data.Items);
+            rc.ready('dbItems');
+        }
+    });
+    // ---- Load Buffs ----
+    docClient.scan({TableName: 'tactics_buffs'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Loading buffs... " + data.Items.length + ' found');
+            ge.loadBuffs(data.Items);
+            rc.ready('dbBuffs');
+        }
+    });
 
+    // ---- Load Classes ----
+    docClient.scan({TableName: 'tactics_classes'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Loading classes... " + data.Items.length + ' found');
+            ge.loadClasses(data.Items);
+            rc.ready('dbClasses');
+        }
+    });
+
+    // ---- Load Userbase ----
+    docClient.scan({TableName: 'users'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Loading users... " + data.Items.length + ' found');
+            ge.loadUsers(data.Items);
+            rc.ready('dbUsers');
+        }
+    });
+
+}
 init();
 
 
