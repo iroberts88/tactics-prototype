@@ -40,3 +40,5 @@ Thumbs.db
 # Specific Files #
 ##################
 *.idea/
+
+server/node_modules
