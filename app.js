@@ -89,7 +89,8 @@ init();
 // ----------------------------------------------------------
 // Start Web Server
 // ----------------------------------------------------------
-app.listen(8080);
+var port = process.env.PORT || 3000;
+app.listen(port);
 
 function webResponse(req, res) {
     var filename = req.url;
