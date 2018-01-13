@@ -11,7 +11,10 @@ var rc = null,
     ge = null;
 
 //{endpoint: "https://dynamodb.us-west-1.amazonaws.com"}
-AWS.config.region = process.env.REGION;
+AWS.config.update({
+  region: "us-east-1",
+  endpoint: "https://dynamodb.us-east-1.amazonaws.com"
+});
 
 function init() {
 
