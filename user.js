@@ -44,7 +44,7 @@ function User() {
                 this.userData.admin = d.admin;
                 this.userData.createDate = d.createDate;
                 try{
-                    var docClient = new AWS.DynamoDB.DocumentClient();
+                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {
                         TableName: 'tactics_userdata',
                         Key: {
@@ -172,7 +172,7 @@ function User() {
                 ge.users[ge._userIndex[this.userData.username]].loggedin = true;
                 try{
                     var d = this.userData;
-                    var docClient = new AWS.DynamoDB.DocumentClient();
+                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {
                         TableName: 'users',
                         Key:{username: d.username},
@@ -201,7 +201,7 @@ function User() {
                 ge.users[ge._userIndex[this.userData.username]].loggedin = false;
                 try{
                     var d = this.userData;
-                    var docClient = new AWS.DynamoDB.DocumentClient();
+                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {
                         TableName: 'users',
                         Key:{username: d.username},
@@ -238,7 +238,7 @@ function User() {
                     for (var i = 0; i < this.inventory.items.length;i++){
                        inv.push([this.inventory.items[i].itemID,this.inventory.items[i].amount]);
                     }
-                    var docClient = new AWS.DynamoDB.DocumentClient();
+                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {
                         TableName: 'users',
                         Key:{username: d.username},

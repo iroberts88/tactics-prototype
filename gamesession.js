@@ -25,7 +25,7 @@ GameSession.prototype.init = function (data) {
     this.id = data.sid;
     var session = this;
 
-    var docClient = new AWS.DynamoDB.DocumentClient();
+    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
     var params = {
         TableName: 'tactics_maps',
         Key:{

@@ -18,7 +18,7 @@ AWS.config.update({
 
 function init() {
 
-    var docClient = new AWS.DynamoDB.DocumentClient();
+    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
 
     rc = new RequireCheck();
     ge = new GameEngine();

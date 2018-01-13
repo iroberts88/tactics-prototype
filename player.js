@@ -358,7 +358,7 @@ Player.prototype.setupSocket = function() {
     this.socket.on('confirmMapSave', function (d) {
         try{
             if (d.c){
-                var docClient = new AWS.DynamoDB.DocumentClient();
+                var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'tactics_maps',
                     Key:{mapid: that.mapData.name},
@@ -386,7 +386,7 @@ Player.prototype.setupSocket = function() {
 
     this.socket.on('deleteMap', function (d) {
         try{
-            var docClient = new AWS.DynamoDB.DocumentClient();
+            var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
             var params = {
                 TableName: 'tactics_maps',
                 Key:{mapid: d.name}
@@ -410,7 +410,7 @@ Player.prototype.setupSocket = function() {
 
     this.socket.on('createMap', function (d) {
         try{
-            var docClient = new AWS.DynamoDB.DocumentClient();
+            var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
             var params = {
                 TableName: 'tactics_maps',
                 Key: {
@@ -453,6 +453,7 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on('editMap', function (d) {
+        console.log(d);
         try{
             var docClient = new AWS.DynamoDB.DocumentClient();
             var params = {
@@ -629,7 +630,7 @@ Player.prototype.setupSocket = function() {
                 }else if (d.sn && d.pw){
                     d.sn = d.sn.toLowerCase();
                     if (!that.gameEngine.users[that.gameEngine._userIndex[d.sn]].loggedin){
-                        var docClient = new AWS.DynamoDB.DocumentClient();
+                        var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                         var params = {
                             TableName: 'users',
                             Key: {
@@ -672,7 +673,7 @@ Player.prototype.setupSocket = function() {
         try{
             d.sn = d.sn.toLowerCase();
             if (!that.gameSession && d.sn != 'guest' && d.pw){
-                var docClient = new AWS.DynamoDB.DocumentClient();
+                var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'users',
                     Key: {
