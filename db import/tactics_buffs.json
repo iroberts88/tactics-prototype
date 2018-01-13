@@ -1,0 +1,38 @@
+{
+  "actionsOnTurn": {
+    "L": [
+      {
+        "M": {
+          "action": {
+            "S": "alterHealthByMaxPercent"
+          },
+          "value": {
+            "N": "5"
+          }
+        }
+      }
+    ]
+  },
+  "buffid": {
+    "S": "buff_bleed"
+  },
+  "description": {
+    "S": "Damage based on max health"
+  },
+  "duration": {
+    "N": "3"
+  },
+  "instant": {
+    "BOOL": false
+  },
+  "name": {
+    "S": "Bleed"
+  },
+  "tags": {
+    "L": [
+      {
+        "S": "detrimental"
+      }
+    ]
+  }
+}

@@ -1,0 +1,312 @@
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9b"), 
+    "name" : "Healing Compound", 
+    "description" : "Use to restore 300 health", 
+    "weight" : 1.0, 
+    "maxItemPile" : NumberInt(99), 
+    "type" : "compound", 
+    "usable" : true, 
+    "onUse" : [
+        {
+            "name" : "alterHealth", 
+            "value" : NumberInt(300)
+        }
+    ], 
+    "_dbIndex" : "compound_healing"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9c"), 
+    "name" : "Vigor Compound", 
+    "description" : "Use to restore 25 energy", 
+    "weight" : 1.0, 
+    "maxItemPile" : NumberInt(99), 
+    "type" : "compound", 
+    "usable" : true, 
+    "onUse" : [
+        {
+            "name" : "alterEnergy", 
+            "value" : NumberInt(25)
+        }
+    ], 
+    "_dbIndex" : "compound_vigor"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9d"), 
+    "name" : "Sidearm Pistol", 
+    "description" : "A simple, leightweight sidearm", 
+    "weight" : 2.0, 
+    "type" : "gun", 
+    "usable" : false, 
+    "classes" : "ALL", 
+    "eqData" : {
+        "rangeMin" : NumberInt(2), 
+        "rangeMax" : NumberInt(4), 
+        "damage" : 220.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "gun_sidearm"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9e"), 
+    "name" : "Chain Sword", 
+    "description" : "Sword with a motorized chain blade.", 
+    "valueMod" : 1.0, 
+    "weight" : 6.0, 
+    "type" : "weapon", 
+    "usable" : true, 
+    "classes" : [
+        "Soldier"
+    ], 
+    "onUseText" : "Rev the chain blade. Next attack will cause the target to bleed for 5% health for 5 turns", 
+    "onUse" : [
+        {
+            "name" : "addOnHit", 
+            "data" : [
+                {
+                    "name" : "addBuff", 
+                    "buffData" : {
+                        "name" : "Bleeding", 
+                        "id" : "buff_bleed", 
+                        "description" : "Bleeding 5% Max health for 3 turns"
+                    }
+                }
+            ]
+        }, 
+        {
+            "name" : "setUsable", 
+            "value" : "false"
+        }
+    ], 
+    "eqData" : {
+        "damage" : 280.0, 
+        "range" : 1.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "weapon_chainSword"
+}
+{ 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c68"), 
+    "name" : "Combat Knife", 
+    "description" : "", 
+    "weight" : 2.0, 
+    "type" : "weapon", 
+    "usable" : false, 
+    "classes" : "ALL", 
+    "eqData" : {
+        "damage" : 220.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "weapon_combatKnife"
+}
+{ 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c69"), 
+    "name" : "Rocket Sledge", 
+    "description" : "A powerful, heavy weapon. ", 
+    "weight" : 14.0, 
+    "type" : "weapon", 
+    "usable" : false, 
+    "classes" : [
+        "Soldier"
+    ], 
+    "eqData" : {
+        "damage" : 480.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "weapon_rocketSledge"
+}
+{ 
+    "_id" : ObjectId("5a01e7505e67e32bf05e7c6a"), 
+    "name" : "Power Axe", 
+    "description" : "A powerful, heavy weapon.", 
+    "weight" : 9.0, 
+    "valueMod" : 2.0, 
+    "type" : "weapon", 
+    "usable" : false, 
+    "onHitText" : "50% chance to break the target's shield", 
+    "classes" : [
+        "Soldier", 
+        "Scout"
+    ], 
+    "eqData" : {
+        "damage" : 330.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+
+        ], 
+        "onHit" : [
+            {
+                "name" : "breakShield", 
+                "chance" : NumberInt(50)
+            }
+        ]
+    }, 
+    "_dbIndex" : "weapon_powerAxe"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22a9f"), 
+    "name" : "SMG", 
+    "description" : "Fires in short auto-bursts", 
+    "weight" : 5.0, 
+    "type" : "gun", 
+    "usable" : false, 
+    "classes" : "ALL", 
+    "eqData" : {
+        "rangeMin" : NumberInt(2), 
+        "rangeMax" : NumberInt(4), 
+        "damage" : 60.0, 
+        "onEquip" : [
+
+        ], 
+        "onFire" : [
+            {
+                "name" : "burstShot", 
+                "value" : NumberInt(5)
+            }
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "gun_smg"
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22aa0"), 
+    "name" : "Cerebral Implant", 
+    "description" : "Increases INT and EXP gain", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "int", 
+                "value" : NumberInt(1)
+            }, 
+            {
+                "name" : "alterStat", 
+                "stat" : "expMod", 
+                "value" : NumberInt(10)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_cerebralImplant", 
+    "onEquipText" : [
+        "<INT> + 1", 
+        "<EXP> + 10%"
+    ]
+}
+{ 
+    "_id" : ObjectId("59ff57e61194231ac0c22aa1"), 
+    "name" : "Shield", 
+    "description" : "A basic shield", 
+    "weight" : 3.0, 
+    "type" : "shield", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+
+        ], 
+        "onHit" : [
+
+        ]
+    }, 
+    "_dbIndex" : "shield_shield"
+}
+{ 
+    "_id" : ObjectId("5a3ac63fe4c7d303c489f5e3"), 
+    "name" : "Battle Boots", 
+    "description" : "Increases movement of the user", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "mov", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_battleBoots", 
+    "onEquipText" : [
+        "<MOVE> + 1"
+    ]
+}
+{ 
+    "_id" : ObjectId("5a3ac673e4c7d303c489f5e4"), 
+    "name" : "Focus", 
+    "description" : "Increases the user's focus", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "dex", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_focus", 
+    "onEquipText" : [
+        "<DEX> + 1"
+    ]
+}
+{ 
+    "_id" : ObjectId("5a3be12ae4c7d303c489f5f8"), 
+    "name" : "Enhancer", 
+    "description" : "Increases the user's strength", 
+    "weight" : 1.0, 
+    "type" : "accessory", 
+    "usable" : false, 
+    "eqData" : {
+        "onEquip" : [
+            {
+                "name" : "alterStat", 
+                "stat" : "str", 
+                "value" : NumberInt(1)
+            }
+        ]
+    }, 
+    "_dbIndex" : "accessory_enhancer", 
+    "onEquipText" : [
+        "<STR> + 1"
+    ]
+}
