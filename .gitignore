@@ -40,3 +40,9 @@ Thumbs.db
 # Specific Files #
 ##################
 *.idea/
+
+server/node_modules
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

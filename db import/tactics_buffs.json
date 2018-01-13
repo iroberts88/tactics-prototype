@@ -1,17 +1,38 @@
-{ 
-    "_id" : ObjectId("59ff57e61194231ac0c22a9a"), 
-    "name" : "Bleed", 
-    "description" : "Damage based on max health", 
-    "duration" : NumberInt(3), 
-    "actionsOnTurn" : [
-        {
-            "action" : "alterHealthByMaxPercent", 
-            "value" : NumberInt(5)
+{
+  "actionsOnTurn": {
+    "L": [
+      {
+        "M": {
+          "action": {
+            "S": "alterHealthByMaxPercent"
+          },
+          "value": {
+            "N": "5"
+          }
         }
-    ], 
-    "instant" : false, 
-    "tags" : [
-        "detrimental"
-    ], 
-    "_dbIndex" : "buff_bleed"
+      }
+    ]
+  },
+  "buffid": {
+    "S": "buff_bleed"
+  },
+  "description": {
+    "S": "Damage based on max health"
+  },
+  "duration": {
+    "N": "3"
+  },
+  "instant": {
+    "BOOL": false
+  },
+  "name": {
+    "S": "Bleed"
+  },
+  "tags": {
+    "L": [
+      {
+        "S": "detrimental"
+      }
+    ]
+  }
 }
