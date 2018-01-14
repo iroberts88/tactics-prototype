@@ -428,7 +428,7 @@
                                 s = s + ' <' + MapGen.mapNames[i] + '> ';
                             }
                             var name = prompt(s, 'noname');
-                            if (person != null){
+                            if (name){
                                 Acorn.Net.socket_.emit('editMap',{name: name});
                             }
                             MapGen.mapName = name;

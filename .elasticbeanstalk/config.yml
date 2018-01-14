@@ -1,4 +1,6 @@
 branch-defaults:
+  Dev:
+    environment: tactics-prod
   master:
     environment: tactics-prod
     group_suffix: null
