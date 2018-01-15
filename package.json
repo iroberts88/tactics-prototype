@@ -1,13 +1,16 @@
-
 {
   "name": "Tactics-Prototype",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "ejs": "latest",
     "aws-sdk": "latest",
+    "body-parser": "latest",
+    "ejs": "latest",
     "express": "latest",
-    "body-parser": "latest"
+    "fs-extra": "^5.0.0",
+    "jsonfile": "^4.0.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.20.1"
   },
   "scripts": {
     "start": "node app.js"
