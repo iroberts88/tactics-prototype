@@ -14,6 +14,10 @@ var HexMap = function(session){
         [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
     ];
 
+    this.cardinalDirections = [
+        'Southeast','Northeast','North',
+        'Northwest','Southwest','South'
+    ];
     this.startZone1 = [];
     this.startZone2 = [];
 }
@@ -50,6 +54,7 @@ HexMap.prototype.init = function(data){
         for (var i = 0; i < data.sz2.length;i++){
             this.startZone2.push(this.axialMap[data.sz2[i].q][data.sz2[i].r]);
         }
+        console.log(this);
     }catch(e){
     	console.log(e);
         console.log('Unable to initialize map');

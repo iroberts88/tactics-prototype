@@ -583,7 +583,7 @@ Player.prototype.setupSocket = function() {
                     // -addAll
                     try{
                         for (var i in that.gameEngine.items){
-                            that.user.inventory.addItem(that.gameEngine.items[i]._dbIndex,1, true);
+                            that.user.inventory.addItem(that.gameEngine.items[i].itemid,1, true);
                         }
                     }catch(e){
                         console.log(e);

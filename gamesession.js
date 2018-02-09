@@ -19,6 +19,11 @@ var GameSession = function (engine) {
     this.mapName = 'test1';
     this.map = null;
     this.mapData = null;
+
+    this.allUnits = {};
+    this.turnOrder = [];
+    
+
 };
 
 GameSession.prototype.init = function (data) {
@@ -41,6 +46,13 @@ GameSession.prototype.init = function (data) {
             session.map.init(data.Item);
         }
     });
+
+    //set up units in the map
+        //init unit health/etc
+        //set position on the map
+        //create turn order
+
+    //send map init data to the client
 };
 
 

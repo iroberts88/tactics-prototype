@@ -6,11 +6,7 @@
     "aws-sdk": "latest",
     "body-parser": "latest",
     "ejs": "latest",
-    "express": "latest",
-    "fs-extra": "^5.0.0",
-    "jsonfile": "^4.0.0",
-    "lodash": "^4.17.4",
-    "moment": "^2.20.1"
+    "express": "latest"
   },
   "scripts": {
     "start": "node app.js"

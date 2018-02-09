@@ -128,6 +128,15 @@
     Unit.prototype.setStat = function(id,amt){
         try{
             switch(id){
+                case 'sh':
+                    this.maximumShields = amt;
+                    break;
+                case 'shdel':
+                    this.shieldDelay = amt;
+                    break;
+                case 'shrec':
+                    this.shieldRecharge = amt;
+                    break;
                 case 'absl':
                     this.abilitySlots = amt;
                     break;

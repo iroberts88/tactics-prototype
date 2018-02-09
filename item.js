@@ -9,11 +9,17 @@ var Item = function(){
     this.type = null;
     this.amount = null;
     this.weight = null;
+
+    //Tooltip texts for item uses
     this.onUseText = null;
     this.onFireText = null;
     this.onEquipText = null;
     this.onHitText = null;
+    this.onTakeDamageText = null;
+    this.onDepletedText = null;
+    this.onFullRechargeText = null;
     this.constantEffectText = null;
+
     this.classes = null;
     this.eqData = {};
 }
@@ -32,6 +38,8 @@ Item.prototype.getClientData = function(){
     data.onEquipText = this.onEquipText;
     data.onHitText = this.onHitText;
     data.constantEffectText = this.constantEffectText;
+    data.onFullRechargeText = this.onFullRechargeText;
+    data.onDepletedText = this.onDepletedText;
     data.amount = this.amount;
     data.eqData = {}
     switch(this.type){
@@ -45,16 +53,15 @@ Item.prototype.getClientData = function(){
             data.eqData.damage = this.eqData.damage;
             break;
         case 'shield':
-            data.eqData.capacity = this.eqData.capacity;
-            data.eqData.rechargeRate = this.eqData.rechargeRate;
-            data.eqData.rechargeDelay = this.eqData.rechargeDelay;
+            data.eqData.recharge = this.eqData.recharge;
+            data.eqData.delay = this.eqData.delay;
             break;
     }
     return data;
 }
 
 Item.prototype.init = function(data) {
-    this.itemID = data._dbIndex;
+    this.itemID = data.itemid;
     this.name = data.name;
     this.description = data.description;
     this.classes = data.classes;
@@ -64,100 +71,41 @@ Item.prototype.init = function(data) {
     this.amount = data.amount;
     this.weight = data.weight;
     this.amount = 1;
-
-    switch(this.type){
-        case 'weapon':
-            this.eqData = new Weapon();
-            this.eqData.init(data.eqData);
-            break;
-        case 'gun':
-            this.eqData = new Gun();
-            this.eqData.init(data.eqData);
-            break;
-        case 'shield':
-            this.eqData = new Shield();
-            this.eqData.init(data.eqData);
-            break;
-        case 'accessory':
-            this.eqData = new Accessory();
-            this.eqData.init(data.eqData);
-            break;
-    }
+    this.eqData = new Equipment();
+    this.eqData.init(data.eqData);
     this.onUseText = data.onUseText;
     this.onFireText = data.onFireText;
     this.onEquipText = data.onEquipText;
     this.onHitText = data.onHitText;
+    this.onDepletedText = data.onDepletedText;
+    this.onFullRechargeText = data.onFullRechargeText;
     this.constantEffectText = data.constantEffectText;
 };
 
 exports.Item = Item;
 
-var Gun = function(){
-    this.rangeMin = null;
-    this.rangeMax = null,
-    this.damage = null;
+var Equipment = function(){}
 
-    this.onEquip = null;
-    this.onFire = null;
-    this.onHit = null;
-}
+Equipment.prototype.init = function(data) {
+    //gun/wep
+    this.rangeMin = (typeof data.rangeMin != 'undefined') ? data.rangeMin : null;
+    this.rangeMax = (typeof data.rangeMax != 'undefined') ? data.rangeMax : null;
+    this.range = (typeof data.range != 'undefined') ? data.range : null;
+    this.damage = (typeof data.damage != 'undefined') ? data.damage : null;
+    //shield
+    this.recharge = (typeof data.recharge != 'undefined') ? data.recharge : null;
+    this.delay = (typeof data.delay != 'undefined') ? data.delay : null;
 
-Gun.prototype.init = function(data) {
-    this.rangeMin = data.rangeMin;
-    this.rangeMax = data.rangeMax;
-    this.damage = data.damage;
+    //all
+    this.onEquip = (typeof data.onEquip != 'undefined') ? data.onEquip : null;
+    this.onFire = (typeof data.onFire != 'undefined') ? data.onFire : null;
+    this.onHit = (typeof data.onHit != 'undefined') ? data.onHit : null;
+    this.onTakeDamage = (typeof data.onTakeDamage != 'undefined') ? data.onTakeDamage : null;
+    this.constant = (typeof data.constant != 'undefined') ? data.constant : null;
+    this.onDepleted = (typeof data.onDepleted != 'undefined') ? data.onDepleted : null;
+    this.onFullRecharge = (typeof data.onFullRecharge != 'undefined') ? data.onFullRecharge : null;
 
-    this.onEquip = data.onEquip;
-    this.onFire = data.onFire;
-    this.onHit = data.onHit;
 };
 
-exports.Gun = Gun;
 
-var Weapon = function(){
-    this.damage = null;
-    this.range = null;
-    this.onEquip = null;
-    this.onFire = null;
-    this.onHit = null;
-}
-
-Weapon.prototype.init = function(data) {
-    this.damage = data.damage;
-    this.range = data.range;
-    this.onEquip = data.onEquip;
-    this.onFire = data.onFire;
-    this.onHit = data.onHit;
-};
-
-exports.Weapon = Weapon;
-
-var Shield = function(){
-    this.capacity = null;
-    this.rechargeRate = null;
-    this.rechargeDelay = null;
-
-    this.onEquip = null;
-    this.onHit = null;
-}
-
-Shield.prototype.init = function(data) {
-    this.capacity = data.capacity;
-    this.rechargeRate = data.rechargeRate;
-    this.rechargeDelay = data.rechargeDelay;
-
-    this.onEquip = data.onEquip;
-    this.onHit = data.onHit;
-};
-
-exports.Shield = Shield;
-
-var Accessory = function(){
-    this.onEquip = null;
-}
-
-Accessory.prototype.init = function(data){
-    this.onEquip = data.onEquip;
-}
-
-exports.Accessory = Accessory;
+exports.Equipment = Equipment;

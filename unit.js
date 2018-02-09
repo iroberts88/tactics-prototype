@@ -7,10 +7,8 @@ var Unit = function(){
     this.sex = null;
     //Unit Stats
     //health
-    this.currentHealth = null;
     this.maximumHealth = null;
     //energy
-    this.currentEnergy = null;
     this.maximumEnergy = null;
 
     this.move = null;
@@ -19,11 +17,6 @@ var Unit = function(){
     this.skill = null;
     this.abilitySlots = null;
     this.usedAbilitySlots = null;
-    //shields
-    this.currentShields = null;
-    this.maximumShields = null;
-    this.shieldDelay = null;
-    this.shieldRecharge = null;
     //attributes
     this.strength = null;
     this.intelligence = null;
@@ -62,6 +55,49 @@ var Unit = function(){
     this.human = null; //a human unit
 
     this.usedAbilitySlots = null;
+
+    //shields
+    this.maximumShields = null;
+    this.currentShields = null;
+    this.shieldDelay = null;
+    this.shieldRecharge = null;
+    //health and energy
+    this.currentEnergy = null;
+    this.currentHealth = null;
+
+    //Map
+    this.currentNode = null;
+    this.direction = null;
+
+    //death
+    this.dead = null;
+    this.down = null;
+
+    //buffs
+    this.buffs = null;
+
+}
+
+Unit.prototype.reset = function(){
+    //things that reset with each new game
+
+    //shields
+    this.currentShields = this.maximumShields.value;
+
+    //health and energy
+    this.currentEnergy = this.maximumEnergy.value;
+    this.currentHealth = this.maximumHealth.value;
+
+    //Map
+    this.currentNode = null;
+    this.direction = null;
+
+    //death
+    this.dead = false;
+    this.down = false;
+
+    //buffs
+    this.buffs = [];
 }
 
 Unit.prototype.init = function(data) {
@@ -77,13 +113,40 @@ Unit.prototype.init = function(data) {
     this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
     this.human = (typeof data.human == 'undefined') ? true : data.human;;
 
+    //the maximum shield value
+    this.maximumShields = new Attribute();
+    this.maximumShields.init({
+        'id': 'sh',
+        'owner': this,
+        'value': 0,
+        'min': 0,
+        'max': 99999
+    });
+    //the amount a shield is recharged per turn
+    this.shieldRecharge = new Attribute();
+    this.shieldRecharge.init({
+        'id': 'shrec',
+        'owner': this,
+        'value': 0,
+        'min': -100,
+        'max': 100
+    });
+    //the number of turns before shield recharge takes effect
+    this.shieldDelay = new Attribute();
+    this.shieldDelay.init({
+        'id': 'shdel',
+        'owner': this,
+        'value': 1,
+        'min': 1,
+        'max': 99
+    });
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
         'id': 'hp',
         'owner': this,
         'value': 1000,
         'min': 1,
-        'max': 9999
+        'max': 99999
     });
     this.maximumEnergy = new Attribute();
     this.maximumEnergy.init({
@@ -316,6 +379,8 @@ Unit.prototype.init = function(data) {
         }
     }
     this.inventory.maxWeight.set();
+
+    this.reset();
 };
 
 Unit.prototype.getDBObj = function(){
@@ -438,6 +503,15 @@ Unit.prototype.setAbilitySlots = function(){
 Unit.prototype.getStat = function(id){
     try{
         switch(id){
+            case 'sh':
+                return this.maximumShields;
+                break;
+            case 'shdel':
+                return this.shieldDelay;
+                break;
+            case 'shrec':
+                return this.shieldRecharge;
+                break;
             case 'absl':
                 return this.abilitySlots;
                 break;
