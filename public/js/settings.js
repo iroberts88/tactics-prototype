@@ -40,21 +40,21 @@
             this.currentRotation = 0;
         },
         zoom: function(dir){
-            if (Acorn.currentState == 'MapGen'){
+            if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
                 if (dir == 'in'){
-                    MapGen.map.currentZoomSetting += 1;
-                    if (MapGen.map.currentZoomSetting == MapGen.map.ZOOM_SETTINGS.length){
-                        MapGen.map.currentZoomSetting = MapGen.map.ZOOM_SETTINGS.length-1;
+                    window.currentGameMap.currentZoomSetting += 1;
+                    if (window.currentGameMap.currentZoomSetting == window.currentGameMap.ZOOM_SETTINGS.length){
+                        window.currentGameMap.currentZoomSetting = window.currentGameMap.ZOOM_SETTINGS.length-1;
                     }
                 }else if (dir == 'out'){
-                    MapGen.map.currentZoomSetting -= 1;
-                    if (MapGen.map.currentZoomSetting == -1){
-                        MapGen.map.currentZoomSetting = 0;
+                    window.currentGameMap.currentZoomSetting -= 1;
+                    if (window.currentGameMap.currentZoomSetting == -1){
+                        window.currentGameMap.currentZoomSetting = 0;
                     }
                 }
                 var t = 1;
-                if (!(MapGen.map.currentRotation%2)){t = 2}
-                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
+                if (!(window.currentGameMap.currentRotation%2)){t = 2}
+                window.currentGameMap['container' + t].children = window.currentGameMap.updateSprites(window.currentGameMap['container' + t].children);
             }else{
                 var bounds = 0;
                 if (Acorn.currentState == 'charScreen'){bounds = Characters.bounds}
@@ -86,46 +86,46 @@
             }
         },
         setYScale: function(dir){
-            if (Acorn.currentState == 'MapGen'){
+            if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
                 if (dir == 'up'){
-                    MapGen.map.currentYScaleSetting += 1;
-                    if (MapGen.map.currentYScaleSetting == MapGen.map.YSCALE_SETTINGS.length){
-                        MapGen.map.currentYScaleSetting = MapGen.map.YSCALE_SETTINGS.length-1;
+                    window.currentGameMap.currentYScaleSetting += 1;
+                    if (window.currentGameMap.currentYScaleSetting == window.currentGameMap.YSCALE_SETTINGS.length){
+                        window.currentGameMap.currentYScaleSetting = window.currentGameMap.YSCALE_SETTINGS.length-1;
                     }
                 }else if (dir == 'down'){
-                    MapGen.map.currentYScaleSetting -= 1;
-                    if (MapGen.map.currentYScaleSetting == -1){
-                        MapGen.map.currentYScaleSetting = 0;
+                    window.currentGameMap.currentYScaleSetting -= 1;
+                    if (window.currentGameMap.currentYScaleSetting == -1){
+                        window.currentGameMap.currentYScaleSetting = 0;
                     }
                 }
                 var t = 1;
-                if (!(MapGen.map.currentRotation%2)){t = 2}
-                MapGen.map['container' + t].children = MapGen.map.updateSprites(MapGen.map['container' + t].children);
+                if (!(window.currentGameMap.currentRotation%2)){t = 2}
+                window.currentGameMap['container' + t].children = window.currentGameMap.updateSprites(window.currentGameMap['container' + t].children);
             }
         },
         rotateMap: function(dir){
             
-            if (Acorn.currentState == 'MapGen'){
-                var c = MapGen.map.currentRotation;
+            if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
+                var c = window.currentGameMap.currentRotation;
                 var d = 1;
                 if (dir == 'right'){
-                    MapGen.map.currentRotation -= 1;
-                    if (MapGen.map.currentRotation == -1){
-                        MapGen.map.currentRotation = MapGen.map.totalRotations-1;
+                    window.currentGameMap.currentRotation -= 1;
+                    if (window.currentGameMap.currentRotation == -1){
+                        window.currentGameMap.currentRotation = window.currentGameMap.totalRotations-1;
                     }
                 }else if (dir == 'left'){
                     d = -1;
-                    MapGen.map.currentRotation += 1;
-                    if (MapGen.map.currentRotation == MapGen.map.totalRotations){
-                        MapGen.map.currentRotation = 0;
+                    window.currentGameMap.currentRotation += 1;
+                    if (window.currentGameMap.currentRotation == window.currentGameMap.totalRotations){
+                        window.currentGameMap.currentRotation = 0;
                     }
                 }
-                MapGen.map.rotateData = {
+                window.currentGameMap.rotateData = {
                     t: 0,
                     extraRot: 0,
                     time: 0.05,
                     dir: dir,
-                    angle: ((360/MapGen.map.totalRotations)*Math.PI/180)*d
+                    angle: ((360/window.currentGameMap.totalRotations)*Math.PI/180)*d
                 }
             }
         },

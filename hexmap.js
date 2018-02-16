@@ -54,7 +54,6 @@ HexMap.prototype.init = function(data){
         for (var i = 0; i < data.sz2.length;i++){
             this.startZone2.push(this.axialMap[data.sz2[i].q][data.sz2[i].r]);
         }
-        console.log(this);
     }catch(e){
     	console.log(e);
         console.log('Unable to initialize map');
@@ -360,11 +359,13 @@ HexMap.prototype.merge = function(left,right){
 
 HexMap.prototype.getAxialNode = function(q,r){
     return {
-        q:q,
-        r:r,
-        h:0,
-        tile: 'base',
-        deleted: false
+        nodeid: this.gameSession.getId(),
+        q:q, //q coord
+        r:r, //r coord
+        h:0, //height value
+        tile: 'base', //tile type
+        deleted: false, //the node is deleted from the map and not visible
+        player: null //use when a player is on the node
     }
 }
 

@@ -181,6 +181,8 @@
         if (typeof item.description != 'undefined'){ttArray.push({text: item.description,color: '#ffd9b3'});}
         if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + Math.round(item.eqData.damage/10)});}
         if (typeof item.eqData.rangeMin != 'undefined'){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
+        if (typeof item.eqData.delay != 'undefined'){ttArray.push({text: '{Recharge Delay: }' + item.eqData.delay + ' turns'});}
+        if (typeof item.eqData.recharge != 'undefined'){ttArray.push({text: '{Recharge Rate: }' + item.eqData.recharge + '% per turn'});}
         if (typeof item.classes != 'undefined'){
             var cText = '';
             if (item.classes == 'ALL'){

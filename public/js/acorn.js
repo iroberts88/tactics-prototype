@@ -26,9 +26,11 @@
                 this.currentState = stateId;
                 Graphics.clear();
                 this.states[stateId].init();
+                return true;
             }catch(e){
                 console.log('failed to change to state ' + stateId);
                 console.log(e);
+                return false;
             }
         },
         onReady: function(callback) {

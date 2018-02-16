@@ -19,12 +19,25 @@
 
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
-              console.log('Connected to server: Info Received');
-              MapGen.mapNames = data.mapNames;
-              Acorn.Net.ready = true;
-              checkReady();
+                console.log('Connected to server: Info Received');
+                MapGen.mapNames = data.mapNames;
+                Acorn.Net.ready = true;
+                checkReady();
             });
-            
+            Acorn.Net.on('mapInfo', function(data) {
+                console.log(data);
+                //init in-game state
+                Game.map = new Map();
+                Game.map.init(data.mapData);
+                if(Acorn.changeState('inGame')){
+                    //game state change successful
+                    //emit ready for full game info
+                    Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: true});
+                }else{
+                    Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: false});
+                }
+
+            });
             Acorn.Net.on('editMap', function (data) {
                 console.log(data);
                 if (data.found){
@@ -589,6 +602,16 @@
                 }
             });
             Acorn.addState({
+                stateId: 'inGame',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    Game.init();
+                },
+                update: function(dt){
+                    Game.update(dt);
+                }
+            });
+            Acorn.addState({
                 stateId: 'MapGenInit',
                 init: function(){
                     console.log('Initializing Map Type Selection');
@@ -869,7 +892,7 @@
                     if (Acorn.Input.buttons[2]){
                         var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                         var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
-                        MapGen.map.move(mX,mY);
+                        window.currentGameMap.move(mX,mY);
                     }
                 }catch(e){
                     //TODO handle mousemove for all game states

@@ -18,7 +18,8 @@ var GameEngine = function() {
     this.playersWaiting = [];
     this.openSessions = null;
     //database objects
-    this.maps = [];
+    this.maps = {};
+    this.mapids = [];
     this.items = {};
     this.buffs = {};
     this.classes = {};
@@ -92,7 +93,8 @@ GameEngine.prototype.getId = function() {
 
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.maps.push(arr[i].mapid);
+        this.maps[arr[i].mapid] = arr[i];
+        this.mapids.push(arr[i].mapid);
     }
     console.log('loaded ' + arr.length + ' Maps from db');
 }

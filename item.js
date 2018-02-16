@@ -37,6 +37,7 @@ Item.prototype.getClientData = function(){
     data.onFireText = this.onFireText;
     data.onEquipText = this.onEquipText;
     data.onHitText = this.onHitText;
+    data.onTakeDamageText = this.onTakeDamageText;
     data.constantEffectText = this.constantEffectText;
     data.onFullRechargeText = this.onFullRechargeText;
     data.onDepletedText = this.onDepletedText;
@@ -71,12 +72,15 @@ Item.prototype.init = function(data) {
     this.amount = data.amount;
     this.weight = data.weight;
     this.amount = 1;
-    this.eqData = new Equipment();
-    this.eqData.init(data.eqData);
+    if (this.type != 'compound' && this.type != 'misc'){
+        this.eqData = new Equipment();
+        this.eqData.init(data.eqData);
+    }
     this.onUseText = data.onUseText;
     this.onFireText = data.onFireText;
     this.onEquipText = data.onEquipText;
     this.onHitText = data.onHitText;
+    this.onTakeDamageText = data.onTakeDamageText;
     this.onDepletedText = data.onDepletedText;
     this.onFullRechargeText = data.onFullRechargeText;
     this.constantEffectText = data.constantEffectText;

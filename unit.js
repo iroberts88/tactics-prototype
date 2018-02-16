@@ -58,10 +58,12 @@ var Unit = function(){
 
     //shields
     this.maximumShields = null;
-    this.currentShields = null;
     this.shieldDelay = null;
     this.shieldRecharge = null;
-    //health and energy
+    
+
+    //stuff that gets reset before game start
+    this.currentShields = null;
     this.currentEnergy = null;
     this.currentHealth = null;
 
@@ -75,6 +77,8 @@ var Unit = function(){
 
     //buffs
     this.buffs = null;
+
+    this.charge = null;
 
 }
 
@@ -96,7 +100,9 @@ Unit.prototype.reset = function(){
     this.dead = false;
     this.down = false;
 
-    //buffs
+    //charge
+    this.charge = 0;
+    //buffs initialize
     this.buffs = [];
 }
 

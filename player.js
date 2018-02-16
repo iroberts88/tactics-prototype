@@ -20,6 +20,8 @@ var Player = function(){
     this.gameSession = null;
     this.user = null;
     this.mapData = null;
+
+    this.ready = null;
 };
 
 Player.prototype.init = function (data) {
@@ -31,6 +33,8 @@ Player.prototype.init = function (data) {
         this.socket = data.socket;
         this.setupSocket();
     }
+
+    this.ready = false;
 };
     
 Player.prototype.getUnit = function(id){
@@ -72,6 +76,14 @@ Player.prototype.setupSocket = function() {
                         that.gameSession.handleDisconnect(that,true);
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'exitGameError', error: e.stack, data: data});
+                    }
+                    break;
+                case 'ready':
+                    console.log(data)
+                    if (data.val){
+                        that.ready = true;
+                    }else{
+                        console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
                     }
                     break;
            }
@@ -398,9 +410,10 @@ Player.prototype.setupSocket = function() {
                     console.log("Delete map succeeded:", JSON.stringify(data, null, 2));
                 }
             });
-            for (var i = 0; i < that.gameEngine.maps.length;i++){
-                if (d.name == that.gameEngine.maps[i]){
-                    that.gameEngine.maps.splice(i,1);
+            delete that.gameEngine.maps[d.name];
+            for (var i = 0; i < that.gameEngine.mapids.length;i++){
+                if (d.name == that.gameEngine.mapids[i]){
+                    that.gameEngine.mapids.splice(i,1);
                 }
             }
         }catch(e){
@@ -436,7 +449,13 @@ Player.prototype.setupSocket = function() {
                                 console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
                             } else {
                                 console.log("Create map succeeded:", JSON.stringify(data2, null, 2));
-                                that.gameEngine.maps.push(d.name);
+                                that.gameEngine.mapids.push(d.name);
+                                that.gameEngine.maps[d.name] = {
+                                    'mapid': d.name,
+                                    'mapData': d.mapData,
+                                    'sz1': d.sz1,
+                                    'sz2': d.sz2
+                                }
                                 that.gameEngine.queuePlayer(that,"mapSaved", {name:d.name});
                             }
                         });

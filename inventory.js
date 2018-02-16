@@ -215,7 +215,7 @@ Inventory.prototype.equip = function(index,updateClient){
 }
 
 Inventory.prototype.unEquip = function(index,updateClient){
-    //attempts to equip the item at the given index
+    //attempts to remove the equipped item at the given index
     try{
         var item = this.items[index];
         if (item.type == 'weapon' || item.type == 'gun'){
@@ -271,7 +271,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
 }
 
 Inventory.prototype.removeItemUnit = function(index,updateClient){
-    //remove Item by index
+    //remove Item by index from a unit's inventory
     var item = this.items[index];
     this.changeWeight(-1*item.weight,1);
     this._removeItem(index);
@@ -297,7 +297,7 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
 }
 
 Inventory.prototype.removeItem = function(index,amt,updateClient){
-    //remove Item by index
+    //remove Item by index from player's inventory
     var item = this.items[index];
     if (item.amount > amt){
         item.amount -= amt;

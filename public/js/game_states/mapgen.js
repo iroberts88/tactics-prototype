@@ -790,6 +790,8 @@
             Graphics.uiContainer.addChild(this.deleteButton);
 
             window.currentGameMap = this.map;
+            window.currentMapState = 'mapgen';
+            
             this.changeCurrentTool('height');
             Graphics.showLoadingMessage(false);
         },

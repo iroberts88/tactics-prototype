@@ -438,57 +438,29 @@
     }
     Map.prototype.setupEvents = function(sprite){
         //setup drag and click events for sprite
-        //TODO - this should be different for MAPGEN and normal map sprites?
-        sprite.clicked = false;
-        sprite.on('pointerdown', function onClick(e){
-            if (e.data.button != 2){
-                MapGen.dragStart = {x:Acorn.Input.mouse.X,y:Acorn.Input.mouse.Y};
-            }
-        });
-        sprite.on('pointerup', function onClick(e){
-            MapGen.dragStart = null;
-            try{
-                if (MapGen.losToolData.losShown){
-                    for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
-                        MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
-                        MapGen.losToolData.spritesAltered[i].alpha = 1.0;
-                    }
-                    MapGen.losToolData.spritesAltered = [];
-                    MapGen.losToolData.losShown = false;
+        if (window.currentMapState == 'mapgen'){    
+            //Events for the mapGen state
+            sprite.clicked = false;
+            sprite.on('pointerdown', function onClick(e){
+                if (e.data.button != 2){
+                    MapGen.dragStart = {x:Acorn.Input.mouse.X,y:Acorn.Input.mouse.Y};
                 }
-            }catch(e){}
-        });
-        sprite.on('pointerupoutside', function onClick(e){
-            MapGen.dragStart = null;
-            var cubeNode = MapGen.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
-            var arr = MapGen.map.cubeSpiral(cubeNode,MapGen.toolSize-1);
-            for (var i = 0;i < arr.length;i++){
-                var c = MapGen.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                var a = MapGen.map.getAxial(c);
-                var t = 1;
-                if (!(MapGen.map.currentRotation%2)){t = 2}
-                var s = a['sprite' + t];
-                s.tint = 0xFFFFFF;
-            }
-            try{
-                if (MapGen.losToolData.losShown){
-                    for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
-                        MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
-                        MapGen.losToolData.spritesAltered[i].alpha = 1.0;
+            });
+            sprite.on('pointerup', function onClick(e){
+                MapGen.dragStart = null;
+                try{
+                    if (MapGen.losToolData.losShown){
+                        for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
+                            MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
+                            MapGen.losToolData.spritesAltered[i].alpha = 1.0;
+                        }
+                        MapGen.losToolData.spritesAltered = [];
+                        MapGen.losToolData.losShown = false;
                     }
-                    MapGen.losToolData.spritesAltered = [];
-                    MapGen.losToolData.losShown = false;
-                }
-            }catch(e){}
-        });
-        sprite.on('pointerover', function onMove(e){
-            if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
-                MapGen.setNewSelectedNode = sprite;
-            }
-            MapGen.currentlyMousedOver = sprite;
-        }); 
-        sprite.on('pointerout', function onMove(e){
-            if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
+                }catch(e){}
+            });
+            sprite.on('pointerupoutside', function onClick(e){
+                MapGen.dragStart = null;
                 var cubeNode = MapGen.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                 var arr = MapGen.map.cubeSpiral(cubeNode,MapGen.toolSize-1);
                 for (var i = 0;i < arr.length;i++){
@@ -499,8 +471,54 @@
                     var s = a['sprite' + t];
                     s.tint = 0xFFFFFF;
                 }
-            }
-        });
+                try{
+                    if (MapGen.losToolData.losShown){
+                        for (var i = 0; i < MapGen.losToolData.spritesAltered.length;i++){
+                            MapGen.losToolData.spritesAltered[i].tint = 0xFFFFFF;
+                            MapGen.losToolData.spritesAltered[i].alpha = 1.0;
+                        }
+                        MapGen.losToolData.spritesAltered = [];
+                        MapGen.losToolData.losShown = false;
+                    }
+                }catch(e){}
+            });
+            sprite.on('pointerover', function onMove(e){
+                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
+                    MapGen.setNewSelectedNode = sprite;
+                }
+                MapGen.currentlyMousedOver = sprite;
+            }); 
+            sprite.on('pointerout', function onMove(e){
+                if (!MapGen.dragStart || MapGen.currentTool == 'noise' || MapGen.currentTool == 'tiles'){
+                    var cubeNode = MapGen.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
+                    var arr = MapGen.map.cubeSpiral(cubeNode,MapGen.toolSize-1);
+                    for (var i = 0;i < arr.length;i++){
+                        var c = MapGen.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                        var a = MapGen.map.getAxial(c);
+                        var t = 1;
+                        if (!(MapGen.map.currentRotation%2)){t = 2}
+                        var s = a['sprite' + t];
+                        s.tint = 0xFFFFFF;
+                    }
+                }
+            });
+        }else if (window.currentMapState == 'game'){
+            //events for the actual game state
+            sprite.clicked = false;
+            sprite.on('pointerdown', function onClick(e){
+
+            });
+            sprite.on('pointerup', function onClick(e){
+
+            });
+            sprite.on('pointerupoutside', function onClick(e){
+            });
+            sprite.on('pointerover', function onMove(e){
+                MapGen.currentlyMousedOver = sprite;
+            }); 
+            sprite.on('pointerout', function onMove(e){
+            });
+        }
     }
     //returns a cube node when given an axial node
     Map.prototype.getCube = function(axialNode){
