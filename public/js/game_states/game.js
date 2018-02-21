@@ -3,6 +3,12 @@
     Game = {
 
         map: null,
+        setNewSelectedNode: null,
+        currentlyMousedOver: null,
+
+        units: null,
+        turnOrder: null,
+
 
         init: function() {
             this.drawBG();
@@ -81,9 +87,8 @@
             this.zoomDown.position.x = Graphics.width/1.5 + this.zoomDown.width/2 + 20;
             this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
             Graphics.uiContainer.addChild(this.zoomDown);
-
             window.currentGameMap = this.map;
-            window.currentMapState = 'game';
+
             Graphics.showLoadingMessage(false);
         },
 
@@ -94,7 +99,7 @@
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
                         'silver', 'teal', 'white', 'yellow'
                     ];
-            Graphics.drawBG('blue', 'white');
+            Graphics.drawBG('blue', 'black');
 
         },
        
@@ -106,15 +111,11 @@
                 if (this.setNewSelectedNode){
                     this.selectedSprite = this.setNewSelectedNode;
                     var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                    var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
-                    for (var i = 0;i < arr.length;i++){
-                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                        var a = this.map.getAxial(c);
-                        var t = 1;
-                        if (!(this.map.currentRotation%2)){t = 2}
-                        var s = a['sprite' + t];
-                        s.tint = 0x999999;
-                    }
+                    var a = this.map.getAxial(cubeNode);
+                    var t = 1;
+                    if (!(this.map.currentRotation%2)){t = 2}
+                    var s = a['sprite' + t];
+                    s.tint = 0x999999;
                     this.setNewSelectedNode = 0;
                 }
             }

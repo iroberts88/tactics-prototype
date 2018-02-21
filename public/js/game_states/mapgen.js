@@ -40,7 +40,9 @@
         init: function() {
             this.drawBG();
             //initialize the map
+            window.currentMapState = 'mapgen';
             this.map = new Map();
+            window.currentGameMap = this.map;
             this.changesMade = false;
             if (!this.data){
                 if (this.type == 't'){
@@ -789,8 +791,6 @@
             this.deleteButton.position.y = this.exitButton.position.y;
             Graphics.uiContainer.addChild(this.deleteButton);
 
-            window.currentGameMap = this.map;
-            window.currentMapState = 'mapgen';
             
             this.changeCurrentTool('height');
             Graphics.showLoadingMessage(false);

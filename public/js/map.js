@@ -362,7 +362,7 @@
                 node.sprite1.axialCoords = {q:x,r:y};
                 node.sprite1.cubeCoords = {x:x,y:-x-y,z:y};
                 node.sprite1.interactive = true;
-                node.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
+                //node.sprite1.hitArea = new PIXI.Rectangle(-16,-32-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
                 this.setupEvents(node.sprite1);
                 this.container1.addChild(node.sprite1);
 
@@ -371,7 +371,7 @@
                 node.sprite2.axialCoords = {q:x,r:y};
                 node.sprite2.cubeCoords = {x:x,y:-x-y,z:y};
                 node.sprite2.interactive = true;
-                node.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
+                //node.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
                 this.setupEvents(node.sprite2);
                 this.container2.addChild(node.sprite2);
             }
@@ -514,9 +514,16 @@
             sprite.on('pointerupoutside', function onClick(e){
             });
             sprite.on('pointerover', function onMove(e){
-                MapGen.currentlyMousedOver = sprite;
+                Game.setNewSelectedNode = sprite;
+                Game.currentlyMousedOver = sprite;
             }); 
             sprite.on('pointerout', function onMove(e){
+                var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
+                var a = Game.map.getAxial(cubeNode);
+                var t = 1;
+                if (!(Game.map.currentRotation%2)){t = 2}
+                var s = a['sprite' + t];
+                s.tint = 0xFFFFFF;
             });
         }
     }

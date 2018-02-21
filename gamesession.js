@@ -22,6 +22,7 @@ var GameSession = function (engine) {
 
     this.allUnits = {};
     this.turnOrder = [];
+    this.chargeMax = 1000000;
     this.allUnitIds = [];
     //variables for ID's
     this.idIterator = 0;
@@ -77,6 +78,25 @@ GameSession.prototype.tickPreGame = function() {
         this.getTurnOrder();
 
         //send down unit info
+        for (var p in this.players){
+            var player = this.players[p];
+            var myUnits = [];
+            var otherUnits = [];
+            var turnList = [];
+            for (var i = 0; i < this.allUnitIds.length;i++){
+                var unit = this.allUnits[this.allUnitIds[i]];
+                if (player.myUnits[unit.id]){
+                    myUnits.push(unit.getClientData());
+                }else{
+                    otherUnits.push(unit.getLessClientData());
+                }
+            }
+            for (var i = 0; i < this.turnOrder.length;i++){
+                turnList.push(this.turnOrder[i].id);
+            }
+            this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList});
+        }
+
         this.currentState = this.gameStates.InGame;
     }
 }
@@ -119,11 +139,14 @@ GameSession.prototype.gameStart = function(){
     var used = {};
     for (var p in this.players){
         var player = this.players[p];
+        player.identifiedUnits = {};
+        player.myUnits = {};
         this.queuePlayer(player,"mapInfo", {mapData: this.mapData});
         for (var i = 0; i < 5;i++){
             var uid = player.user.characters[i].id;
             this.allUnitIds.push(uid);
             this.allUnits[uid] = player.user.characters[i];
+            player.myUnits[uid] = uid;
             //init unit health/etc
             this.allUnits[uid].reset();
             //set position on the map
@@ -142,8 +165,48 @@ GameSession.prototype.gameStart = function(){
     
 }
 
+GameSession.prototype.turnSort = function(arr){
+    if (arr.length <=1){
+        return arr;
+    }
+    var smaller = [];
+    var larger = [];
+    var pivotArr = [arr[0]];
+    var pivot = arr[0].val;
+    for (var x = 1;x < arr.length;x++){
+        if (arr[x].val < pivot){
+            smaller.push(arr[x]);
+        }else if (arr[x].val > pivot){
+            larger.push(arr[x]);
+        }else{
+            //values are equal, randomize turn position in pivot array (TODO -- or go by some other metric?)
+            if (Math.round(Math.random())){
+                pivotArr.push(arr[x]);
+                this.allUnits[arr[x].id].charge -= (x*0.001);
+            }else{
+                pivotArr.splice(0,0,arr[x]);
+                this.allUnits[arr[x].id].charge += (x*0.001);
+            }
+        }
+    }
+    smaller = this.turnSort(smaller);
+    larger = this.turnSort(larger);
+    smaller = smaller.concat(pivotArr);
+    
+    return smaller.concat(larger);
+}
 GameSession.prototype.getTurnOrder = function(){
+    this.turnOrder = [];
+    for (var i = 0; i < this.allUnitIds.length;i++){
+        var unit = this.allUnits[this.allUnitIds[i]];
+        this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
+    }
+    this.turnOrder = this.turnSort(this.turnOrder);
 
+    for (var i = 0; i < this.allUnitIds.length;i++){
+        var unit = this.allUnits[this.allUnitIds[i]];
+        unit.charge += this.turnOrder[0].val*unit.speed.value;
+    }
 }
 
 GameSession.prototype.handleDisconnect = function(p,toEngine){

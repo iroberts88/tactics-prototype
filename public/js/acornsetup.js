@@ -27,6 +27,7 @@
             Acorn.Net.on('mapInfo', function(data) {
                 console.log(data);
                 //init in-game state
+                window.currentMapState = 'game';
                 Game.map = new Map();
                 Game.map.init(data.mapData);
                 if(Acorn.changeState('inGame')){
@@ -37,6 +38,12 @@
                     Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: false});
                 }
 
+            });
+            Acorn.Net.on('unitInfo', function(data) {
+                //get the data for the units on the map
+                console.log(data);
+                //init in-game state
+                
             });
             Acorn.Net.on('editMap', function (data) {
                 console.log(data);

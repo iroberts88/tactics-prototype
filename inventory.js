@@ -178,6 +178,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 this.gameEngine.debug(this.owner.owner,{'id': 'shieldEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.shield = index;
+            this.owner.maximumShields.set();
         }else if (item.type == 'accessory'){
             try{
                 if (typeof this.owner.accessory == 'number'){
@@ -210,7 +211,7 @@ Inventory.prototype.equip = function(index,updateClient){
             this.gameEngine.queuePlayer(this.owner.owner,'equipItem',{'unit': this.owner.id, 'index': index});
         }
     }catch(e){
-        this.gameEngine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+        this.gameEngine.debug(this.owner.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
     }
 }
 

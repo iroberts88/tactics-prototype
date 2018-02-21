@@ -126,7 +126,16 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 99999
+        'max': 99999,
+        formula: function(){
+            if (this.owner.shield == null){
+                return 0;
+            }else{
+                var shield = this.owner.inventory.items[this.owner.shield];
+                this.base = Math.ceil((25*shield.weight) * (1+this.owner.level/10) * (0.2 + (5/(shield.eqData.recharge))) *(0.5 + Math.pow(0.5*(shield.eqData.delay-1),2)));
+            }
+            return Math.round((this.base*this.pMod)+this.nMod);
+        }
     });
     //the amount a shield is recharged per turn
     this.shieldRecharge = new Attribute();
@@ -204,7 +213,7 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 999,
         formula: function(){
-            //Speed is reduced by 10*
+            //Speed is reduced by 10% per weight over limit
             var mod = 1.0;
             if (this.owner.inventory.currentWeight > this.owner.inventory.maxWeight.value){
                 for (var i = 0; i < this.owner.inventory.currentWeight-this.owner.inventory.maxWeight.value;i++){
@@ -456,9 +465,16 @@ Unit.prototype.getClientData = function(){
             }
         }
     }
+    data.full = true; //get full data;
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
+    data.health = this.currentHealth;
+    data.energy = this.currentEnergy;
+    data.shields = this.currentShields;
+    data.charge = this.charge;
+    data.currentNode = this.currentNode;
+    data.direction = this.direction
     data.classInfo = {};
     data.weapon = this.weapon;
     data.shield = this.shield;
@@ -475,6 +491,27 @@ Unit.prototype.getClientData = function(){
     }
     data.inventory.maxWeight = this.inventory.maxWeight.value;
     return data;
+}
+
+Unit.prototype.getLessClientData = function(){
+    var data = {}
+    data.full = false; //reduced data (unidentified unit)
+    data.name = this.name;
+    data.sex = this.sex
+    data.id = this.id;
+    data.health = this.currentHealth;
+    data.energy = this.currentEnergy;
+    data.shields = this.currentShields;
+    data.charge = this.charge;
+    data.currentNode = this.currentNode;
+    data.direction = this.direction;
+    data.classInfo = {};
+    data.weapon = this.weapon;
+    data.shield = this.shield;
+    data.accessory = this.accessory;
+    data.class = this.classInfo.currentClass;
+    return data;
+
 }
 Unit.prototype.setClass = function(c){
     try{

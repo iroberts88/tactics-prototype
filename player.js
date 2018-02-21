@@ -22,6 +22,10 @@ var Player = function(){
     this.mapData = null;
 
     this.ready = null;
+
+    //game variables
+    this.identifiedUnits = {};
+    this.myUnits = {}
 };
 
 Player.prototype.init = function (data) {
@@ -607,6 +611,13 @@ Player.prototype.setupSocket = function() {
                     }catch(e){
                         console.log(e);
                         console.log('Unable to add item ' + commands[2]);
+                    }
+                    break;
+                case '-to':
+                    try{
+                        that.gameSession.getTurnOrder();
+                    }catch(e){
+                        console.log(e);
                     }
                     break;
             }
