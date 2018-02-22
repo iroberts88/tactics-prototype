@@ -7,7 +7,7 @@
         currentlyMousedOver: null,
 
         units: null,
-        turnOrder: null,
+        turnList: null,
 
 
         init: function() {
@@ -89,7 +89,26 @@
             Graphics.uiContainer.addChild(this.zoomDown);
             window.currentGameMap = this.map;
 
+            this.units = {};
+            this.turnList = [];
             Graphics.showLoadingMessage(false);
+        },
+
+        initUI: function(){
+            //initialize the units and every UI element
+            for (var i in this.units){
+                var x = 0;
+                var y = 0;
+                var node = this.map.axialMap[this.units[i].currentNode.q][this.units[i].currentNode.r];
+                node.unit = this.units[i];
+                var t = 1;
+                if (!(this.map.currentRotation%2)){t = 2}
+                var cont = 'container' + t;
+                var sp = 'sprite' + t;
+                this.units[i].sprite.position.x = node[sp].position.x;
+                this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+               this.map[cont].addChild(this.units[i].sprite);
+            }
         },
 
         drawBG: function(){
@@ -121,17 +140,13 @@
             }
         },
 
-        nodeInArr: function(node,arr){
-            for (var j = 0; j < arr.length;j++){
-                if (arr[j] == node){
-                    return true;
-                }
-            }
-            return false;
-        },
+
 
         resetColors: function(){
         }
     }
     window.Game = Game;
 })(window);
+
+
+//Game UI Elements

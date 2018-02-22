@@ -42,7 +42,18 @@
             Acorn.Net.on('unitInfo', function(data) {
                 //get the data for the units on the map
                 console.log(data);
-                //init in-game state
+                Game.turnList = data.turnList;
+                for(var i = 0; i < data.myUnits.length;i++){
+                    var unit = new Unit();
+                    unit.init(data.myUnits[i]);
+                    Game.units[unit.id] = unit;
+                }
+                for(var i = 0; i < data.otherUnits.length;i++){
+                    var unit = new Unit();
+                    unit.init(data.otherUnits[i]);
+                    Game.units[unit.id] = unit;
+                }
+                Game.initUI(); 
                 
             });
             Acorn.Net.on('editMap', function (data) {

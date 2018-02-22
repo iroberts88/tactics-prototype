@@ -159,6 +159,8 @@ GameSession.prototype.gameStart = function(){
                     haveNode = true;
                 }
             }
+            this.allUnits[uid].currentNode = node;
+            this.allUnits[uid].direction = this.map.cardinalDirections[Math.floor(Math.random()*this.map.cardinalDirections.length)];
         }
         sz += 1;
     }

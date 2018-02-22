@@ -36,6 +36,19 @@
             [+2, -1, -1], [+1, +1, -2], [-1, +2, -1], 
             [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
         ];
+        this.cardinalDirections = [
+            'Southeast','Northeast','North',
+            'Northwest','Southwest','South'
+        ];
+        this.spriteStartingDirections = {
+            'Southeast': 10,
+            'Northeast': 8,
+            'North': 6,
+            'Northwest': 4,
+            'Southwest': 2,
+            'South': 0
+        }
+        this.dirArray = ['d','dl','dl','l','ul','ul','u','ul','ul','l','dl','dl'];
         this.maxSize = 0;
         this.startZone1 = [];
         this.startZone2 = [];
@@ -109,7 +122,7 @@
                     var a = this.axialMap[i][j]
                     a.sprite1.texture = this.tileTextures[a.tile][1][a.h];
                     a.sprite1.anchor.y = (a.sprite1.texture.height-32)/a.sprite1.texture.height;
-                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
+                    a.sprite1.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
                     a.sprite2.texture = this.tileTextures[a.tile][2][a.h];
                     a.sprite2.anchor.y = (a.sprite2.texture.height-32)/a.sprite2.texture.height;
                     a.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT*(a.h+1),32,32+this.TILE_HEIGHT*(a.h+1));
@@ -362,7 +375,6 @@
                 node.sprite1.axialCoords = {q:x,r:y};
                 node.sprite1.cubeCoords = {x:x,y:-x-y,z:y};
                 node.sprite1.interactive = true;
-                //node.sprite1.hitArea = new PIXI.Rectangle(-16,-32-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
                 this.setupEvents(node.sprite1);
                 this.container1.addChild(node.sprite1);
 
@@ -371,7 +383,6 @@
                 node.sprite2.axialCoords = {q:x,r:y};
                 node.sprite2.cubeCoords = {x:x,y:-x-y,z:y};
                 node.sprite2.interactive = true;
-                //node.sprite2.hitArea = new PIXI.Rectangle(-16,-16-this.TILE_HEIGHT,32,32+this.TILE_HEIGHT);
                 this.setupEvents(node.sprite2);
                 this.container2.addChild(node.sprite2);
             }
@@ -818,7 +829,7 @@
             }
 
             this.rotateData.t += deltaTime;
-            if (!this.rotateData.swapped){
+            if (!this.rotateData.swapped && this.rotateData.t >= this.rotateData.time/2){
                 this.rotateData.extraRot = -this.rotateData.angle;
                 this.rotateData.swapped = true;
                 Graphics.worldContainer.removeChildren();
@@ -843,7 +854,8 @@
             r:r,
             h:0,
             tile: 'base',
-            deleted: false
+            deleted: false,
+            unit: null
         }
     }
 

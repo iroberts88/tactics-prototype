@@ -187,11 +187,11 @@
                 'unit_base_dl_', 8
             ];
             Graphics.animationSpeeds = {
-                'unit_base_ul_': -0.15,
-                'unit_base_l_': -0.15,
-                'unit_base_u_': -0.15,
-                'unit_base_d_': -0.15,
-                'unit_base_dl_': -0.15
+                'unit_base_ul_': -0.1,
+                'unit_base_l_': -0.1,
+                'unit_base_u_': -0.1,
+                'unit_base_d_': -0.1,
+                'unit_base_dl_': -0.1
             };
 
             //add all movie clips to resources

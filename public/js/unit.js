@@ -42,6 +42,8 @@
         //game stats (games won; damage/healing done etc)
         this.gameInfo = null;
 
+        this.sprite = null;
+
         this.weapon = null;
         this.shield = null;
         this.accessory = null;
@@ -65,6 +67,12 @@
         this.maximumEnergy = data.maximumEnergy;
         //shields stay at null until a shield is equipped?
 
+        this.full = data.full;
+        this.direction = data.direction;
+        this.currentNode = data.currentNode;
+        this.currentHealth = data.health;
+        this.currentEnergy = data.energy;
+        this.currentShields = data.shields;
         this.move = data.move;
         this.jump = data.jump;
         this.power = data.power;
@@ -93,11 +101,34 @@
         this.sex = data.sex;
         this.id = data.id;
         this.inventory = new Inventory();
-        this.inventory.init(data.inventory);
+        if (data.inventory){
+            this.inventory.init(data.inventory);
+        }
         this.level = data.level;
         this.exp = data.exp;
         this.classInfo = data.classInfo;
-
+        if (data.direction){
+            //initialize the sprite
+            var dir = '';
+            dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
+            console.log(dir);
+            this.sprite = Graphics.getSprite('unit_base_'+ dir + '_');
+            this.sprite.scale.x = 0.6;
+            this.sprite.scale.y = 0.6;
+            if ((window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations >= 7){
+                this.sprite.scale.x = -0.6;
+            }
+            this.sprite.anchor.x = 0.5;
+            this.sprite.anchor.y = 0.85;
+            var colors = {
+                'tech': 0xFFFF00,
+                'soldier': 0xFF0000,
+                'medic': 0x00FF00,
+                'scout': 0x42f1f4
+            };
+            console.log(data.classInfo)
+            this.sprite.tint = colors[this.classInfo.currentClass.toLowerCase()];
+        }
         this.weapon = data.weapon;
         this.shield = data.shield;
         this.accessory = data.accessory;
