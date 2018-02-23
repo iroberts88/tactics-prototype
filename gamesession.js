@@ -16,7 +16,7 @@ var GameSession = function (engine) {
     this.players = {};
     this.playerCount = 0;
     this.id = null;
-    this.mapName = 'test1';
+    this.mapName = 'bunker01';
     this.map = null;
     this.mapData = null;
 
@@ -39,8 +39,13 @@ var GameSession = function (engine) {
 GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
-    this.mapData = this.gameEngine.maps[this.mapName];
-    this.map.init(this.gameEngine.maps[this.mapName]);
+    var names = [];
+    for (var i in this.gameEngine.maps){
+        names.push(i);
+    }
+    var name = 'triforce'//names[Math.floor(Math.random()*names.length)];
+    this.mapData = this.gameEngine.maps[name];
+    this.map.init(this.gameEngine.maps[name]);
 };
 
 

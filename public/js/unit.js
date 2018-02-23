@@ -111,11 +111,12 @@
             //initialize the sprite
             var dir = '';
             dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
-            console.log(dir);
             this.sprite = Graphics.getSprite('unit_base_'+ dir + '_');
+            this.sprite.pSprite = true;
             this.sprite.scale.x = 0.6;
             this.sprite.scale.y = 0.6;
-            if ((window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations >= 7){
+            var p = (window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations;
+            if (p >= 1 && p <= 5){
                 this.sprite.scale.x = -0.6;
             }
             this.sprite.anchor.x = 0.5;
@@ -126,8 +127,8 @@
                 'medic': 0x00FF00,
                 'scout': 0x42f1f4
             };
-            console.log(data.classInfo)
             this.sprite.tint = colors[this.classInfo.currentClass.toLowerCase()];
+            this.sprite.gotoAndPlay(Math.floor(Math.random()*8))
         }
         this.weapon = data.weapon;
         this.shield = data.shield;

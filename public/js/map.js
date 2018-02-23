@@ -24,6 +24,8 @@
         this.rotateData = null;
         this.currentRotation = null;
 
+        this.changedZoom = false;
+
         this.axialDirections = [
             [1,0],[1,-1],[0,-1],
             [-1,0],[-1,1],[0,1]
@@ -432,6 +434,9 @@
         //updates sprite position in c.children arr after a rotation/zoom ect.
         try{
             for (var i = 0; i < arr.length;i++){
+                if (arr[i].pSprite){
+                    continue;
+                }
                 arr[i].scale.x = this.ZOOM_SETTINGS[this.currentZoomSetting];
                 arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
                 arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
@@ -789,6 +794,15 @@
     Map.prototype.merge = function(left,right){
         var result = [];
         while (left.length && right.length) {
+            //if not a map tile sprite, ignore pos
+            if (left[0].pSprite){
+                left.shift();
+                continue;
+            }
+            if (right[0].pSprite){
+                right.shift();
+                continue;
+            }
             if (left[0].position.y < right[0].position.y) {
                 result.push(left.shift());
             } else if (left[0].position.y == right[0].position.y) {

@@ -41,20 +41,26 @@
         },
         zoom: function(dir){
             if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
+                var changed = true;
                 if (dir == 'in'){
                     window.currentGameMap.currentZoomSetting += 1;
                     if (window.currentGameMap.currentZoomSetting == window.currentGameMap.ZOOM_SETTINGS.length){
                         window.currentGameMap.currentZoomSetting = window.currentGameMap.ZOOM_SETTINGS.length-1;
+                        changed = false
                     }
                 }else if (dir == 'out'){
                     window.currentGameMap.currentZoomSetting -= 1;
                     if (window.currentGameMap.currentZoomSetting == -1){
                         window.currentGameMap.currentZoomSetting = 0;
+                        changed = false
                     }
                 }
-                var t = 1;
-                if (!(window.currentGameMap.currentRotation%2)){t = 2}
-                window.currentGameMap['container' + t].children = window.currentGameMap.updateSprites(window.currentGameMap['container' + t].children);
+                if (changed){
+                    var t = 1;
+                    if (!(window.currentGameMap.currentRotation%2)){t = 2}
+                    window.currentGameMap['container' + t].children = window.currentGameMap.updateSprites(window.currentGameMap['container' + t].children);
+                    window.currentGameMap.changedZoom = true;
+                }
             }else{
                 var bounds = 0;
                 if (Acorn.currentState == 'charScreen'){bounds = Characters.bounds}
