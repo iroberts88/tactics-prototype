@@ -6,15 +6,8 @@
             font: '64px Sigmar One',
             fill: Graphics.pallette.color1,
             align: 'left',
-            dropShadow: true,
-            dropShadowColor: '#000000',
             stroke: '#000000',
-            strokeThickness: 3,
-            dropShadow: true,
-            dropShadowColor: '#000000',
-            dropShadowBlur: 2,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 4
+            strokeThickness: 2,
         },
 
         net: function() {
@@ -22,6 +15,7 @@
                 console.log('Connected to server: Info Received');
                 MapGen.mapNames = data.mapNames;
                 Acorn.Net.ready = true;
+                window.playerID = data.id;
                 checkReady();
             });
             Acorn.Net.on('mapInfo', function(data) {

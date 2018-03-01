@@ -11,6 +11,14 @@
 
         updateUnitsBool: null,
 
+        turnListSprites: null,
+        compass: null,
+        timeDisplay: null,
+        mainMenu: null,
+        tilePane: null,
+        infoPane: null,
+
+
         init: function() {
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
@@ -114,7 +122,15 @@
             //UI Elements
 
             //Turn order
-
+            this.turnListSprites = [];
+            for (var i = 0; i < this.turnList.length;i++){
+                //create box
+                var sprite = this.getTurnBox(this.turnList[i]);
+                sprite.position.x = 25;
+                sprite.position.y = 25 + i*75;
+                Graphics.uiContainer.addChild(sprite);
+                this.turnListSprites.push(sprite);
+            }
             //Compass
 
             //Time/player turn
@@ -127,6 +143,70 @@
 
         },
 
+        getTurnBox: function(id){
+            var h = 75;
+            var w = 130;
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0x0000FF;
+            var style  = AcornSetup.baseStyle;
+            if (this.units[id].owner != window.playerID){
+                color = 0xFF0000;
+            }
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            scene.addChild(gfx);
+            scene.addChild(cont);
+
+            //draw outline
+            gfx.lineStyle(3,color,1);
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
+
+
+            var text = new PIXI.Text(Game.units[id].name, style);
+            text.anchor.x = 0.5;
+            text.anchor.y = 0.5;
+            text.position.x = w*0.5;
+            text.position.y = h*0.33;
+            text.style.fill = Graphics.pallette.color1;
+            while(text.width > w-5){
+                text.style.fontSize = text.style.fontSize*0.9;
+            }
+            cont.addChild(text);
+
+            //create and render the texture and sprite
+            var texture = PIXI.RenderTexture.create(w,h);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(scene,texture);
+            var sprite = new PIXI.Sprite(texture);
+            sprite.interactive = true;
+            sprite.unitID = id;
+
+
+            var overFunc = function(e){
+                console.log('Moused over ' + Game.units[e.currentTarget.unitID].name);
+            }
+            var outFunc = function(e){
+                console.log('Moused out ' + Game.units[e.currentTarget.unitID].name);
+            }
+            var moveFunc = function(e){
+                console.log('Move');
+            }
+            sprite.on('pointerover',overFunc);
+            sprite.on('pointermove',moveFunc);
+            sprite.on('touchmove',overFunc);
+            sprite.on('touchend', outFunc);
+            sprite.on('touchendoutside', outFunc);
+            sprite.on('pointerout', outFunc);
+
+            return sprite;
+        },
         drawBG: function(){
             Graphics.bgContainer.clear();
             var colors= [
@@ -134,7 +214,7 @@
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
                         'silver', 'teal', 'white', 'yellow'
                     ];
-            Graphics.drawBG('blue', 'black');
+            Graphics.drawBG('gray', 'gray');
 
         },
        
@@ -166,7 +246,7 @@
             }
             for (var i in this.units){
                 if (!this.units[i].sprite.parent.parent){
-                    //units havent updated properly?...
+                    //units havent updated properly...
                     this.updateUnitsBool = true;
                     return;
                 }

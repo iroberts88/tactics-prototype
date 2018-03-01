@@ -218,7 +218,8 @@
                 'grass_tile1',
                 'ice_tile2',
                 'sand_tile1',
-                'sand_tile2'
+                'sand_tile2',
+                'arrow'
             ];
 
             //add all textures to resources

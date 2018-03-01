@@ -97,6 +97,7 @@
         this.radiationRes = data.radiationRes;
         this.gravityRes = data.gravityRes;
 
+        this.owner = data.owner;
         this.name = data.name;
         this.sex = data.sex;
         this.id = data.id;

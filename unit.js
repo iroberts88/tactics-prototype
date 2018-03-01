@@ -466,6 +466,7 @@ Unit.prototype.getClientData = function(){
         }
     }
     data.full = true; //get full data;
+    data.owner = this.owner.id;
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
@@ -496,6 +497,7 @@ Unit.prototype.getClientData = function(){
 Unit.prototype.getLessClientData = function(){
     var data = {}
     data.full = false; //reduced data (unidentified unit)
+    data.owner = this.owner.id;
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;

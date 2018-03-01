@@ -18,7 +18,7 @@
         this.type = null;
         this.size = null;
         this.currentMap = 0;
-        this.container = null; //container for all "pointy top" sprites
+        this.container1 = null; //container for all "pointy top" sprites
         this.container2 = null; //container for all "flat top" sprites
         this.cAverages = null; //the average of all sprite locations (used for correct rotations)
         this.rotateData = null;

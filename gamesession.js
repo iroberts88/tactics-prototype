@@ -43,7 +43,7 @@ GameSession.prototype.init = function (data) {
     for (var i in this.gameEngine.maps){
         names.push(i);
     }
-    var name = 'triforce'//names[Math.floor(Math.random()*names.length)];
+    var name = names[Math.floor(Math.random()*names.length)];
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
 };
