@@ -59,6 +59,8 @@
         this.gravityRes = null;
 
         this.usedAbilitySlots = 0;
+
+        this.turnSprite = null;
     };
 
     Unit.prototype.init = function(data) {

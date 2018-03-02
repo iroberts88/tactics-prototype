@@ -56,30 +56,34 @@ function User() {
                         if (err) {
                             console.error("Unable to find user data. Error JSON:", JSON.stringify(err, null, 2));
                         } else {
-                            var c = data.Item.characters;
-                            var inv = data.Item.inventory;
-                            if (typeof inv != 'undefined'){
-                                for (var i = 0; i < inv.length;i++){
-                                    that.inventory.addItem(inv[i][0],inv[i][1],true);
+                            try{
+                                var c = data.Item.characters;
+                                var inv = data.Item.inventory;
+                                if (typeof inv != 'undefined'){
+                                    for (var i = 0; i < inv.length;i++){
+                                        that.inventory.addItem(inv[i][0],inv[i][1],true);
+                                    }
                                 }
-                            }
-                            if (typeof c != 'undefined'){
-                                for (var i = 0; i < c.length; i++){
-                                    var char = new Unit();
-                                    //init unit
-                                    c[i].owner = that.owner;
-                                    c[i].id = that.owner.gameEngine.getId();
-                                    char.init(c[i]);
-                                    char.classInfo = new ClassInfo();
-                                    char.classInfo.init({unit: char, 
-                                        learned: c[i].classInfo.learnedAbilities,
-                                        equipped: c[i].classInfo.equippedAbilities,
-                                        ap: c[i].classInfo.ap});
-                                    char.classInfo.setBaseClass(c[i].classInfo.baseId);
-                                    char.classInfo.setClass(c[i].classInfo.classId);
-                                    that.owner.gameEngine.queuePlayer(that.owner,'addNewUnit', {'unit': char.getClientData()});
-                                    that.characters.push(char);
+                                if (typeof c != 'undefined'){
+                                    for (var i = 0; i < c.length; i++){
+                                        var char = new Unit();
+                                        //init unit
+                                        c[i].owner = that.owner;
+                                        c[i].id = that.owner.gameEngine.getId();
+                                        char.init(c[i]);
+                                        char.classInfo = new ClassInfo();
+                                        char.classInfo.init({unit: char, 
+                                            learned: c[i].classInfo.learnedAbilities,
+                                            equipped: c[i].classInfo.equippedAbilities,
+                                            ap: c[i].classInfo.ap});
+                                        char.classInfo.setBaseClass(c[i].classInfo.baseId);
+                                        char.classInfo.setClass(c[i].classInfo.classId);
+                                        that.owner.gameEngine.queuePlayer(that.owner,'addNewUnit', {'unit': char.getClientData()});
+                                        that.characters.push(char);
+                                    }
                                 }
+                            }catch(e){
+                                console.log(e);
                             }
                         }
                     });

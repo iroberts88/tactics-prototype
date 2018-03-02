@@ -18,6 +18,9 @@
         tilePane: null,
         infoPane: null,
 
+        currentTurnArrow: null,
+        turnArrowStartY: null,
+
 
         init: function() {
             this.drawBG();
@@ -98,8 +101,6 @@
             Graphics.uiContainer.addChild(this.zoomDown);
             window.currentGameMap = this.map;
 
-            this.units = {};
-            this.turnList = [];
             Graphics.showLoadingMessage(false);
         },
 
@@ -131,6 +132,12 @@
                 Graphics.uiContainer.addChild(sprite);
                 this.turnListSprites.push(sprite);
             }
+            this.currentTurnArrow = Graphics.getSprite('arrow');
+            this.currentTurnArrow.tint = 0x00FF00;
+            this.currentTurnArrow.anchor.x = 0.5;
+            this.currentTurnArrow.anchor.y = 0.5;
+            this.setTurnArrow();
+
             //Compass
 
             //Time/player turn
@@ -145,12 +152,13 @@
 
         getTurnBox: function(id){
             var h = 75;
-            var w = 130;
+            var w = 150;
             var scene = new PIXI.Container();
             var cont = new PIXI.Container();
             var gfx = new PIXI.Graphics();
             var color = 0x0000FF;
             var style  = AcornSetup.baseStyle;
+            style.fill = 'white';
             if (this.units[id].owner != window.playerID){
                 color = 0xFF0000;
             }
@@ -179,6 +187,17 @@
                 text.style.fontSize = text.style.fontSize*0.9;
             }
             cont.addChild(text);
+
+            var text2 = new PIXI.Text('Level ' + Game.units[id].level + ' ' + Game.units[id].classInfo.currentClass, style);
+            text2.anchor.x = 0.5;
+            text2.anchor.y = 0.5;
+            text2.position.x = w*0.5;
+            text2.position.y = h*0.66;
+            text2.style.fill = Graphics.pallette.color1;
+            while(text2.width > w-5){
+                text2.style.fontSize = text2.style.fontSize*0.9;
+            }
+            cont.addChild(text2);
 
             //create and render the texture and sprite
             var texture = PIXI.RenderTexture.create(w,h);
@@ -217,16 +236,32 @@
             Graphics.drawBG('gray', 'gray');
 
         },
-       
+        
+        setTurnArrow: function(){
+            //set scale
+            this.currentTurnArrow.scale.x = 0.6 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+            this.currentTurnArrow.scale.y = 0.6 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+            //set position
+            var t = 1;
+            if (!(this.map.currentRotation%2)){t = 2}
+            var cont = 'container' + t;
+
+            var sp = this.units[this.turnList[0]].sprite;
+            this.currentTurnArrow.position.x = sp.position.x + this.map[cont].position.x;
+            this.currentTurnArrow.position.y = sp.position.y + this.map[cont].position.y - sp.height/2 - this.currentTurnArrow.height/1.5;
+            this.turnArrowStartY = this.currentTurnArrow.position.y;
+            Graphics.worldContainer.addChild(this.currentTurnArrow);
+        },
+
         update: function(deltaTime){
             this.map.update(deltaTime);
-            
             if (!this.map.rotateData){
                 //set the new currently selected node after mouseover
                 try{
 
                     if (this.updateUnitsBool || this.map.changedZoom){
                         this.updateUnits();
+                        this.setTurnArrow();
                     }
                     if (this.setNewSelectedNode){
                         this.selectedSprite = this.setNewSelectedNode;

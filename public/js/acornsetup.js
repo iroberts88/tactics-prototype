@@ -37,6 +37,7 @@
                 //get the data for the units on the map
                 console.log(data);
                 Game.turnList = data.turnList;
+                Game.units = {};
                 for(var i = 0; i < data.myUnits.length;i++){
                     var unit = new Unit();
                     unit.init(data.myUnits[i]);

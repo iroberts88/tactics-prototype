@@ -72,302 +72,307 @@ Player.prototype.setupSocket = function() {
     var that = this;
 
     this.socket.on('playerUpdate', function (data) {
-        if (that.gameSession){
-            //if the player is in a gameSession - deal with received data
-           switch(data.command){
-                case 'exitGame':
-                    try{
-                        that.gameSession.handleDisconnect(that,true);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'exitGameError', error: e.stack, data: data});
-                    }
-                    break;
-                case 'ready':
-                    console.log(data)
-                    if (data.val){
-                        that.ready = true;
-                    }else{
-                        console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
-                    }
-                    break;
-           }
-        }else{
-            //player is not in a game currently - main menu commands
-            console.log(data);
-            switch(data.command){
-                case 'learnAbility':
-                    try{
-                        //get the unit
-                        var cID = data['classID'];
-                        var aID = data['ablID'];
-                        var uID = data['unitID'];
-                        var unit;
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == uID){
-                                unit = that.user.characters[i];
-                                continue;
-                            }
-                        }
-                        //get the ability
-                        var abl;
-                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                abl = unit.classInfo.allClassAbilities[cID][a];
-                            }
-                        }
-                        //check available AP
-                        if (unit.classInfo.ap[cID] < abl.ApCost){
-                            break;
-                        }
-                        //check if ability is already learned
-                        if (unit.classInfo.learnedAbilities[aID]){
-                            break;
-                        }
-                        //ability can be learned. reduce AP and add to learned abilities list
-                        unit.classInfo.ap[cID] -= abl.ApCost;
-                        unit.classInfo.learnedAbilities[aID] = true;
-                        //update client
-                        data.apCost = abl.ApCost;
-                        that.gameEngine.queuePlayer(that,'learnAbility',data);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'learnAbilityError', error: e.stack, lData: data});
-                    }
-                    break;
-                case 'equipAbility':
-                    try{
-                        //get the unit
-                        var cID = data['classID'];
-                        var aID = data['ablID'];
-                        var uID = data['unitID'];
-                        var unit;
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == uID){
-                                unit = that.user.characters[i];
-                                continue;
-                            }
-                        }
-                        //get the ability
-                        var abl;
-                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                abl = unit.classInfo.allClassAbilities[cID][a];
-                            }
-                        }
-                        //check available SLOTS
-                        if (unit.abilitySlots.value - unit.usedAbilitySlots < abl.sCost){
-                            break;
-                        }
-                        //check if ability is already equipped
-                        if (unit.classInfo.equippedAbilities[aID]){
-                            break;
-                        }
-                        //ability can be equipped. add current slots and add to learned abilities list
-                        unit.classInfo.equippedAbilities[aID] = true;
-                        unit.setAbilitySlots();
-                        //update client
-                        data.sCost = abl.sCost;
-                        that.gameEngine.queuePlayer(that,'equipAbility',data);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'equipAbilityError', error: e.stack, lData: data});
-                    }
-                    break;
-                case 'unEquipAbility':
-                    try{
-                        //get the unit
-                        var cID = data['classID'];
-                        var aID = data['ablID'];
-                        var uID = data['unitID'];
-                        var unit;
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == uID){
-                                unit = that.user.characters[i];
-                                continue;
-                            }
-                        }
-                        //get the ability
-                        var abl;
-                        for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                            if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                abl = unit.classInfo.allClassAbilities[cID][a];
-                            }
-                        }
-                        //check if ability is already not equipped
-                        if (typeof unit.classInfo.equippedAbilities[aID] == 'undefined'){
-                            break;
-                        }
-                        //ability can be un-equipped.
-                        delete unit.classInfo.equippedAbilities[aID];
-                        unit.setAbilitySlots();
-                        //update client
-                        data.sCost = abl.sCost;
-                        that.gameEngine.queuePlayer(that,'unEquipAbility',data);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'unEquipAbilityError', error: e.stack, lData: data});
-                    }
-                    break;
-                case 'clearAbilities':
-                    try{
-                        //get the unit
-                        var uID = data['unitID'];
-                        var unit;
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == uID){
-                                unit = that.user.characters[i];
-                                continue;
-                            }
-                        }
-                        unit.usedAbilitySlots = 0;
-                        unit.classInfo.equippedAbilities = {};
-                        //update client
-                        that.gameEngine.queuePlayer(that,'clearAbilities',data);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'clearAbilitiesError', error: e.stack, lData: data});
-                    }
-                    break;
-                case 'logout':
-                    try{
-                        that.gameEngine.playerLogout(that);
-                        that.gameEngine.queuePlayer(that,'logout', {});
-                        that.user.unlock();
-                        that.user.updateDB();
-                        that.user = null;
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
-                    }
-                    break;
-                case 'deleteChar':
-                    try{
-                        //remove the character from the player's character list
-                        for (var i = 0; i < that.user.characters.length;i++){
-                            if (that.user.characters[i].id == data['charToDelete']){
-                                console.log('deleting character: ' + that.user.characters[i].name);
-                                that.user.characters.splice(i,1);
-                                that.gameEngine.queuePlayer(that,'deleteUnit',{'id': data['charToDelete']});
-                                continue;
-                            }
-                        }
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'deleteCharError', error: e.stack, dData: data});
-                    }
-                    break;
-                case 'itemToUnit':
-                    try{
-                        var unit = that.getUnit(data.unitID);
-                        var itemID = that.user.inventory.items[data.itemIndex].itemID;
-                        //add item to unit
-                        if (unit.inventory.addItemUnit(itemID,1, true)){
-                            //remove item from player
-                            that.user.inventory.removeItem(data.itemIndex,1,true);
-                        }
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
-                    }
-                    break;
-                case 'itemToPlayer':
-                    try{
-                        var unit = that.getUnit(data.unitID);
-                        itemID = unit.inventory.items[data.itemIndex].itemID;
-                        //add item to player
-                        that.user.inventory.addItem(itemID,1, true);
-                        //remove item from unit
-                        unit.inventory.removeItemUnit(data.itemIndex,true);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
-                    }
-                    break;
-                case 'equipItem':
-                    console.log(data);
-                    try{
-                        var unit = that.getUnit(data.unitID);
-                        //add item to player
-                        unit.inventory.equip(data.itemIndex, true);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'equipItemError', error: e.stack, dData: data});
-                    }
-                    break;
-                case 'unEquipItem':
-                    console.log(data);
-                    try{
-                        var unit = that.getUnit(data.unitID);
-                        //add item to player
-                        unit.inventory.unEquip(data.itemIndex, true);
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'unEquipItemError', error: e.stack, dData: data});
-                    }
-                    break;
-                case 'addUnit':
-                    //TODO -- validate unit before creation
-                    //check max characters
-                    if (that.user.characters.length < 30){
+        try{
+            if (that.gameSession){
+                //if the player is in a gameSession - deal with received data
+               switch(data.command){
+                    case 'exitGame':
                         try{
-                            var char = new Unit();
-                            char.init({
-                                id: that.gameEngine.getId(),
-                                owner: that,
-                                name: data.name,
-                                sex: data.sex,
-                                inventory: ['gun_sidearm','weapon_combatKnife']
-                            });
-                            for (var i in data.stats){
-                                char[i].base = data.stats[i];
-                                char[i].set();
-                            }
-                            char.classInfo = new ClassInfo();
-                            char.classInfo.init({unit: char});
-                            char.classInfo.setBaseClass(data.class);
-                            char.classInfo.setClass(data.class);
-                            //create object to send to the client
-                            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
-                            that.user.characters.push(char);
+                            that.gameSession.handleDisconnect(that,true);
                         }catch(e){
-                            that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
+                            that.gameEngine.debug(that,{id: 'exitGameError', error: e.stack, data: data});
                         }
-                    }
-                    break;
-                case 'addRandomChar':
-                    if (that.user.characters.length < 30){
+                        break;
+                    case 'ready':
+                        console.log(data)
+                        if (data.val){
+                            that.ready = true;
+                        }else{
+                            console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
+                        }
+                        break;
+               }
+            }else{
+                //player is not in a game currently - main menu commands
+                console.log(data);
+                switch(data.command){
+                    case 'learnAbility':
                         try{
-                            var char = new Unit();
-                            var sexes = ['male','female'];
-                            var sex = sexes[Math.floor(Math.random()*sexes.length)];
-                            var nT = sex;
-                            var lastNT = 'last';
-                            //if (sex == 'female'){nT = 'romanFemale';lastNT = 'romanLastF'}
-                            char.init({
-                                id: that.gameEngine.getId(),
-                                owner: that,
-                                name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
-                                sex: sex,
-                                inventory: ['gun_sidearm','weapon_combatKnife']
-                            });
-                            var classes = ['soldier','medic','scout','tech'];
-                            var cl = classes[Math.floor(Math.random()*classes.length)];
-                            //randomize stats
-                            var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
-                            for (var i = 0;i < 20;i++){
-                                var randStat = stats[Math.floor(Math.random()*stats.length)];
-                                char[randStat].base += 1;
-                                char[randStat].set();
+                            //get the unit
+                            var cID = data['classID'];
+                            var aID = data['ablID'];
+                            var uID = data['unitID'];
+                            var unit;
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == uID){
+                                    unit = that.user.characters[i];
+                                    continue;
+                                }
                             }
-                            char.classInfo = new ClassInfo();
-                            char.classInfo.init({unit: char});
-                            char.classInfo.setBaseClass(cl);
-                            char.classInfo.setClass(cl);
-                           
-                            that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
-                            that.user.characters.push(char);
+                            //get the ability
+                            var abl;
+                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                    abl = unit.classInfo.allClassAbilities[cID][a];
+                                }
+                            }
+                            //check available AP
+                            if (unit.classInfo.ap[cID] < abl.ApCost){
+                                break;
+                            }
+                            //check if ability is already learned
+                            if (unit.classInfo.learnedAbilities[aID]){
+                                break;
+                            }
+                            //ability can be learned. reduce AP and add to learned abilities list
+                            unit.classInfo.ap[cID] -= abl.ApCost;
+                            unit.classInfo.learnedAbilities[aID] = true;
+                            //update client
+                            data.apCost = abl.ApCost;
+                            that.gameEngine.queuePlayer(that,'learnAbility',data);
                         }catch(e){
-                            that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
+                            that.gameEngine.debug(that,{id: 'learnAbilityError', error: e.stack, lData: data});
                         }
-                    }
-                    break;
-                case 'testGame':
-                    that.gameEngine.playersWaiting.push(that.id);
-                    break;
-                case 'cancelSearch':
-                    that.gameEngine.playerCancelSearch(that);
-                    break;
+                        break;
+                    case 'equipAbility':
+                        try{
+                            //get the unit
+                            var cID = data['classID'];
+                            var aID = data['ablID'];
+                            var uID = data['unitID'];
+                            var unit;
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == uID){
+                                    unit = that.user.characters[i];
+                                    continue;
+                                }
+                            }
+                            //get the ability
+                            var abl;
+                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                    abl = unit.classInfo.allClassAbilities[cID][a];
+                                }
+                            }
+                            //check available SLOTS
+                            if (unit.abilitySlots.value - unit.usedAbilitySlots < abl.sCost){
+                                break;
+                            }
+                            //check if ability is already equipped
+                            if (unit.classInfo.equippedAbilities[aID]){
+                                break;
+                            }
+                            //ability can be equipped. add current slots and add to learned abilities list
+                            unit.classInfo.equippedAbilities[aID] = true;
+                            unit.setAbilitySlots();
+                            //update client
+                            data.sCost = abl.sCost;
+                            that.gameEngine.queuePlayer(that,'equipAbility',data);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'equipAbilityError', error: e.stack, lData: data});
+                        }
+                        break;
+                    case 'unEquipAbility':
+                        try{
+                            //get the unit
+                            var cID = data['classID'];
+                            var aID = data['ablID'];
+                            var uID = data['unitID'];
+                            var unit;
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == uID){
+                                    unit = that.user.characters[i];
+                                    continue;
+                                }
+                            }
+                            //get the ability
+                            var abl;
+                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
+                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
+                                    abl = unit.classInfo.allClassAbilities[cID][a];
+                                }
+                            }
+                            //check if ability is already not equipped
+                            if (typeof unit.classInfo.equippedAbilities[aID] == 'undefined'){
+                                break;
+                            }
+                            //ability can be un-equipped.
+                            delete unit.classInfo.equippedAbilities[aID];
+                            unit.setAbilitySlots();
+                            //update client
+                            data.sCost = abl.sCost;
+                            that.gameEngine.queuePlayer(that,'unEquipAbility',data);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'unEquipAbilityError', error: e.stack, lData: data});
+                        }
+                        break;
+                    case 'clearAbilities':
+                        try{
+                            //get the unit
+                            var uID = data['unitID'];
+                            var unit;
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == uID){
+                                    unit = that.user.characters[i];
+                                    continue;
+                                }
+                            }
+                            unit.usedAbilitySlots = 0;
+                            unit.classInfo.equippedAbilities = {};
+                            //update client
+                            that.gameEngine.queuePlayer(that,'clearAbilities',data);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'clearAbilitiesError', error: e.stack, lData: data});
+                        }
+                        break;
+                    case 'logout':
+                        try{
+                            that.gameEngine.playerLogout(that);
+                            that.gameEngine.queuePlayer(that,'logout', {});
+                            that.user.unlock();
+                            that.user.updateDB();
+                            that.user = null;
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
+                        }
+                        break;
+                    case 'deleteChar':
+                        try{
+                            //remove the character from the player's character list
+                            for (var i = 0; i < that.user.characters.length;i++){
+                                if (that.user.characters[i].id == data['charToDelete']){
+                                    console.log('deleting character: ' + that.user.characters[i].name);
+                                    that.user.characters.splice(i,1);
+                                    that.gameEngine.queuePlayer(that,'deleteUnit',{'id': data['charToDelete']});
+                                    continue;
+                                }
+                            }
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'deleteCharError', error: e.stack, dData: data});
+                        }
+                        break;
+                    case 'itemToUnit':
+                        try{
+                            var unit = that.getUnit(data.unitID);
+                            var itemID = that.user.inventory.items[data.itemIndex].itemID;
+                            //add item to unit
+                            if (unit.inventory.addItemUnit(itemID,1, true)){
+                                //remove item from player
+                                that.user.inventory.removeItem(data.itemIndex,1,true);
+                            }
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
+                        }
+                        break;
+                    case 'itemToPlayer':
+                        try{
+                            var unit = that.getUnit(data.unitID);
+                            itemID = unit.inventory.items[data.itemIndex].itemID;
+                            //add item to player
+                            that.user.inventory.addItem(itemID,1, true);
+                            //remove item from unit
+                            unit.inventory.removeItemUnit(data.itemIndex,true);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
+                        }
+                        break;
+                    case 'equipItem':
+                        console.log(data);
+                        try{
+                            var unit = that.getUnit(data.unitID);
+                            //add item to player
+                            unit.inventory.equip(data.itemIndex, true);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'equipItemError', error: e.stack, dData: data});
+                        }
+                        break;
+                    case 'unEquipItem':
+                        console.log(data);
+                        try{
+                            var unit = that.getUnit(data.unitID);
+                            //add item to player
+                            unit.inventory.unEquip(data.itemIndex, true);
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'unEquipItemError', error: e.stack, dData: data});
+                        }
+                        break;
+                    case 'addUnit':
+                        //TODO -- validate unit before creation
+                        //check max characters
+                        if (that.user.characters.length < 30){
+                            try{
+                                var char = new Unit();
+                                char.init({
+                                    id: that.gameEngine.getId(),
+                                    owner: that,
+                                    name: data.name,
+                                    sex: data.sex,
+                                    inventory: ['gun_sidearm','weapon_combatKnife']
+                                });
+                                for (var i in data.stats){
+                                    char[i].base = data.stats[i];
+                                    char[i].set();
+                                }
+                                char.classInfo = new ClassInfo();
+                                char.classInfo.init({unit: char});
+                                char.classInfo.setBaseClass(data.class);
+                                char.classInfo.setClass(data.class);
+                                //create object to send to the client
+                                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
+                                that.user.characters.push(char);
+                            }catch(e){
+                                that.gameEngine.debug(that,{'id': 'addUnitError', 'error': e.stack});
+                            }
+                        }
+                        break;
+                    case 'addRandomChar':
+                        if (that.user.characters.length < 30){
+                            try{
+                                var char = new Unit();
+                                var sexes = ['male','female'];
+                                var sex = sexes[Math.floor(Math.random()*sexes.length)];
+                                var nT = sex;
+                                var lastNT = 'last';
+                                //if (sex == 'female'){nT = 'romanFemale';lastNT = 'romanLastF'}
+                                char.init({
+                                    id: that.gameEngine.getId(),
+                                    owner: that,
+                                    name: '' + Utils.generateName(nT) + ' ' + Utils.generateName(lastNT),
+                                    sex: sex,
+                                    inventory: ['gun_sidearm','weapon_combatKnife']
+                                });
+                                var classes = ['soldier','medic','scout','tech'];
+                                var cl = classes[Math.floor(Math.random()*classes.length)];
+                                //randomize stats
+                                var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
+                                for (var i = 0;i < 20;i++){
+                                    var randStat = stats[Math.floor(Math.random()*stats.length)];
+                                    char[randStat].base += 1;
+                                    char[randStat].set();
+                                }
+                                char.classInfo = new ClassInfo();
+                                char.classInfo.init({unit: char});
+                                char.classInfo.setBaseClass(cl);
+                                char.classInfo.setClass(cl);
+                               
+                                that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
+                                that.user.characters.push(char);
+                            }catch(e){
+                                that.gameEngine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
+                            }
+                        }
+                        break;
+                    case 'testGame':
+                        that.gameEngine.playersWaiting.push(that.id);
+                        break;
+                    case 'cancelSearch':
+                        that.gameEngine.playerCancelSearch(that);
+                        break;
+                }
             }
+        }catch(e){
+            console.log("Player Update Error");
+            console.log(e);
         }
     });
 
