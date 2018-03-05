@@ -520,9 +520,19 @@
             });
         }else if (window.currentMapState == 'game'){
             //events for the actual game state
+            //var outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
+            //var outlineFilterRed = new PIXI.filters.GlowFilter(15, 2, 1, 0xff9999, 0.5);
+            var filtersOn = function () {
+                this.filters = [outlineFilterRed]
+            }
+
+            var filtersOff = function() {
+                this.filters = []
+            }
             sprite.clicked = false;
             sprite.on('pointerdown', function onClick(e){
-
+                var node = Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r];
+                Game.selectNode(node);
             });
             sprite.on('pointerup', function onClick(e){
 
@@ -540,6 +550,7 @@
                 if (!(Game.map.currentRotation%2)){t = 2}
                 var s = a['sprite' + t];
                 s.tint = 0xFFFFFF;
+
             });
         }
     }
@@ -828,10 +839,14 @@
         return result;
     }
     Map.prototype.move = function(x,y){
-        this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
+
+        Graphics.worldContainer.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
+        Graphics.worldContainer.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
+
+        /*this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
         this.container2.position.x = this.container1.position.x;
         this.container1.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
-        this.container2.position.y = this.container1.position.y;
+        this.container2.position.y = this.container1.position.y;*/
         Graphics.worldPrimitives.position.x = this.container1.position.x;
         Graphics.worldPrimitives.position.y = this.container1.position.y;
     }

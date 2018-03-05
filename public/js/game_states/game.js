@@ -110,6 +110,7 @@
                 var x = 0;
                 var y = 0;
                 var node = this.map.axialMap[this.units[i].currentNode.q][this.units[i].currentNode.r];
+                this.units[i].setCurrentNode(this.units[i].currentNode.q,this.units[i].currentNode.r,this.map);
                 node.unit = this.units[i];
                 var t = 1;
                 if (!(this.map.currentRotation%2)){t = 2}
@@ -118,12 +119,24 @@
                 this.units[i].sprite.position.x = node[sp].position.x;
                 this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
                 this.map[cont].addChildAt(this.units[i].sprite,this.map[cont].getChildIndex(node[sp])+1);
+                var overFunc = function(e){
+                    Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
+                }
+                //this.units[i].sprite.on('pointerdown',overFunc);
             }
 
             //UI Elements
 
             //Turn order
             this.turnListSprites = [];
+            var outlineFilterRed = new PIXI.filters.GlowFilter(15, 2, 1, 0xff9999, 0.5);
+            var filtersOn = function (e) {
+                 Game.units[e.currentTarget.unitID].sprite.filters = [outlineFilterRed];
+            }
+
+            var filtersOff = function(e) {
+                 Game.units[e.currentTarget.unitID].sprite.filters = [];
+            }
             for (var i = 0; i < this.turnList.length;i++){
                 //create box
                 var sprite = this.getTurnBox(this.turnList[i]);
@@ -131,6 +144,8 @@
                 sprite.position.y = 25 + i*75;
                 Graphics.uiContainer.addChild(sprite);
                 this.turnListSprites.push(sprite);
+                sprite.on('pointerover', filtersOn);
+                sprite.on('pointerout', filtersOff);
             }
             this.currentTurnArrow = Graphics.getSprite('arrow');
             this.currentTurnArrow.tint = 0x00FF00;
@@ -209,23 +224,20 @@
 
 
             var overFunc = function(e){
-                console.log('Moused over ' + Game.units[e.currentTarget.unitID].name);
+                Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
             }
-            var outFunc = function(e){
-                console.log('Moused out ' + Game.units[e.currentTarget.unitID].name);
-            }
-            var moveFunc = function(e){
-                console.log('Move');
-            }
-            sprite.on('pointerover',overFunc);
-            sprite.on('pointermove',moveFunc);
-            sprite.on('touchmove',overFunc);
-            sprite.on('touchend', outFunc);
-            sprite.on('touchendoutside', outFunc);
-            sprite.on('pointerout', outFunc);
+            sprite.on('pointerdown',overFunc);
 
             return sprite;
         },
+
+        selectNode: function(n){
+            if (typeof n == 'undefined'){n = 'none'}
+
+            console.log(n);
+
+        },
+
         drawBG: function(){
             Graphics.bgContainer.clear();
             var colors= [
@@ -239,8 +251,8 @@
         
         setTurnArrow: function(){
             //set scale
-            this.currentTurnArrow.scale.x = 0.6 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
-            this.currentTurnArrow.scale.y = 0.6 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+            this.currentTurnArrow.scale.x = 0.4 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+            this.currentTurnArrow.scale.y = 0.4 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
             //set position
             var t = 1;
             if (!(this.map.currentRotation%2)){t = 2}

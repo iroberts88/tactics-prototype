@@ -115,6 +115,7 @@
             var dir = '';
             dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
             this.sprite = Graphics.getSprite('unit_base_'+ dir + '_');
+            this.sprite.unitID = this.id;
             this.sprite.pSprite = true;
             this.sprite.scale.x = 0.6;
             this.sprite.scale.y = 0.6;
@@ -140,6 +141,10 @@
         this.usedAbilitySlots = data.usedAbilitySlots;
     };
 
+    Unit.prototype.setCurrentNode = function(q,r,map){
+        this.currentNode = map.axialMap[q][r];
+    };
+    
     Unit.prototype.equip = function(index) {
         var item = this.inventory.items[index];
         if (item.type == 'weapon' || item.type == 'gun'){
