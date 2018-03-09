@@ -1,1614 +1,3923 @@
-{ 
-    "_id" : ObjectId("572cb08ad1046a45d490252d"), 
-    "hitData" : [
-        [
-            NumberInt(-14), 
-            NumberInt(-9)
-        ], 
-        [
-            NumberInt(-14), 
-            NumberInt(9)
-        ], 
-        [
-            NumberInt(14), 
-            NumberInt(9)
-        ], 
-        [
-            NumberInt(14), 
-            NumberInt(-9)
-        ]
-    ], 
-    "name" : "Corrosive Maggot", 
-    "state" : "idle", 
-    "health" : NumberInt(10), 
-    "armor" : NumberInt(1), 
-    "earmor" : NumberInt(1), 
-    "power" : NumberInt(5), 
-    "skill" : NumberInt(5), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(70), 
-    "experience" : NumberInt(2), 
-    "type" : NumberInt(2), 
-    "description" : "", 
-    "scale" : 0.38, 
-    "mapCollide" : true, 
-    "noTarget" : {
-        "name" : "acidDrop"
-    }, 
-    "hasTarget" : {
-        "name" : "acidDrop"
-    }, 
-    "acquireTarget" : {
-        "name" : "searchInRadius", 
-        "radius" : NumberInt(1000)
-    }, 
-    "_dbIndex" : "enemy_maggot", 
-    "resistances" : {
-        "heat" : 0.0, 
-        "cold" : 0.0, 
-        "shock" : 0.0, 
-        "acid" : 1.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "maggot_", 
-        "moving" : "maggot_", 
-        "dying" : "maggot_"
-    }, 
-    "clientBehaviours" : [
-
-    ], 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
+{
+  "dungeon_enemies": [
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 15
+          },
+          "behaviours": {
+            "M": {
+              "tier5": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "boulderDamage": {
+                        "N": 25
+                      },
+                      "chance": {
+                        "N": 0.8
+                      },
+                      "name": {
+                        "S": "monolithBoss"
+                      },
+                      "speedBoost": {
+                        "N": 2
+                      },
+                      "boulderSpeed": {
+                        "N": 125
+                      },
+                      "meleeDamage": {
+                        "N": 25
+                      },
+                      "speedBoostPercent": {
+                        "N": 0.5
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 80
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier4": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "boulderDamage": {
+                        "N": 22
+                      },
+                      "chance": {
+                        "N": 0.7
+                      },
+                      "name": {
+                        "S": "monolithBoss"
+                      },
+                      "speedBoost": {
+                        "N": 2.7
+                      },
+                      "boulderSpeed": {
+                        "N": 120
+                      },
+                      "meleeDamage": {
+                        "N": 22
+                      },
+                      "speedBoostPercent": {
+                        "N": 0.5
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 70
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier3": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "boulderDamage": {
+                        "N": 18
+                      },
+                      "chance": {
+                        "N": 0.6
+                      },
+                      "name": {
+                        "S": "monolithBoss"
+                      },
+                      "speedBoost": {
+                        "N": 2.3
+                      },
+                      "boulderSpeed": {
+                        "N": 115
+                      },
+                      "meleeDamage": {
+                        "N": 18
+                      },
+                      "speedBoostPercent": {
+                        "N": 0.4
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 60
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier2": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "boulderDamage": {
+                        "N": 14
+                      },
+                      "chance": {
+                        "N": 0.4
+                      },
+                      "name": {
+                        "S": "monolithBoss"
+                      },
+                      "speedBoost": {
+                        "N": 2
+                      },
+                      "boulderSpeed": {
+                        "N": 110
+                      },
+                      "meleeDamage": {
+                        "N": 14
+                      },
+                      "speedBoostPercent": {
+                        "N": 0.3
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 50
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier6": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "boulderDamage": {
+                        "N": 13
+                      },
+                      "chance": {
+                        "N": 1
+                      },
+                      "name": {
+                        "S": "monolithBoss"
+                      },
+                      "speedBoost": {
+                        "N": 2
+                      },
+                      "boulderSpeed": {
+                        "N": 130
+                      },
+                      "meleeDamage": {
+                        "N": 15
+                      },
+                      "speedBoostPercent": {
+                        "N": 0.5
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 90
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier1": {
+                "M": {
+                  "client": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "monolith"
+                        }
+                      }
+                    ]
+                  },
+                  "noTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAroundRoom"
+                      }
+                    }
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 1000
+                      },
+                      "name": {
+                        "S": "searchInRadius"
+                      }
+                    }
+                  },
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveTowardsM"
+                      },
+                      "boulderDamage": {
+                        "N": 10
+                      },
+                      "boulderSpeed": {
+                        "N": 110
+                      },
+                      "meleeDamage": {
+                        "N": 10
+                      },
+                      "chance": {
+                        "N": 0.2
+                      }
+                    }
+                  }
+                }
+              },
+              "tier0": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveTowardsM"
+                      },
+                      "boulderDamage": {
+                        "N": 5
+                      },
+                      "boulderSpeed": {
+                        "N": 100
+                      },
+                      "meleeDamage": {
+                        "N": 7
+                      },
+                      "chance": {
+                        "N": 0.2
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 30
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "strength": {
+            "N": 5
+          },
+          "skill": {
+            "N": 15
+          },
+          "name": {
+            "S": "Monolith"
+          },
+          "state": {
+            "S": "attacking"
+          },
+          "intelligence": {
+            "N": 10
+          },
+          "speed": {
+            "N": 40
+          },
+          "dexterity": {
+            "N": 1
+          },
+          "scale": {
+            "N": 0.5
+          },
+          "armor": {
+            "N": 4
+          },
+          "experience": {
+            "N": 4
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -14,
+                    -17
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -14,
+                    17
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    14,
+                    17
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -17,
+                    14
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
             ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "s" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "r" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_endurance++",
+                          "item_gun_yellowPlasmaPistol",
+                          "item_tbot_map+"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.01
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_greenPlasmaPistol",
+                          "item_misc_monolithHeart"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 5
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_endurance+",
+                          "item_tbot_demag",
+                          "item_weapon_handSaw",
+                          "item_weapon_redPlasmaPistol"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.1
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_robot"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_viper",
+                          "item_tbot_downgrade",
+                          "item_tbot_upgrade"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_hornet",
+                          "item_tbot_destruct",
+                          "item_weapon_occamsRazor"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_endurance",
+                          "item_tbot_mag",
+                          "item_tbot_map",
+                          "item_weapon_combatKnife"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 1
+                  }
+                }
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_monolith"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "megalith_dying_d"
+              },
+              "idle": {
+                "S": "megalith_idle_d"
+              },
+              "moving": {
+                "S": "megalith_attacking_d"
+              },
+              "attacking": {
+                "S": "megalith_attacking_d"
+              }
+            }
+          },
+          "power": {
+            "N": 20
+          },
+          "earmor": {
+            "N": 25
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0.2
+              },
+              "acid": {
+                "N": -1
+              },
+              "cold": {
+                "N": 0.2
+              },
+              "gravity": {
+                "N": 0.2
+              },
+              "shock": {
+                "N": 0.2
+              }
+            }
+          },
+          "description": {
+            "S": "\"High armor. Weak to acid attacks\""
+          },
+          "type": {
+            "N": 0
+          },
+          "agility": {
+            "N": 2
+          }
         }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 13
+          },
+          "behaviours": {
+            "M": {
+              "tier5": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "spinEvery": {
+                        "N": 0.2
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "burnDamage": {
+                        "N": 4
+                      },
+                      "fireBallDamage": {
+                        "N": 18
+                      },
+                      "name": {
+                        "S": "blazerBoss"
+                      },
+                      "accuracy": {
+                        "N": 70
+                      },
+                      "rotations": {
+                        "N": 6
+                      },
+                      "rotationDelay": {
+                        "N": 0.1
+                      },
+                      "chanceToBurn": {
+                        "N": 75
+                      }
+                    }
+                  }
+                }
+              },
+              "tier4": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "spinEvery": {
+                        "N": 0.2
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "burnDamage": {
+                        "N": 4
+                      },
+                      "fireBallDamage": {
+                        "N": 18
+                      },
+                      "name": {
+                        "S": "blazerBoss"
+                      },
+                      "accuracy": {
+                        "N": 70
+                      },
+                      "rotations": {
+                        "N": 6
+                      },
+                      "rotationDelay": {
+                        "N": 0.1
+                      },
+                      "chanceToBurn": {
+                        "N": 75
+                      }
+                    }
+                  }
+                }
+              },
+              "tier3": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "spinEvery": {
+                        "N": 2
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "burnDamage": {
+                        "N": 3
+                      },
+                      "fireBallDamage": {
+                        "N": 15
+                      },
+                      "name": {
+                        "S": "blazerBoss"
+                      },
+                      "accuracy": {
+                        "N": 80
+                      },
+                      "rotations": {
+                        "N": 4
+                      },
+                      "rotationDelay": {
+                        "N": 0.2
+                      },
+                      "chanceToBurn": {
+                        "N": 50
+                      }
+                    }
+                  }
+                }
+              },
+              "tier2": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "spinEvery": {
+                        "N": 2
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "burnDamage": {
+                        "N": 3
+                      },
+                      "fireBallDamage": {
+                        "N": 10
+                      },
+                      "name": {
+                        "S": "blazerBoss"
+                      },
+                      "accuracy": {
+                        "N": 90
+                      },
+                      "rotations": {
+                        "N": 4
+                      },
+                      "rotationDelay": {
+                        "N": 0.35
+                      },
+                      "chanceToBurn": {
+                        "N": 50
+                      }
+                    }
+                  }
+                }
+              },
+              "tier1": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "blazer"
+                      },
+                      "damage": {
+                        "N": 5
+                      },
+                      "burnDamage": {
+                        "N": 2
+                      },
+                      "fireBallDamage": {
+                        "N": 5
+                      }
+                    }
+                  },
+                  "noTarget": {
+                    "M": {
+                      "name": {
+                        "S": "idle"
+                      }
+                    }
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 1250
+                      },
+                      "name": {
+                        "S": "radiusThenAggro"
+                      }
+                    }
+                  }
+                }
+              },
+              "tier6": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "spinEvery": {
+                        "N": 0.1
+                      },
+                      "damage": {
+                        "N": 16
+                      },
+                      "burnDamage": {
+                        "N": 5
+                      },
+                      "fireBallDamage": {
+                        "N": 20
+                      },
+                      "name": {
+                        "S": "blazerJesus"
+                      },
+                      "accuracy": {
+                        "N": 60
+                      },
+                      "healFor": {
+                        "N": 1
+                      },
+                      "rotations": {
+                        "N": 6
+                      },
+                      "rotationDelay": {
+                        "N": 0.1
+                      },
+                      "chanceToBurn": {
+                        "N": 100
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 7
+          },
+          "name": {
+            "S": "Blazer"
+          },
+          "state": {
+            "S": "idle"
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 0
+          },
+          "dexterity": {
+            "N": 1
+          },
+          "scale": {
+            "N": 1
+          },
+          "armor": {
+            "N": 7
+          },
+          "experience": {
+            "N": 4
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -21,
+                    -20
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    20,
+                    -20
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    20,
+                    21
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    20,
+                    -20
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_dexterity++",
+                          "item_gun_thumper",
+                          "item_misc_fireGem",
+                          "item_tbot_map+"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.01
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_spreader",
+                          "item_misc_fireShard",
+                          "item_weapon_pitchfork"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 5
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_dexterity+",
+                          "item_tbot_identify+",
+                          "item_weapon_bluePlasmaPistol",
+                          "item_weapon_wrench"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.1
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_phoenix"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_hellBiter",
+                          "item_tbot_downgrade",
+                          "item_tbot_upgrade"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_hornet",
+                          "item_tbot_destruct"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_dexterity",
+                          "item_tbot_demag",
+                          "item_tbot_identify",
+                          "item_weapon_sledgehammer"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 1
+                  }
+                }
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_blazer"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "blazer_dying"
+              },
+              "idle": {
+                "S": "blazer_idle"
+              },
+              "moving": {
+                "S": "blazer_idle"
+              },
+              "attacking": {
+                "S": "blazer_attacking"
+              }
+            }
+          },
+          "power": {
+            "N": 5
+          },
+          "earmor": {
+            "N": 2
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 2
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": -1
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "\"Absorbs fire damage. Weak to cold damage\""
+          },
+          "type": {
+            "N": 0
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 10
+          },
+          "behaviours": {
+            "M": {
+              "tier5": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 12
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 170
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier4": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 11
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 165
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier3": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 10
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 160
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier2": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 9
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 155
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier6": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 13
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 175
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier1": {
+                "M": {
+                  "client": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "frog"
+                        }
+                      },
+                      {
+                        "name": {
+                          "S": "pointWeapon"
+                        },
+                        "texture": {
+                          "S": "revolver"
+                        }
+                      },
+                      {
+                        "color": {
+                          "S": "0xff1a1a"
+                        },
+                        "name": {
+                          "S": "tint"
+                        }
+                      }
+                    ]
+                  },
+                  "noTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAroundRoom"
+                      }
+                    }
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 500
+                      },
+                      "name": {
+                        "S": "radiusThenAggro"
+                      }
+                    }
+                  },
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAndFire"
+                      },
+                      "fireType": {
+                        "S": "basicFire"
+                      },
+                      "damage": {
+                        "N": 10
+                      }
+                    }
+                  }
+                }
+              },
+              "tier0": {
+                "M": {
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 135
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 15
+          },
+          "name": {
+            "S": "Berserk"
+          },
+          "state": {
+            "S": "idle"
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 150
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 0.8
+          },
+          "armor": {
+            "N": 2
+          },
+          "experience": {
+            "N": 3
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    -16
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    16,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_agility++",
+                          "item_gun_yellowPlasmaPistol",
+                          "item_tbot_destruct",
+                          "item_tbot_repair"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.01
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_medical",
+                          "item_gun_basicRevolver",
+                          "item_misc_emptyBottle"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 5
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_agility+",
+                          "item_gun_goldenRevolver",
+                          "item_gun_shredder",
+                          "item_weapon_handSaw"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.1
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_loveMachine"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_javelin",
+                          "item_tbot_downgrade",
+                          "item_tbot_upgrade"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_rhino",
+                          "item_tbot_destruct",
+                          "item_tbot_repair"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_agility",
+                          "item_bbot_lure",
+                          "item_compound_vigor",
+                          "item_weapon_bat"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 1
+                  }
+                }
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_berserk"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "walk_fish"
+              },
+              "idle": {
+                "S": "walk_fish_idle"
+              },
+              "moving": {
+                "S": "walk_fish"
+              }
+            }
+          },
+          "power": {
+            "N": 10
+          },
+          "earmor": {
+            "N": 2
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": 0
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "Red frog...with a gun..."
+          },
+          "type": {
+            "N": 0
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 10
+          },
+          "behaviours": {
+            "M": {
+              "tier5": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "batKing"
+                      },
+                      "runAwayPercent": {
+                        "N": 30
+                      },
+                      "damage": {
+                        "N": 18
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 223
+                        }
+                      }
+                    ]
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 1250
+                      },
+                      "name": {
+                        "S": "searchInRadiusAndHeal"
+                      }
+                    }
+                  }
+                }
+              },
+              "tier4": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "smartMoveTowards"
+                      },
+                      "damage": {
+                        "N": 18
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 220
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier3": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "smartMoveTowards"
+                      },
+                      "damage": {
+                        "N": 18
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 218
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier2": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "basicMoveTowards"
+                      },
+                      "damage": {
+                        "N": 15
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 215
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier6": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "batKing"
+                      },
+                      "runAwayPercent": {
+                        "N": 40
+                      },
+                      "damage": {
+                        "N": 25
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 225
+                        }
+                      }
+                    ]
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 1250
+                      },
+                      "name": {
+                        "S": "searchInRadiusAndHeal"
+                      }
+                    }
+                  }
+                }
+              },
+              "tier1": {
+                "M": {
+                  "client": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "flying"
+                        },
+                        "height": {
+                          "N": 35
+                        }
+                      }
+                    ]
+                  },
+                  "noTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveRandomly"
+                      }
+                    }
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 400
+                      },
+                      "name": {
+                        "S": "aggroThenRadius"
+                      }
+                    }
+                  },
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "basicMoveTowards"
+                      },
+                      "damage": {
+                        "N": 15
+                      }
+                    }
+                  }
+                }
+              },
+              "tier0": {
+                "M": {
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 195
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 5
+          },
+          "name": {
+            "S": "Red Bat"
+          },
+          "state": {
+            "S": "idle"
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 215
+          },
+          "dexterity": {
+            "N": 1
+          },
+          "scale": {
+            "N": 0.75
+          },
+          "armor": {
+            "N": 1
+          },
+          "experience": {
+            "N": 2
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -11,
+                    -10
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    10,
+                    -10
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    11,
+                    10
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    10,
+                    -10
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": false
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_strength++",
+                          "item_gun_thumper",
+                          "item_tbot_map+"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.01
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_greenPlasmaPistol",
+                          "item_misc_batWing",
+                          "item_shield_shield"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 3
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_strength+",
+                          "item_gun_redPlasmaPistol",
+                          "item_tbot_identify+",
+                          "item_weapon_wrench"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.1
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_shrapCannon"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_assailant",
+                          "item_tbot_downgrade",
+                          "item_tbot_upgrade"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_hornet",
+                          "item_tbot_destruct"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_strength",
+                          "item_compound_poison",
+                          "item_tbot_demag",
+                          "item_tbot_identify"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 1
+                  }
+                }
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_redBat"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "redbat_dying"
+              },
+              "idle": {
+                "S": "redbat_moving"
+              },
+              "moving": {
+                "S": "redbat_moving"
+              }
+            }
+          },
+          "power": {
+            "N": 10
+          },
+          "earmor": {
+            "N": 1
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0.5
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": -0.5
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "It's a red bat"
+          },
+          "type": {
+            "N": 0
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 10
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 5
+          },
+          "name": {
+            "S": "Corrosive Maggot"
+          },
+          "noTarget": {
+            "M": {
+              "name": {
+                "S": "acidDrop"
+              }
+            }
+          },
+          "state": {
+            "S": "idle"
+          },
+          "hasTarget": {
+            "M": {
+              "name": {
+                "S": "acidDrop"
+              }
+            }
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 70
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 0.38
+          },
+          "armor": {
+            "N": 1
+          },
+          "experience": {
+            "N": 2
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -14,
+                    -9
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -14,
+                    9
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    14,
+                    9
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -9,
+                    14
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              }
+            }
+          },
+          "acquireTarget": {
+            "M": {
+              "radius": {
+                "N": 1000
+              },
+              "name": {
+                "S": "searchInRadius"
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_maggot"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "maggot_"
+              },
+              "idle": {
+                "S": "maggot_"
+              },
+              "moving": {
+                "S": "maggot_"
+              }
+            }
+          },
+          "power": {
+            "N": 5
+          },
+          "earmor": {
+            "N": 1
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0
+              },
+              "acid": {
+                "N": 1
+              },
+              "cold": {
+                "N": 0
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "test"
+          },
+          "type": {
+            "N": 2
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "health": {
+            "N": 12
+          },
+          "behaviours": {
+            "M": {
+              "tier5": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "missileEvery": {
+                        "N": 4
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "shootDelay": {
+                        "N": 0.08
+                      },
+                      "name": {
+                        "S": "frogKing"
+                      },
+                      "shotsMin": {
+                        "N": 12
+                      },
+                      "shotsMax": {
+                        "N": 12
+                      },
+                      "shootEvery": {
+                        "N": 0.2
+                      },
+                      "missileDamage": {
+                        "N": 25
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 160
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier4": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "missileEvery": {
+                        "N": 8
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "shootDelay": {
+                        "N": 0.2
+                      },
+                      "name": {
+                        "S": "frogKing"
+                      },
+                      "shotsMin": {
+                        "N": 10
+                      },
+                      "shotsMax": {
+                        "N": 10
+                      },
+                      "shootEvery": {
+                        "N": 0.1
+                      },
+                      "missileDamage": {
+                        "N": 15
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 150
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier3": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "frog"
+                      },
+                      "shotsMin": {
+                        "N": 8
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "shotsMax": {
+                        "N": 12
+                      },
+                      "shootEvery": {
+                        "N": 0.1
+                      },
+                      "shootDelay": {
+                        "N": 0.4
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 140
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier2": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "frog"
+                      },
+                      "shotsMin": {
+                        "N": 6
+                      },
+                      "damage": {
+                        "N": 9
+                      },
+                      "shotsMax": {
+                        "N": 10
+                      },
+                      "shootEvery": {
+                        "N": 0.15
+                      },
+                      "shootDelay": {
+                        "N": 0.5
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 130
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier6": {
+                "M": {
+                  "hasTarget": {
+                    "M": {
+                      "missileEvery": {
+                        "N": 2
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "shootDelay": {
+                        "N": 0.3
+                      },
+                      "name": {
+                        "S": "frogJesus"
+                      },
+                      "shotsMin": {
+                        "N": 15
+                      },
+                      "shotsMax": {
+                        "N": 20
+                      },
+                      "shootEvery": {
+                        "N": 0.1
+                      },
+                      "missileDamage": {
+                        "N": 25
+                      }
+                    }
+                  },
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 170
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "tier1": {
+                "M": {
+                  "client": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "frog"
+                        }
+                      },
+                      {
+                        "name": {
+                          "S": "pointWeapon"
+                        },
+                        "texture": {
+                          "S": "revolver"
+                        }
+                      }
+                    ]
+                  },
+                  "noTarget": {
+                    "M": {
+                      "name": {
+                        "S": "moveAroundRoom"
+                      }
+                    }
+                  },
+                  "acquireTarget": {
+                    "M": {
+                      "radius": {
+                        "N": 500
+                      },
+                      "name": {
+                        "S": "radiusThenAggro"
+                      }
+                    }
+                  },
+                  "hasTarget": {
+                    "M": {
+                      "name": {
+                        "S": "frog"
+                      },
+                      "shotsMin": {
+                        "N": 3
+                      },
+                      "damage": {
+                        "N": 10
+                      },
+                      "shotsMax": {
+                        "N": 8
+                      },
+                      "shootEvery": {
+                        "N": 0.2
+                      },
+                      "shootDelay": {
+                        "N": 1
+                      }
+                    }
+                  }
+                }
+              },
+              "tier0": {
+                "M": {
+                  "onInit": {
+                    "L": [
+                      {
+                        "name": {
+                          "S": "setSpeed"
+                        },
+                        "value": {
+                          "N": 100
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 15
+          },
+          "name": {
+            "S": "Frog"
+          },
+          "state": {
+            "S": "idle"
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 120
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 0.8
+          },
+          "armor": {
+            "N": 2
+          },
+          "experience": {
+            "N": 3
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    -16
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    16,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_intelligence++",
+                          "item_bbot_willpower++",
+                          "item_gun_yellowPlasmaPistol",
+                          "item_tbot_destruct",
+                          "item_tbot_repair"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.01
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_medical",
+                          "item_gun_basicRevolver",
+                          "item_misc_emptyBottle"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 5
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_intelligence+",
+                          "item_bbot_willpower+",
+                          "item_gun_goldenRevolver",
+                          "item_gun_shredder",
+                          "item_weapon_handSaw"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0.1
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_loveMachine"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_javelin",
+                          "item_tbot_downgrade",
+                          "item_tbot_upgrade"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_rhino",
+                          "item_tbot_destruct",
+                          "item_tbot_repair"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_bbot_intelligence",
+                          "item_bbot_lure",
+                          "item_bbot_willpower",
+                          "item_compound_vigor",
+                          "item_weapon_bat"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 1
+                  }
+                }
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_frog"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "walk_fish"
+              },
+              "idle": {
+                "S": "walk_fish_idle"
+              },
+              "moving": {
+                "S": "walk_fish"
+              }
+            }
+          },
+          "power": {
+            "N": 10
+          },
+          "earmor": {
+            "N": 2
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": 0
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "Frog...with a gun..."
+          },
+          "type": {
+            "N": 0
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 3
+          },
+          "health": {
+            "N": 1000
+          },
+          "strength": {
+            "N": 10
+          },
+          "skill": {
+            "N": 15
+          },
+          "name": {
+            "S": "Apocalypse"
+          },
+          "noTarget": {
+            "M": {
+              "name": {
+                "S": "moveAroundRoom"
+              }
+            }
+          },
+          "state": {
+            "S": "idle"
+          },
+          "hasTarget": {
+            "M": {
+              "damage": {
+                "N": 10
+              },
+              "orbSpawnMin": {
+                "N": 20
+              },
+              "orbDamage": {
+                "N": 22
+              },
+              "orbTickerMin": {
+                "N": 6
+              },
+              "jumpChance": {
+                "N": 50
+              },
+              "berserkPercent": {
+                "N": 25
+              },
+              "chanceToFireOrbs": {
+                "N": 50
+              },
+              "orbTickerMax": {
+                "N": 12
+              },
+              "orbDelay": {
+                "N": 4
+              },
+              "name": {
+                "S": "apocalypse"
+              },
+              "orbRadius": {
+                "N": 150
+              },
+              "orbSpawnMax": {
+                "N": 30
+              },
+              "jumpRadius": {
+                "N": 2000
+              },
+              "jumpTimePer100": {
+                "N": 0.4
+              }
+            }
+          },
+          "intelligence": {
+            "N": 10
+          },
+          "speed": {
+            "N": 40
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 1
+          },
+          "armor": {
+            "N": 5
+          },
+          "experience": {
+            "N": 30
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -40,
+                    -35
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -35,
+                    40
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    35,
+                    40
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -40,
+                    35
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_hornet",
+                          "item_gun_thumper",
+                          "item_gun_yellowPlasmaPistol",
+                          "item_tbot_map+"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 30
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_compound_healing+",
+                          "item_compound_slow",
+                          "item_compound_speed",
+                          "item_gun_basicRevolver",
+                          "item_gun_greenPlasmaPistol",
+                          "item_misc_emptyBottle",
+                          "item_misc_emptySyringe",
+                          "item_weapon_combatKnife"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 80
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_gun_bluePlasmaPistol",
+                          "item_gun_redPlasmaPistol",
+                          "item_weapon_handSaw",
+                          "item_weapon_wrench"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 40
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_downgrade+",
+                          "item_?bot_upgrade+",
+                          "item_gun_mosquito",
+                          "item_gun_swarmer"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 5
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_?bot_destruct+",
+                          "item_?bot_repair+",
+                          "item_gun_assailant",
+                          "item_gun_hellBiter",
+                          "item_gun_rhino",
+                          "item_gun_viper"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 10
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_compound_explosive",
+                          "item_gun_assailant",
+                          "item_gun_hornet",
+                          "item_gun_rhino",
+                          "item_weapon_occamsRazor"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 20
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "list": {
+                    "M": {
+                      "values": {
+                        "SS": [
+                          "item_compound_poison",
+                          "item_gun_redPlasmaPistol",
+                          "item_gun_shredder",
+                          "item_gun_smg",
+                          "item_gun_spreader",
+                          "item_weapon_pitchfork"
+                        ]
+                      },
+                      "type": {
+                        "S": "String"
+                      }
+                    }
+                  },
+                  "chance": {
+                    "N": 60
+                  }
+                }
+              }
+            }
+          },
+          "acquireTarget": {
+            "M": {
+              "radius": {
+                "N": 3000
+              },
+              "name": {
+                "S": "searchInRadius"
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_apocalypse"
+          },
+          "willpower": {
+            "N": 5
+          },
+          "endurance": {
+            "N": 3
+          },
+          "lootLevel": {
+            "M": {
+              "values": {
+                "NS": [
+                  4,
+                  5
+                ]
+              },
+              "type": {
+                "S": "Number"
+              }
+            }
+          },
+          "level": {
+            "N": 5
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "apocalypse_dying_"
+              },
+              "idle": {
+                "S": "apocalypse_standing_"
+              },
+              "moving": {
+                "S": "apocalypse_walking_"
+              },
+              "attacking": {
+                "S": "apocalypse_attacking_"
+              }
+            }
+          },
+          "power": {
+            "N": 15
+          },
+          "earmor": {
+            "N": 5
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0.5
+              },
+              "acid": {
+                "N": 0.5
+              },
+              "cold": {
+                "N": 0.5
+              },
+              "gravity": {
+                "N": 0.5
+              },
+              "shock": {
+                "N": 0.5
+              }
+            }
+          },
+          "description": {
+            "S": "big robot boss?"
+          },
+          "type": {
+            "N": 1
+          },
+          "agility": {
+            "N": 1
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "clientBehaviours": {
+            "L": [
+              {
+                "name": {
+                  "S": "frog"
+                }
+              },
+              {
+                "name": {
+                  "S": "pointWeapon"
+                },
+                "texture": {
+                  "S": "weapon_spreader"
+                }
+              }
+            ]
+          },
+          "health": {
+            "N": 20
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 5
+          },
+          "name": {
+            "S": "Robot"
+          },
+          "noTarget": {
+            "M": {
+              "name": {
+                "S": "moveAroundRoomRobot"
+              }
+            }
+          },
+          "state": {
+            "S": "idle"
+          },
+          "hasTarget": {
+            "M": {
+              "damage": {
+                "N": 12
+              },
+              "fireType": {
+                "S": "robotFiring"
+              },
+              "shootDelay": {
+                "N": 0.75
+              },
+              "name": {
+                "S": "robot"
+              },
+              "shotsMin": {
+                "N": 3
+              },
+              "shotsMax": {
+                "N": 5
+              },
+              "shootEvery": {
+                "N": 0.25
+              }
+            }
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 175
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 0.6
+          },
+          "armor": {
+            "N": 1
+          },
+          "experience": {
+            "N": 0
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    -16
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    16,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              }
+            }
+          },
+          "acquireTarget": {
+            "M": {
+              "radius": {
+                "N": 1000
+              },
+              "name": {
+                "S": "searchInRadius"
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_robot"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "robot_walk"
+              },
+              "idle": {
+                "S": "robot_idle"
+              },
+              "moving": {
+                "S": "robot_walk"
+              },
+              "attacking": {
+                "S": "robot_walk"
+              }
+            }
+          },
+          "power": {
+            "N": 5
+          },
+          "earmor": {
+            "N": 1
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": 0
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "A mini robot"
+          },
+          "type": {
+            "N": 2
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "dropChances": {
+            "N": 1
+          },
+          "clientBehaviours": {
+            "L": [
+              {
+                "name": {
+                  "S": "frog"
+                }
+              },
+              {
+                "name": {
+                  "S": "pointWeapon"
+                },
+                "texture": {
+                  "S": "weapon_spreader"
+                }
+              },
+              {
+                "color": {
+                  "S": "0x666666"
+                },
+                "name": {
+                  "S": "tint"
+                }
+              }
+            ]
+          },
+          "health": {
+            "N": 20
+          },
+          "strength": {
+            "N": 1
+          },
+          "skill": {
+            "N": 5
+          },
+          "name": {
+            "S": "Dark Robot"
+          },
+          "noTarget": {
+            "M": {
+              "name": {
+                "S": "moveAroundRoom"
+              }
+            }
+          },
+          "state": {
+            "S": "idle"
+          },
+          "hasTarget": {
+            "M": {
+              "damage": {
+                "N": 12
+              },
+              "fireType": {
+                "S": "robotFiring"
+              },
+              "shootDelay": {
+                "N": 0.75
+              },
+              "name": {
+                "S": "frog"
+              },
+              "shotsMin": {
+                "N": 3
+              },
+              "shotsMax": {
+                "N": 5
+              },
+              "shootEvery": {
+                "N": 0.5
+              }
+            }
+          },
+          "intelligence": {
+            "N": 1
+          },
+          "speed": {
+            "N": 175
+          },
+          "dexterity": {
+            "N": 3
+          },
+          "scale": {
+            "N": 0.6
+          },
+          "armor": {
+            "N": 1
+          },
+          "experience": {
+            "N": 3
+          },
+          "hitData": {
+            "L": [
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    -16
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    16,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              },
+              {
+                "values": {
+                  "NS": [
+                    -15,
+                    15
+                  ]
+                },
+                "type": {
+                  "S": "Number"
+                }
+              }
+            ]
+          },
+          "mapCollide": {
+            "BOOL": true
+          },
+          "drops": {
+            "M": {
+              "r": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "c": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "s": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "f": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "l": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "ur": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              },
+              "uc": {
+                "M": {
+                  "chance": {
+                    "N": 0
+                  }
+                }
+              }
+            }
+          },
+          "acquireTarget": {
+            "M": {
+              "radius": {
+                "N": 1000
+              },
+              "name": {
+                "S": "aggroThenRadius"
+              }
+            }
+          },
+          "enemyid": {
+            "S": "enemy_robot2"
+          },
+          "willpower": {
+            "N": 1
+          },
+          "endurance": {
+            "N": 1
+          },
+          "states": {
+            "M": {
+              "dying": {
+                "S": "robot_walk"
+              },
+              "idle": {
+                "S": "robot_idle"
+              },
+              "moving": {
+                "S": "robot_walk"
+              }
+            }
+          },
+          "power": {
+            "N": 5
+          },
+          "earmor": {
+            "N": 1
+          },
+          "resistances": {
+            "M": {
+              "heat": {
+                "N": 0
+              },
+              "acid": {
+                "N": 0
+              },
+              "cold": {
+                "N": 0
+              },
+              "gravity": {
+                "N": 0
+              },
+              "shock": {
+                "N": 0
+              }
+            }
+          },
+          "description": {
+            "S": "A mini robot"
+          },
+          "type": {
+            "N": 2
+          },
+          "agility": {
+            "N": 2
+          }
+        }
+      }
     }
-}
-{ 
-    "_id" : ObjectId("56d7105dd1046a20a0f5aab5"), 
-    "hitData" : [
-        [
-            NumberInt(-15), 
-            NumberInt(-15)
-        ], 
-        [
-            NumberInt(-15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(-15)
-        ]
-    ], 
-    "name" : "Robot", 
-    "state" : "idle", 
-    "health" : NumberInt(20), 
-    "armor" : NumberInt(1), 
-    "earmor" : NumberInt(1), 
-    "power" : NumberInt(5), 
-    "skill" : NumberInt(5), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(175), 
-    "experience" : NumberInt(0), 
-    "type" : NumberInt(2), 
-    "description" : "A mini robot", 
-    "scale" : 0.6, 
-    "mapCollide" : true, 
-    "noTarget" : {
-        "name" : "moveAroundRoomRobot"
-    }, 
-    "hasTarget" : {
-        "name" : "robot", 
-        "damage" : NumberInt(12), 
-        "shootEvery" : 0.25, 
-        "shotsMin" : NumberInt(3), 
-        "shotsMax" : NumberInt(5), 
-        "shootDelay" : 0.75, 
-        "fireType" : "robotFiring"
-    }, 
-    "acquireTarget" : {
-        "name" : "searchInRadius", 
-        "radius" : NumberInt(1000)
-    }, 
-    "_dbIndex" : "enemy_robot", 
-    "resistances" : {
-        "heat" : 0.0, 
-        "cold" : 0.0, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "robot_idle", 
-        "moving" : "robot_walk", 
-        "dying" : "robot_walk", 
-        "attacking" : "robot_walk"
-    }, 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "s" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "r" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }
-    }, 
-    "clientBehaviours" : [
-        {
-            "name" : "frog"
-        }, 
-        {
-            "name" : "pointWeapon", 
-            "texture" : "weapon_spreader"
-        }
-    ]
-}
-{ 
-    "_id" : ObjectId("573470b2d1046a45d4902533"), 
-    "hitData" : [
-        [
-            NumberInt(-15), 
-            NumberInt(-15)
-        ], 
-        [
-            NumberInt(-15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(-15)
-        ]
-    ], 
-    "name" : "Dark Robot", 
-    "state" : "idle", 
-    "health" : NumberInt(20), 
-    "armor" : NumberInt(1), 
-    "earmor" : NumberInt(1), 
-    "power" : NumberInt(5), 
-    "skill" : NumberInt(5), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(175), 
-    "experience" : NumberInt(3), 
-    "type" : NumberInt(2), 
-    "description" : "A mini robot", 
-    "scale" : 0.6, 
-    "mapCollide" : true, 
-    "noTarget" : {
-        "name" : "moveAroundRoom"
-    }, 
-    "hasTarget" : {
-        "name" : "frog", 
-        "damage" : NumberInt(12), 
-        "shootEvery" : 0.5, 
-        "shotsMin" : NumberInt(3), 
-        "shotsMax" : NumberInt(5), 
-        "shootDelay" : 0.75, 
-        "fireType" : "robotFiring"
-    }, 
-    "acquireTarget" : {
-        "name" : "aggroThenRadius", 
-        "radius" : NumberInt(1000)
-    }, 
-    "_dbIndex" : "enemy_robot2", 
-    "resistances" : {
-        "heat" : 0.0, 
-        "cold" : 0.0, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "robot_idle", 
-        "moving" : "robot_walk", 
-        "dying" : "robot_walk"
-    }, 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "s" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "r" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-
-            ]
-        }
-    }, 
-    "clientBehaviours" : [
-        {
-            "name" : "frog"
-        }, 
-        {
-            "name" : "pointWeapon", 
-            "texture" : "weapon_spreader"
-        }, 
-        {
-            "name" : "tint", 
-            "color" : "0x666666"
-        }
-    ]
-}
-{ 
-    "_id" : ObjectId("55196681d1046a170cd00731"), 
-    "hitData" : [
-        [
-            NumberInt(-10), 
-            NumberInt(-10)
-        ], 
-        [
-            NumberInt(-10), 
-            NumberInt(10)
-        ], 
-        [
-            NumberInt(10), 
-            NumberInt(10)
-        ], 
-        [
-            NumberInt(10), 
-            NumberInt(-10)
-        ]
-    ], 
-    "name" : "Red Bat", 
-    "state" : "idle", 
-    "health" : NumberInt(10), 
-    "armor" : NumberInt(1), 
-    "earmor" : NumberInt(1), 
-    "power" : NumberInt(10), 
-    "skill" : NumberInt(5), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(1), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(215), 
-    "experience" : NumberInt(2), 
-    "type" : NumberInt(0), 
-    "description" : "It's a red bat", 
-    "scale" : 0.75, 
-    "mapCollide" : false, 
-    "behaviours" : {
-        "tier0" : {
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(195)
-                }
-            ]
-        }, 
-        "tier1" : {
-            "noTarget" : {
-                "name" : "moveRandomly"
-            }, 
-            "hasTarget" : {
-                "name" : "basicMoveTowards", 
-                "damage" : NumberInt(15)
-            }, 
-            "acquireTarget" : {
-                "name" : "aggroThenRadius", 
-                "radius" : NumberInt(400)
-            }, 
-            "client" : [
-                {
-                    "name" : "flying", 
-                    "height" : NumberInt(35)
-                }
-            ]
-        }, 
-        "tier2" : {
-            "hasTarget" : {
-                "name" : "basicMoveTowards", 
-                "damage" : NumberInt(15)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(215)
-                }
-            ]
-        }, 
-        "tier3" : {
-            "hasTarget" : {
-                "name" : "smartMoveTowards", 
-                "damage" : NumberInt(18)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(218)
-                }
-            ]
-        }, 
-        "tier4" : {
-            "hasTarget" : {
-                "name" : "smartMoveTowards", 
-                "damage" : NumberInt(18)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(220)
-                }
-            ]
-        }, 
-        "tier5" : {
-            "hasTarget" : {
-                "name" : "batKing", 
-                "damage" : NumberInt(18), 
-                "runAwayPercent" : NumberInt(30)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(223)
-                }
-            ], 
-            "acquireTarget" : {
-                "name" : "searchInRadiusAndHeal", 
-                "radius" : NumberInt(1250)
-            }
-        }, 
-        "tier6" : {
-            "hasTarget" : {
-                "name" : "batKing", 
-                "damage" : NumberInt(25), 
-                "runAwayPercent" : NumberInt(40)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(225)
-                }
-            ], 
-            "acquireTarget" : {
-                "name" : "searchInRadiusAndHeal", 
-                "radius" : NumberInt(1250)
-            }
-        }
-    }, 
-    "_dbIndex" : "enemy_redBat", 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(3), 
-            "list" : [
-                "item_gun_greenPlasmaPistol", 
-                "item_misc_batWing", 
-                "item_shield_shield"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(1), 
-            "list" : [
-                "item_compound_poison", 
-                "item_tbot_identify", 
-                "item_tbot_demag"
-            ]
-        }, 
-        "s" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_gun_redPlasmaPistol", 
-                "item_weapon_wrench", 
-                "item_tbot_identify+"
-            ]
-        }, 
-        "r" : {
-            "chance" : 0.01, 
-            "list" : [
-                "item_gun_thumper", 
-                "item_tbot_map+"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_hornet", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_assailant", 
-                "item_tbot_upgrade", 
-                "item_tbot_downgrade"
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_shrapCannon"
-            ]
-        }
-    }, 
-    "resistances" : {
-        "heat" : 0.5, 
-        "cold" : -0.5, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "redbat_moving", 
-        "moving" : "redbat_moving", 
-        "dying" : "redbat_dying"
-    }
-}
-{ 
-    "_id" : ObjectId("5519723bd1046a170cd00732"), 
-    "hitData" : [
-        [
-            NumberInt(-20), 
-            NumberInt(-20)
-        ], 
-        [
-            NumberInt(-20), 
-            NumberInt(20)
-        ], 
-        [
-            NumberInt(20), 
-            NumberInt(20)
-        ], 
-        [
-            NumberInt(20), 
-            NumberInt(-20)
-        ]
-    ], 
-    "name" : "Blazer", 
-    "state" : "idle", 
-    "health" : NumberInt(13), 
-    "armor" : NumberInt(7), 
-    "earmor" : NumberInt(2), 
-    "power" : NumberInt(5), 
-    "skill" : NumberInt(7), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(1), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(0), 
-    "experience" : NumberInt(4), 
-    "type" : NumberInt(0), 
-    "description" : "\"Absorbs fire damage. Weak to cold damage\"", 
-    "scale" : 1.0, 
-    "behaviours" : {
-        "tier0" : {
-
-        }, 
-        "tier1" : {
-            "noTarget" : {
-                "name" : "idle"
-            }, 
-            "hasTarget" : {
-                "name" : "blazer", 
-                "damage" : NumberInt(5), 
-                "fireBallDamage" : NumberInt(5), 
-                "burnDamage" : NumberInt(2)
-            }, 
-            "acquireTarget" : {
-                "name" : "radiusThenAggro", 
-                "radius" : NumberInt(1250)
-            }, 
-            "client" : [
-
-            ]
-        }, 
-        "tier2" : {
-            "hasTarget" : {
-                "name" : "blazerBoss", 
-                "damage" : NumberInt(10), 
-                "chanceToBurn" : NumberInt(50), 
-                "accuracy" : NumberInt(90), 
-                "spinEvery" : 2.0, 
-                "rotations" : NumberInt(4), 
-                "rotationDelay" : 0.35, 
-                "fireBallDamage" : NumberInt(10), 
-                "burnDamage" : NumberInt(3)
-            }
-        }, 
-        "tier3" : {
-            "hasTarget" : {
-                "name" : "blazerBoss", 
-                "damage" : NumberInt(10), 
-                "chanceToBurn" : NumberInt(50), 
-                "accuracy" : NumberInt(80), 
-                "spinEvery" : 2.0, 
-                "rotations" : NumberInt(4), 
-                "rotationDelay" : 0.2, 
-                "fireBallDamage" : NumberInt(15), 
-                "burnDamage" : NumberInt(3)
-            }
-        }, 
-        "tier4" : {
-            "hasTarget" : {
-                "name" : "blazerBoss", 
-                "damage" : NumberInt(10), 
-                "chanceToBurn" : NumberInt(75), 
-                "accuracy" : NumberInt(70), 
-                "spinEvery" : 0.2, 
-                "rotations" : NumberInt(6), 
-                "rotationDelay" : 0.1, 
-                "fireBallDamage" : NumberInt(18), 
-                "burnDamage" : NumberInt(4)
-            }
-        }, 
-        "tier5" : {
-            "hasTarget" : {
-                "name" : "blazerBoss", 
-                "damage" : NumberInt(10), 
-                "chanceToBurn" : NumberInt(75), 
-                "accuracy" : NumberInt(70), 
-                "spinEvery" : 0.2, 
-                "rotations" : NumberInt(6), 
-                "rotationDelay" : 0.1, 
-                "fireBallDamage" : NumberInt(18), 
-                "burnDamage" : NumberInt(4)
-            }
-        }, 
-        "tier6" : {
-            "hasTarget" : {
-                "name" : "blazerJesus", 
-                "damage" : NumberInt(16), 
-                "chanceToBurn" : NumberInt(100), 
-                "accuracy" : NumberInt(60), 
-                "spinEvery" : 0.1, 
-                "rotations" : NumberInt(6), 
-                "rotationDelay" : 0.1, 
-                "healFor" : NumberInt(1), 
-                "fireBallDamage" : NumberInt(20), 
-                "burnDamage" : NumberInt(5)
-            }
-        }
-    }, 
-    "mapCollide" : true, 
-    "_dbIndex" : "enemy_blazer", 
-    "resistances" : {
-        "heat" : 2.0, 
-        "cold" : -1.0, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "blazer_idle", 
-        "moving" : "blazer_idle", 
-        "dying" : "blazer_dying", 
-        "attacking" : "blazer_attacking"
-    }, 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(5), 
-            "list" : [
-                "item_gun_spreader", 
-                "item_misc_fireShard", 
-                "item_weapon_pitchfork"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(1), 
-            "list" : [
-                "item_weapon_sledgehammer", 
-                "item_tbot_identify", 
-                "item_tbot_demag"
-            ]
-        }, 
-        "s" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_weapon_bluePlasmaPistol", 
-                "item_weapon_wrench", 
-                "item_tbot_identify+"
-            ]
-        }, 
-        "r" : {
-            "chance" : 0.01, 
-            "list" : [
-                "item_gun_thumper", 
-                "item_tbot_map+", 
-                "item_misc_fireGem"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_hornet", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_hellBiter", 
-                "item_tbot_upgrade", 
-                "item_tbot_downgrade"
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_phoenix"
-            ]
-        }
-    }
-}
-{ 
-    "_id" : ObjectId("55281faad1046a216c37ea26"), 
-    "hitData" : [
-        [
-            NumberInt(-14), 
-            NumberInt(-17)
-        ], 
-        [
-            NumberInt(-14), 
-            NumberInt(17)
-        ], 
-        [
-            NumberInt(14), 
-            NumberInt(17)
-        ], 
-        [
-            NumberInt(14), 
-            NumberInt(-17)
-        ]
-    ], 
-    "name" : "Monolith", 
-    "state" : "attacking", 
-    "health" : NumberInt(15), 
-    "armor" : NumberInt(4), 
-    "earmor" : NumberInt(25), 
-    "power" : NumberInt(20), 
-    "skill" : NumberInt(15), 
-    "strength" : NumberInt(5), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(1), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(10), 
-    "speed" : NumberInt(40), 
-    "experience" : NumberInt(4), 
-    "type" : NumberInt(0), 
-    "description" : "\"High armor. Weak to acid attacks\"", 
-    "scale" : 0.5, 
-    "behaviours" : {
-        "tier0" : {
-            "hasTarget" : {
-                "name" : "moveTowardsM", 
-                "boulderDamage" : NumberInt(5), 
-                "boulderSpeed" : NumberInt(100), 
-                "chance" : 0.2, 
-                "meleeDamage" : NumberInt(7)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(30)
-                }
-            ]
-        }, 
-        "tier1" : {
-            "noTarget" : {
-                "name" : "moveAroundRoom"
-            }, 
-            "hasTarget" : {
-                "name" : "moveTowardsM", 
-                "boulderDamage" : NumberInt(10), 
-                "boulderSpeed" : NumberInt(110), 
-                "chance" : 0.2, 
-                "meleeDamage" : NumberInt(10)
-            }, 
-            "acquireTarget" : {
-                "name" : "searchInRadius", 
-                "radius" : NumberInt(1000)
-            }, 
-            "client" : [
-                {
-                    "name" : "monolith"
-                }
-            ]
-        }, 
-        "tier2" : {
-            "hasTarget" : {
-                "name" : "monolithBoss", 
-                "meleeDamage" : NumberInt(14), 
-                "boulderDamage" : NumberInt(14), 
-                "boulderSpeed" : NumberInt(110), 
-                "chance" : 0.4, 
-                "speedBoostPercent" : 0.3, 
-                "speedBoost" : 2.0
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(50)
-                }
-            ]
-        }, 
-        "tier3" : {
-            "hasTarget" : {
-                "name" : "monolithBoss", 
-                "meleeDamage" : NumberInt(18), 
-                "boulderDamage" : NumberInt(18), 
-                "boulderSpeed" : NumberInt(115), 
-                "chance" : 0.6, 
-                "speedBoostPercent" : 0.4, 
-                "speedBoost" : 2.3
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(60)
-                }
-            ]
-        }, 
-        "tier4" : {
-            "hasTarget" : {
-                "name" : "monolithBoss", 
-                "meleeDamage" : NumberInt(22), 
-                "boulderDamage" : NumberInt(22), 
-                "boulderSpeed" : NumberInt(120), 
-                "chance" : 0.7, 
-                "speedBoostPercent" : 0.5, 
-                "speedBoost" : 2.7
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(70)
-                }
-            ]
-        }, 
-        "tier5" : {
-            "hasTarget" : {
-                "name" : "monolithBoss", 
-                "meleeDamage" : NumberInt(25), 
-                "boulderDamage" : NumberInt(25), 
-                "boulderSpeed" : NumberInt(125), 
-                "chance" : 0.8, 
-                "speedBoostPercent" : 0.5, 
-                "speedBoost" : 2.0
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(80)
-                }
-            ]
-        }, 
-        "tier6" : {
-            "hasTarget" : {
-                "name" : "monolithBoss", 
-                "meleeDamage" : NumberInt(15), 
-                "boulderDamage" : NumberInt(13), 
-                "boulderSpeed" : NumberInt(130), 
-                "chance" : 1.0, 
-                "speedBoostPercent" : 0.5, 
-                "speedBoost" : 2.0
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(90)
-                }
-            ]
-        }
-    }, 
-    "mapCollide" : true, 
-    "_dbIndex" : "enemy_monolith", 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(5), 
-            "list" : [
-                "item_gun_greenPlasmaPistol", 
-                "item_misc_monolithHeart"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(1), 
-            "list" : [
-                "item_weapon_combatKnife", 
-                "item_tbot_map", 
-                "item_tbot_mag"
-            ]
-        }, 
-        "s" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_weapon_redPlasmaPistol", 
-                "item_weapon_handSaw", 
-                "item_tbot_demag"
-            ]
-        }, 
-        "r" : {
-            "chance" : 0.01, 
-            "list" : [
-                "item_gun_yellowPlasmaPistol", 
-                "item_tbot_map+"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_hornet", 
-                "item_weapon_occamsRazor", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_viper", 
-                "item_tbot_upgrade", 
-                "item_tbot_downgrade"
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_robot"
-            ]
-        }
-    }, 
-    "resistances" : {
-        "heat" : 0.2, 
-        "cold" : 0.2, 
-        "shock" : 0.2, 
-        "acid" : -1.0, 
-        "gravity" : 0.2
-    }, 
-    "states" : {
-        "idle" : "megalith_idle_d", 
-        "moving" : "megalith_attacking_d", 
-        "dying" : "megalith_dying_d", 
-        "attacking" : "megalith_attacking_d"
-    }
-}
-{ 
-    "_id" : ObjectId("560183153da59819dcf0346d"), 
-    "hitData" : [
-        [
-            NumberInt(-15), 
-            NumberInt(-15)
-        ], 
-        [
-            NumberInt(-15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(-15)
-        ]
-    ], 
-    "name" : "Frog", 
-    "state" : "idle", 
-    "health" : NumberInt(12), 
-    "armor" : NumberInt(2), 
-    "earmor" : NumberInt(2), 
-    "power" : NumberInt(10), 
-    "skill" : NumberInt(15), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(120), 
-    "experience" : NumberInt(3), 
-    "type" : NumberInt(0), 
-    "description" : "Frog...with a gun...", 
-    "scale" : 0.8, 
-    "mapCollide" : true, 
-    "behaviours" : {
-        "tier0" : {
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(100)
-                }
-            ]
-        }, 
-        "tier1" : {
-            "noTarget" : {
-                "name" : "moveAroundRoom"
-            }, 
-            "hasTarget" : {
-                "name" : "frog", 
-                "damage" : NumberInt(10), 
-                "shootEvery" : 0.2, 
-                "shotsMin" : NumberInt(3), 
-                "shotsMax" : NumberInt(8), 
-                "shootDelay" : 1.0
-            }, 
-            "acquireTarget" : {
-                "name" : "radiusThenAggro", 
-                "radius" : NumberInt(500)
-            }, 
-            "client" : [
-                {
-                    "name" : "frog"
-                }, 
-                {
-                    "name" : "pointWeapon", 
-                    "texture" : "revolver"
-                }
-            ]
-        }, 
-        "tier2" : {
-            "hasTarget" : {
-                "name" : "frog", 
-                "damage" : NumberInt(9), 
-                "shootEvery" : 0.15, 
-                "shotsMin" : NumberInt(6), 
-                "shotsMax" : NumberInt(10), 
-                "shootDelay" : 0.5
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(130)
-                }
-            ]
-        }, 
-        "tier3" : {
-            "hasTarget" : {
-                "name" : "frog", 
-                "damage" : NumberInt(10), 
-                "shootEvery" : 0.1, 
-                "shotsMin" : NumberInt(8), 
-                "shotsMax" : NumberInt(12), 
-                "shootDelay" : 0.4
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(140)
-                }
-            ]
-        }, 
-        "tier4" : {
-            "hasTarget" : {
-                "name" : "frogKing", 
-                "damage" : NumberInt(10), 
-                "shootEvery" : 0.1, 
-                "shotsMin" : NumberInt(10), 
-                "shotsMax" : NumberInt(10), 
-                "shootDelay" : 0.2, 
-                "missileEvery" : 8.0, 
-                "missileDamage" : NumberInt(15)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(150)
-                }
-            ]
-        }, 
-        "tier5" : {
-            "hasTarget" : {
-                "name" : "frogKing", 
-                "damage" : NumberInt(10), 
-                "shootEvery" : 0.2, 
-                "shotsMin" : NumberInt(12), 
-                "shotsMax" : NumberInt(12), 
-                "shootDelay" : 0.08, 
-                "missileEvery" : 4.0, 
-                "missileDamage" : NumberInt(25)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(160)
-                }
-            ]
-        }, 
-        "tier6" : {
-            "hasTarget" : {
-                "damage" : NumberInt(10), 
-                "shootEvery" : 0.1, 
-                "shotsMin" : NumberInt(15), 
-                "shotsMax" : NumberInt(20), 
-                "shootDelay" : 0.3, 
-                "missileEvery" : 2.0, 
-                "name" : "frogJesus", 
-                "missileDamage" : NumberInt(25)
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(170)
-                }
-            ]
-        }
-    }, 
-    "_dbIndex" : "enemy_frog", 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(5), 
-            "list" : [
-                "item_gun_basicRevolver", 
-                "item_bbot_medical", 
-                "item_misc_emptyBottle"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(1), 
-            "list" : [
-                "item_weapon_bat", 
-                "item_bbot_lure", 
-                "item_compound_vigor"
-            ]
-        }, 
-        "s" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_gun_goldenRevolver", 
-                "item_weapon_handSaw", 
-                "item_gun_shredder"
-            ]
-        }, 
-        "r" : {
-            "chance" : 0.01, 
-            "list" : [
-                "item_gun_yellowPlasmaPistol", 
-                "item_tbot_repair", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_rhino", 
-                "item_tbot_repair", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_javelin", 
-                "item_tbot_upgrade", 
-                "item_tbot_downgrade"
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_loveMachine"
-            ]
-        }
-    }, 
-    "resistances" : {
-        "heat" : 0.0, 
-        "cold" : 0.0, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "walk_fish_idle", 
-        "moving" : "walk_fish", 
-        "dying" : "walk_fish"
-    }
-}
-{ 
-    "_id" : ObjectId("5674404a3da5980b84a7184f"), 
-    "hitData" : [
-        [
-            NumberInt(-35), 
-            NumberInt(-40)
-        ], 
-        [
-            NumberInt(-35), 
-            NumberInt(40)
-        ], 
-        [
-            NumberInt(35), 
-            NumberInt(40)
-        ], 
-        [
-            NumberInt(35), 
-            NumberInt(-40)
-        ]
-    ], 
-    "name" : "Apocalypse", 
-    "state" : "idle", 
-    "health" : NumberInt(1000), 
-    "armor" : NumberInt(5), 
-    "earmor" : NumberInt(5), 
-    "power" : NumberInt(15), 
-    "skill" : NumberInt(15), 
-    "strength" : NumberInt(10), 
-    "endurance" : NumberInt(3), 
-    "agility" : NumberInt(1), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(5), 
-    "intelligence" : NumberInt(10), 
-    "speed" : NumberInt(40), 
-    "experience" : NumberInt(30), 
-    "type" : NumberInt(1), 
-    "description" : "big robot boss?", 
-    "scale" : 1.0, 
-    "mapCollide" : true, 
-    "noTarget" : {
-        "name" : "moveAroundRoom"
-    }, 
-    "hasTarget" : {
-        "name" : "apocalypse", 
-        "damage" : NumberInt(10), 
-        "jumpChance" : NumberInt(50), 
-        "jumpRadius" : NumberInt(2000), 
-        "jumpTimePer100" : 0.4, 
-        "orbDamage" : NumberInt(22), 
-        "chanceToFireOrbs" : NumberInt(50), 
-        "orbTickerMin" : NumberInt(6), 
-        "orbTickerMax" : NumberInt(12), 
-        "orbSpawnMin" : NumberInt(20), 
-        "orbSpawnMax" : NumberInt(30), 
-        "orbDelay" : 4.0, 
-        "berserkPercent" : NumberInt(25), 
-        "orbRadius" : NumberInt(150)
-    }, 
-    "acquireTarget" : {
-        "name" : "searchInRadius", 
-        "radius" : NumberInt(3000)
-    }, 
-    "_dbIndex" : "enemy_apocalypse", 
-    "resistances" : {
-        "heat" : 0.5, 
-        "cold" : 0.5, 
-        "shock" : 0.5, 
-        "acid" : 0.5, 
-        "gravity" : 0.5
-    }, 
-    "states" : {
-        "idle" : "apocalypse_standing_", 
-        "moving" : "apocalypse_walking_", 
-        "dying" : "apocalypse_dying_", 
-        "attacking" : "apocalypse_attacking_"
-    }, 
-    "dropChances" : NumberInt(3), 
-    "lootLevel" : [
-        NumberInt(4), 
-        NumberInt(5)
-    ], 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(75), 
-            "list" : [
-                "item_compound_slow", 
-                "item_compound_speed", 
-                "item_gun_greenPlasmaPistol", 
-                "item_gun_basicRevolver", 
-                "item_weapon_combatKnife", 
-                "item_misc_emptyBottle", 
-                "item_misc_emptySyringe", 
-                "item_compound_healing+"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(40), 
-            "list" : [
-                "item_compound_poison", 
-                "item_gun_redPlasmaPistol", 
-                "item_gun_shredder", 
-                "item_weapon_pitchfork", 
-                "item_gun_spreader", 
-                "item_gun_smg"
-            ]
-        }, 
-        "s" : {
-            "chance" : NumberInt(20), 
-            "list" : [
-                "item_gun_redPlasmaPistol", 
-                "item_weapon_wrench", 
-                "item_gun_bluePlasmaPistol", 
-                "item_weapon_handSaw"
-            ]
-        }, 
-        "r" : {
-            "chance" : NumberInt(10), 
-            "list" : [
-                "item_gun_thumper", 
-                "item_tbot_map+", 
-                "item_gun_yellowPlasmaPistol", 
-                "item_gun_hornet"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(3), 
-            "list" : [
-                "item_gun_hornet", 
-                "item_weapon_occamsRazor", 
-                "item_gun_rhino", 
-                "item_gun_assailant", 
-                "item_compound_explosive"
-            ]
-        }, 
-        "l" : {
-            "chance" : 1.0, 
-            "list" : [
-                "item_gun_assailant", 
-                "item_gun_hellBiter", 
-                "item_gun_rhino", 
-                "item_gun_viper", 
-                "item_?bot_destruct+", 
-                "item_?bot_repair+"
-            ]
-        }, 
-        "f" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_mosquito", 
-                "item_gun_swarmer"
-            ]
-        }
-    }, 
-    "level" : NumberInt(5), 
-    "clientBehaviours" : [
-
-    ]
-}
-{ 
-    "_id" : ObjectId("57c595a3d1046a1ea8e69836"), 
-    "hitData" : [
-        [
-            NumberInt(-15), 
-            NumberInt(-15)
-        ], 
-        [
-            NumberInt(-15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(15)
-        ], 
-        [
-            NumberInt(15), 
-            NumberInt(-15)
-        ]
-    ], 
-    "name" : "Berserk", 
-    "state" : "idle", 
-    "health" : NumberInt(10), 
-    "armor" : NumberInt(2), 
-    "earmor" : NumberInt(2), 
-    "power" : NumberInt(10), 
-    "skill" : NumberInt(15), 
-    "strength" : NumberInt(1), 
-    "endurance" : NumberInt(1), 
-    "agility" : NumberInt(2), 
-    "dexterity" : NumberInt(3), 
-    "willpower" : NumberInt(1), 
-    "intelligence" : NumberInt(1), 
-    "speed" : NumberInt(150), 
-    "experience" : NumberInt(3), 
-    "type" : NumberInt(0), 
-    "description" : "Red frog...with a gun...", 
-    "scale" : 0.8, 
-    "mapCollide" : true, 
-    "behaviours" : {
-        "tier0" : {
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(135)
-                }
-            ]
-        }, 
-        "tier1" : {
-            "noTarget" : {
-                "name" : "moveAroundRoom"
-            }, 
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(10), 
-                "fireType" : "basicFire"
-            }, 
-            "acquireTarget" : {
-                "name" : "radiusThenAggro", 
-                "radius" : NumberInt(500)
-            }, 
-            "client" : [
-                {
-                    "name" : "frog"
-                }, 
-                {
-                    "name" : "pointWeapon", 
-                    "texture" : "revolver"
-                }, 
-                {
-                    "name" : "tint", 
-                    "color" : "0xff1a1a"
-                }
-            ]
-        }, 
-        "tier2" : {
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(9), 
-                "fireType" : "basicFire"
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(155)
-                }
-            ]
-        }, 
-        "tier3" : {
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(10), 
-                "fireType" : "basicFire"
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(160)
-                }
-            ]
-        }, 
-        "tier4" : {
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(11), 
-                "fireType" : "basicFire"
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(165)
-                }
-            ]
-        }, 
-        "tier5" : {
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(12), 
-                "fireType" : "basicFire"
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(170)
-                }
-            ]
-        }, 
-        "tier6" : {
-            "hasTarget" : {
-                "name" : "moveAndFire", 
-                "damage" : NumberInt(13), 
-                "fireType" : "basicFire"
-            }, 
-            "onInit" : [
-                {
-                    "name" : "setSpeed", 
-                    "value" : NumberInt(175)
-                }
-            ]
-        }
-    }, 
-    "_dbIndex" : "enemy_berserk", 
-    "dropChances" : NumberInt(1), 
-    "drops" : {
-        "c" : {
-            "chance" : NumberInt(5), 
-            "list" : [
-                "item_gun_basicRevolver", 
-                "item_bbot_medical", 
-                "item_misc_emptyBottle"
-            ]
-        }, 
-        "uc" : {
-            "chance" : NumberInt(1), 
-            "list" : [
-                "item_weapon_bat", 
-                "item_bbot_lure", 
-                "item_compound_vigor"
-            ]
-        }, 
-        "s" : {
-            "chance" : 0.1, 
-            "list" : [
-                "item_gun_goldenRevolver", 
-                "item_weapon_handSaw", 
-                "item_gun_shredder"
-            ]
-        }, 
-        "r" : {
-            "chance" : 0.01, 
-            "list" : [
-                "item_gun_yellowPlasmaPistol", 
-                "item_tbot_repair", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "ur" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_rhino", 
-                "item_tbot_repair", 
-                "item_tbot_destruct"
-            ]
-        }, 
-        "l" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_gun_javelin", 
-                "item_tbot_upgrade", 
-                "item_tbot_downgrade"
-            ]
-        }, 
-        "f" : {
-            "chance" : NumberInt(0), 
-            "list" : [
-                "item_?bot_upgrade+", 
-                "item_?bot_downgrade+", 
-                "item_gun_loveMachine"
-            ]
-        }
-    }, 
-    "resistances" : {
-        "heat" : 0.0, 
-        "cold" : 0.0, 
-        "shock" : 0.0, 
-        "acid" : 0.0, 
-        "gravity" : 0.0
-    }, 
-    "states" : {
-        "idle" : "walk_fish_idle", 
-        "moving" : "walk_fish", 
-        "dying" : "walk_fish"
-    }
+  ]
 }

@@ -3,7 +3,11 @@
 //----------------------------------------------------------------
 
 var GameSession = require('./gamesession.js').GameSession,
-    Player = require('./player.js').Player;
+    Player = require('./player.js').Player,
+    AWS = require("aws-sdk");
+
+
+var fs = require('fs');
 
 var self = null;
 
@@ -45,6 +49,8 @@ GameEngine.prototype.start = function () {
     self = this;
     setInterval(this.tick, this.gameTickInterval);
 }
+
+
 
 GameEngine.prototype.tick = function() {
     var now = Date.now();

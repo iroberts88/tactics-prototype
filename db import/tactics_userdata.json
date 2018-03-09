@@ -1,0 +1,1479 @@
+{
+  "tactics_userdata": [
+    {
+      "PutRequest": {
+        "Item": {
+          "username": {
+            "S": "ian"
+          },
+          "characters": {
+            "L": [
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 5
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 5
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 1
+                },
+                "inventory": {
+                  "SS": [
+                    "gun_sidearm",
+                    "weapon_combatKnife"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 3
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "soldier"
+                    },
+                    "classId": {
+                      "S": "soldier"
+                    },
+                    "baseClass": {
+                      "S": "soldier"
+                    },
+                    "baseId": {
+                      "S": "soldier"
+                    },
+                    "ap": {
+                      "M": {
+                        "soldier": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 5
+                },
+                "dexterity": {
+                  "N": 4
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Relaeg Koha"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 4
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 5
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 3
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 7
+                },
+                "inventory": {
+                  "SS": [
+                    "gun_sidearm",
+                    "weapon_combatKnife"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 2
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "scout"
+                    },
+                    "classId": {
+                      "S": "scout"
+                    },
+                    "baseClass": {
+                      "S": "scout"
+                    },
+                    "baseId": {
+                      "S": "scout"
+                    },
+                    "ap": {
+                      "M": {
+                        "scout": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "male"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 5
+                },
+                "dexterity": {
+                  "N": 4
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Nyenin Anana"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 2
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 2
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 3
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 4
+                },
+                "inventory": {
+                  "SS": [
+                    "gun_sidearm",
+                    "weapon_combatKnife"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 8
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "scout"
+                    },
+                    "classId": {
+                      "S": "scout"
+                    },
+                    "baseClass": {
+                      "S": "scout"
+                    },
+                    "baseId": {
+                      "S": "scout"
+                    },
+                    "ap": {
+                      "M": {
+                        "scout": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "male"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 2
+                },
+                "dexterity": {
+                  "N": 2
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Fyrind Xzcea"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 6
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 4
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 4
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 5
+                },
+                "inventory": {
+                  "SS": [
+                    "gun_sidearm",
+                    "weapon_combatKnife"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 4
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "scout"
+                    },
+                    "classId": {
+                      "S": "scout"
+                    },
+                    "baseClass": {
+                      "S": "scout"
+                    },
+                    "baseId": {
+                      "S": "scout"
+                    },
+                    "ap": {
+                      "M": {
+                        "scout": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 4
+                },
+                "dexterity": {
+                  "N": 5
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Janika Aerdar"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 3
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 4
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 4
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 1
+                },
+                "inventory": {
+                  "SS": [
+                    "gun_sidearm",
+                    "weapon_combatKnife"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 8
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "soldier"
+                    },
+                    "classId": {
+                      "S": "soldier"
+                    },
+                    "baseClass": {
+                      "S": "soldier"
+                    },
+                    "baseId": {
+                      "S": "soldier"
+                    },
+                    "ap": {
+                      "M": {
+                        "soldier": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "male"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 4
+                },
+                "dexterity": {
+                  "N": 4
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Iii"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 2
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "inventory": {
+            "L": [
+              {
+                "0": {
+                  "S": "weapon_chainSword"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "accessory_enhancer"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "compound_vigor"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "weapon_combatKnife"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "accessory_battleBoots"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "accessory_cerebralImplant"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "accessory_focus"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "weapon_rocketSledge"
+                },
+                "1": {
+                  "N": 1
+                }
+              },
+              {
+                "0": {
+                  "S": "gun_sidearm"
+                },
+                "1": {
+                  "N": 1
+                }
+              }
+            ]
+          },
+          "username": {
+            "S": "faulken"
+          },
+          "characters": {
+            "L": [
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 9
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 2
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 1
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 4
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "scout"
+                    },
+                    "classId": {
+                      "S": "scout"
+                    },
+                    "baseClass": {
+                      "S": "scout"
+                    },
+                    "baseId": {
+                      "S": "scout"
+                    },
+                    "ap": {
+                      "M": {
+                        "scout": {
+                          "N": 100
+                        },
+                        "Scout": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 9
+                },
+                "dexterity": {
+                  "N": 4
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Alenane Alelennan"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 5
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 5
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 7
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 1
+                },
+                "inventory": {
+                  "SS": [
+                    "weapon_powerAxe",
+                    "shield_shield",
+                    "gun_smg",
+                    "compound_healing"
+                  ]
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 3
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "N": 0
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "soldier"
+                    },
+                    "classId": {
+                      "S": "soldier"
+                    },
+                    "learnedAbilities": {
+                      "M": {
+                        "bolster": {
+                          "BOOL": true
+                        },
+                        "charge": {
+                          "BOOL": true
+                        }
+                      }
+                    },
+                    "baseClass": {
+                      "S": "soldier"
+                    },
+                    "baseId": {
+                      "S": "soldier"
+                    },
+                    "equippedAbilities": {
+                      "M": {
+                        "bolster": {
+                          "BOOL": true
+                        },
+                        "charge": {
+                          "BOOL": true
+                        }
+                      }
+                    },
+                    "ap": {
+                      "M": {
+                        "soldier": {
+                          "N": 5
+                        },
+                        "Soldier": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 5
+                },
+                "dexterity": {
+                  "N": 2
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 16
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Arina Araen"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 4
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 5
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 2
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 3
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 4
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "scout"
+                    },
+                    "classId": {
+                      "S": "scout"
+                    },
+                    "baseClass": {
+                      "S": "scout"
+                    },
+                    "baseId": {
+                      "S": "scout"
+                    },
+                    "ap": {
+                      "M": {
+                        "scout": {
+                          "N": 100
+                        },
+                        "Scout": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 5
+                },
+                "dexterity": {
+                  "N": 4
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Aynaer Ackyel"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 3
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 2
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 8
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 1
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 2
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "medic"
+                    },
+                    "classId": {
+                      "S": "medic"
+                    },
+                    "baseClass": {
+                      "S": "medic"
+                    },
+                    "baseId": {
+                      "S": "medic"
+                    },
+                    "ap": {
+                      "M": {
+                        "medic": {
+                          "N": 100
+                        },
+                        "Medic": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "male"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 2
+                },
+                "dexterity": {
+                  "N": 5
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Cayari Kaleri"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 5
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              },
+              {
+                "shield": {
+                  "NULL": true
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "physicalRes": {
+                  "N": 0
+                },
+                "strength": {
+                  "N": 3
+                },
+                "maximumHealth": {
+                  "N": 1000
+                },
+                "willpower": {
+                  "N": 4
+                },
+                "mechanical": {
+                  "BOOL": false
+                },
+                "endurance": {
+                  "N": 7
+                },
+                "pulseRes": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 100
+                },
+                "charisma": {
+                  "N": 2
+                },
+                "gameStats": {
+                  "NULL": true
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "weapon": {
+                  "NULL": true
+                },
+                "skill": {
+                  "N": 10
+                },
+                "electricRes": {
+                  "N": 0
+                },
+                "power": {
+                  "N": 10
+                },
+                "exp": {
+                  "N": 0
+                },
+                "human": {
+                  "BOOL": true
+                },
+                "jump": {
+                  "N": 2
+                },
+                "classInfo": {
+                  "M": {
+                    "currentClass": {
+                      "S": "soldier"
+                    },
+                    "classId": {
+                      "S": "soldier"
+                    },
+                    "baseClass": {
+                      "S": "soldier"
+                    },
+                    "baseId": {
+                      "S": "soldier"
+                    },
+                    "ap": {
+                      "M": {
+                        "soldier": {
+                          "N": 100
+                        },
+                        "Soldier": {
+                          "N": 100
+                        }
+                      }
+                    }
+                  }
+                },
+                "move": {
+                  "N": 3
+                },
+                "level": {
+                  "N": 1
+                },
+                "sex": {
+                  "S": "female"
+                },
+                "abilitySlots": {
+                  "N": 50
+                },
+                "intelligence": {
+                  "N": 3
+                },
+                "dexterity": {
+                  "N": 3
+                },
+                "maximumEnergy": {
+                  "N": 100
+                },
+                "usedAbilitySlots": {
+                  "N": 0
+                },
+                "poisonRes": {
+                  "N": 0
+                },
+                "name": {
+                  "S": "Aekae Cled"
+                },
+                "radiationRes": {
+                  "N": 0
+                },
+                "agility": {
+                  "N": 3
+                },
+                "accessory": {
+                  "NULL": true
+                },
+                "heatRes": {
+                  "N": 0
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

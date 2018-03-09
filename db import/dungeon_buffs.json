@@ -1,588 +1,1498 @@
-{ 
-    "_id" : ObjectId("55198fd9d1046a170cd00733"), 
-    "name" : "Acid Damage", 
-    "description" : "Taking acid damage", 
-    "actionsOnTick" : [
-        {
-            "action" : "damageAcid", 
-            "value" : NumberInt(1)
+{
+  "dungeon_buffs": [
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "noAction"
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Nothing happens..."
+          },
+          "name": {
+            "S": "Nothing"
+          },
+          "buffid": {
+            "S": "buff_nothing"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "duration" : 5.0, 
-    "tickEvery" : 1.0, 
-    "debuff" : true, 
-    "tags" : [
-        "elemental", 
-        "negative", 
-        "acid"
-    ], 
-    "_dbIndex" : "buff_acidDamageOT", 
-    "textureId" : "buff_poison_1", 
-    "stackType" : "refresh"
-}
-{ 
-    "_id" : ObjectId("54fb35131368660db0516c68"), 
-    "name" : "Restore Health", 
-    "description" : "Instantly restores 30 health", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterHealth", 
-            "value" : NumberInt(30)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "textureId": {
+            "S": "shield_1"
+          },
+          "description": {
+            "S": "Armor and E-Armor increased!"
+          },
+          "duration": {
+            "N": 10
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "name": {
+            "S": "Champions"
+          },
+          "noTicks": {
+            "BOOL": true
+          },
+          "buffid": {
+            "S": "buff_champions"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "positive"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "healing", 
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_restoreHealthInstant"
-}
-{ 
-    "_id" : ObjectId("5537ccecd1046a069048dd0d"), 
-    "name" : "Identify Item By Id", 
-    "description" : "Inentifies an Item", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "identifyItemById", 
-            "value" : "id here"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "damageCold"
+                },
+                "value": {
+                  "N": 10
+                }
+              },
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              }
+            ]
+          },
+          "removes": {
+            "M": {
+              "ids": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "idhere"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              },
+              "tags": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "alterSpeed",
+                      "heat"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              }
+            }
+          },
+          "description": {
+            "S": "Slowed"
+          },
+          "duration": {
+            "N": 10
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Glacial"
+          },
+          "noTicks": {
+            "BOOL": true
+          },
+          "buffid": {
+            "S": "buff_glacial"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "alterSpeed",
+                  "cold",
+                  "elemental",
+                  "negative"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_identifyItemById"
-}
-{ 
-    "_id" : ObjectId("553bcf8613686615c035008b"), 
-    "name" : "Speed", 
-    "description" : "Moving faster", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : 0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "sound": {
+            "S": "fire"
+          },
+          "textureId": {
+            "S": "buff_heal_1"
+          },
+          "stackType": {
+            "S": "refresh"
+          },
+          "tickEvery": {
+            "N": 0.5
+          },
+          "description": {
+            "S": "Taking heat damage"
+          },
+          "duration": {
+            "N": 5
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Heat Damage"
+          },
+          "actionsOnTick": {
+            "L": [
+              {
+                "action": {
+                  "S": "damageHeat"
+                },
+                "value": {
+                  "N": 10
+                }
+              }
+            ]
+          },
+          "buffid": {
+            "S": "buff_heatDamageOT"
+          },
+          "effect": {
+            "S": "fire_"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "elemental",
+                  "heat",
+                  "negative"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "duration" : 10.0, 
-    "noTicks" : true, 
-    "debuff" : false, 
-    "tags" : [
-        "positive", 
-        "alterSpeed"
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : -0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterEnergy"
+                },
+                "value": {
+                  "N": 5
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Instantly restores 5 energy"
+          },
+          "name": {
+            "S": "Restore Energy"
+          },
+          "buffid": {
+            "S": "buff_restoreEnergyInstant"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "alterEnergy",
+                  "beneficial"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "removes" : {
-        "tags" : [
-            "alterSpeed"
-        ], 
-        "ids" : [
-
-        ]
-    }, 
-    "_dbIndex" : "buff_speed", 
-    "textureId" : "buff_speed_1"
-}
-{ 
-    "_id" : ObjectId("553bcfbb13686615c035008c"), 
-    "name" : "Slow", 
-    "description" : "Moving slower", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : -0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "displayInfo"
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Display target info"
+          },
+          "name": {
+            "S": "Display"
+          },
+          "buffid": {
+            "S": "buff_displayInfo"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "duration" : 10.0, 
-    "noTicks" : true, 
-    "debuff" : true, 
-    "tags" : [
-        "negative", 
-        "alterSpeed"
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : 0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "identifyItemById"
+                },
+                "value": {
+                  "S": "id here"
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Inentifies an Item"
+          },
+          "name": {
+            "S": "Identify Item By Id"
+          },
+          "buffid": {
+            "S": "buff_identifyItemById"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "removes" : {
-        "tags" : [
-            "alterSpeed"
-        ], 
-        "ids" : [
-
-        ]
-    }, 
-    "_dbIndex" : "buff_slow", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("55437c84d1046a10b0d0784a"), 
-    "name" : "Restore Energy", 
-    "description" : "Instantly restores 5 energy", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterEnergy", 
-            "value" : NumberInt(5)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterStat"
+                },
+                "value": {
+                  "N": 1
+                },
+                "stat": {
+                  "S": "strength"
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Alters a stat"
+          },
+          "name": {
+            "S": "AlterStat"
+          },
+          "buffid": {
+            "S": "buff_alterStat"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "none"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "alterEnergy", 
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_restoreEnergyInstant"
-}
-{ 
-    "_id" : ObjectId("5564c37bd1046a0e30b7d8de"), 
-    "name" : "Damage", 
-    "description" : "Deals damage based on max health", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "randomAlterHealthPercent", 
-            "min" : -0.2, 
-            "max" : -0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "lure"
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "description": {
+            "S": "All enemies are lured to you!"
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Lure"
+          },
+          "buffid": {
+            "S": "buff_lure"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "instant" : true, 
-    "debuff" : true, 
-    "tags" : [
-        "alterHealth"
-    ], 
-    "_dbIndex" : "buff_damage"
-}
-{ 
-    "_id" : ObjectId("55a905663da59814649151ac"), 
-    "name" : "Display", 
-    "description" : "Display target info", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "displayInfo"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterHealth"
+                },
+                "value": {
+                  "N": 30
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Instantly restores 30 health"
+          },
+          "name": {
+            "S": "Restore Health"
+          },
+          "buffid": {
+            "S": "buff_restoreHealthInstant"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial",
+                  "healing"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_displayInfo"
-}
-{ 
-    "_id" : ObjectId("55c4fdcc3da59823ec049b57"), 
-    "name" : "Nothing", 
-    "description" : "Nothing happens...", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "noAction"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_speed_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              }
+            ]
+          },
+          "removes": {
+            "M": {
+              "ids": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              },
+              "tags": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "alterSpeed"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              }
+            }
+          },
+          "description": {
+            "S": "Moving faster"
+          },
+          "duration": {
+            "N": 10
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "name": {
+            "S": "Speed"
+          },
+          "noTicks": {
+            "BOOL": true
+          },
+          "buffid": {
+            "S": "buff_speed"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "alterSpeed",
+                  "positive"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_nothing"
-}
-{ 
-    "_id" : ObjectId("55fc29ca3da59804f8b9c5cf"), 
-    "name" : "Lure", 
-    "description" : "All enemies are lured to you!", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "lure"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "radius": {
+                  "N": 1.5
+                },
+                "action": {
+                  "S": "explode"
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Explosion"
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Explosive"
+          },
+          "buffid": {
+            "S": "buff_explode"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "none"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "debuff" : true, 
-    "tags" : [
-
-    ], 
-    "instant" : true, 
-    "_dbIndex" : "buff_lure", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("562f92fa3da59822986583e6"), 
-    "name" : "Magnetize", 
-    "description" : "Magnetize equipped items", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "magnetize"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterSpeedPercent"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              }
+            ]
+          },
+          "removes": {
+            "M": {
+              "ids": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              },
+              "tags": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "alterSpeed"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              }
+            }
+          },
+          "description": {
+            "S": "Moving slower"
+          },
+          "duration": {
+            "N": 10
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Slow"
+          },
+          "noTicks": {
+            "BOOL": true
+          },
+          "buffid": {
+            "S": "buff_slow"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "alterSpeed",
+                  "negative"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "debuff" : true, 
-    "tags" : [
-
-    ], 
-    "instant" : true, 
-    "_dbIndex" : "buff_magnetize", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("562f93173da59822986583e7"), 
-    "name" : "De-Magnetize", 
-    "description" : "De-Magnetize equipped items", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "magnetize", 
-            "reverse" : true
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterEnergyMax"
+                },
+                "value": {
+                  "N": 30
+                }
+              },
+              {
+                "action": {
+                  "S": "alterHealthMax"
+                },
+                "value": {
+                  "N": 30
+                }
+              }
+            ]
+          },
+          "tickImmediately": {
+            "BOOL": true
+          },
+          "textureId": {
+            "S": "buff_heal_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterEnergyMax"
+                },
+                "value": {
+                  "N": -30
+                }
+              },
+              {
+                "action": {
+                  "S": "alterHealthMax"
+                },
+                "value": {
+                  "N": -30
+                }
+              }
+            ]
+          },
+          "tickEvery": {
+            "N": 1
+          },
+          "description": {
+            "S": "Restores health and energy, and increases MAX health and energy for 30 seconds"
+          },
+          "duration": {
+            "N": 30
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "name": {
+            "S": "Vigor Chem"
+          },
+          "actionsOnTick": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterHealth"
+                },
+                "value": {
+                  "N": 1
+                }
+              },
+              {
+                "action": {
+                  "S": "alterEnergy"
+                },
+                "value": {
+                  "N": 1
+                }
+              }
+            ]
+          },
+          "buffid": {
+            "S": "buff_vigorChem"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial",
+                  "healing"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "debuff" : true, 
-    "tags" : [
-
-    ], 
-    "instant" : true, 
-    "_dbIndex" : "buff_demagnetize", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("5682bbd23da5982308bc3e5e"), 
-    "name" : "Map", 
-    "description" : "Mini-Map Revealed!", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "revealMap", 
-            "showItems" : true
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "randomAlterHealthPercent"
+                },
+                "max": {
+                  "N": -0.5
+                },
+                "min": {
+                  "N": -0.2
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Deals damage based on max health"
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Damage"
+          },
+          "buffid": {
+            "S": "buff_damage"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "alterHealth"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "debuff" : false, 
-    "tags" : [
-
-    ], 
-    "instant" : true, 
-    "_dbIndex" : "buff_map", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("56a65ec3d1046a16bc486803"), 
-    "name" : "Champions", 
-    "description" : "Armor and E-Armor increased!", 
-    "duration" : 10.0, 
-    "noTicks" : true, 
-    "debuff" : false, 
-    "tags" : [
-        "positive"
-    ], 
-    "_dbIndex" : "buff_champions", 
-    "textureId" : "shield_1"
-}
-{ 
-    "_id" : ObjectId("56f16fa7d1046a2404bb8f30"), 
-    "name" : "Priests", 
-    "description" : "Instantly restores 5% Health and 5 energy", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterHealthPercent", 
-            "value" : 0.05
-        }, 
-        {
-            "action" : "alterEnergy", 
-            "value" : NumberInt(5)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "showItems": {
+                  "BOOL": true
+                },
+                "action": {
+                  "S": "revealMap"
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "description": {
+            "S": "Mini-Map Revealed!"
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "name": {
+            "S": "Map"
+          },
+          "buffid": {
+            "S": "buff_map"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "none"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-        "healing", 
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_priests"
-}
-{ 
-    "_id" : ObjectId("55147b3c136866110c4f53d8"), 
-    "name" : "Restore Health", 
-    "description" : "Restores 3% health every 3 seconds", 
-    "actionsOnTick" : [
-        {
-            "action" : "alterHealthPercent", 
-            "value" : 0.03
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "tickImmediately": {
+            "BOOL": true
+          },
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterFireRate"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterReloadSpeed"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponSpeed"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponRecov"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponDamagePM"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunDamagePM"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              }
+            ]
+          },
+          "actionsOnTick": {
+            "L": [
+              {
+                "action": {
+                  "S": "chemistPotionThrow"
+                }
+              }
+            ]
+          },
+          "name": {
+            "S": "Rage Serum"
+          },
+          "buffid": {
+            "S": "buff_rageSerum"
+          },
+          "textureId": {
+            "S": "buff_speed_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterFireRate"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterReloadSpeed"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponSpeed"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponRecov"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterWeaponDamagePM"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunDamagePM"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "addBuff"
+                },
+                "value": {
+                  "S": "buff_rageSerumWithdrawal"
+                }
+              }
+            ]
+          },
+          "tickEvery": {
+            "N": 2.5
+          },
+          "removes": {
+            "M": {
+              "ids": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              },
+              "tags": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              }
+            }
+          },
+          "description": {
+            "S": "Increased Damage. Increased Attack/Reload speed. Throwing potions. Will suffer withdrawal"
+          },
+          "duration": {
+            "N": 10
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "positive"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "duration" : 30.0, 
-    "tickEvery" : 3.0, 
-    "debuff" : false, 
-    "tags" : [
-        "healing", 
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_restoreHealthOT", 
-    "textureId" : "buff_heal_1"
-}
-{ 
-    "_id" : ObjectId("5547887ed1046a10b0d07853"), 
-    "name" : "Vigor Chem", 
-    "description" : "Restores health and energy, and increases MAX health and energy for 30 seconds", 
-    "actionsOnTick" : [
-        {
-            "action" : "alterHealth", 
-            "value" : NumberInt(1)
-        }, 
-        {
-            "action" : "alterEnergy", 
-            "value" : NumberInt(1)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "magnetize"
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "description": {
+            "S": "Magnetize equipped items"
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Magnetize"
+          },
+          "buffid": {
+            "S": "buff_magnetize"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "none"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterEnergyMax", 
-            "value" : NumberInt(30)
-        }, 
-        {
-            "action" : "alterHealthMax", 
-            "value" : NumberInt(30)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "reverse": {
+                  "BOOL": true
+                },
+                "action": {
+                  "S": "magnetize"
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "description": {
+            "S": "De-Magnetize equipped items"
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "De-Magnetize"
+          },
+          "buffid": {
+            "S": "buff_demagnetize"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "none"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterEnergyMax", 
-            "value" : NumberInt(-30)
-        }, 
-        {
-            "action" : "alterHealthMax", 
-            "value" : NumberInt(-30)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterHealthPercent"
+                },
+                "value": {
+                  "N": 0.05
+                }
+              },
+              {
+                "action": {
+                  "S": "alterEnergy"
+                },
+                "value": {
+                  "N": 5
+                }
+              }
+            ]
+          },
+          "description": {
+            "S": "Instantly restores 5% Health and 5 energy"
+          },
+          "name": {
+            "S": "Priests"
+          },
+          "buffid": {
+            "S": "buff_priests"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial",
+                  "healing"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          },
+          "instant": {
+            "BOOL": true
+          }
         }
-    ], 
-    "duration" : 30.0, 
-    "tickEvery" : 1.0, 
-    "debuff" : false, 
-    "tags" : [
-        "healing", 
-        "beneficial"
-    ], 
-    "_dbIndex" : "buff_vigorChem", 
-    "tickImmediately" : true, 
-    "textureId" : "buff_heal_1"
-}
-{ 
-    "_id" : ObjectId("5515a2cad1046a11780254b6"), 
-    "name" : "Heat Damage", 
-    "description" : "Taking heat damage", 
-    "actionsOnTick" : [
-        {
-            "action" : "damageHeat", 
-            "value" : NumberInt(10)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "textureId": {
+            "S": "buff_poison_1"
+          },
+          "stackType": {
+            "S": "refresh"
+          },
+          "tickEvery": {
+            "N": 1
+          },
+          "description": {
+            "S": "Taking acid damage"
+          },
+          "duration": {
+            "N": 5
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Acid Damage"
+          },
+          "actionsOnTick": {
+            "L": [
+              {
+                "action": {
+                  "S": "damageAcid"
+                },
+                "value": {
+                  "N": 1
+                }
+              }
+            ]
+          },
+          "buffid": {
+            "S": "buff_acidDamageOT"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "acid",
+                  "elemental",
+                  "negative"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "duration" : 5.0, 
-    "tickEvery" : 0.5, 
-    "debuff" : true, 
-    "tags" : [
-        "elemental", 
-        "negative", 
-        "heat"
-    ], 
-    "_dbIndex" : "buff_heatDamageOT", 
-    "textureId" : "buff_heal_1", 
-    "stackType" : "refresh", 
-    "effect" : "fire_", 
-    "sound" : "fire"
-}
-{ 
-    "_id" : ObjectId("58a479e3d1046a1804a8d80d"), 
-    "name" : "AlterStat", 
-    "description" : "", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterStat", 
-            "stat" : "strength", 
-            "value" : NumberInt(1)
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "textureId": {
+            "S": "buff_heal_1"
+          },
+          "tickEvery": {
+            "N": 3
+          },
+          "description": {
+            "S": "Restores 3% health every 3 seconds"
+          },
+          "duration": {
+            "N": 30
+          },
+          "debuff": {
+            "BOOL": false
+          },
+          "name": {
+            "S": "Restore Health"
+          },
+          "actionsOnTick": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterHealthPercent"
+                },
+                "value": {
+                  "N": 0.03
+                }
+              }
+            ]
+          },
+          "buffid": {
+            "S": "buff_restoreHealthOT"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "beneficial",
+                  "healing"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "instant" : true, 
-    "tags" : [
-
-    ], 
-    "_dbIndex" : "buff_alterStat"
-}
-{ 
-    "_id" : ObjectId("5515a94cd1046a11780254b7"), 
-    "name" : "Glacial", 
-    "description" : "Slowed", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "damageCold", 
-            "value" : NumberInt(10)
-        }, 
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : -0.5
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "actionsOnImmediate": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterWeaponDamagePM"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunDamagePM"
+                },
+                "value": {
+                  "N": -0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunAccuracyNM"
+                },
+                "value": {
+                  "N": -20
+                }
+              }
+            ]
+          },
+          "textureId": {
+            "S": "buff_slow_1"
+          },
+          "actionsOnEnd": {
+            "L": [
+              {
+                "action": {
+                  "S": "alterWeaponDamagePM"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunDamagePM"
+                },
+                "value": {
+                  "N": 0.5
+                }
+              },
+              {
+                "action": {
+                  "S": "alterGunAccuracyNM"
+                },
+                "value": {
+                  "N": 20
+                }
+              }
+            ]
+          },
+          "removes": {
+            "M": {
+              "ids": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              },
+              "tags": {
+                "M": {
+                  "values": {
+                    "SS": [
+                      "none"
+                    ]
+                  },
+                  "type": {
+                    "S": "String"
+                  }
+                }
+              }
+            }
+          },
+          "description": {
+            "S": "Decreased Damage and Accuracy"
+          },
+          "duration": {
+            "N": 15
+          },
+          "debuff": {
+            "BOOL": true
+          },
+          "name": {
+            "S": "Rage Serum Withdrawal"
+          },
+          "noTicks": {
+            "BOOL": true
+          },
+          "buffid": {
+            "S": "buff_rageSerumWithdrawal"
+          },
+          "tags": {
+            "M": {
+              "values": {
+                "SS": [
+                  "negative"
+                ]
+              },
+              "type": {
+                "S": "String"
+              }
+            }
+          }
         }
-    ], 
-    "duration" : 10.0, 
-    "noTicks" : true, 
-    "debuff" : true, 
-    "tags" : [
-        "elemental", 
-        "cold", 
-        "negative", 
-        "alterSpeed"
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterSpeedPercent", 
-            "value" : 0.5
-        }
-    ], 
-    "removes" : {
-        "tags" : [
-            "heat", 
-            "alterSpeed"
-        ], 
-        "ids" : [
-            "idhere"
-        ]
-    }, 
-    "_dbIndex" : "buff_glacial", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("5883f401d1046a270cd97ad8"), 
-    "name" : "Rage Serum", 
-    "description" : "Increased Damage. Increased Attack/Reload speed. Throwing potions. Will suffer withdrawal", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterFireRate", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterReloadSpeed", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterWeaponSpeed", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterWeaponRecov", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterWeaponDamagePM", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterGunDamagePM", 
-            "value" : 0.5
-        }
-    ], 
-    "actionsOnTick" : [
-        {
-            "action" : "chemistPotionThrow"
-        }
-    ], 
-    "duration" : 10.0, 
-    "tickEvery" : 2.5, 
-    "tickImmediately" : true, 
-    "debuff" : false, 
-    "tags" : [
-        "positive"
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterFireRate", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterReloadSpeed", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterWeaponSpeed", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterWeaponRecov", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterWeaponDamagePM", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterGunDamagePM", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "addBuff", 
-            "value" : "buff_rageSerumWithdrawal"
-        }
-    ], 
-    "removes" : {
-        "tags" : [
-
-        ], 
-        "ids" : [
-
-        ]
-    }, 
-    "_dbIndex" : "buff_rageSerum", 
-    "textureId" : "buff_speed_1"
-}
-{ 
-    "_id" : ObjectId("5883f401d1046a270cd97ad9"), 
-    "name" : "Rage Serum Withdrawal", 
-    "description" : "Decreased Damage and Accuracy", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "alterWeaponDamagePM", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterGunDamagePM", 
-            "value" : -0.5
-        }, 
-        {
-            "action" : "alterGunAccuracyNM", 
-            "value" : NumberInt(-20)
-        }
-    ], 
-    "duration" : 15.0, 
-    "noTicks" : true, 
-    "debuff" : true, 
-    "tags" : [
-        "negative"
-    ], 
-    "actionsOnEnd" : [
-        {
-            "action" : "alterWeaponDamagePM", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterGunDamagePM", 
-            "value" : 0.5
-        }, 
-        {
-            "action" : "alterGunAccuracyNM", 
-            "value" : NumberInt(20)
-        }
-    ], 
-    "removes" : {
-        "tags" : [
-
-        ], 
-        "ids" : [
-
-        ]
-    }, 
-    "_dbIndex" : "buff_rageSerumWithdrawal", 
-    "textureId" : "buff_slow_1"
-}
-{ 
-    "_id" : ObjectId("5564d0edd1046a0e30b7d8e0"), 
-    "name" : "Explosive", 
-    "description" : "Explosion", 
-    "actionsOnImmediate" : [
-        {
-            "action" : "explode", 
-            "radius" : 1.5
-        }
-    ], 
-    "instant" : true, 
-    "debuff" : true, 
-    "tags" : [
-
-    ], 
-    "_dbIndex" : "buff_explode"
+      }
+    }
+  ]
 }

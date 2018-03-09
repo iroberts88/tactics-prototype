@@ -550,7 +550,8 @@
                 if (!(Game.map.currentRotation%2)){t = 2}
                 var s = a['sprite' + t];
                 s.tint = 0xFFFFFF;
-
+                Game.nodeInfo.visible = false;
+                Game.nodeText.visible = false;
             });
         }
     }

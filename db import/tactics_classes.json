@@ -1,634 +1,1662 @@
-{ 
-    "_id" : ObjectId("59ef76dc5e67e31684e32450"), 
-    "_dbIndex" : "medic", 
-    "name" : "Medic", 
-    "attributes" : {
-        "strength" : -1.0, 
-        "intelligence" : 2.0, 
-        "endurance" : 2.0, 
-        "willpower" : 3.0, 
-        "agility" : 1.0, 
-        "dexterity" : -1.0, 
-        "charisma" : 4.0
-    }, 
-    "baseAttr" : {
-        "move" : 0.0, 
-        "jump" : 0.0, 
-        "speed" : -10.0, 
-        "maximumHealth" : 0.0, 
-        "maximumEnergy" : 20.0
-    }, 
-    "abilities" : [
-        {
-            "name" : "First Aid", 
-            "description" : "Heal a unit in melee range for <15+CHA%> of their maximum health", 
-            "sCost" : NumberInt(5), 
-            "range" : "1/3/self", 
-            "type" : "Single Unit", 
-            "eCost" : 10.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(50), 
-            "id" : "firstAid"
-        }, 
-        {
-            "name" : "Resuscitate", 
-            "description" : "Bring a fainted unit back to life with <1+CHA*3%> max health. The target gains <20+AGI+DEX%> bonus speed until their next turn", 
-            "sCost" : NumberInt(8), 
-            "range" : "1/3", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "350", 
-            "ApCost" : NumberInt(80), 
-            "id" : "resuscitate"
-        }, 
-        {
-            "name" : "Healing Field", 
-            "description" : "Place a healing field bot with <200+50*INT> health and <100+20*INT> speed. Every turn the field heals units in a <4+INT/2> hex radius for <50+25*INT>", 
-            "sCost" : NumberInt(10), 
-            "range" : "1/3", 
-            "type" : "Open Tile", 
-            "eCost" : 35.0, 
-            "speed" : "250", 
-            "ApCost" : NumberInt(100), 
-            "id" : "healingField"
-        }, 
-        {
-            "name" : "Recovery", 
-            "description" : "Recover <1+END/3%> max health at the end of each turn", 
-            "type" : "Passive", 
-            "sCost" : NumberInt(12), 
-            "ApCost" : NumberInt(200), 
-            "id" : "recovery"
-        }, 
-        {
-            "name" : "Sprint", 
-            "description" : "Use your action to move <AGI/2> additional units", 
-            "sCost" : NumberInt(10), 
-            "range" : "self", 
-            "type" : "Single Unit", 
-            "eCost" : 25.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(125), 
-            "id" : "sprint"
-        }, 
-        {
-            "name" : "Precision Strike", 
-            "description" : "Perform an attack with a melee weapon, striking a vital point to decrease the target’s healing received permanently by <STR%>", 
-            "sCost" : NumberInt(8), 
-            "range" : "melee", 
-            "type" : "Single Unit", 
-            "eCost" : 12.0, 
-            "speed" : "instant", 
-            "ApCost" : NumberInt(80), 
-            "id" : "precisionStrike"
-        }, 
-        {
-            "name" : "Cripple", 
-            "description" : "Perform an attack with a ranged weapon, striking a vital point to decrease the targets next movement by <DEX/2>", 
-            "sCost" : NumberInt(8), 
-            "range" : "ranged", 
-            "type" : "Single Unit", 
-            "eCost" : 12.0, 
-            "speed" : "instant", 
-            "ApCost" : NumberInt(80), 
-            "id" : "cripple"
-        }, 
-        {
-            "name" : "Shield Boost", 
-            "description" : "Upgrade an ally’s shield temporarily, boosting its maximum and current capacity by <WIL*3%> for <INT> turns", 
-            "sCost" : NumberInt(10), 
-            "range" : "3/3/self", 
-            "type" : "Single Unit", 
-            "eCost" : 15.0, 
-            "speed" : "400", 
-            "ApCost" : NumberInt(150), 
-            "id" : "shieldBoost"
-        }, 
-        {
-            "name" : "Concentrate", 
-            "description" : "Abilities you use for the next <WIL> turns cannot be interrupted", 
-            "sCost" : NumberInt(12), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(300), 
-            "id" : "concentrate"
+{
+  "tactics_classes": [
+    {
+      "PutRequest": {
+        "Item": {
+          "classid": {
+            "S": "scout"
+          },
+          "attributes": {
+            "M": {
+              "dexterity": {
+                "N": 2
+              },
+              "strength": {
+                "N": 2
+              },
+              "willpower": {
+                "N": 2
+              },
+              "endurance": {
+                "N": 1
+              },
+              "agility": {
+                "N": 3
+              },
+              "charisma": {
+                "N": -1
+              },
+              "intelligence": {
+                "N": 1
+              }
+            }
+          },
+          "baseAttr": {
+            "M": {
+              "move": {
+                "N": 1
+              },
+              "maximumEnergy": {
+                "N": -20
+              },
+              "maximumHealth": {
+                "N": -200
+              },
+              "speed": {
+                "N": 20
+              },
+              "jump": {
+                "N": 1
+              }
+            }
+          },
+          "abilities": {
+            "L": [
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Flare"
+                },
+                "description": {
+                  "S": "Reveal stealthed/hidden units and items in the area"
+                },
+                "range": {
+                  "S": "5/5"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "flare"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<INT> Circle"
+                },
+                "eCost": {
+                  "N": 5
+                },
+                "speed": {
+                  "S": "1000"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 15
+                },
+                "name": {
+                  "S": "Stealth"
+                },
+                "description": {
+                  "S": "Become stealthed until the end of your next turn, or until damaged or revealed. Your speed is reduced by <50-AGI*5%>"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "stealth"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 15
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Dodge"
+                },
+                "description": {
+                  "S": "Use your reaction to reduce incoming melee or Projectile based damage by <DEX*5%>"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 80
+                },
+                "id": {
+                  "S": "dodge"
+                },
+                "type": {
+                  "S": "Reaction"
+                },
+                "eCost": {
+                  "S": "<40-END*2>"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Evasion"
+                },
+                "description": {
+                  "S": "Use your reaction to reduce incoming AoE based damage by <AGI*5%>"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 80
+                },
+                "id": {
+                  "S": "evasion"
+                },
+                "type": {
+                  "S": "Reaction"
+                },
+                "eCost": {
+                  "S": "<40-END*2>"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Quick Attack"
+                },
+                "description": {
+                  "S": "Make a quick attack, entering the turn order at <50+AGI%>"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 400
+                },
+                "id": {
+                  "S": "quickAttack"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 7
+                },
+                "name": {
+                  "S": "Agitate"
+                },
+                "description": {
+                  "S": "Reduce the target’s morale, lowering all stats for the duration of the combat by <CHA/3>"
+                },
+                "range": {
+                  "S": "<5+CHA/5+CHA"
+                },
+                "ApCost": {
+                  "N": 75
+                },
+                "id": {
+                  "S": "agitate"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 1
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "name": {
+                  "S": "Climber"
+                },
+                "description": {
+                  "S": "Add your <STR> to your <JMP> passively"
+                },
+                "ApCost": {
+                  "N": 125
+                },
+                "id": {
+                  "S": "climber"
+                },
+                "sCost": {
+                  "N": 10
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Momentum"
+                },
+                "description": {
+                  "S": "Restore <END%> energy at the end of each turn"
+                },
+                "ApCost": {
+                  "N": 350
+                },
+                "id": {
+                  "S": "momentum"
+                },
+                "sCost": {
+                  "N": 18
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 10
+                },
+                "name": {
+                  "S": "Counter Attack"
+                },
+                "description": {
+                  "S": "Use your reaction to make a melee or ranged counterattack when hit"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 500
+                },
+                "id": {
+                  "S": "counterAttack"
+                },
+                "type": {
+                  "S": "Reaction"
+                },
+                "eCost": {
+                  "S": "<20-WIL>"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 15
+                },
+                "name": {
+                  "S": "Guile"
+                },
+                "description": {
+                  "S": "Increase the unit's <CHA> by 3"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "guile"
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Poison Weapon"
+                },
+                "description": {
+                  "S": "Coat your weapon with poison, causing it's next strike to poison the target. The poison deals <5+INT/2%> of the unit's max health until cured."
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 350
+                },
+                "id": {
+                  "S": "poisonWeapon"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "S": "50% current energy"
+                },
+                "speed": {
+                  "N": 350
+                }
+              },
+              {
+                "sCost": {
+                  "N": 15
+                },
+                "name": {
+                  "S": "Interrupt"
+                },
+                "description": {
+                  "S": "Strike a unit with your melee weapon, interrupting any charging ability"
+                },
+                "range": {
+                  "S": "Melee"
+                },
+                "ApCost": {
+                  "N": 500
+                },
+                "id": {
+                  "S": "interrupt"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 35
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              }
+            ]
+          },
+          "name": {
+            "S": "Scout"
+          }
         }
-    ]
-}
-{ 
-    "_id" : ObjectId("59ff57e61194231ac0c22aa2"), 
-    "name" : "Tech", 
-    "_dbIndex" : "tech", 
-    "attributes" : {
-        "strength" : 2.0, 
-        "intelligence" : 4.0, 
-        "endurance" : -1.0, 
-        "willpower" : 3.0, 
-        "agility" : 2.0, 
-        "dexterity" : 1.0, 
-        "charisma" : -1.0
-    }, 
-    "baseAttr" : {
-        "move" : 0.0, 
-        "jump" : 0.0, 
-        "speed" : -10.0, 
-        "maximumHealth" : -200.0, 
-        "maximumEnergy" : 40.0
-    }, 
-    "abilities" : [
-        {
-            "name" : "Scan", 
-            "description" : "Reveal detailed information of units in the area (stats, abilities etc.)", 
-            "sCost" : NumberInt(8), 
-            "range" : "5/5", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 5.0, 
-            "speed" : "Instant", 
-            "radius" : "<INT> Circle", 
-            "ApCost" : NumberInt(50), 
-            "id" : "scan"
-        }, 
-        {
-            "name" : "Repair", 
-            "description" : "Repair a mechanical unit for <15+DEX*2> max health", 
-            "sCost" : NumberInt(5), 
-            "range" : "1/3/self", 
-            "type" : "Single Unit", 
-            "eCost" : 15.0, 
-            "speed" : "350", 
-            "ApCost" : NumberInt(50), 
-            "id" : "repair"
-        }, 
-        {
-            "name" : "Resist UP", 
-            "description" : "All units gain <WIL*5%> resistance to all elements for <CHA> turns", 
-            "sCost" : NumberInt(5), 
-            "range" : "5/5", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 30.0, 
-            "speed" : "400", 
-            "radius" : "3.0 Circle", 
-            "ApCost" : NumberInt(125), 
-            "id" : "resUp"
-        }, 
-        {
-            "name" : "Mech Cloak", 
-            "description" : "After being hit, use your reaction to release a wave of electricity, dealing <END> shock damage and stunning for 1 round", 
-            "sCost" : NumberInt(12), 
-            "type" : "Reaction", 
-            "eCost" : "<25.0-WIL>", 
-            "radius" : "3.0 Cone", 
-            "speed" : 800.0, 
-            "ApCost" : NumberInt(100), 
-            "id" : "mechCloak"
-        }, 
-        {
-            "name" : "Flare Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> heat damage and sets non-mechanical units on fire", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(100), 
-            "id" : "flareGrenade"
-        }, 
-        {
-            "name" : "Cryo Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> cold damage and reduces position in the turn order by 10%", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(100), 
-            "id" : "cryoGrenade"
-        }, 
-        {
-            "name" : "Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> explosive damage (Ignore 50% physical resistance)", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(100), 
-            "id" : "grenade"
-        }, 
-        {
-            "name" : "Shock Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> shock damage and reduces shields to 0", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR> Circle", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2>", 
-            "ApCost" : NumberInt(100), 
-            "id" : "shockGrenade"
-        }, 
-        {
-            "name" : "Corrosive Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> acid damage and destroys weak mechanical units", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(100), 
-            "id" : "corrosiveGrenade"
-        }, 
-        {
-            "name" : "Toxic Grenade", 
-            "description" : "Lob a grenade that deals <200+LVL*2> low poison damage and creates a poison cloudfor 5 turns", 
-            "sCost" : NumberInt(8), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(100), 
-            "id" : "poisonGrenade"
-        }, 
-        {
-            "name" : "EMP Grenade", 
-            "description" : "Lob a grenade that that deals <600+LVL*2> pulse damage", 
-            "sCost" : NumberInt(12), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 40.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2>", 
-            "ApCost" : NumberInt(200), 
-            "id" : "empGrenade"
-        }, 
-        {
-            "name" : "Uranium Grenade", 
-            "description" : "Lob a grenade that deals <600+LVL*2> radiation damage", 
-            "sCost" : NumberInt(12), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 40.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(200), 
-            "id" : "uraniumGrenade"
-        }, 
-        {
-            "name" : "Void Grenade", 
-            "description" : "Lob a grenade that deals <400+LVL*2> gravity damage and pulls units towards the center hex", 
-            "sCost" : NumberInt(15), 
-            "range" : "<5+STR/5+STR>", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 50.0, 
-            "speed" : "Instant", 
-            "radius" : "<2+INT/2> Circle", 
-            "ApCost" : NumberInt(250), 
-            "id" : "voidGrenade"
-        }, 
-        {
-            "name" : "Cybernetics: Legs", 
-            "description" : "Mechanically enhance unit's legs, increasing <AGI> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybLegs"
-        }, 
-        {
-            "name" : "Cybernetics: Arms", 
-            "description" : "Mechanically enhance unit's arms, increasing <STR> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybArms"
-        }, 
-        {
-            "name" : "Cybernetics: Brain", 
-            "description" : "Mechanically enhance unit's cerebral cortex, increasing <INT> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybBrain"
-        }, 
-        {
-            "name" : "Cybernetics: Eyes", 
-            "description" : "Mechanically enhance unit's eyes, increasing <DEX> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybEyes"
-        }, 
-        {
-            "name" : "Cybernetics: Lungs", 
-            "description" : "Mechanically enhance unit's resperitory system, increasing <END> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybLungs"
-        }, 
-        {
-            "name" : "Cybernetics: Heart", 
-            "description" : "Mechanically enhance unit's body, increasing <WIL> by 3 and making the unit mechanical", 
-            "sCost" : NumberInt(15), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "cybHeart"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "classid": {
+            "S": "tech"
+          },
+          "attributes": {
+            "M": {
+              "dexterity": {
+                "N": 1
+              },
+              "strength": {
+                "N": 2
+              },
+              "willpower": {
+                "N": 3
+              },
+              "endurance": {
+                "N": -1
+              },
+              "agility": {
+                "N": 2
+              },
+              "charisma": {
+                "N": -1
+              },
+              "intelligence": {
+                "N": 4
+              }
+            }
+          },
+          "baseAttr": {
+            "M": {
+              "move": {
+                "N": 0
+              },
+              "maximumEnergy": {
+                "N": 40
+              },
+              "maximumHealth": {
+                "N": -200
+              },
+              "speed": {
+                "N": -10
+              },
+              "jump": {
+                "N": 0
+              }
+            }
+          },
+          "abilities": {
+            "L": [
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Scan"
+                },
+                "description": {
+                  "S": "Reveal detailed information of units in the area (stats, abilities etc.)"
+                },
+                "range": {
+                  "S": "5/5"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "scan"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<INT> Circle"
+                },
+                "eCost": {
+                  "N": 5
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Repair"
+                },
+                "description": {
+                  "S": "Repair a mechanical unit for <15+DEX*2> max health"
+                },
+                "range": {
+                  "S": "1/3/self"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "repair"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 15
+                },
+                "speed": {
+                  "S": "350"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Resist UP"
+                },
+                "description": {
+                  "S": "All units gain <WIL*5%> resistance to all elements for <CHA> turns"
+                },
+                "range": {
+                  "S": "5/5"
+                },
+                "ApCost": {
+                  "N": 125
+                },
+                "id": {
+                  "S": "resUp"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "3.0 Circle"
+                },
+                "eCost": {
+                  "N": 30
+                },
+                "speed": {
+                  "S": "400"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Mech Cloak"
+                },
+                "description": {
+                  "S": "After being hit, use your reaction to release a wave of electricity, dealing <END> shock damage and stunning for 1 round"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "mechCloak"
+                },
+                "type": {
+                  "S": "Reaction"
+                },
+                "radius": {
+                  "S": "3.0 Cone"
+                },
+                "eCost": {
+                  "S": "<25.0-WIL>"
+                },
+                "speed": {
+                  "N": 800
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Flare Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> heat damage and sets non-mechanical units on fire"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "flareGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Cryo Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> cold damage and reduces position in the turn order by 10%"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "cryoGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> explosive damage (Ignore 50% physical resistance)"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "grenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Shock Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> shock damage and reduces shields to 0"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR> Circle"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "shockGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2>"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Corrosive Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> acid damage and destroys weak mechanical units"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "corrosiveGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Toxic Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <200+LVL*2> low poison damage and creates a poison cloudfor 5 turns"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "poisonGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "EMP Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that that deals <600+LVL*2> pulse damage"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 200
+                },
+                "id": {
+                  "S": "empGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2>"
+                },
+                "eCost": {
+                  "N": 40
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Uranium Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <600+LVL*2> radiation damage"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 200
+                },
+                "id": {
+                  "S": "uraniumGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 40
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 15
+                },
+                "name": {
+                  "S": "Void Grenade"
+                },
+                "description": {
+                  "S": "Lob a grenade that deals <400+LVL*2> gravity damage and pulls units towards the center hex"
+                },
+                "range": {
+                  "S": "<5+STR/5+STR>"
+                },
+                "ApCost": {
+                  "N": 250
+                },
+                "id": {
+                  "S": "voidGrenade"
+                },
+                "type": {
+                  "S": "Single Unit/Hex in Range"
+                },
+                "radius": {
+                  "S": "<2+INT/2> Circle"
+                },
+                "eCost": {
+                  "N": 50
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Legs"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's legs, increasing <AGI> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybLegs"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Arms"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's arms, increasing <STR> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybArms"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Brain"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's cerebral cortex, increasing <INT> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybBrain"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Eyes"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's eyes, increasing <DEX> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybEyes"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Lungs"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's resperitory system, increasing <END> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybLungs"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Cybernetics: Heart"
+                },
+                "description": {
+                  "S": "Mechanically enhance unit's body, increasing <WIL> by 3 and making the unit mechanical"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "cybHeart"
+                },
+                "sCost": {
+                  "N": 15
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              }
+            ]
+          },
+          "name": {
+            "S": "Tech"
+          }
         }
-    ]
-}
-{ 
-    "_id" : ObjectId("59ef99d15e67e31684e32452"), 
-    "name" : "Scout", 
-    "_dbIndex" : "scout", 
-    "attributes" : {
-        "strength" : 2.0, 
-        "intelligence" : 1.0, 
-        "endurance" : 1.0, 
-        "willpower" : 2.0, 
-        "agility" : 3.0, 
-        "dexterity" : 2.0, 
-        "charisma" : -1.0
-    }, 
-    "baseAttr" : {
-        "move" : 1.0, 
-        "jump" : 1.0, 
-        "speed" : 50.0, 
-        "maximumHealth" : -200.0, 
-        "maximumEnergy" : -20.0
-    }, 
-    "abilities" : [
-        {
-            "name" : "Flare", 
-            "description" : "Reveal stealthed/hidden units and items in the area", 
-            "sCost" : NumberInt(8), 
-            "range" : "5/5", 
-            "type" : "Single Unit/Hex in Range", 
-            "eCost" : 5.0, 
-            "speed" : "1000", 
-            "radius" : "<INT> Circle", 
-            "ApCost" : NumberInt(50), 
-            "id" : "flare"
-        }, 
-        {
-            "name" : "Stealth", 
-            "description" : "Become stealthed until the end of your next turn, or until damaged or revealed. Your speed is reduced by <50-AGI*5%>", 
-            "sCost" : NumberInt(15), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "eCost" : 15.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(100), 
-            "id" : "stealth"
-        }, 
-        {
-            "name" : "Dodge", 
-            "description" : "Use your reaction to reduce incoming melee or Projectile based damage by <DEX*5%>", 
-            "sCost" : NumberInt(8), 
-            "range" : "Self", 
-            "type" : "Reaction", 
-            "eCost" : "<40-END*2>", 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(80), 
-            "id" : "dodge"
-        }, 
-        {
-            "name" : "Evasion", 
-            "description" : "Use your reaction to reduce incoming AoE based damage by <AGI*5%>", 
-            "sCost" : NumberInt(8), 
-            "range" : "Self", 
-            "type" : "Reaction", 
-            "eCost" : "<40-END*2>", 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(80), 
-            "id" : "evasion"
-        }, 
-        {
-            "name" : "Quick Attack", 
-            "description" : "Make a quick attack, entering the turn order at <50+AGI%>", 
-            "sCost" : NumberInt(12), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(400), 
-            "id" : "quickAttack"
-        }, 
-        {
-            "name" : "Agitate", 
-            "description" : "Reduce the target’s morale, lowering all stats for the duration of the combat by <CHA/3>", 
-            "sCost" : NumberInt(7), 
-            "range" : "<5+CHA/5+CHA", 
-            "type" : "Single Unit", 
-            "eCost" : 1.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(75), 
-            "id" : "agitate"
-        }, 
-        {
-            "name" : "Climber", 
-            "description" : "Add your <STR> to your <JMP> passively", 
-            "sCost" : NumberInt(10), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(125), 
-            "id" : "climber"
-        }, 
-        {
-            "name" : "Momentum", 
-            "description" : "Restore <END%> energy at the end of each turn", 
-            "sCost" : NumberInt(18), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(350), 
-            "id" : "momentum"
-        }, 
-        {
-            "name" : "Counter Attack", 
-            "description" : "Use your reaction to make a melee or ranged counterattack when hit", 
-            "sCost" : NumberInt(10), 
-            "range" : "Self", 
-            "type" : "Reaction", 
-            "eCost" : "<20-WIL>", 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(500), 
-            "id" : "counterAttack"
-        }, 
-        {
-            "name" : "Guile", 
-            "description" : "Increase the unit's <CHA> by 3", 
-            "sCost" : NumberInt(15), 
-            "range" : "Self", 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(300), 
-            "id" : "guile"
-        }, 
-        {
-            "name" : "Poison Weapon", 
-            "description" : "Coat your weapon with poison, causing it's next strike to poison the target. The poison deals <5+INT/2%> of the unit's max health until cured.", 
-            "sCost" : NumberInt(12), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "speed" : 350.0, 
-            "eCost" : "50% current energy", 
-            "ApCost" : NumberInt(350), 
-            "id" : "poisonWeapon"
-        }, 
-        {
-            "name" : "Interrupt", 
-            "description" : "Strike a unit with your melee weapon, interrupting any charging ability", 
-            "sCost" : NumberInt(15), 
-            "range" : "Melee", 
-            "type" : "Single Unit", 
-            "eCost" : 35.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(500), 
-            "id" : "interrupt"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "classid": {
+            "S": "soldier"
+          },
+          "attributes": {
+            "M": {
+              "dexterity": {
+                "N": 2
+              },
+              "strength": {
+                "N": 2
+              },
+              "willpower": {
+                "N": 1
+              },
+              "endurance": {
+                "N": 2
+              },
+              "agility": {
+                "N": 2
+              },
+              "charisma": {
+                "N": 2
+              },
+              "intelligence": {
+                "N": -1
+              }
+            }
+          },
+          "baseAttr": {
+            "M": {
+              "move": {
+                "N": 0
+              },
+              "maximumEnergy": {
+                "N": -20
+              },
+              "maximumHealth": {
+                "N": 200
+              },
+              "jump": {
+                "N": 0
+              }
+            }
+          },
+          "abilities": {
+            "L": [
+              {
+                "sCost": {
+                  "N": 4
+                },
+                "name": {
+                  "S": "Bolster"
+                },
+                "description": {
+                  "S": "Increase all stats for all allies by 1"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 75
+                },
+                "id": {
+                  "S": "bolster"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "radius": {
+                  "S": "<CHA> Circle"
+                },
+                "eCost": {
+                  "S": "1"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 4
+                },
+                "name": {
+                  "S": "Focus"
+                },
+                "description": {
+                  "S": "Increase <PWR> and <SKL> by <WIL/2%+WIL*2>"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 75
+                },
+                "id": {
+                  "S": "focus"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "S": "1"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Heroic Leap"
+                },
+                "description": {
+                  "S": "Jump to a neighboring hex with a jump distance of <JMP+STR> and immediately make an attack with your equipped weapon, dealing <CHA*10%> additional damage"
+                },
+                "range": {
+                  "S": "1/<JMP+STR>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "heroicLeap"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Heroic Charge"
+                },
+                "description": {
+                  "S": "Charge to a tile with a move of <MOV+AGI> and immediately make an attack with your equipped melee weapon, dealing <CHA*10%> additional damage"
+                },
+                "range": {
+                  "S": "<MOV+AGI>/<JMP>"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "heroicCharge"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Power Attack"
+                },
+                "description": {
+                  "S": "Make a melee attack dealing <STR*5%> Additional Damage"
+                },
+                "range": {
+                  "S": "Melee"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "powerAttack"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "Power Shot"
+                },
+                "description": {
+                  "S": "Make a ranged attack dealing <DEX*5%> Additional Damage"
+                },
+                "range": {
+                  "S": "Ranged"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "powerShot"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "name": {
+                  "S": "Hardy"
+                },
+                "description": {
+                  "S": "All damage taken is reduced by <END*2%>"
+                },
+                "ApCost": {
+                  "N": 175
+                },
+                "id": {
+                  "S": "hardy"
+                },
+                "sCost": {
+                  "N": 10
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Vengeance"
+                },
+                "description": {
+                  "S": "All melee damage dealt is increased by 25% when low health. Low health is anything under <WIL+END%>"
+                },
+                "ApCost": {
+                  "N": 150
+                },
+                "id": {
+                  "S": "vengeance"
+                },
+                "sCost": {
+                  "N": 5
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Reversal"
+                },
+                "description": {
+                  "S": "Use your reaction to swap places with an attacking unit"
+                },
+                "ApCost": {
+                  "N": 200
+                },
+                "id": {
+                  "S": "reversal"
+                },
+                "type": {
+                  "S": "Reaction"
+                },
+                "eCost": {
+                  "S": "<20-INT>"
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Charge"
+                },
+                "description": {
+                  "S": "Slam an enemy, dealing <STR*10> damage and knocking back <STR/3> units"
+                },
+                "range": {
+                  "S": "1/1"
+                },
+                "ApCost": {
+                  "N": 20
+                },
+                "id": {
+                  "S": "charge"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "name": {
+                  "S": "Opportunity"
+                },
+                "description": {
+                  "S": "All damage dealt is increased by <INT*2%>"
+                },
+                "ApCost": {
+                  "N": 175
+                },
+                "id": {
+                  "S": "opportunity"
+                },
+                "sCost": {
+                  "N": 10
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "name": {
+                  "S": "Quick Draw"
+                },
+                "description": {
+                  "S": "Switching a weapon from inventory returns you into the turn order at <AGI*5%>"
+                },
+                "ApCost": {
+                  "N": 350
+                },
+                "id": {
+                  "S": "quickDraw"
+                },
+                "sCost": {
+                  "N": 10
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              }
+            ]
+          },
+          "name": {
+            "S": "Soldier"
+          }
         }
-    ]
-}
-{ 
-    "_id" : ObjectId("59efa3545e67e31684e32453"), 
-    "name" : "Soldier", 
-    "_dbIndex" : "soldier", 
-    "attributes" : {
-        "strength" : 2.0, 
-        "intelligence" : -1.0, 
-        "endurance" : 2.0, 
-        "willpower" : 1.0, 
-        "agility" : 2.0, 
-        "dexterity" : 2.0, 
-        "charisma" : 2.0
-    }, 
-    "baseAttr" : {
-        "move" : 0.0, 
-        "jump" : 0.0, 
-        "maximumHealth" : 200.0, 
-        "maximumEnergy" : -20.0
-    }, 
-    "abilities" : [
-        {
-            "name" : "Bolster", 
-            "description" : "Increase all stats for all allies by 1", 
-            "sCost" : NumberInt(4), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "eCost" : "1", 
-            "speed" : "Instant", 
-            "radius" : "<CHA> Circle", 
-            "ApCost" : NumberInt(75), 
-            "id" : "bolster"
-        }, 
-        {
-            "name" : "Focus", 
-            "description" : "Increase <PWR> and <SKL> by <WIL/2%+WIL*2>", 
-            "sCost" : NumberInt(4), 
-            "range" : "Self", 
-            "type" : "Single Unit", 
-            "eCost" : "1", 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(75), 
-            "id" : "focus"
-        }, 
-        {
-            "name" : "Heroic Leap", 
-            "description" : "Jump to a neighboring hex with a jump distance of <JMP+STR> and immediately make an attack with your equipped weapon, dealing <CHA*10%> additional damage", 
-            "sCost" : NumberInt(5), 
-            "range" : "1/<JMP+STR>", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(100), 
-            "id" : "heroicLeap"
-        }, 
-        {
-            "name" : "Heroic Charge", 
-            "description" : "Charge to a tile with a move of <MOV+AGI> and immediately make an attack with your equipped melee weapon, dealing <CHA*10%> additional damage", 
-            "sCost" : NumberInt(5), 
-            "range" : "<MOV+AGI>/<JMP>", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(100), 
-            "id" : "heroicCharge"
-        }, 
-        {
-            "name" : "Power Attack", 
-            "description" : "Make a melee attack dealing <STR*5%> Additional Damage", 
-            "sCost" : NumberInt(5), 
-            "range" : "Melee", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(50), 
-            "id" : "powerAttack"
-        }, 
-        {
-            "name" : "Power Shot", 
-            "description" : "Make a ranged attack dealing <DEX*5%> Additional Damage", 
-            "sCost" : NumberInt(5), 
-            "range" : "Ranged", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(50), 
-            "id" : "powerShot"
-        }, 
-        {
-            "name" : "Hardy", 
-            "description" : "All damage taken is reduced by <END*2%>", 
-            "sCost" : NumberInt(10), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(175), 
-            "id" : "hardy"
-        }, 
-        {
-            "name" : "Vengeance", 
-            "description" : "All melee damage dealt is increased by 25% when low health. Low health is anything under <WIL+END%>", 
-            "sCost" : NumberInt(5), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(150), 
-            "id" : "vengeance"
-        }, 
-        {
-            "name" : "Reversal", 
-            "description" : "Use your reaction to swap places with an attacking unit", 
-            "sCost" : NumberInt(12), 
-            "type" : "Reaction", 
-            "eCost" : "<20-INT>", 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(200), 
-            "id" : "reversal"
-        }, 
-        {
-            "name" : "Charge", 
-            "description" : "Slam an enemy, dealing <STR*10> damage and knocking back <STR/3> units", 
-            "sCost" : NumberInt(12), 
-            "range" : "1/1", 
-            "type" : "Single Unit", 
-            "eCost" : 20.0, 
-            "speed" : "Instant", 
-            "ApCost" : NumberInt(20), 
-            "id" : "charge"
-        }, 
-        {
-            "name" : "Opportunity", 
-            "description" : "All damage dealt is increased by <INT*2%>", 
-            "sCost" : NumberInt(10), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(175), 
-            "id" : "opportunity"
-        }, 
-        {
-            "name" : "Quick Draw", 
-            "description" : "Switching a weapon from inventory returns you into the turn order at <AGI*5%>", 
-            "sCost" : NumberInt(10), 
-            "type" : "Passive", 
-            "ApCost" : NumberInt(350), 
-            "id" : "quickDraw"
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "classid": {
+            "S": "medic"
+          },
+          "attributes": {
+            "M": {
+              "dexterity": {
+                "N": -1
+              },
+              "strength": {
+                "N": -1
+              },
+              "willpower": {
+                "N": 3
+              },
+              "endurance": {
+                "N": 2
+              },
+              "agility": {
+                "N": 1
+              },
+              "charisma": {
+                "N": 4
+              },
+              "intelligence": {
+                "N": 2
+              }
+            }
+          },
+          "baseAttr": {
+            "M": {
+              "move": {
+                "N": 0
+              },
+              "maximumEnergy": {
+                "N": 20
+              },
+              "maximumHealth": {
+                "N": 0
+              },
+              "speed": {
+                "N": -10
+              },
+              "jump": {
+                "N": 0
+              }
+            }
+          },
+          "abilities": {
+            "L": [
+              {
+                "sCost": {
+                  "N": 5
+                },
+                "name": {
+                  "S": "First Aid"
+                },
+                "description": {
+                  "S": "Heal a unit in melee range for <15+CHA%> of their maximum health"
+                },
+                "range": {
+                  "S": "1/3/self"
+                },
+                "ApCost": {
+                  "N": 50
+                },
+                "id": {
+                  "S": "firstAid"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 10
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Resuscitate"
+                },
+                "description": {
+                  "S": "Bring a fainted unit back to life with <1+CHA*3%> max health. The target gains <20+AGI+DEX%> bonus speed until their next turn"
+                },
+                "range": {
+                  "S": "1/3"
+                },
+                "ApCost": {
+                  "N": 80
+                },
+                "id": {
+                  "S": "resuscitate"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "350"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 10
+                },
+                "name": {
+                  "S": "Healing Field"
+                },
+                "description": {
+                  "S": "Place a healing field bot with <200+50*INT> health and <100+20*INT> speed. Every turn the field heals units in a <4+INT/2> hex radius for <50+25*INT>"
+                },
+                "range": {
+                  "S": "1/3"
+                },
+                "ApCost": {
+                  "N": 100
+                },
+                "id": {
+                  "S": "healingField"
+                },
+                "type": {
+                  "S": "Open Tile"
+                },
+                "eCost": {
+                  "N": 35
+                },
+                "speed": {
+                  "S": "250"
+                }
+              },
+              {
+                "name": {
+                  "S": "Recovery"
+                },
+                "description": {
+                  "S": "Recover <1+END/3%> max health at the end of each turn"
+                },
+                "ApCost": {
+                  "N": 200
+                },
+                "id": {
+                  "S": "recovery"
+                },
+                "sCost": {
+                  "N": 12
+                },
+                "type": {
+                  "S": "Passive"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 10
+                },
+                "name": {
+                  "S": "Sprint"
+                },
+                "description": {
+                  "S": "Use your action to move <AGI/2> additional units"
+                },
+                "range": {
+                  "S": "self"
+                },
+                "ApCost": {
+                  "N": 125
+                },
+                "id": {
+                  "S": "sprint"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 25
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Precision Strike"
+                },
+                "description": {
+                  "S": "Perform an attack with a melee weapon, striking a vital point to decrease the target’s healing received permanently by <STR%>"
+                },
+                "range": {
+                  "S": "melee"
+                },
+                "ApCost": {
+                  "N": 80
+                },
+                "id": {
+                  "S": "precisionStrike"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 12
+                },
+                "speed": {
+                  "S": "instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 8
+                },
+                "name": {
+                  "S": "Cripple"
+                },
+                "description": {
+                  "S": "Perform an attack with a ranged weapon, striking a vital point to decrease the targets next movement by <DEX/2>"
+                },
+                "range": {
+                  "S": "ranged"
+                },
+                "ApCost": {
+                  "N": 80
+                },
+                "id": {
+                  "S": "cripple"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 12
+                },
+                "speed": {
+                  "S": "instant"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 10
+                },
+                "name": {
+                  "S": "Shield Boost"
+                },
+                "description": {
+                  "S": "Upgrade an ally’s shield temporarily, boosting its maximum and current capacity by <WIL*3%> for <INT> turns"
+                },
+                "range": {
+                  "S": "3/3/self"
+                },
+                "ApCost": {
+                  "N": 150
+                },
+                "id": {
+                  "S": "shieldBoost"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 15
+                },
+                "speed": {
+                  "S": "400"
+                }
+              },
+              {
+                "sCost": {
+                  "N": 12
+                },
+                "name": {
+                  "S": "Concentrate"
+                },
+                "description": {
+                  "S": "Abilities you use for the next <WIL> turns cannot be interrupted"
+                },
+                "range": {
+                  "S": "Self"
+                },
+                "ApCost": {
+                  "N": 300
+                },
+                "id": {
+                  "S": "concentrate"
+                },
+                "type": {
+                  "S": "Single Unit"
+                },
+                "eCost": {
+                  "N": 20
+                },
+                "speed": {
+                  "S": "Instant"
+                }
+              }
+            ]
+          },
+          "name": {
+            "S": "Medic"
+          }
         }
-    ]
+      }
+    }
+  ]
 }

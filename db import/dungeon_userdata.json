@@ -1,0 +1,1020 @@
+{
+  "dungeon_userdata": [
+    {
+      "PutRequest": {
+        "Item": {
+          "currentCharacter": {
+            "N": 2
+          },
+          "username": {
+            "S": "faulken"
+          },
+          "myCharacters": {
+            "L": [
+              {
+                "abilityCooldownPercentMod": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "weaponRangePercentMod": {
+                  "N": 1
+                },
+                "strength": {
+                  "N": 10
+                },
+                "willpower": {
+                  "N": 10
+                },
+                "gunRangePercentMod": {
+                  "N": 1
+                },
+                "abilityCostPercentMod": {
+                  "N": 1
+                },
+                "expMod": {
+                  "N": 1
+                },
+                "shieldCapacityNumericMod": {
+                  "N": 0
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "healthRegenSeconds": {
+                  "N": 20
+                },
+                "shieldRechargeNumericMod": {
+                  "N": 0
+                },
+                "earmor": {
+                  "N": 8
+                },
+                "shockRes": {
+                  "N": 0
+                },
+                "weaponDamagePercentMod": {
+                  "N": 1
+                },
+                "cpr": {
+                  "N": 150
+                },
+                "gunFireRatePercentMod": {
+                  "N": 1
+                },
+                "level": {
+                  "N": 1
+                },
+                "intelligence": {
+                  "N": 10
+                },
+                "gunReloadPercentMod": {
+                  "N": 1
+                },
+                "playerClass": {
+                  "S": "beastMaster"
+                },
+                "armor": {
+                  "N": 6
+                },
+                "shieldDelayNumericMod": {
+                  "N": 0
+                },
+                "gunBulletSpeedPercentMod": {
+                  "N": 1
+                },
+                "name": {
+                  "S": "Beasty"
+                },
+                "weaponSpeedPercentMod": {
+                  "N": 1
+                },
+                "agility": {
+                  "N": 10
+                },
+                "energyMax": {
+                  "N": 102
+                },
+                "gunAccNumericMod": {
+                  "N": 0
+                },
+                "shield": {
+                  "S": "default"
+                },
+                "weaponRangeNumericMod": {
+                  "N": 0
+                },
+                "abilityCooldownNumericMod": {
+                  "N": 0
+                },
+                "expToNextLvl": {
+                  "N": 1000
+                },
+                "className": {
+                  "S": "The Beastmaster"
+                },
+                "endurance": {
+                  "N": 10
+                },
+                "gunBulletSpeedNumericMod": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 250
+                },
+                "eRegen": {
+                  "N": 1
+                },
+                "credits": {
+                  "N": 0
+                },
+                "healthMax": {
+                  "N": 96
+                },
+                "shieldDelayPercentMod": {
+                  "N": 1
+                },
+                "skill": {
+                  "N": 20
+                },
+                "gunDamageNumericMod": {
+                  "N": 0
+                },
+                "abilityCostNumericMod": {
+                  "N": 0
+                },
+                "jumpCost": {
+                  "N": 15
+                },
+                "power": {
+                  "N": 25
+                },
+                "jumpTime": {
+                  "N": 0.75
+                },
+                "weaponRoutineBonus": {
+                  "N": 0
+                },
+                "gunRangeNumericMod": {
+                  "N": 0
+                },
+                "attributePoints": {
+                  "N": 0
+                },
+                "weaponDamageNumericMod": {
+                  "N": 0
+                },
+                "totalExpEarned": {
+                  "N": 0
+                },
+                "shieldRechargePercentMod": {
+                  "N": 1
+                },
+                "gunDamagePercentMod": {
+                  "N": 1
+                },
+                "weaponSpeedNumericMod": {
+                  "N": 0
+                },
+                "dexterity": {
+                  "N": 10
+                },
+                "gunAccPercentMod": {
+                  "N": 1
+                },
+                "currentExp": {
+                  "N": 0
+                },
+                "weaponRecovPercentMod": {
+                  "N": 1
+                },
+                "shieldCapacityPercentMod": {
+                  "N": 1
+                },
+                "gunFireRateNumericMod": {
+                  "N": 0
+                },
+                "weapon2": {
+                  "S": "default"
+                },
+                "accessory": {
+                  "S": "default"
+                },
+                "heatRes": {
+                  "N": 0
+                },
+                "weapon1": {
+                  "S": "default"
+                }
+              },
+              {
+                "abilityCooldownPercentMod": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "weaponRangePercentMod": {
+                  "N": 1
+                },
+                "strength": {
+                  "N": 10
+                },
+                "willpower": {
+                  "N": 10
+                },
+                "gunRangePercentMod": {
+                  "N": 1
+                },
+                "abilityCostPercentMod": {
+                  "N": 1
+                },
+                "expMod": {
+                  "N": 1
+                },
+                "shieldCapacityNumericMod": {
+                  "N": 0
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "healthRegenSeconds": {
+                  "N": 20
+                },
+                "shieldRechargeNumericMod": {
+                  "N": 0
+                },
+                "earmor": {
+                  "N": 8
+                },
+                "shockRes": {
+                  "N": 0
+                },
+                "weaponDamagePercentMod": {
+                  "N": 1
+                },
+                "cpr": {
+                  "N": 150
+                },
+                "gunFireRatePercentMod": {
+                  "N": 1
+                },
+                "level": {
+                  "N": 1
+                },
+                "intelligence": {
+                  "N": 10
+                },
+                "gunReloadPercentMod": {
+                  "N": 1
+                },
+                "playerClass": {
+                  "S": "celestial"
+                },
+                "armor": {
+                  "N": 6
+                },
+                "shieldDelayNumericMod": {
+                  "N": 0
+                },
+                "gunBulletSpeedPercentMod": {
+                  "N": 1
+                },
+                "name": {
+                  "S": "Skyman"
+                },
+                "weaponSpeedPercentMod": {
+                  "N": 1
+                },
+                "agility": {
+                  "N": 10
+                },
+                "energyMax": {
+                  "N": 102
+                },
+                "gunAccNumericMod": {
+                  "N": 0
+                },
+                "shield": {
+                  "S": "default"
+                },
+                "weaponRangeNumericMod": {
+                  "N": 0
+                },
+                "abilityCooldownNumericMod": {
+                  "N": 0
+                },
+                "expToNextLvl": {
+                  "N": 1000
+                },
+                "className": {
+                  "S": "The Celestial"
+                },
+                "endurance": {
+                  "N": 10
+                },
+                "gunBulletSpeedNumericMod": {
+                  "N": 0
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 206
+                },
+                "eRegen": {
+                  "N": 1
+                },
+                "credits": {
+                  "N": 0
+                },
+                "healthMax": {
+                  "N": 96
+                },
+                "shieldDelayPercentMod": {
+                  "N": 1
+                },
+                "skill": {
+                  "N": 20
+                },
+                "gunDamageNumericMod": {
+                  "N": 0
+                },
+                "abilityCostNumericMod": {
+                  "N": 0
+                },
+                "jumpCost": {
+                  "N": 15
+                },
+                "power": {
+                  "N": 25
+                },
+                "jumpTime": {
+                  "N": 0.75
+                },
+                "weaponRoutineBonus": {
+                  "N": 0
+                },
+                "gunRangeNumericMod": {
+                  "N": 0
+                },
+                "attributePoints": {
+                  "N": 0
+                },
+                "weaponDamageNumericMod": {
+                  "N": 0
+                },
+                "totalExpEarned": {
+                  "N": 0
+                },
+                "shieldRechargePercentMod": {
+                  "N": 1
+                },
+                "gunDamagePercentMod": {
+                  "N": 1
+                },
+                "weaponSpeedNumericMod": {
+                  "N": 0
+                },
+                "dexterity": {
+                  "N": 10
+                },
+                "gunAccPercentMod": {
+                  "N": 1
+                },
+                "currentExp": {
+                  "N": 0
+                },
+                "weaponRecovPercentMod": {
+                  "N": 1
+                },
+                "shieldCapacityPercentMod": {
+                  "N": 1
+                },
+                "gunFireRateNumericMod": {
+                  "N": 0
+                },
+                "weapon2": {
+                  "S": "default"
+                },
+                "accessory": {
+                  "S": "default"
+                },
+                "heatRes": {
+                  "N": 0
+                },
+                "weapon1": {
+                  "S": "default"
+                }
+              },
+              {
+                "abilityCooldownPercentMod": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "weaponRangePercentMod": {
+                  "N": 1
+                },
+                "strength": {
+                  "N": 10
+                },
+                "willpower": {
+                  "N": 10
+                },
+                "gunRangePercentMod": {
+                  "N": 1
+                },
+                "expMod": {
+                  "N": 1.1
+                },
+                "shieldCapacityNumericMod": {
+                  "N": 0
+                },
+                "abilityCostPercentMod": {
+                  "N": 1
+                },
+                "coldRes": {
+                  "N": 0
+                },
+                "healthRegenSeconds": {
+                  "N": 20
+                },
+                "shieldRechargeNumericMod": {
+                  "N": 0
+                },
+                "earmor": {
+                  "N": 16
+                },
+                "weaponDamagePercentMod": {
+                  "N": 1
+                },
+                "shockRes": {
+                  "N": 0
+                },
+                "cpr": {
+                  "N": 150
+                },
+                "gunFireRatePercentMod": {
+                  "N": 1
+                },
+                "level": {
+                  "N": 5
+                },
+                "intelligence": {
+                  "N": 10
+                },
+                "gunReloadPercentMod": {
+                  "N": 1
+                },
+                "playerClass": {
+                  "S": "chemist"
+                },
+                "shieldDelayNumericMod": {
+                  "N": 0
+                },
+                "armor": {
+                  "N": 14
+                },
+                "gunBulletSpeedPercentMod": {
+                  "N": 1
+                },
+                "name": {
+                  "S": "Razzil"
+                },
+                "weaponSpeedPercentMod": {
+                  "N": 1
+                },
+                "agility": {
+                  "N": 10
+                },
+                "energyMax": {
+                  "N": 102
+                },
+                "gunAccNumericMod": {
+                  "N": 0
+                },
+                "weaponRangeNumericMod": {
+                  "N": 0
+                },
+                "shield": {
+                  "N": 17
+                },
+                "abilityCooldownNumericMod": {
+                  "N": 0
+                },
+                "expToNextLvl": {
+                  "N": 3931
+                },
+                "className": {
+                  "S": "The Chemist"
+                },
+                "gunBulletSpeedNumericMod": {
+                  "N": 0
+                },
+                "endurance": {
+                  "N": 12
+                },
+                "gravityRes": {
+                  "N": 0.35
+                },
+                "speed": {
+                  "N": 206
+                },
+                "eRegen": {
+                  "N": 1
+                },
+                "credits": {
+                  "N": 1142
+                },
+                "healthMax": {
+                  "N": 446
+                },
+                "shieldDelayPercentMod": {
+                  "N": 1
+                },
+                "skill": {
+                  "N": 60
+                },
+                "gunDamageNumericMod": {
+                  "N": 0
+                },
+                "abilityCostNumericMod": {
+                  "N": 0
+                },
+                "jumpCost": {
+                  "N": 15
+                },
+                "power": {
+                  "N": 65
+                },
+                "jumpTime": {
+                  "N": 0.75
+                },
+                "weaponRoutineBonus": {
+                  "N": 0
+                },
+                "gunRangeNumericMod": {
+                  "N": 0
+                },
+                "attributePoints": {
+                  "N": 0
+                },
+                "weaponDamageNumericMod": {
+                  "N": 0
+                },
+                "totalExpEarned": {
+                  "N": 8871
+                },
+                "shieldRechargePercentMod": {
+                  "N": 1
+                },
+                "gunDamagePercentMod": {
+                  "N": 1
+                },
+                "weaponSpeedNumericMod": {
+                  "N": 0
+                },
+                "dexterity": {
+                  "N": 16
+                },
+                "gunAccPercentMod": {
+                  "N": 1
+                },
+                "currentExp": {
+                  "N": 909
+                },
+                "weaponRecovPercentMod": {
+                  "N": 1
+                },
+                "shieldCapacityPercentMod": {
+                  "N": 1
+                },
+                "gunFireRateNumericMod": {
+                  "N": 0
+                },
+                "weapon2": {
+                  "N": 7
+                },
+                "accessory": {
+                  "N": 8
+                },
+                "heatRes": {
+                  "N": 0
+                },
+                "weapon1": {
+                  "N": 14
+                }
+              },
+              {
+                "abilityCooldownPercentMod": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 0
+                },
+                "weaponRangePercentMod": {
+                  "N": 1
+                },
+                "strength": {
+                  "N": 10
+                },
+                "willpower": {
+                  "N": 10
+                },
+                "gunRangePercentMod": {
+                  "N": 1
+                },
+                "expMod": {
+                  "N": 1
+                },
+                "shieldCapacityNumericMod": {
+                  "N": 0
+                },
+                "abilityCostPercentMod": {
+                  "N": 1
+                },
+                "coldRes": {
+                  "N": 0.75
+                },
+                "healthRegenSeconds": {
+                  "N": 20
+                },
+                "shieldRechargeNumericMod": {
+                  "N": 0
+                },
+                "earmor": {
+                  "N": 16
+                },
+                "weaponDamagePercentMod": {
+                  "N": 1
+                },
+                "shockRes": {
+                  "N": 0
+                },
+                "cpr": {
+                  "N": 150
+                },
+                "gunFireRatePercentMod": {
+                  "N": 1
+                },
+                "level": {
+                  "N": 5
+                },
+                "intelligence": {
+                  "N": 10
+                },
+                "gunReloadPercentMod": {
+                  "N": 1
+                },
+                "playerClass": {
+                  "S": "elder"
+                },
+                "shieldDelayNumericMod": {
+                  "N": 0
+                },
+                "armor": {
+                  "N": 14
+                },
+                "gunBulletSpeedPercentMod": {
+                  "N": 1
+                },
+                "name": {
+                  "S": "Eldurr"
+                },
+                "weaponSpeedPercentMod": {
+                  "N": 1
+                },
+                "agility": {
+                  "N": 10
+                },
+                "energyMax": {
+                  "N": 102
+                },
+                "gunAccNumericMod": {
+                  "N": 0
+                },
+                "weaponRangeNumericMod": {
+                  "N": 0
+                },
+                "shield": {
+                  "S": "default"
+                },
+                "abilityCooldownNumericMod": {
+                  "N": 0
+                },
+                "expToNextLvl": {
+                  "N": 3931
+                },
+                "className": {
+                  "S": "The Elder"
+                },
+                "gunBulletSpeedNumericMod": {
+                  "N": 0
+                },
+                "endurance": {
+                  "N": 10
+                },
+                "gravityRes": {
+                  "N": 0
+                },
+                "speed": {
+                  "N": 206
+                },
+                "eRegen": {
+                  "N": 1
+                },
+                "credits": {
+                  "N": 490
+                },
+                "healthMax": {
+                  "N": 446
+                },
+                "shieldDelayPercentMod": {
+                  "N": 1
+                },
+                "skill": {
+                  "N": 60
+                },
+                "gunDamageNumericMod": {
+                  "N": 0
+                },
+                "abilityCostNumericMod": {
+                  "N": 0
+                },
+                "jumpCost": {
+                  "N": 15
+                },
+                "power": {
+                  "N": 65
+                },
+                "jumpTime": {
+                  "N": 0.75
+                },
+                "weaponRoutineBonus": {
+                  "N": 0
+                },
+                "gunRangeNumericMod": {
+                  "N": 0
+                },
+                "attributePoints": {
+                  "N": 0
+                },
+                "weaponDamageNumericMod": {
+                  "N": 0
+                },
+                "totalExpEarned": {
+                  "N": 11429
+                },
+                "shieldRechargePercentMod": {
+                  "N": 1
+                },
+                "gunDamagePercentMod": {
+                  "N": 1
+                },
+                "weaponSpeedNumericMod": {
+                  "N": 0
+                },
+                "dexterity": {
+                  "N": 10
+                },
+                "gunAccPercentMod": {
+                  "N": 1
+                },
+                "currentExp": {
+                  "N": 3467
+                },
+                "weaponRecovPercentMod": {
+                  "N": 1
+                },
+                "shieldCapacityPercentMod": {
+                  "N": 1
+                },
+                "gunFireRateNumericMod": {
+                  "N": 0
+                },
+                "weapon2": {
+                  "N": 7
+                },
+                "accessory": {
+                  "S": "default"
+                },
+                "heatRes": {
+                  "N": 0
+                },
+                "weapon1": {
+                  "N": 10
+                }
+              },
+              {
+                "abilityCooldownPercentMod": {
+                  "N": 1
+                },
+                "acidRes": {
+                  "N": 1.5
+                },
+                "weaponRangePercentMod": {
+                  "N": 1
+                },
+                "strength": {
+                  "N": 1009
+                },
+                "willpower": {
+                  "N": 1009
+                },
+                "gunRangePercentMod": {
+                  "N": 1
+                },
+                "expMod": {
+                  "N": 1
+                },
+                "shieldCapacityNumericMod": {
+                  "N": 0
+                },
+                "abilityCostPercentMod": {
+                  "N": 1
+                },
+                "coldRes": {
+                  "N": 1.5
+                },
+                "healthRegenSeconds": {
+                  "N": 20
+                },
+                "shieldRechargeNumericMod": {
+                  "N": 0
+                },
+                "earmor": {
+                  "N": 47
+                },
+                "weaponDamagePercentMod": {
+                  "N": 1
+                },
+                "shockRes": {
+                  "N": 1.5
+                },
+                "cpr": {
+                  "N": 150
+                },
+                "gunFireRatePercentMod": {
+                  "N": 1
+                },
+                "level": {
+                  "N": 23
+                },
+                "intelligence": {
+                  "N": 1009
+                },
+                "gunReloadPercentMod": {
+                  "N": 1
+                },
+                "playerClass": {
+                  "S": "celestial"
+                },
+                "shieldDelayNumericMod": {
+                  "N": 0
+                },
+                "armor": {
+                  "N": 47
+                },
+                "gunBulletSpeedPercentMod": {
+                  "N": 1
+                },
+                "name": {
+                  "S": "Overpowered"
+                },
+                "weaponSpeedPercentMod": {
+                  "N": 1
+                },
+                "agility": {
+                  "N": 1009
+                },
+                "energyMax": {
+                  "N": 100
+                },
+                "gunAccNumericMod": {
+                  "N": 0
+                },
+                "weaponRangeNumericMod": {
+                  "N": 0
+                },
+                "shield": {
+                  "S": "default"
+                },
+                "abilityCooldownNumericMod": {
+                  "N": 0
+                },
+                "expToNextLvl": {
+                  "N": 174227
+                },
+                "className": {
+                  "S": "The Celestial"
+                },
+                "gunBulletSpeedNumericMod": {
+                  "N": 0
+                },
+                "endurance": {
+                  "N": 1009
+                },
+                "gravityRes": {
+                  "N": 1.5
+                },
+                "speed": {
+                  "N": 205
+                },
+                "eRegen": {
+                  "N": 1
+                },
+                "credits": {
+                  "N": 60
+                },
+                "healthMax": {
+                  "N": 2178
+                },
+                "shieldDelayPercentMod": {
+                  "N": 1
+                },
+                "skill": {
+                  "N": 230
+                },
+                "gunDamageNumericMod": {
+                  "N": 0
+                },
+                "abilityCostNumericMod": {
+                  "N": 0
+                },
+                "jumpCost": {
+                  "N": 15
+                },
+                "power": {
+                  "N": 230
+                },
+                "jumpTime": {
+                  "N": 0.75
+                },
+                "weaponRoutineBonus": {
+                  "N": 0
+                },
+                "gunRangeNumericMod": {
+                  "N": 0
+                },
+                "attributePoints": {
+                  "N": 0
+                },
+                "weaponDamageNumericMod": {
+                  "N": 0
+                },
+                "totalExpEarned": {
+                  "N": 1009030
+                },
+                "shieldRechargePercentMod": {
+                  "N": 1
+                },
+                "gunDamagePercentMod": {
+                  "N": 1
+                },
+                "weaponSpeedNumericMod": {
+                  "N": 0
+                },
+                "dexterity": {
+                  "N": 1009
+                },
+                "gunAccPercentMod": {
+                  "N": 1
+                },
+                "currentExp": {
+                  "N": 148997
+                },
+                "weaponRecovPercentMod": {
+                  "N": 1
+                },
+                "shieldCapacityPercentMod": {
+                  "N": 1
+                },
+                "gunFireRateNumericMod": {
+                  "N": 0
+                },
+                "weapon2": {
+                  "S": "default"
+                },
+                "accessory": {
+                  "S": "default"
+                },
+                "heatRes": {
+                  "N": 1.5
+                },
+                "weapon1": {
+                  "N": 46
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

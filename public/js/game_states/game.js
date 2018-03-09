@@ -21,6 +21,8 @@
         currentTurnArrow: null,
         turnArrowStartY: null,
 
+        nodeText: null,
+        nodeInfo: null,
 
         init: function() {
             this.drawBG();
@@ -99,8 +101,20 @@
             this.zoomDown.position.x = Graphics.width/1.5 + this.zoomDown.width/2 + 20;
             this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
             Graphics.uiContainer.addChild(this.zoomDown);
-            window.currentGameMap = this.map;
 
+            this.nodeText = new PIXI.Text("Node Info",style);
+            this.nodeInfo = new PIXI.Text('',style);
+            this.nodeInfo.anchor.x = 1;
+            this.nodeInfo.anchor.y = 1;
+            this.nodeText.anchor.x = 0.5;
+            this.nodeText.anchor.y = 1;
+            this.nodeInfo.position.x = Graphics.width - 20;
+            this.nodeInfo.position.y = Graphics.height - 20;
+            this.nodeText.visible = false;
+            this.nodeInfo.visible = false;
+            Graphics.uiContainer.addChild(this.nodeText);
+            Graphics.uiContainer.addChild(this.nodeInfo);
+            window.currentGameMap = this.map;
             Graphics.showLoadingMessage(false);
         },
 
@@ -129,7 +143,7 @@
 
             //Turn order
             this.turnListSprites = [];
-            var outlineFilterRed = new PIXI.filters.GlowFilter(15, 2, 1, 0xff9999, 0.5);
+            var outlineFilterRed = new PIXI.filters.GlowFilter(25, 2, 1.5, 0xff9999, 0.5);
             var filtersOn = function (e) {
                  Game.units[e.currentTarget.unitID].sprite.filters = [outlineFilterRed];
             }
@@ -147,11 +161,11 @@
                 sprite.on('pointerover', filtersOn);
                 sprite.on('pointerout', filtersOff);
             }
-            this.currentTurnArrow = Graphics.getSprite('arrow');
+            /*this.currentTurnArrow = Graphics.getSprite('arrow');
             this.currentTurnArrow.tint = 0x00FF00;
             this.currentTurnArrow.anchor.x = 0.5;
             this.currentTurnArrow.anchor.y = 0.5;
-            this.setTurnArrow();
+            this.setTurnArrow();*/
 
             //Compass
 
@@ -250,7 +264,7 @@
         },
         
         setTurnArrow: function(){
-            //set scale
+            /*//set scale
             this.currentTurnArrow.scale.x = 0.4 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
             this.currentTurnArrow.scale.y = 0.4 * this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
             //set position
@@ -262,7 +276,7 @@
             this.currentTurnArrow.position.x = sp.position.x + this.map[cont].position.x;
             this.currentTurnArrow.position.y = sp.position.y + this.map[cont].position.y - sp.height/2 - this.currentTurnArrow.height/1.5;
             this.turnArrowStartY = this.currentTurnArrow.position.y;
-            Graphics.worldContainer.addChild(this.currentTurnArrow);
+            Graphics.worldContainer.addChild(this.currentTurnArrow);*/
         },
 
         update: function(deltaTime){
@@ -283,6 +297,12 @@
                         if (!(this.map.currentRotation%2)){t = 2}
                         var s = a['sprite' + t];
                         s.tint = 0x999999;
+                        //set node info text
+                        this.nodeText.visible = true;
+                        this.nodeInfo.visible = true;
+                        this.nodeInfo.text = 'Height: ' + a.h + '    Type: ' + a.tile;
+                        this.nodeText.position.x = this.nodeInfo.position.x - this.nodeInfo.width/2;
+                        this.nodeText.position.y = this.nodeInfo.position.y - this.nodeInfo.height - 25;
                         this.setNewSelectedNode = 0;
                     }
                 }catch(e){

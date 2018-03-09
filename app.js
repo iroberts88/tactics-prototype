@@ -5,10 +5,12 @@ var app = require('http').createServer(webResponse),
     GameEngine = require('./gameengine.js').GameEngine,
     RequireCheck = require('./requirecheck.js').RequireCheck;
 
+
 const crypto = require('crypto');
     
 var rc = null,
     ge = null;
+
 
 //{endpoint: "https://dynamodb.us-west-1.amazonaws.com"}
 AWS.config.update({
@@ -16,12 +18,14 @@ AWS.config.update({
   endpoint: "https://dynamodb.us-east-1.amazonaws.com"
 });
 
+
 function init() {
 
     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
 
     rc = new RequireCheck();
     ge = new GameEngine();
+
     rc.onReady(onReady);
 
     // ----------------------------------------------------------

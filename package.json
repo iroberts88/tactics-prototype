@@ -5,9 +5,9 @@
   "dependencies": {
     "aws-sdk": "latest",
     "body-parser": "latest",
+    "dynamodb-marshaler": "^2.0.0",
     "ejs": "latest",
     "express": "latest",
-    "pixi-filters": "^2.6.0",
     "socket.io": "^2.0.4"
   },
   "scripts": {
