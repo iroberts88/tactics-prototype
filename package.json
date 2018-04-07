@@ -1,14 +1,13 @@
 {
-  "name": "Tactics-Prototype",
+  "name": "Tactics",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "aws-sdk": "latest",
-    "body-parser": "latest",
-    "dynamodb-marshaler": "^2.0.0",
     "ejs": "latest",
+    "aws-sdk": "latest",
     "express": "latest",
-    "socket.io": "^2.0.4"
+    "body-parser": "latest",
+    "socket.io": "latest"
   },
   "scripts": {
     "start": "node app.js"
