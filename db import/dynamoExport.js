@@ -1,7 +1,7 @@
 var fs = require('fs'),
     AWS = require("aws-sdk");
 
-var dbs = [ 'dungeon_buffs','dungeon_classes','dungeon_enemies','dungeon_items','dungeon_userdata','tactics_classes','tactics_items','tactics_maps','tactics_userdata','users','wisp_highScores','wisp_userdata','tactics_buffs'];
+var dbs = ['blaine_attacks','blaine_pkmn','blaine_userdata'];
 var pos = 0;
 var objects = {};
 var num = 0;
@@ -30,12 +30,7 @@ function next(){
                 var d = {};
                 d[dbName] = [];
                 for (var i = 0; i < data.Items.length;i++){
-                    var obj = {
-                        "PutRequest": {
-                            "Item": objToDynamoJSON(data.Items[i])
-                        }
-                    }
-                    d[dbName].push(obj);
+                    d[dbName].push(data.Items[i]);
                 }
                 objects[dbName] = d;
                 pos += 1;

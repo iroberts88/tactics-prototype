@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "description": "Damage based on max health",
+      "duration": 3,
+      "name": "Bleed",
+      "actionsOnTurn": [
+        {
+          "action": "alterHealthByMaxPercent",
+          "value": 5
+        }
+      ],
+      "buffid": "buff_bleed",
+      "tags": [
+        "detrimental"
+      ],
+      "instant": false
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "items": [
+    {
+      "value": 500,
+      "usable": false,
+      "itemid": "shield_shield",
+      "description": "A basic shield. Has a high capacity and recharges slowly",
+      "name": "Shield",
+      "weight": 3,
+      "eqData": {
+        "onFullRecharge": [],
+        "constant": [],
+        "delay": 3,
+        "recharge": 10,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": [],
+        "onTakeDamage": [],
+        "onDepleted": []
+      },
+      "type": "shield"
+    },
+    {
+      "value": 1200,
+      "onUse": [
+        {
+          "data": [
+            {
+              "name": "addBuff",
+              "buffData": {
+                "name": "Bleeding",
+                "description": "Bleeding 5% Max health for 3 turns",
+                "id": "buff_bleed"
+              }
+            }
+          ],
+          "name": "addOnHit"
+        },
+        {
+          "name": "setUsable",
+          "value": "false"
+        }
+      ],
+      "usable": true,
+      "classes": [
+        "Soldier"
+      ],
+      "onUseText": "Rev the chain blade. Next attack will cause the target to bleed for 5% health for 5 turns",
+      "itemid": "weapon_chainSword",
+      "description": "Sword with a motorized chain blade.",
+      "name": "Chain Sword",
+      "weight": 6,
+      "eqData": {
+        "damage": 240,
+        "range": 1,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": []
+      },
+      "type": "weapon"
+    },
+    {
+      "value": 1000,
+      "onEquipText": [
+        "<STR> + 1"
+      ],
+      "usable": false,
+      "itemid": "accessory_enhancer",
+      "description": "Increases the user's strength",
+      "name": "Enhancer",
+      "weight": 1,
+      "eqData": {
+        "onEquip": [
+          {
+            "name": "alterStat",
+            "value": 1,
+            "stat": "str"
+          }
+        ]
+      },
+      "type": "accessory"
+    },
+    {
+      "value": 100,
+      "onUse": [
+        {
+          "name": "alterHealth",
+          "value": 300
+        }
+      ],
+      "usable": true,
+      "maxItemPile": 99,
+      "itemid": "compound_healing",
+      "description": "Use to restore 300 health",
+      "name": "Healing Compound",
+      "weight": 1,
+      "type": "compound"
+    },
+    {
+      "value": 150,
+      "onUse": [
+        {
+          "name": "alterEnergy",
+          "value": 25
+        }
+      ],
+      "usable": true,
+      "maxItemPile": 99,
+      "itemid": "compound_vigor",
+      "description": "Use to restore 25 energy",
+      "name": "Vigor Compound",
+      "weight": 1,
+      "type": "compound"
+    },
+    {
+      "value": 300,
+      "usable": false,
+      "classes": "ALL",
+      "itemid": "weapon_combatKnife",
+      "description": "A knife",
+      "name": "Combat Knife",
+      "weight": 2,
+      "eqData": {
+        "damage": 210,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": []
+      },
+      "type": "weapon"
+    },
+    {
+      "value": 2000,
+      "usable": false,
+      "classes": [
+        "Soldier",
+        "Scout"
+      ],
+      "itemid": "weapon_powerAxe",
+      "description": "A powerful, heavy weapon.",
+      "name": "Power Axe",
+      "onHitText": "50% chance to break the target's shield",
+      "weight": 9,
+      "eqData": {
+        "damage": 300,
+        "onEquip": [],
+        "onHit": [
+          {
+            "name": "breakShield",
+            "chance": 50
+          }
+        ],
+        "onFire": []
+      },
+      "type": "weapon"
+    },
+    {
+      "value": 1000,
+      "onEquipText": [
+        "<MOVE> + 1"
+      ],
+      "usable": false,
+      "itemid": "accessory_battleBoots",
+      "description": "Increases movement of the user",
+      "name": "Battle Boots",
+      "weight": 1,
+      "eqData": {
+        "onEquip": [
+          {
+            "name": "alterStat",
+            "value": 1,
+            "stat": "mov"
+          }
+        ]
+      },
+      "type": "accessory"
+    },
+    {
+      "value": 1000,
+      "onEquipText": [
+        "<INT> + 1",
+        "<EXP> + 10%"
+      ],
+      "usable": false,
+      "itemid": "accessory_cerebralImplant",
+      "description": "Increases INT and EXP gain",
+      "name": "Cerebral Implant",
+      "weight": 1,
+      "eqData": {
+        "onEquip": [
+          {
+            "name": "alterStat",
+            "value": 1,
+            "stat": "int"
+          },
+          {
+            "name": "alterStat",
+            "value": 10,
+            "stat": "expMod"
+          }
+        ]
+      },
+      "type": "accessory"
+    },
+    {
+      "value": 1000,
+      "onEquipText": [
+        "<DEX> + 1"
+      ],
+      "usable": false,
+      "itemid": "accessory_focus",
+      "description": "Increases the user's focus",
+      "name": "Focus",
+      "weight": 1,
+      "eqData": {
+        "onEquip": [
+          {
+            "name": "alterStat",
+            "value": 1,
+            "stat": "dex"
+          }
+        ]
+      },
+      "type": "accessory"
+    },
+    {
+      "value": 800,
+      "usable": false,
+      "classes": "ALL",
+      "itemid": "gun_smg",
+      "description": "Fires in short auto-bursts",
+      "name": "SMG",
+      "weight": 5,
+      "eqData": {
+        "damage": 50,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": [
+          {
+            "name": "burstShot",
+            "value": 5
+          }
+        ],
+        "rangeMax": 4,
+        "rangeMin": 2
+      },
+      "type": "gun"
+    },
+    {
+      "value": 2000,
+      "usable": false,
+      "classes": [
+        "Soldier"
+      ],
+      "itemid": "weapon_rocketSledge",
+      "description": "A powerful, heavy weapon. ",
+      "name": "Rocket Sledge",
+      "weight": 14,
+      "eqData": {
+        "damage": 390,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": []
+      },
+      "type": "weapon"
+    },
+    {
+      "value": 300,
+      "usable": false,
+      "classes": "ALL",
+      "itemid": "gun_sidearm",
+      "description": "A simple, leightweight sidearm",
+      "name": "Sidearm Pistol",
+      "weight": 2,
+      "eqData": {
+        "damage": 210,
+        "onEquip": [],
+        "onHit": [],
+        "onFire": [],
+        "rangeMax": 4,
+        "rangeMin": 2
+      },
+      "type": "gun"
+    }
+  ]
+}

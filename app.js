@@ -36,45 +36,45 @@ function init() {
     rc.require('dbMaps','dbUsers','dbItems','dbBuffs','dbClasses');
 
     // ---- Load Maps ----
-    docClient.scan({TableName: 'tactics_maps'}, function(err, data) {
+    fs.readFile('./db/tactics_maps.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Loading maps... " + data.Items.length + ' found');
-            ge.loadMaps(data.Items);
-            rc.ready('dbMaps');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadMaps(obj.items);
+        rc.ready('dbMaps');
     });
     // ---- Load Items ----
-    docClient.scan({TableName: 'tactics_items'}, function(err, data) {
+    fs.readFile('./db/tactics_items.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Loading items... " + data.Items.length + ' found');
-            ge.loadItems(data.Items);
-            rc.ready('dbItems');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadItems(obj.items);
+        rc.ready('dbItems');
     });
     // ---- Load Buffs ----
-    docClient.scan({TableName: 'tactics_buffs'}, function(err, data) {
+    fs.readFile('./db/tactics_buffs.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Loading buffs... " + data.Items.length + ' found');
-            ge.loadBuffs(data.Items);
-            rc.ready('dbBuffs');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadBuffs(obj.items);
+        rc.ready('dbBuffs');
     });
 
     // ---- Load Classes ----
-    docClient.scan({TableName: 'tactics_classes'}, function(err, data) {
+    fs.readFile('./db/tactics_classes.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Loading classes... " + data.Items.length + ' found');
-            ge.loadClasses(data.Items);
-            rc.ready('dbClasses');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadClasses(obj.items);
+        rc.ready('dbClasses');
     });
 
     // ---- Load Userbase ----
