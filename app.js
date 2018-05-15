@@ -96,7 +96,40 @@ init();
 // ----------------------------------------------------------
 // Start Web Server
 // ----------------------------------------------------------
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3002;
+
+process.on('exit', (code) => {
+    console.log("Running exit code...")
+    console.log("Updating tactics_maps.json")
+    var s = ge.soloHighScores;
+    var c = ge.coopHighScores;
+    var v = ge.vsHighScores;
+    var st = ge.starsHighScores;
+    var data = {
+        "items": []
+    }
+    for (var i in ge.maps){
+        data.items.push(ge.maps[i]);
+    }
+    //synchronus file write to update high scores
+    fs.writeFileSync('./db/tactics_maps.json',JSON.stringify(data, null, 2), function(err){
+        if (err){
+            return console.log(err);
+        }
+    });
+});
+
+process.on('SIGINT', function () {
+    console.log('Ctrl-C...');
+    process.exit(2);
+});
+
+process.on('uncaughtException', function(e) {
+    console.log('Uncaught Exception...');
+    console.log(e.stack);
+    process.exit(99);
+});
+
 app.listen(port);
 
 function webResponse(req, res) {

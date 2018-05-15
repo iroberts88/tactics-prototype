@@ -379,24 +379,14 @@ Player.prototype.setupSocket = function() {
     this.socket.on('confirmMapSave', function (d) {
         try{
             if (d.c){
-                var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
-                var params = {
-                    TableName: 'tactics_maps',
-                    Key:{mapid: that.mapData.name},
-                    UpdateExpression: "set mapData = :m, sz1 = :s1, sz2 = :s2",
-                    ExpressionAttributeValues: {
-                        ':m': that.mapData.mapData,
-                        ':s1': that.mapData.sz1,
-                        ':s2': that.mapData.sz2
-                    }
+                that.gameEngine.mapids.push(that.mapData.name);
+                that.gameEngine.maps[that.mapData.name] = {
+                    'mapid': that.mapData.name,
+                    'mapData': that.mapData.mapData,
+                    'sz1': that.mapData.sz1,
+                    'sz2': that.mapData.sz2
                 }
-                docClient.update(params, function(err, data) {
-                    if (err) {
-                        console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
-                    } else {
-                        console.log("Map saved:", JSON.stringify(data, null, 2));
-                    }
-                });
+                that.gameEngine.queuePlayer(that,"mapSaved", {name:d.name});
             }else{
                 that.mapData = null;
             }
@@ -407,18 +397,6 @@ Player.prototype.setupSocket = function() {
 
     this.socket.on('deleteMap', function (d) {
         try{
-            var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
-            var params = {
-                TableName: 'tactics_maps',
-                Key:{mapid: d.name}
-            }
-            docClient.delete(params, function(err, data) {
-                if (err) {
-                    console.error("Unable to delete map. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Delete map succeeded:", JSON.stringify(data, null, 2));
-                }
-            });
             delete that.gameEngine.maps[d.name];
             for (var i = 0; i < that.gameEngine.mapids.length;i++){
                 if (d.name == that.gameEngine.mapids[i]){
@@ -432,49 +410,19 @@ Player.prototype.setupSocket = function() {
 
     this.socket.on('createMap', function (d) {
         try{
-            var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
-            var params = {
-                TableName: 'tactics_maps',
-                Key: {
-                    mapid: d.name
+            if (typeof that.gameEngine.maps[d.name] == 'undefined'){
+                that.gameEngine.mapids.push(d.name);
+                that.gameEngine.maps[d.name] = {
+                    'mapid': d.name,
+                    'mapData': d.mapData,
+                    'sz1': d.sz1,
+                    'sz2': d.sz2
                 }
+                that.gameEngine.queuePlayer(that,"mapSaved", {name:d.name});
+            }else{
+                that.gameEngine.queuePlayer(that,"confirmMapSave", {name:d.name});
+                that.mapData = d;
             }
-            docClient.get(params, function(err, data) {
-                if (err) {
-                    console.error("Unable to check for map. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    if (typeof data.Item == 'undefined'){
-                        var params2 = {
-                            TableName: 'tactics_maps',
-                            Item: {
-                                'mapid': d.name,
-                                'mapData': d.mapData,
-                                'sz1': d.sz1,
-                                'sz2': d.sz2
-                            }
-                        }
-                        docClient.put(params2, function(err, data2) {
-                            if (err) {
-                                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
-                            } else {
-                                console.log("Create map succeeded:", JSON.stringify(data2, null, 2));
-                                that.gameEngine.mapids.push(d.name);
-                                that.gameEngine.maps[d.name] = {
-                                    'mapid': d.name,
-                                    'mapData': d.mapData,
-                                    'sz1': d.sz1,
-                                    'sz2': d.sz2
-                                }
-                                that.gameEngine.queuePlayer(that,"mapSaved", {name:d.name});
-                            }
-                        });
-                    }else{
-                        that.gameEngine.queuePlayer(that,"confirmMapSave", {name:d.name});
-                        that.mapData = d;
-                    }
-                }
-            });
-            
         }catch(e){
             that.gameEngine.debug(that, {'id': 'createMapError', 'error': e.stack, dMapData: d});
         }
@@ -483,25 +431,17 @@ Player.prototype.setupSocket = function() {
     this.socket.on('editMap', function (d) {
         console.log(d);
         try{
-            var docClient = new AWS.DynamoDB.DocumentClient();
-            var params = {
-                TableName: 'tactics_maps',
-                Key: {
-                    mapid: d.name
-                }
+            if (typeof that.gameEngine.maps[d.name] != 'undefined'){
+                that.gameEngine.queuePlayer(that,"editMap",{found:true,
+                    name:d.name,
+                    mapData:that.gameEngine.maps[d.name].mapData,
+                    sz1: that.gameEngine.maps[d.name].sz1,
+                    sz2: that.gameEngine.maps[d.name].sz2
+                });
+            }else{
+                console.log('No map named ' + d.name);
+                that.gameEngine.queuePlayer(that,"editMap", {found: false});
             }
-            docClient.get(params, function(err, data) {
-                if (err) {
-                    console.error("Unable to find map. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    if (typeof data.Item != 'undefined'){
-                        that.gameEngine.queuePlayer(that,"editMap", {found:true,name:data.Item.name,mapData:data.Item.mapData,sz1: data.Item.sz1,sz2:data.Item.sz2});
-                    }else{
-                        console.log('No map named ' + d.name);
-                        that.gameEngine.queuePlayer(that,"editMap", {found: false});
-                    }
-                }
-            });
         }catch(e){
             that.gameEngine.debug(that, {'id': 'createMapError', 'error': e.stack, dMapData: d});
         }

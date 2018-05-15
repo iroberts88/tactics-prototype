@@ -206,7 +206,7 @@ GameEngine.prototype.newConnection = function(socket) {
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
-    self.queuePlayer(p,'connInfo', {mapNames: self.maps,id:p.id});
+    self.queuePlayer(p,'connInfo', {mapNames: self.mapids,id:p.id});
     self.addPlayer(p);
 }
 
