@@ -44,6 +44,7 @@ GameSession.prototype.init = function (data) {
         names.push(i);
     }
     var name = names[Math.floor(Math.random()*names.length)];
+    //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
 };

@@ -1529,24 +1529,25 @@
                                     }
                                     var a = this.map.getAxial(c);
                                     if (blocked1 && blocked2){
+                                        //Full cover / no LoS
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.alpha = 0.05;
+                                        s.tint = 0x5b5b5b;
                                         this.losToolData.spritesAltered.push(s);
                                     }else if ((!blocked1 && !blocked2) == false){
-                                        //partial cover
+                                        //partial cover / partial los
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.alpha = 0.5;
+                                        s.tint = 0xa0a0a0;
                                         this.losToolData.spritesAltered.push(s);
                                     }else{
-                                        //NO COVER
+                                        //NO COVER / Full los
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.alpha = 1.0;
+                                        s.tint = 0xffffff;
                                         this.losToolData.spritesAltered.push(s);
                                     }
                                 }

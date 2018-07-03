@@ -3,8 +3,11 @@
     Game = {
 
         map: null,
-        setNewSelectedNode: null,
+        setNewHoveredNode: null, //set a new hovered over node
         currentlyMousedOver: null,
+
+        selectedNode: null,
+        currentInfoPane: null,
 
         units: null,
         turnList: null,
@@ -119,6 +122,20 @@
         },
 
         initUI: function(){
+            var outlineFilterRed = new PIXI.filters.GlowFilter(25, 2, 1.5, 0xff9999, 0.5);
+            var filtersOn = function (e) {
+                Game.resetTint();
+                Game.units[e.currentTarget.unitID].sprite.filters = [outlineFilterRed];
+                var t = 1;
+                if (!(Game.map.currentRotation%2)){t = 2}
+                Game.setNewHoveredNode = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+                Game.currentlyMousedOver = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+            }
+
+            var filtersOff = function(e) {
+                Game.resetTint();
+                Game.units[e.currentTarget.unitID].sprite.filters = [];
+            }
             //initialize the units and every UI element
             for (var i in this.units){
                 var x = 0;
@@ -133,24 +150,21 @@
                 this.units[i].sprite.position.x = node[sp].position.x;
                 this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
                 this.map[cont].addChildAt(this.units[i].sprite,this.map[cont].getChildIndex(node[sp])+1);
+                this.units[i].sprite.interactive = true;
+                this.units[i].sprite.buttonMode = true;
+                this.units[i].infoPane = this.getUnitInfoPane(i);
                 var overFunc = function(e){
                     Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
                 }
-                //this.units[i].sprite.on('pointerdown',overFunc);
+                this.units[i].sprite.on('pointerdown',overFunc);
+                this.units[i].sprite.on('pointerover', filtersOn);
+                this.units[i].sprite.on('pointerout', filtersOff);
             }
 
             //UI Elements
 
             //Turn order
             this.turnListSprites = [];
-            var outlineFilterRed = new PIXI.filters.GlowFilter(25, 2, 1.5, 0xff9999, 0.5);
-            var filtersOn = function (e) {
-                 Game.units[e.currentTarget.unitID].sprite.filters = [outlineFilterRed];
-            }
-
-            var filtersOff = function(e) {
-                 Game.units[e.currentTarget.unitID].sprite.filters = [];
-            }
             for (var i = 0; i < this.turnList.length;i++){
                 //create box
                 var sprite = this.getTurnBox(this.turnList[i]);
@@ -234,8 +248,8 @@
             Graphics.app.renderer.render(scene,texture);
             var sprite = new PIXI.Sprite(texture);
             sprite.interactive = true;
+            sprite.buttonMode = true;
             sprite.unitID = id;
-
 
             var overFunc = function(e){
                 Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
@@ -245,11 +259,236 @@
             return sprite;
         },
 
-        selectNode: function(n){
-            if (typeof n == 'undefined'){n = 'none'}
+        getUnitInfoPane: function(id){
+            var h = 600;
+            var w = 400;
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0xFFFFFF;
+            var style  = AcornSetup.baseStyle;
+            gfx.lineStyle(3,color,1);
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            scene.addChild(gfx);
+            scene.addChild(cont);
 
-            console.log(n);
+            //draw outline
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
 
+            var unit = Game.units[id];
+            //NAME
+            var nameText = new PIXI.Text(unit.name, style);
+            nameText.anchor.x = 0.5;
+            nameText.style.fill = Graphics.pallette.color1;
+            while(nameText.width > w-100){
+                nameText.style.fontSize = nameText.style.fontSize*0.9;
+            }
+            nameText.position.x = w*0.5;
+            nameText.position.y = 5;
+            cont.addChild(nameText);
+
+            //LEVEL AND CLASS
+            var n = 'Level ' + unit.level + ' ' + unit.classInfo.currentClass;
+            if (typeof unit.classInfo.baseClass != 'undefined'){
+                n += ' (' + unit.classInfo.baseClass + ')';
+            }
+            var lvlClassText = new PIXI.Text(n, style);
+            lvlClassText.anchor.x = 0.5;
+            lvlClassText.style.fill = Graphics.pallette.color1;
+            while(lvlClassText.width > w-100){
+                lvlClassText.style.fontSize = lvlClassText.style.fontSize*0.9;
+            }
+            lvlClassText.position.x = w*0.5;
+            lvlClassText.position.y = 10 + nameText.height;
+            cont.addChild(lvlClassText);
+
+            //HEALTH, ENERGY , SHIELDS
+            var barHeight = 30;
+            var hY = lvlClassText.position.y + lvlClassText.height + 50;
+            var eY = hY + barHeight + 5;
+            var sY = eY + barHeight + 5;
+            gfx.lineStyle(3,0xFF0000,0);
+            gfx.beginFill(0xFF0000,0.5);
+            var percentage = unit.currentHealth/unit.maximumHealth;
+            gfx.drawRect(10,hY-barHeight/2,w-20*percentage,barHeight);
+            gfx.endFill();
+            gfx.lineStyle(3,0xFFFF00,0);
+            gfx.beginFill(0xFFFF00,0.5);
+            var percentage = unit.currentEnergy/unit.maximumEnergy;
+            gfx.drawRect(10,eY-barHeight/2,w-20*percentage,barHeight);
+            gfx.endFill();
+            gfx.lineStyle(3,0x00D0FF,0);
+            gfx.beginFill(0x00D0FF,0.5);
+            var percentage = unit.currentShields/unit.maximumShields;
+            gfx.drawRect(10,sY-barHeight/2,w-20*percentage,barHeight);
+            gfx.endFill();
+            gfx.lineStyle(1,0xFFFFFF,1);
+            gfx.drawRect(10,hY-barHeight/2,w-20,barHeight);
+            gfx.drawRect(10,eY-barHeight/2,w-20,barHeight);
+            gfx.drawRect(10,sY-barHeight/2,w-20,barHeight);
+
+            var hpText = new PIXI.Text('Health: ' + unit.currentHealth + '/' + unit.maximumHealth, style);
+            hpText.anchor.x = 0.5;
+            hpText.anchor.y = 0.5;
+            hpText.style.fill = Graphics.pallette.color1;
+            while(hpText.width > w/2){
+                hpText.style.fontSize = hpText.style.fontSize*0.9;
+            }
+            hpText.position.x = w*0.5;
+            hpText.position.y = hY;
+            cont.addChild(hpText);
+            var enText = new PIXI.Text('Energy: ' + unit.currentEnergy + '/' + unit.maximumEnergy, style);
+            enText.anchor.x = 0.5;
+            enText.anchor.y = 0.5;
+            enText.style.fill = Graphics.pallette.color1;
+            while(enText.width > w/2){
+                enText.style.fontSize = enText.style.fontSize*0.9;
+            }
+            enText.position.x = w*0.5;
+            enText.position.y = eY;
+            cont.addChild(enText);
+            var shText = new PIXI.Text('Shields: ' + unit.currentShields + '/' + unit.maximumShields, style);
+            shText.anchor.x = 0.5;
+            shText.anchor.y = 0.5;
+            shText.style.fill = Graphics.pallette.color1;
+            while(shText.width > w/2){
+                shText.style.fontSize = shText.style.fontSize*0.9;
+            }
+            shText.position.x = w*0.5;
+            shText.position.y = sY;
+            cont.addChild(shText);
+
+            //MOVE
+            var n = (typeof unit.move == 'undefined') ? 'MOV: ???' : 'MOV: ' + unit.move;
+            var movText = new PIXI.Text(n, style);
+            movText.style.fill = Graphics.pallette.color1;
+            while(movText.width > w/3*5){
+                movText.style.fontSize = movText.style.fontSize*0.9;
+            }
+            movText.position.x = 10;
+            movText.position.y = sY + barHeight/2 + 20;
+            cont.addChild(movText);
+
+            //JUMP
+            var n = (typeof unit.jump == 'undefined') ? 'JMP: ???' : 'JMP: ' + unit.jump;
+            var jmpText = new PIXI.Text(n, style);
+            jmpText.style.fill = Graphics.pallette.color1;
+            while(jmpText.width > w/3*5){
+                jmpText.style.fontSize = jmpText.style.fontSize*0.9;
+            }
+            jmpText.position.x = 10;
+            jmpText.position.y = movText.position.y + movText.height;
+            cont.addChild(jmpText);
+
+            //SPEED
+            var n = (typeof unit.speed == 'undefined') ? 'SPD: ???' : 'SPD: ' + unit.speed;
+            var spdText = new PIXI.Text(n, style);
+            spdText.style.fill = Graphics.pallette.color1;
+            while(spdText.width > w/3-5){
+                spdText.style.fontSize = spdText.style.fontSize*0.9;
+            }
+            spdText.position.x = 10;
+            spdText.position.y = jmpText.position.y + jmpText.height;
+            cont.addChild(spdText);
+
+            //STRENGTH
+            var n = (typeof unit.strength == 'undefined') ? 'STR: ???' : 'STR: ' + unit.strength;
+            var strText = new PIXI.Text(n, style);
+            strText.anchor.x = 0.5;
+            strText.style.fill = Graphics.pallette.color1;
+            while(strText.width > w/3-5){
+                strText.style.fontSize = strText.style.fontSize*0.9;
+            }
+            strText.position.x = w/2;
+            strText.position.y = sY + barHeight/2 + 20;
+            cont.addChild(strText);
+
+            //ENDURANCE
+            var n = (typeof unit.endurance == 'undefined') ? 'END: ???' : 'END: ' + unit.endurance;
+            var endText = new PIXI.Text(n, style);
+            endText.anchor.x = 0.5;
+            endText.style.fill = Graphics.pallette.color1;
+            while(endText.width > w/3-5){
+                endText.style.fontSize = endText.style.fontSize*0.9;
+            }
+            endText.position.x = w/2;
+            endText.position.y = strText.position.y + strText.height;
+            cont.addChild(endText);
+
+            //DEXTERITY
+            var n = (typeof unit.dexterity == 'undefined') ? 'DEX: ???' : 'DEX: ' + unit.dexterity;
+            var dexText = new PIXI.Text(n, style);
+            dexText.anchor.x = 0.5;
+            dexText.style.fill = Graphics.pallette.color1;
+            while(dexText.width > w/3-5){
+                dexText.style.fontSize = dexText.style.fontSize*0.9;
+            }
+            dexText.position.x = w/2;
+            dexText.position.y = endText.position.y + endText.height;
+            cont.addChild(dexText);
+
+            //AGILITY
+            var n = (typeof unit.agility == 'undefined') ? 'AGI: ???' : 'AGI: ' + unit.agility;
+            var agiText = new PIXI.Text(n, style);
+            agiText.anchor.x = 1;
+            agiText.style.fill = Graphics.pallette.color1;
+            while(agiText.width > w/3*5){
+                agiText.style.fontSize = agiText.style.fontSize*0.9;
+            }
+            agiText.position.x = w-10;
+            agiText.position.y = sY + barHeight/2 + 20;
+            cont.addChild(agiText);
+
+            //INTELLIGENCE
+            var n = (typeof unit.intelligence == 'undefined') ? 'INT: ???' : 'INT: ' + unit.intelligence;
+            var intText = new PIXI.Text(n, style);
+            intText.anchor.x = 1;
+            intText.style.fill = Graphics.pallette.color1;
+            while(intText.width > w/3*5){
+                intText.style.fontSize = intText.style.fontSize*0.9;
+            }
+            intText.position.x = w-10;
+            intText.position.y = agiText.position.y + agiText.height;
+            cont.addChild(intText);
+
+            //WILLPOWER
+            var n = (typeof unit.willpower == 'undefined') ? 'WIL: ???' : 'WIL: ' + unit.willpower;
+            var wilText = new PIXI.Text(n, style);
+            wilText.anchor.x = 1;
+            wilText.style.fill = Graphics.pallette.color1;
+            while(wilText.width > w/3*5){
+                wilText.style.fontSize = wilText.style.fontSize*0.9;
+            }
+            wilText.position.x = w-10;
+            wilText.position.y = intText.position.y + intText.height;
+            cont.addChild(wilText);
+
+            //CHARISMA
+            var n = (typeof unit.charisma == 'undefined') ? 'CHA: ???' : 'CHA: ' + unit.charisma;
+            var chaText = new PIXI.Text(n, style);
+            chaText.anchor.x = 0.5;
+            chaText.style.fill = Graphics.pallette.color1;
+            while(chaText.width > w/3*5){
+                chaText.style.fontSize = chaText.style.fontSize*0.9;
+            }
+            chaText.position.x = w/2;
+            chaText.position.y = dexText.position.y + dexText.height;
+            cont.addChild(chaText);
+
+            //create and render the texture and sprite
+            var texture = PIXI.RenderTexture.create(w,h);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(scene,texture);
+            var sprite = new PIXI.Sprite(texture);
+            sprite.unitID = id;
+
+            return sprite;
         },
 
         drawBG: function(){
@@ -287,23 +526,9 @@
 
                     if (this.updateUnitsBool || this.map.changedZoom){
                         this.updateUnits();
-                        this.setTurnArrow();
                     }
-                    if (this.setNewSelectedNode){
-                        this.selectedSprite = this.setNewSelectedNode;
-                        var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                        var a = this.map.getAxial(cubeNode);
-                        var t = 1;
-                        if (!(this.map.currentRotation%2)){t = 2}
-                        var s = a['sprite' + t];
-                        s.tint = 0x999999;
-                        //set node info text
-                        this.nodeText.visible = true;
-                        this.nodeInfo.visible = true;
-                        this.nodeInfo.text = 'Height: ' + a.h + '    Type: ' + a.tile;
-                        this.nodeText.position.x = this.nodeInfo.position.x - this.nodeInfo.width/2;
-                        this.nodeText.position.y = this.nodeInfo.position.y - this.nodeInfo.height - 25;
-                        this.setNewSelectedNode = 0;
+                    if (this.setNewHoveredNode && this.selectedNode == null){
+                        this.setHoveredNode();
                     }
                 }catch(e){
                     console.log(e)
@@ -318,6 +543,59 @@
                     return;
                 }
             }
+        },
+
+        setHoveredNode: function(){
+            Game.resetTint();
+            this.selectedSprite = this.setNewHoveredNode;
+            this.setNodeText(this.selectedSprite);
+            this.setNewHoveredNode = 0;
+        },
+
+        resetTint: function(){
+            if (this.selectedNode != null){return;}
+            if (this.selectedSprite){this.selectedSprite.tint = 0xFFFFFF;}
+            if (this.currentInfoPane != null){
+                Graphics.uiContainer.removeChild(this.currentInfoPane);
+                this.currentInfoPane = null;
+            }
+            this.nodeText.visible = false;
+            this.nodeInfo.visible = false;
+        },
+
+        setNodeText: function(node){
+            var cubeNode = this.map.cubeMap[node.cubeCoords.x][node.cubeCoords.y][node.cubeCoords.z];
+            var a = this.map.getAxial(cubeNode);
+            var t = 1;
+            if (!(this.map.currentRotation%2)){t = 2}
+            var s = a['sprite' + t];
+            s.tint = 0x999999;
+            //set node info text
+            this.nodeText.visible = true;
+            this.nodeInfo.visible = true;
+            this.nodeInfo.text = 'Height: ' + a.h + '    Type: ' + a.tile;
+            this.nodeText.position.x = this.nodeInfo.position.x - this.nodeInfo.width/2;
+            this.nodeText.position.y = this.nodeInfo.position.y - this.nodeInfo.height - 25;
+            //find units, set unit text
+            if (this.currentInfoPane != null){
+                Graphics.uiContainer.removeChild(this.currentInfoPane);
+                this.currentInfoPane = null;
+            }
+            if (a.unit == null){return;}
+            console.log('set unit to: ');
+            console.log(a.unit);
+            a.unit.infoPane.position.x = Graphics.width - 10 - a.unit.infoPane.width;
+            a.unit.infoPane.position.y = this.nodeText.position.y - 50 - a.unit.infoPane.height;
+            Graphics.uiContainer.addChild(a.unit.infoPane);
+            this.currentInfoPane = a.unit.infoPane;
+
+        },
+
+        selectNode: function(n){
+            if (typeof n == 'undefined'){n = 'none'}
+
+            console.log(n);
+
         },
 
         updateUnits: function(){

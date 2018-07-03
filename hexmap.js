@@ -94,7 +94,9 @@ HexMap.prototype.getCubeNeighbor = function(cubeNode,direction){
     var d = this.cubeDirections[direction];
     try{
         return this.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
-    }catch(e){}
+    }catch(e){
+        console.log(e);
+    }
     return null;
 }
 //finds the diagonal neighbor of a cube node in <dir> direction

@@ -61,12 +61,14 @@
         this.usedAbilitySlots = 0;
 
         this.turnSprite = null;
+        this.infoPane = null;
     };
 
     Unit.prototype.init = function(data) {
         //Set up all stats and attributes
         this.maximumHealth = data.maximumHealth;
         this.maximumEnergy = data.maximumEnergy;
+        this.maximumShields = data.maximumShields;
         //shields stay at null until a shield is equipped?
 
         this.full = data.full;

@@ -540,18 +540,21 @@
             sprite.on('pointerupoutside', function onClick(e){
             });
             sprite.on('pointerover', function onMove(e){
-                Game.setNewSelectedNode = sprite;
+                Game.resetTint();
+                Game.setNewHoveredNode = sprite;
                 Game.currentlyMousedOver = sprite;
             }); 
             sprite.on('pointerout', function onMove(e){
-                var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
-                var a = Game.map.getAxial(cubeNode);
-                var t = 1;
-                if (!(Game.map.currentRotation%2)){t = 2}
-                var s = a['sprite' + t];
-                s.tint = 0xFFFFFF;
-                Game.nodeInfo.visible = false;
-                Game.nodeText.visible = false;
+                if (Game.selectedNode == null){
+                    var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
+                    var a = Game.map.getAxial(cubeNode);
+                    var t = 1;
+                    if (!(Game.map.currentRotation%2)){t = 2}
+                    var s = a['sprite' + t];
+                    s.tint = 0xFFFFFF;
+                    Game.nodeInfo.visible = false;
+                    Game.nodeText.visible = false;
+                }
             });
         }
     }
@@ -841,15 +844,15 @@
     }
     Map.prototype.move = function(x,y){
 
-        Graphics.worldContainer.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
-        Graphics.worldContainer.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
+        Graphics.worldContainer.position.x = Math.max(-Graphics.width/2,Math.min(Graphics.worldContainer.position.x+x,Graphics.width/2));
+        Graphics.worldContainer.position.y = Math.max(-Graphics.height/2,Math.min(Graphics.worldContainer.position.y+y,Graphics.height/2));
 
-        /*this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
-        this.container2.position.x = this.container1.position.x;
-        this.container1.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
-        this.container2.position.y = this.container1.position.y;*/
-        Graphics.worldPrimitives.position.x = this.container1.position.x;
-        Graphics.worldPrimitives.position.y = this.container1.position.y;
+        //this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
+        //this.container2.position.x = this.container1.position.x;
+        //this.container1.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
+        //this.container2.position.y = this.container1.position.y;
+        //Graphics.worldPrimitives.position.x = Graphics.worldContainer.position.x;
+        //Graphics.worldPrimitives.position.y = Graphics.worldContainer.position.y;
     }
     Map.prototype.update = function(deltaTime){
     	if (this.rotateData){
