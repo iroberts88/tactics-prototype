@@ -62,6 +62,8 @@
 
         this.turnSprite = null;
         this.infoPane = null;
+
+        this.visible = null;
     };
 
     Unit.prototype.init = function(data) {
@@ -72,6 +74,7 @@
         //shields stay at null until a shield is equipped?
 
         this.full = data.full;
+        this.visible = (typeof data.visible == 'undefined') ? true : data.visible;
         this.direction = data.direction;
         this.currentNode = data.currentNode;
         this.currentHealth = data.health;

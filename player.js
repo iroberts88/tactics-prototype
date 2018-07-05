@@ -26,6 +26,8 @@ var Player = function(){
     //game variables
     this.identifiedUnits = {};
     this.myUnits = {}
+
+    this.visibleNodes = {};
 };
 
 Player.prototype.init = function (data) {
@@ -53,6 +55,104 @@ Player.prototype.getUnit = function(id){
 Player.prototype.tick = function(deltaTime){
    
 };
+
+Player.prototype.getLineOfSight = function(map){
+            console.log('getting LOS...')
+    for (var i in map.cubeMap){
+        for (var j in map.cubeMap[i]){
+            for (var k in map.cubeMap[i][j]){
+                //set node to 
+                this.getLosOfNode(map,map.cubeMap[i][j][k]);
+            }
+        }
+    }
+};
+
+Player.prototype.getLosOfNode = function(map,node){
+    var aNode = map.getAxial(node);
+    var aH = aNode.h;
+    var startingHeight = 3;
+    if (aNode.unit != null){
+        // if there is a unit on the node, add unit height
+    }
+    aH += startingHeight;
+    for (var u in this.myUnits){
+        var unit = this.gameSession.allUnits[this.myUnits[u]];
+        if (unit.owner != this){continue;}
+        var c = map.getCube(unit.currentNode)
+        var cPos = {
+            x: c.x + 1e-6,
+            y: c.y + 1e-6,
+            z: c.z + -2e-6,
+        }
+        var cNeg = {
+            x: c.x + -1e-6,
+            y: c.y + -1e-6,
+            z: c.z + 2e-6,
+        }
+        var r1 = map.cubeLineDraw(node,cPos);
+        var r2 = map.cubeLineDraw(node,cNeg);
+        var blocked1 = false;
+        var blocked2 = false;
+        var highestAngle = 0;
+        for (var j = 1; j < r1.length;j++){
+            var a = map.getAxial(r1[j]);
+            var h = (j==(r1.length-1)) ? (a.h+3) : a.h; //TODO actual unit height?
+            var angle = 0;
+            if (h > aH){
+                angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+            }else if (h < aH){
+                angle = (180/Math.PI)*Math.atan(j/(aH-h));
+            }else{
+                angle = 90;
+            }
+            if (highestAngle < angle){
+                highestAngle = angle;
+                blocked1 = false;
+            }else{
+                if (angle < highestAngle){
+                    blocked1 = true;
+                }else{
+                    blocked1 = false;
+                }
+            }
+        }
+        highestAngle = 0;
+        for (var j = 1; j < r2.length;j++){
+            var a = map.getAxial(r2[j]);
+            var h = (j==(r2.length-1)) ? (a.h+3): a.h;//TODO actual unit height?
+            var angle = 0;
+            if (h > aH){
+                angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+            }else if (h < aH){
+                angle = (180/Math.PI)*Math.atan(j/(aH-h));
+            }else{
+                angle = 90;
+            }
+            if (highestAngle < angle){
+                highestAngle = angle;
+                blocked2 = false;
+            }else{
+                if (angle < highestAngle){
+                    blocked2 = true;
+                }else{
+                    blocked2 = false;
+                }
+            }
+        }
+        if (blocked1 && blocked2){
+            //NO LOS
+            this.visibleNodes[aNode.nodeid] = false;
+        }else if ((!blocked1 && !blocked2) == false){
+            //PARTIAL LOS
+            this.visibleNodes[aNode.nodeid] = true;
+        }else{
+            this.visibleNodes[aNode.nodeid] = true;
+            break;
+        }
+    }
+};
+
 
 Player.prototype.onDisconnect = function(callback) {
     this.onDisconnectHandler = callback;

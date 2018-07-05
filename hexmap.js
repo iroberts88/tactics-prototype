@@ -367,7 +367,7 @@ HexMap.prototype.getAxialNode = function(q,r){
         h:0, //height value
         tile: 'base', //tile type
         deleted: false, //the node is deleted from the map and not visible
-        player: null //use when a player is on the node
+        unit: null //use when a player is on the node
     }
 }
 

@@ -4,6 +4,7 @@
 
         map: null,
         setNewHoveredNode: null, //set a new hovered over node
+        setNewHoveredUnit: null, //set a new hovered over unit
         currentlyMousedOver: null,
 
         selectedNode: null,
@@ -128,8 +129,12 @@
                 Game.units[e.currentTarget.unitID].sprite.filters = [outlineFilterRed];
                 var t = 1;
                 if (!(Game.map.currentRotation%2)){t = 2}
-                Game.setNewHoveredNode = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
-                Game.currentlyMousedOver = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+                if (Game.units[e.currentTarget.unitID].currentNode){
+                    Game.setNewHoveredNode = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+                    Game.currentlyMousedOver = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+                }else{
+                    Game.setNewHoveredUnit = Game.units[e.currentTarget.unitID];
+                }
             }
 
             var filtersOff = function(e) {
@@ -140,25 +145,33 @@
             for (var i in this.units){
                 var x = 0;
                 var y = 0;
-                var node = this.map.axialMap[this.units[i].currentNode.q][this.units[i].currentNode.r];
-                this.units[i].setCurrentNode(this.units[i].currentNode.q,this.units[i].currentNode.r,this.map);
-                node.unit = this.units[i];
                 var t = 1;
                 if (!(this.map.currentRotation%2)){t = 2}
                 var cont = 'container' + t;
                 var sp = 'sprite' + t;
-                this.units[i].sprite.position.x = node[sp].position.x;
-                this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
-                this.map[cont].addChildAt(this.units[i].sprite,this.map[cont].getChildIndex(node[sp])+1);
+                if (this.units[i].visible){
+                    //SET CURRENT NODE
+                    var node = this.map.axialMap[this.units[i].currentNode.q][this.units[i].currentNode.r];
+                    this.units[i].setCurrentNode(this.units[i].currentNode.q,this.units[i].currentNode.r,this.map);
+                    node.unit = this.units[i];
+                    this.units[i].sprite.position.x = node[sp].position.x;
+                    this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                    this.map[cont].addChildAt(this.units[i].sprite,this.map[cont].getChildIndex(node[sp])+1);
+                }
                 this.units[i].sprite.interactive = true;
                 this.units[i].sprite.buttonMode = true;
                 this.units[i].infoPane = this.getUnitInfoPane(i);
                 var overFunc = function(e){
-                    Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
+                    if (Game.units[e.currentTarget.unitID].currentNode){
+                        Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
+                    }
                 }
                 this.units[i].sprite.on('pointerdown',overFunc);
                 this.units[i].sprite.on('pointerover', filtersOn);
                 this.units[i].sprite.on('pointerout', filtersOff);
+                if (!this.units[i].visible){
+                    this.units[i].sprite.visible = false;
+                }
             }
 
             //UI Elements
@@ -252,7 +265,9 @@
             sprite.unitID = id;
 
             var overFunc = function(e){
-                Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
+                if (Game.units[e.currentTarget.unitID].currentNode){
+                    Game.selectNode(Game.units[e.currentTarget.unitID].currentNode);
+                }
             }
             sprite.on('pointerdown',overFunc);
 
@@ -529,6 +544,8 @@
                     }
                     if (this.setNewHoveredNode && this.selectedNode == null){
                         this.setHoveredNode();
+                    }else if(this.setNewHoveredUnit && this.selectedNode == null){
+                        this.setHoveredUnit();
                     }
                 }catch(e){
                     console.log(e)
@@ -537,11 +554,13 @@
                 this.updateUnitsBool = true;
             }
             for (var i in this.units){
-                if (!this.units[i].sprite.parent.parent){
-                    //units havent updated properly...
-                    this.updateUnitsBool = true;
-                    return;
-                }
+                try{
+                    if (!this.units[i].sprite.parent.parent){
+                        //units havent updated properly...
+                        this.updateUnitsBool = true;
+                        return;
+                    }
+                }catch(e){}
             }
         },
 
@@ -551,10 +570,18 @@
             this.setNodeText(this.selectedSprite);
             this.setNewHoveredNode = 0;
         },
-
+        setHoveredUnit: function(){
+            Game.resetTint();
+            this.setNewHoveredUnit.infoPane.position.x = Graphics.width - 10 - this.setNewHoveredUnit.infoPane.width;
+            this.setNewHoveredUnit.infoPane.position.y = this.nodeText.position.y - 50 - this.setNewHoveredUnit.infoPane.height;
+            Graphics.uiContainer.addChild(this.setNewHoveredUnit.infoPane);
+            this.currentInfoPane = this.setNewHoveredUnit.infoPane;
+            this.setNewHoveredNode = 0;
+        },
+          
         resetTint: function(){
             if (this.selectedNode != null){return;}
-            if (this.selectedSprite){this.selectedSprite.tint = 0xFFFFFF;}
+            if (this.selectedSprite){this.selectedSprite.filters = [];}
             if (this.currentInfoPane != null){
                 Graphics.uiContainer.removeChild(this.currentInfoPane);
                 this.currentInfoPane = null;
@@ -569,11 +596,17 @@
             var t = 1;
             if (!(this.map.currentRotation%2)){t = 2}
             var s = a['sprite' + t];
-            s.tint = 0x999999;
+            s.filters = [Game.map.outlineFilter];
             //set node info text
+            var t = 'Full LOS';
+            if (s.tint == this.map.partialTint){
+                t = 'Partial LOS'
+            }else if (s.tint == this.map.noLosTint){
+                t = 'NO LOS';
+            }
             this.nodeText.visible = true;
             this.nodeInfo.visible = true;
-            this.nodeInfo.text = 'Height: ' + a.h + '    Type: ' + a.tile;
+            this.nodeInfo.text = t + '     Height: ' + a.h + '    Type: ' + a.tile;
             this.nodeText.position.x = this.nodeInfo.position.x - this.nodeInfo.width/2;
             this.nodeText.position.y = this.nodeInfo.position.y - this.nodeInfo.height - 25;
             //find units, set unit text
@@ -602,6 +635,9 @@
             for (var i in this.units){
                 var sprite = this.units[i].sprite;
                 var unit = this.units[i];
+                if (!unit.visible){
+                    continue;
+                }
                 var frame = sprite.currentFrame;
                 //set correct facing
                 var dir = '';
@@ -627,7 +663,106 @@
                 this.map.changedZoom = false;
             }
         },
+        getLineOfSight: function(){
+            for (var i in this.map.cubeMap){
+                for (var j in this.map.cubeMap[i]){
+                    for (var k in this.map.cubeMap[i][j]){
+                        //set node to 
+                        this.getLosOfNode(this.map.cubeMap[i][j][k]);
+                    }
+                }
+            }
+        },
+        getLosOfNode: function(node){
+            var aNode = this.map.getAxial(node);
+            aNode.sprite1.tint = this.map.noLosTint;
+            aNode.sprite2.tint = this.map.noLosTint;
+            var aH = aNode.h;
+            var startingHeight = 3;
+            if (aNode.unit != null){
+                // if there is a unit on the node, add unit height
+            }
+            aH += startingHeight;
+            for (var u in this.units){
+                if (this.units[u].owner != playerID){continue;}
+                var c = this.map.getCube(this.units[u].currentNode)
+                var cPos = {
+                    x: c.x + 1e-6,
+                    y: c.y + 1e-6,
+                    z: c.z + -2e-6,
+                }
+                var cNeg = {
+                    x: c.x + -1e-6,
+                    y: c.y + -1e-6,
+                    z: c.z + 2e-6,
+                }
+                var r1 = this.map.cubeLineDraw(node,cPos);
+                var r2 = this.map.cubeLineDraw(node,cNeg);
+                var blocked1 = false;
+                var blocked2 = false;
+                var highestAngle = 0;
+                for (var j = 1; j < r1.length;j++){
+                    var a = this.map.getAxial(r1[j]);
+                    var h = (j==(r1.length-1)) ? (a.h+3) : a.h; //TODO actual unit height?
+                    var angle = 0;
+                    if (h > aH){
+                        angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+                    }else if (h < aH){
+                        angle = (180/Math.PI)*Math.atan(j/(aH-h));
+                    }else{
+                        angle = 90;
+                    }
+                    if (highestAngle < angle){
+                        highestAngle = angle;
+                        blocked1 = false;
+                    }else{
+                        if (angle < highestAngle){
+                            blocked1 = true;
+                        }else{
+                            blocked1 = false;
+                        }
+                    }
+                }
+                highestAngle = 0;
+                for (var j = 1; j < r2.length;j++){
+                    var a = this.map.getAxial(r2[j]);
+                    var h = (j==(r2.length-1)) ? (a.h+3): a.h;//TODO actual unit height?
+                    var angle = 0;
+                    if (h > aH){
+                        angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+                    }else if (h < aH){
+                        angle = (180/Math.PI)*Math.atan(j/(aH-h));
+                    }else{
+                        angle = 90;
+                    }
+                    if (highestAngle < angle){
+                        highestAngle = angle;
+                        blocked2 = false;
+                    }else{
+                        if (angle < highestAngle){
+                            blocked2 = true;
+                        }else{
+                            blocked2 = false;
+                        }
+                    }
+                }
+                aNode.sprite1.tint = this.map.noLosTint;
+                aNode.sprite2.tint = this.map.noLosTint;
 
+                if (blocked1 && blocked2){
+                    //NO LOS
+                }else if ((!blocked1 && !blocked2) == false){
+                    //PARTIAL LOS
+                    aNode.sprite1.tint = this.map.partialTint;
+                    aNode.sprite2.tint = this.map.partialTint;
+                }else{
+                    //FULL LOS AND BREAK
+                    aNode.sprite1.tint = 0xFFFFFF;
+                    aNode.sprite2.tint = 0xFFFFFF;
+                    break;
+                }
+            }
+        },
         resetColors: function(){
         }
     }

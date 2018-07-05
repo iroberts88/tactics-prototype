@@ -47,9 +47,10 @@
                     var unit = new Unit();
                     unit.init(data.otherUnits[i]);
                     Game.units[unit.id] = unit;
+                    unit.sprite.tint = 0xfcfcfc;
                 }
                 Game.initUI(); 
-                
+                Game.getLineOfSight();
             });
             Acorn.Net.on('editMap', function (data) {
                 console.log(data);

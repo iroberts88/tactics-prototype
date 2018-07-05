@@ -1533,14 +1533,14 @@
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0x5b5b5b;
+                                        s.tint = this.map.noLosTint;
                                         this.losToolData.spritesAltered.push(s);
                                     }else if ((!blocked1 && !blocked2) == false){
                                         //partial cover / partial los
                                         var t = 1;
                                         if (!(this.map.currentRotation%2)){t = 2}
                                         var s = a['sprite' + t];
-                                        s.tint = 0xa0a0a0;
+                                        s.tint = this.map.partialTint;
                                         this.losToolData.spritesAltered.push(s);
                                     }else{
                                         //NO COVER / Full los

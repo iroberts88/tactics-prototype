@@ -3,6 +3,8 @@
 
     var Map = function(){
 
+        this.partialTint = 0x5b5b5b;
+        this.noLosTint = 0x2b2b2b;
         this.TILE_SIZE = 17; //edge length?
         this.TILE_HEIGHT = 11;
         this.MAX_NODE_HEIGHT = 25;
@@ -54,6 +56,8 @@
         this.maxSize = 0;
         this.startZone1 = [];
         this.startZone2 = [];
+
+        this.outlineFilter = new PIXI.filters.OutlineFilter(2, 0xff9999);
     }
 
     Map.prototype.init = function(data){
@@ -441,7 +445,7 @@
                 arr[i].scale.y = this.YSCALE_SETTINGS[this.currentYScaleSetting]*this.ZOOM_SETTINGS[this.currentZoomSetting];
                 arr[i].position.x = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].x;
                 arr[i].position.y = arr[i].rotatedPositions[this.currentRotation][this.currentZoomSetting][this.currentYScaleSetting].y;
-                if (resetTint){
+                if (resetTint && window.currentMapState != 'game'){
                     arr[i].tint = 0xFFFFFF;
                 }
             }
@@ -520,7 +524,6 @@
             });
         }else if (window.currentMapState == 'game'){
             //events for the actual game state
-            //var outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
             //var outlineFilterRed = new PIXI.filters.GlowFilter(15, 2, 1, 0xff9999, 0.5);
             var filtersOn = function () {
                 this.filters = [outlineFilterRed]
@@ -551,7 +554,8 @@
                     var t = 1;
                     if (!(Game.map.currentRotation%2)){t = 2}
                     var s = a['sprite' + t];
-                    s.tint = 0xFFFFFF;
+                    //s.tint = 0xFFFFFF;
+                    s.filters = [];//Game.map.outlineFilter;
                     Game.nodeInfo.visible = false;
                     Game.nodeText.visible = false;
                 }

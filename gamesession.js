@@ -86,6 +86,7 @@ GameSession.prototype.tickPreGame = function() {
         //send down unit info
         for (var p in this.players){
             var player = this.players[p];
+            player.getLineOfSight(this.map);
             var myUnits = [];
             var otherUnits = [];
             var turnList = [];
@@ -94,7 +95,14 @@ GameSession.prototype.tickPreGame = function() {
                 if (player.myUnits[unit.id]){
                     myUnits.push(unit.getClientData());
                 }else{
-                    otherUnits.push(unit.getLessClientData());
+                    var data = unit.getLessClientData();
+                    if (!player.visibleNodes[unit.currentNode.nodeid]){
+                        data.visible = false;
+                        data.currentNode = null;
+                    }else{
+                        data.visible = true;
+                    }
+                    otherUnits.push(data);
                 }
             }
             for (var i = 0; i < this.turnOrder.length;i++){
@@ -162,10 +170,11 @@ GameSession.prototype.gameStart = function(){
                 node = this.map['startZone' + sz][Math.floor(Math.random()*this.map['startZone' + sz].length)];
                 if (!used[node.nodeid]){
                     used[node.nodeid] = 1;
+                    node.unit = this.allUnits[uid];
+                    this.allUnits[uid].currentNode = node;
                     haveNode = true;
                 }
             }
-            this.allUnits[uid].currentNode = node;
             this.allUnits[uid].direction = this.map.cardinalDirections[Math.floor(Math.random()*this.map.cardinalDirections.length)];
         }
         sz += 1;

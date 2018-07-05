@@ -453,16 +453,21 @@ Unit.prototype.getDBObj = function(){
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
     return dbObj;
 }
+Unit.prototype.minCurrentNode = function(){
+    if (this.currentNode == null){
+        return null;
+    }
+    return {
+        q:this.currentNode.q, //q coord
+        r:this.currentNode.r, //r coord
+    }
+}
 Unit.prototype.getClientData = function(){
     //create object to send to the client
     var data = {}
     for (var a in this){
         if (this[a] instanceof Attribute){
             data[a] = this[a].value;
-        }else{
-            if (a != 'owner'){
-                data[a] = this[a];
-            }
         }
     }
     data.full = true; //get full data;
@@ -470,11 +475,12 @@ Unit.prototype.getClientData = function(){
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
+    data.level = this.level;
     data.health = this.currentHealth;
     data.energy = this.currentEnergy;
     data.shields = this.currentShields;
     data.charge = this.charge;
-    data.currentNode = this.currentNode;
+    data.currentNode = this.minCurrentNode();
     data.direction = this.direction
     data.classInfo = {};
     data.weapon = this.weapon;
@@ -509,7 +515,7 @@ Unit.prototype.getLessClientData = function(){
     data.maximumShields = this.maximumShields.value;
     data.maximumEnergy = this.maximumEnergy.value;
     data.charge = this.charge;
-    data.currentNode = this.currentNode;
+    data.currentNode = this.minCurrentNode();
     data.direction = this.direction;
     data.classInfo = {currentClass: this.classInfo.currentClass};
     data.weapon = this.weapon;
