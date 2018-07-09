@@ -76,7 +76,11 @@
         this.full = data.full;
         this.visible = (typeof data.visible == 'undefined') ? true : data.visible;
         this.direction = data.direction;
-        this.currentNode = data.currentNode;
+        if (data.currentNode){
+            this.currentNode = Game.map.axialMap[data.currentNode.q][data.currentNode.r];
+        }else{
+            this.currentNode = data.currentNode;
+        }
         this.currentHealth = data.health;
         this.currentEnergy = data.energy;
         this.currentShields = data.shields;
@@ -108,9 +112,11 @@
         this.name = data.name;
         this.sex = data.sex;
         this.id = data.id;
-        this.inventory = new Inventory();
         if (data.inventory){
+            this.inventory = new Inventory();
             this.inventory.init(data.inventory);
+        }else{
+            this.inventory = null;
         }
         this.level = data.level;
         this.exp = data.exp;

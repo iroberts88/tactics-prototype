@@ -584,6 +584,14 @@
             this.app.renderer.render(g1,this.plusTexture);
             this.app.renderer.render(g2,this.minusTexture);
             this.app.renderer.render(g3,this.starTexture);
+        },
+        fitText: function(text,size){
+            //resize a text object to the given size
+            while(text.width > size){
+                var s = parseInt(text.style.fontSize);
+                text.style.fontSize = (s-1) + 'px';
+            }
+            return text;
         }
     };
 

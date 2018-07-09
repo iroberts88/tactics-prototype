@@ -14,7 +14,7 @@
       "baseAttr": {
         "move": 1,
         "maximumEnergy": -20,
-        "maximumHealth": -200,
+        "maximumHealth": -20,
         "speed": 20,
         "jump": 1
       },
@@ -161,7 +161,7 @@
       "baseAttr": {
         "move": 0,
         "maximumEnergy": 40,
-        "maximumHealth": -200,
+        "maximumHealth": -20,
         "speed": -10,
         "jump": 0
       },
@@ -385,7 +385,7 @@
       "baseAttr": {
         "move": 0,
         "maximumEnergy": -20,
-        "maximumHealth": 200,
+        "maximumHealth": 20,
         "jump": 0
       },
       "abilities": [

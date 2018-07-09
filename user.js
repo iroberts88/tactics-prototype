@@ -152,8 +152,10 @@ function User() {
                             ap: ap});
                         char.classInfo.setBaseClass(unitClass);
                         char.classInfo.setClass(unitClass);
+                        char.levelUp(false);
                         this.owner.gameEngine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
                         this.characters.push(char);
+
                     }
                 }
             }catch(e){

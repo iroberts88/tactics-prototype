@@ -112,7 +112,6 @@
             */
         },
         rotateMap: function(dir){
-            
             if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
                 var c = window.currentGameMap.currentRotation;
                 var d = 1;

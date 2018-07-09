@@ -34,6 +34,9 @@ var GameSession = function (engine) {
         InGame: 'inGame',
         PostGame: 'postGame'
     }
+
+    this.turnTicker = 0;
+    this.timePerTurn = 60; //1 minute turns?
 };
 
 GameSession.prototype.init = function (data) {

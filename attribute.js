@@ -69,6 +69,7 @@ Attribute.prototype.set = function(updateClient){
             });
         }
     }catch(e){}
+    return;
 }
 
 exports.Attribute = Attribute;

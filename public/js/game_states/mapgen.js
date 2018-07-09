@@ -37,6 +37,8 @@
         currentSZone: 1,
         sZoneMaxSize: 30,
 
+        losAngle: 1e-6,
+
         init: function() {
             this.drawBG();
             //initialize the map
@@ -1468,14 +1470,14 @@
                                 for (var i = 0;i < arr.length;i++){
                                     var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
                                     var cPos = {
-                                        x: c.x + 1e-6,
-                                        y: c.y + 1e-6,
-                                        z: c.z + -2e-6,
+                                        x: c.x + this.losAngle,
+                                        y: c.y + this.losAngle,
+                                        z: c.z + -this.losAngle*2,
                                     }
                                     var cNeg = {
-                                        x: c.x + -1e-6,
-                                        y: c.y + -1e-6,
-                                        z: c.z + 2e-6,
+                                        x: c.x + -this.losAngle,
+                                        y: c.y + -this.losAngle,
+                                        z: c.z + this.losAngle,
                                     }
                                     var r1 = this.map.cubeLineDraw(cubeNode,cPos);
                                     var r2 = this.map.cubeLineDraw(cubeNode,cNeg);

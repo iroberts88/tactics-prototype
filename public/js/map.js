@@ -534,8 +534,11 @@
             }
             sprite.clicked = false;
             sprite.on('pointerdown', function onClick(e){
+                if (Game.map.rotateData){return;}
                 var node = Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r];
-                Game.selectNode(node);
+                if (node.unit){
+                    Game.selectUnit(node.unit);
+                }
             });
             sprite.on('pointerup', function onClick(e){
 
@@ -543,19 +546,18 @@
             sprite.on('pointerupoutside', function onClick(e){
             });
             sprite.on('pointerover', function onMove(e){
+                if (Game.map.rotateData){return;}
                 Game.resetTint();
-                Game.setNewHoveredNode = sprite;
+                Game.setNewHoveredNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                 Game.currentlyMousedOver = sprite;
             }); 
             sprite.on('pointerout', function onMove(e){
                 if (Game.selectedNode == null){
+                if (Game.map.rotateData){return;}
                     var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                     var a = Game.map.getAxial(cubeNode);
-                    var t = 1;
-                    if (!(Game.map.currentRotation%2)){t = 2}
-                    var s = a['sprite' + t];
-                    //s.tint = 0xFFFFFF;
-                    s.filters = [];//Game.map.outlineFilter;
+                    a.sprite1.filters = [];
+                    a.sprite2.filters = [];
                     Game.nodeInfo.visible = false;
                     Game.nodeText.visible = false;
                 }

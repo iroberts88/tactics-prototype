@@ -81,14 +81,14 @@ Player.prototype.getLosOfNode = function(map,node){
         if (unit.owner != this){continue;}
         var c = map.getCube(unit.currentNode)
         var cPos = {
-            x: c.x + 1e-6,
-            y: c.y + 1e-6,
-            z: c.z + -2e-6,
+            x: c.x + map.losAngle,
+            y: c.y + map.losAngle,
+            z: c.z + -map.losAngle*2,
         }
         var cNeg = {
-            x: c.x + -1e-6,
-            y: c.y + -1e-6,
-            z: c.z + 2e-6,
+            x: c.x + -map.losAngle,
+            y: c.y + -map.losAngle,
+            z: c.z + map.losAngle*2,
         }
         var r1 = map.cubeLineDraw(node,cPos);
         var r2 = map.cubeLineDraw(node,cNeg);
@@ -418,6 +418,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.setBaseClass(data.class);
                                 char.classInfo.setClass(data.class);
                                 //create object to send to the client
+                                char.levelUp();
                                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                                 that.user.characters.push(char);
                             }catch(e){
@@ -454,7 +455,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.init({unit: char});
                                 char.classInfo.setBaseClass(cl);
                                 char.classInfo.setClass(cl);
-                               
+                                char.levelUp();
                                 that.gameEngine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                                 that.user.characters.push(char);
                             }catch(e){

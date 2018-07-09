@@ -20,6 +20,8 @@ var HexMap = function(session){
     ];
     this.startZone1 = [];
     this.startZone2 = [];
+
+    this.losAngle = 1e-6;
 }
 
 HexMap.prototype.init = function(data){

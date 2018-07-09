@@ -59,7 +59,8 @@
             TOGGLESTATS: 11,
             BACKSPACE: 12,
             SCROLLUP: 13,
-            SCROLLDOWN: 14
+            SCROLLDOWN: 14,
+            CANCEL: 15
         },
         keysPressed: [],
         keyBindings: [],
@@ -102,12 +103,13 @@
             this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
             this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
             this.keyBindings[40] = Acorn.Input.Key.SCROLLDOWN; //default M
+            this.keyBindings[27] = Acorn.Input.Key.CANCEL; //default ESC
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];
         },
         keyDown: function(keyCode) {
-            //console.log(keyCode);
+            console.log(keyCode);
             this.keysPressed[this.getBinding(keyCode)] = true;
         },
         keyUp: function(keyCode) {

@@ -132,7 +132,7 @@ Unit.prototype.init = function(data) {
                 return 0;
             }else{
                 var shield = this.owner.inventory.items[this.owner.shield];
-                this.base = Math.ceil((25*shield.weight) * (1+this.owner.level/10) * (0.2 + (5/(shield.eqData.recharge))) *(0.5 + Math.pow(0.5*(shield.eqData.delay-1),2)));
+                this.base = Math.ceil(((25*shield.weight) * (1+this.owner.level/10) * (0.2 + (5/(shield.eqData.recharge))) *(0.5 + Math.pow(0.5*(shield.eqData.delay-1),2)))/10);
             }
             return Math.round((this.base*this.pMod)+this.nMod);
         }
@@ -159,7 +159,7 @@ Unit.prototype.init = function(data) {
     this.maximumHealth.init({
         'id': 'hp',
         'owner': this,
-        'value': 1000,
+        'value': 100,
         'min': 1,
         'max': 99999
     });
@@ -227,7 +227,7 @@ Unit.prototype.init = function(data) {
     this.abilitySlots.init({
         'id': 'absl',
         'owner': this,
-        'value': 50,
+        'value': 25,
         'min': 0,
         'max': 999 //TODO should check if current absl are too high, possibly resetting abilities
     });
@@ -398,6 +398,34 @@ Unit.prototype.init = function(data) {
     this.reset();
 };
 
+Unit.prototype.levelUp = function(update){
+    //TODO save these values just in case the numbers change?
+    this.power.base += 5;
+    this.power.base += this.strength.base*0.2;
+    this.power.base += this.charisma.base*0.05;
+    this.power.set(update);
+    this.maximumHealth.base += 5
+    this.maximumHealth.base += this.endurance.base*0.28;
+    this.maximumHealth.base += this.charisma.base*0.07;
+    this.maximumHealth.set(update);
+    this.abilitySlots.base += 1;
+    this.abilitySlots.base += this.intelligence.base*0.1;
+    this.abilitySlots.base += this.charisma.base*0.02;
+    this.abilitySlots.set(update);
+    this.skill.base += 5;
+    this.skill.base += this.dexterity.base*0.2;
+    this.skill.base += this.charisma.base*0.05;
+    this.skill.set(update);
+    this.speed.base += 1;
+    this.speed.base += this.agility.base*0.1;
+    this.speed.base += this.charisma.base*0.025;
+    this.speed.set(update);
+    this.maximumEnergy.base += 1;
+    this.maximumEnergy.base += this.willpower.base*0.1;
+    this.maximumEnergy.base += this.charisma.base*0.025;
+    this.maximumEnergy.set(update);
+}
+
 Unit.prototype.getDBObj = function(){
     var dbObj = {};
     dbObj.name = this.name;
@@ -475,6 +503,7 @@ Unit.prototype.getClientData = function(){
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
+    data.usedAbilitySlots = this.usedAbilitySlots;
     data.level = this.level;
     data.health = this.currentHealth;
     data.energy = this.currentEnergy;

@@ -51,12 +51,12 @@ ClassInfo.prototype.getDBObj = function(){
 ClassInfo.prototype.setClass = function(c){
 	try{
 		//TODO reduce attributes from old class?
-
+		
 		var charClass = this.unit.owner.gameEngine.classes[c]
 		this.classId = c;
 		this.currentClass = charClass.classid;
 		for (var stat in charClass.attributes){
-			this.unit[stat].nMod += charClass.attributes[stat];
+			this.unit[stat].base += charClass.attributes[stat];
 			this.unit[stat].set();
 		}
 		if (typeof this.ap[charClass.classid] == 'undefined'){
