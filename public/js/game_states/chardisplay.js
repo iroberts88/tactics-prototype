@@ -132,10 +132,10 @@
                 ["Speed:  ", this.charToDisplay.speed]
             ];
             var attrDesc = [
-                "The maximum <Health> of the unit. Will faint when reduced to 0 health. Will be killed when reduced to -50% health or when fainted for 5 turns",
+                "The maximum <Health> of the unit. Will be knocked unconscious when reduced to 0 health. Will be killed when reduced to -50% health or when fainted for 5 turns",
                 "<Energy> is the main resource for using abilities",
-                '<Power> directly increases melee weapon damage',
-                '<Skill> directly increases ranged gun damage',
+                '<Power> directly increases melee weapon damage (1% per point)',
+                '<Skill> directly increases ranged gun damage (1% per point)',
                 "<Ability Slots> are used to equip abilites. An ability not from the unit's base or current class costs x3",
                 '',
                 "<Strength> increases <power> on levelup. It also increases max carry weight and effectiveness of strength based abilities",
@@ -147,8 +147,8 @@
                 "<Charisma> increases all stats slightly on levelup. It also increases effectiveness of charisma based abilities",
                 '',
                 "Number of hexes a unit can move during it's turn",
-                "Number of hexes a unit can jump while moving. Also affects fall damage",
-                "Speed affects the unit's position in the turn order"
+                "Number of hexes a unit can jump while moving. Also effects fall damage",
+                "Speed affects the unit's position in the turn order. Always set to 50 when unconscious."
             ];
             var startY = unitStats.y + unitStats.height + 25;
             for (var j = 0; j < attr.length;j++){

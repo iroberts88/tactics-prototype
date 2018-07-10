@@ -132,7 +132,7 @@ Unit.prototype.init = function(data) {
                 return 0;
             }else{
                 var shield = this.owner.inventory.items[this.owner.shield];
-                this.base = Math.ceil(((25*shield.weight) * (1+this.owner.level/10) * (0.2 + (5/(shield.eqData.recharge))) *(0.5 + Math.pow(0.5*(shield.eqData.delay-1),2)))/10);
+                this.base = Math.ceil(((10*shield.weight) + (100+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
             }
             return Math.round((this.base*this.pMod)+this.nMod);
         }

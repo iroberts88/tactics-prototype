@@ -51,7 +51,7 @@
       "name": "Chain Sword",
       "weight": 6,
       "eqData": {
-        "damage": 240,
+        "damage": 24,
         "range": 1,
         "onEquip": [],
         "onHit": [],
@@ -85,13 +85,13 @@
       "onUse": [
         {
           "name": "alterHealth",
-          "value": 300
+          "value": 30
         }
       ],
       "usable": true,
       "maxItemPile": 99,
       "itemid": "compound_healing",
-      "description": "Use to restore 300 health",
+      "description": "Use to restore 30 health",
       "name": "Healing Compound",
       "weight": 1,
       "type": "compound"
@@ -121,7 +121,7 @@
       "name": "Combat Knife",
       "weight": 2,
       "eqData": {
-        "damage": 210,
+        "damage": 21,
         "onEquip": [],
         "onHit": [],
         "onFire": []
@@ -141,7 +141,7 @@
       "onHitText": "50% chance to break the target's shield",
       "weight": 9,
       "eqData": {
-        "damage": 300,
+        "damage": 30,
         "onEquip": [],
         "onHit": [
           {
@@ -231,7 +231,7 @@
       "name": "SMG",
       "weight": 5,
       "eqData": {
-        "damage": 50,
+        "damage": 5,
         "onEquip": [],
         "onHit": [],
         "onFire": [
@@ -256,7 +256,7 @@
       "name": "Rocket Sledge",
       "weight": 14,
       "eqData": {
-        "damage": 390,
+        "damage": 39,
         "onEquip": [],
         "onHit": [],
         "onFire": []
@@ -272,7 +272,7 @@
       "name": "Sidearm Pistol",
       "weight": 2,
       "eqData": {
-        "damage": 210,
+        "damage": 21,
         "onEquip": [],
         "onHit": [],
         "onFire": [],

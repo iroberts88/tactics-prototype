@@ -179,10 +179,19 @@
         var ttArray = [{text: '<' + item.name + '>'}];
         if (typeof item.weight != 'undefined'){ttArray.push({text: '{Weight: }' + item.weight});}
         if (typeof item.description != 'undefined'){ttArray.push({text: item.description,color: '#ffd9b3'});}
-        if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + Math.round(item.eqData.damage/10)});}
+        if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + item.eqData.damage});}
         if (typeof item.eqData.rangeMin != 'undefined'){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
-        if (typeof item.eqData.delay != 'undefined'){ttArray.push({text: '{Recharge Delay: }' + item.eqData.delay + ' turns'});}
-        if (typeof item.eqData.recharge != 'undefined'){ttArray.push({text: '{Recharge Rate: }' + item.eqData.recharge + '% per turn'});}
+        var t = "Recharges <";
+        if (typeof item.eqData.recharge != 'undefined'){t += item.eqData.recharge + '%> shield capacity per turn'}
+        if (typeof item.eqData.delay != 'undefined'){
+            if (item.eqData.delay == 1){
+                t += '.'
+            }else{
+                t += ' after not taking damage for <' + (item.eqData.delay-1) + '> turns.';
+            }
+            ttArray.push({text: t});
+        }
+
         if (typeof item.classes != 'undefined'){
             var cText = '';
             if (item.classes == 'ALL'){

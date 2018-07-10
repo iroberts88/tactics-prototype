@@ -204,7 +204,7 @@
         {
           "sCost": 12,
           "name": "Mech Cloak",
-          "description": "After being hit, use your reaction to release a wave of electricity, dealing <END*30> shock damage and stunning for 1 round",
+          "description": "After being hit, use your reaction to release a wave of electricity, dealing <END*LVL/5> shock damage and stunning for 1 round",
           "ApCost": 100,
           "id": "mechCloak",
           "type": "Reaction",
@@ -215,7 +215,7 @@
         {
           "sCost": 8,
           "name": "Flare Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> heat damage and sets non-mechanical units on fire",
+          "description": "Lob a grenade that deals <20+LVL*2> heat damage and sets non-mechanical units on fire",
           "range": "<5+STR/5+STR>",
           "ApCost": 100,
           "id": "flareGrenade",
@@ -227,7 +227,7 @@
         {
           "sCost": 8,
           "name": "Cryo Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> cold damage and reduces position in the turn order by 10%",
+          "description": "Lob a grenade that deals <20+LVL*2> cold damage and reduces position in the turn order by 10%",
           "range": "<5+STR/5+STR>",
           "ApCost": 100,
           "id": "cryoGrenade",
@@ -239,7 +239,7 @@
         {
           "sCost": 8,
           "name": "Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> explosive damage (Ignore 50% physical resistance)",
+          "description": "Lob a grenade that deals <20+LVL*2> explosive damage (Ignore 50% physical resistance)",
           "range": "<5+STR/5+STR>",
           "ApCost": 100,
           "id": "grenade",
@@ -251,7 +251,7 @@
         {
           "sCost": 8,
           "name": "Shock Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> shock damage and reduces shields to 0",
+          "description": "Lob a grenade that deals <20+LVL*2> shock damage and reduces shields to 0",
           "range": "<5+STR/5+STR> Circle",
           "ApCost": 100,
           "id": "shockGrenade",
@@ -263,7 +263,7 @@
         {
           "sCost": 8,
           "name": "Corrosive Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> acid damage and destroys weak mechanical units",
+          "description": "Lob a grenade that deals <20+LVL*2> acid damage and destroys weak mechanical units",
           "range": "<5+STR/5+STR>",
           "ApCost": 100,
           "id": "corrosiveGrenade",
@@ -275,7 +275,7 @@
         {
           "sCost": 8,
           "name": "Toxic Grenade",
-          "description": "Lob a grenade that deals <200+LVL*2> low poison damage and creates a poison cloudfor 5 turns",
+          "description": "Lob a grenade that deals <20+LVL*2>  poison damage and creates a poison cloud for 5 turns",
           "range": "<5+STR/5+STR>",
           "ApCost": 100,
           "id": "poisonGrenade",
@@ -287,7 +287,7 @@
         {
           "sCost": 12,
           "name": "EMP Grenade",
-          "description": "Lob a grenade that that deals <600+LVL*2> pulse damage",
+          "description": "Lob a grenade that that deals <60+LVL*2> pulse damage",
           "range": "<5+STR/5+STR>",
           "ApCost": 200,
           "id": "empGrenade",
@@ -298,11 +298,11 @@
         },
         {
           "sCost": 12,
-          "name": "Uranium Grenade",
-          "description": "Lob a grenade that deals <600+LVL*2> radiation damage",
+          "name": "Unstable Grenade",
+          "description": "Lob a grenade that deals <60+LVL*2> radiation damage",
           "range": "<5+STR/5+STR>",
           "ApCost": 200,
-          "id": "uraniumGrenade",
+          "id": "unstableGrenade",
           "type": "Any Hex",
           "radius": "<2+INT/2> Circle",
           "eCost": 40,
@@ -311,7 +311,7 @@
         {
           "sCost": 15,
           "name": "Void Grenade",
-          "description": "Lob a grenade that deals <400+LVL*2> gravity damage and pulls units towards the center hex",
+          "description": "Lob a grenade that deals <40+LVL*2> gravity damage and pulls units towards the center hex",
           "range": "<5+STR/5+STR>",
           "ApCost": 250,
           "id": "voidGrenade",
@@ -475,7 +475,7 @@
         {
           "sCost": 12,
           "name": "Reversal",
-          "description": "Use your reaction to swap places with an attacking unit",
+          "description": "Use your reaction to swap places with an attacking unit in melee",
           "ApCost": 200,
           "id": "reversal",
           "type": "Reaction",
@@ -485,7 +485,7 @@
         {
           "sCost": 12,
           "name": "Charge",
-          "description": "Slam an enemy, dealing <STR*10> damage and knocking back <STR/3> units",
+          "description": "Slam an enemy, dealing <STR%> of your <maximum health> as damage and knocking back <STR/3> units",
           "range": "1/1",
           "ApCost": 20,
           "id": "charge",
@@ -557,7 +557,7 @@
         {
           "sCost": 10,
           "name": "Healing Field",
-          "description": "Place a healing field bot with <200+50*INT> health and <100+20*INT> speed. Every turn the field heals units in a <4+INT/2> hex radius for <50+25*INT>",
+          "description": "Place a healing field bot with <20+5*INT> health and <100+20*INT> speed. Every turn the field heals units in a <4+INT/2> hex radius for <5+.5*INT%>",
           "range": "1/3",
           "ApCost": 100,
           "id": "healingField",
@@ -620,7 +620,7 @@
         {
           "sCost": 12,
           "name": "Concentrate",
-          "description": "Abilities you use for the next <WIL> turns cannot be interrupted,and ignore 1 instance of fatal damage.",
+          "description": "Abilities you use for the next <WIL> turns cannot be interrupted. While active, when reduced below 1 health, set health to 1 and end the effect.",
           "range": "Self",
           "ApCost": 300,
           "id": "concentrate",

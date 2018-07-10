@@ -130,8 +130,8 @@ function User() {
                                 ap = {'Medic': 9999};
                                 break;
                             case 'tech':
-                                learned = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "uraniumGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
-                                equipped = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "uraniumGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                learned = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                equipped = { "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
                                 ap = {'Tech': 9999};
                                 break;
                             case 'soldier':

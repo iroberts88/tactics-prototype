@@ -71,6 +71,15 @@
             this.rotateText.position.y = this.rotateText.height/2;
             Graphics.uiContainer.addChild(this.rotateText);
 
+            this.turnOrderText = Graphics.makeUiElement({
+                text: 'Turn Order',
+                style: style,
+            });
+            this.turnOrderText.style.fontSize = 14;
+            this.turnOrderText.position.x = 100;
+            this.turnOrderText.position.y = 10;
+            Graphics.uiContainer.addChild(this.turnOrderText);
+
             this.rotateLeft = Graphics.makeUiElement({
                 text: '◄',
                 style: style,
@@ -195,6 +204,13 @@
                 this.turnListSprites.push(sprite);
                 sprite.on('pointerover', Game.filtersOn);
                 sprite.on('pointerout', Game.filtersOff);
+
+                var num = new PIXI.Text(i+1,AcornSetup.baseStyle);
+                num.style.fontSize = 14
+                num.anchor.y = 0.5;
+                num.position.y = sprite.position.y + 37;
+                num.position.x = 2;
+                Graphics.uiContainer.addChild(num);
             }
             /*this.currentTurnArrow = Graphics.getSprite('arrow');
             this.currentTurnArrow.tint = 0x00FF00;
@@ -695,7 +711,7 @@
             var aH = aNode.h;
             var startingHeight = 3;
             if (aNode.unit != null){
-                // if there is a unit on the node, add unit height
+                //startingHeight = 3// if there is a unit on the node, add unit height
             }
             aH += startingHeight;
             for (var u in this.units){
