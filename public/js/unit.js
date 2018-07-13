@@ -13,6 +13,7 @@
         this.maximumEnergy = null;
 
         this.move = null;
+        this.moveLeft = null;
         this.jump = null;
         this.power = null;
         this.skill = null;
@@ -85,6 +86,7 @@
         this.currentEnergy = data.energy;
         this.currentShields = data.shields;
         this.move = data.move;
+        this.moveLeft = data.move;
         this.jump = data.jump;
         this.power = data.power;
         this.skill = data.skill;

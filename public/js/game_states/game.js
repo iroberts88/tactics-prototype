@@ -2,6 +2,20 @@
 (function(window) {
     Game = {
 
+        timePerTurn: null,
+        timePerReaction: null,
+        delayBetweenStates: null,
+
+        betweenStateTicker: 0,
+        turnTicker: 0,
+        reactionTicker: 0,
+        currentState: 'idle',
+        states: {
+            Idle: 'idle',
+            BetweenStates: 'BetweenStates',
+            Turn: 'turn',
+            Reaction: 'reaction'
+        },
         currentNode: null,
         outlineFilterRed: new PIXI.filters.OutlineFilter(2, 0xff9999),
         filtersOn: function (e) {
@@ -47,6 +61,7 @@
         mainMenu: null,
         tilePane: null,
         infoPane: null,
+        turnMenu: null,
 
         currentTurnArrow: null,
         turnArrowStartY: null,
@@ -155,6 +170,15 @@
             this.nodeInfo.visible = false;
             Graphics.uiContainer.addChild(this.nodeText);
             Graphics.uiContainer.addChild(this.nodeInfo);
+
+            this.battleStartText = new PIXI.Text("BATTLE START",style);
+            this.battleStartText.style.fontSize = 120;
+            this.battleStartText.anchor.x = 0.5;
+            this.battleStartText.anchor.y = 0.5;
+            this.battleStartText.position.x = Graphics.width/2;
+            this.battleStartText.position.y = Graphics.height/2;
+            Graphics.uiContainer.addChild(this.battleStartText);
+            this.battleStartText.visible = false;
             window.currentGameMap = this.map;
             Graphics.showLoadingMessage(false);
         },
@@ -212,24 +236,228 @@
                 num.position.x = 2;
                 Graphics.uiContainer.addChild(num);
             }
-            /*this.currentTurnArrow = Graphics.getSprite('arrow');
-            this.currentTurnArrow.tint = 0x00FF00;
-            this.currentTurnArrow.anchor.x = 0.5;
-            this.currentTurnArrow.anchor.y = 0.5;
-            this.setTurnArrow();*/
+
+            //Current Turn window
 
             //Compass
 
             //Time/player turn
-
-            //Info Pane
-
-            //Node info pane
+            this.timeText = Graphics.makeUiElement({
+                text: '',
+                style: AcornSetup.baseStyle
+            });
+            this.timeText.anchor.x = 0;
+            this.timeText.position.x = Graphics.width/4;
+            this.timeText.position.y = 10;
+            Graphics.uiContainer.addChild(this.timeText);
+            this.timeText.visible = false;
 
             //Menu
 
         },
 
+        startGame: function(){
+            //the first turn starts
+            this.betweenStateTicker = 0;
+            this.turnTicker = 0;
+            this.reactionTicker = 0;
+            this.currentState = this.states.BetweenStates;
+            this.battleStartText.visible = true;
+            this.turnMenu = this.getTurnMenu();
+            this.turnMenu.position.x = 180;
+            this.turnMenu.position.y = 25;
+            Graphics.uiContainer.addChild(this.turnMenu);
+        },
+        newTurnOrder: function(arr){
+            //set timer
+            this.timeText.visible = false
+            this.betweenStateTicker = 0;
+            this.turnTicker = 0;
+            this.reactionTicker = 0;
+            this.currentState = this.states.BetweenStates;
+            Graphics.uiContainer.removeChild(this.turnMenu);
+            for (var i = 0; i < arr.length;i++){
+                for (var j = 0; j < this.turnListSprites.length;j++){
+                    if (this.turnListSprites[j].unitID == arr[i]){
+                        var sprite = this.turnListSprites[j];
+                        sprite.position.x = 25;
+                        sprite.position.y = 25 + i*75;
+                    }
+                }
+            }
+            this.turnMenu = this.getTurnMenu();
+            this.turnMenu.position.x = 180;
+            this.turnMenu.position.y = 25;
+            Graphics.uiContainer.addChild(this.turnMenu);
+
+        },
+
+        update: function(deltaTime){
+            this.map.update(deltaTime);
+            if (this.battleStartText.visible){
+                this.battleStartText.alpha = this.battleStartText.alpha * 0.97;
+                if (this.battleStartText.alpha <= 0.01){
+                    this.battleStartText.visible = false;
+                    this.battleStartText.alpha = 1.0;
+                }
+            }
+            if (!this.map.rotateData){
+                //set the new currently selected node after mouseover
+                try{
+
+                    if (this.updateUnitsBool || this.map.changedZoom){
+                        this.updateUnits();
+                    }
+                    if (this.setNewHoveredNode && this.selectedUnit == null){
+                        this.setHoveredNode();
+                    }else if(this.setNewHoveredUnit && this.selectedUnit == null){
+                        this.setHoveredUnit();
+                    }
+                }catch(e){
+                    console.log(e)
+                }
+            }else{
+                this.updateUnitsBool = true;
+            }
+            for (var i in this.units){
+                try{
+                    if (!this.units[i].sprite.parent.parent){
+                        //units havent updated properly...
+                        this.updateUnitsBool = true;
+                        return;
+                    }
+                }catch(e){}
+            }
+            //update timers
+            switch (this.currentState){
+                case this.states.Idle:
+                    break;
+                case this.states.BetweenStates:
+                    this.betweenStateTicker += deltaTime;
+                    if (this.betweenStateTicker >= this.delayBetweenStates){
+                        this.timeText.visible = true;
+                        this.currentState = this.states.Turn;
+                    }
+                    break;
+                case this.states.Turn:
+                    this.turnTicker += deltaTime;
+                    this.timeText.text = 'Time left: ' + (this.timePerTurn - Math.floor(this.turnTicker));
+                    if (this.turnTicker >= this.timePerTurn){
+                        this.currentState = this.states.Idle;
+                        this.timeText.visible = false;
+                        this.turnTicker = 0;
+                    }
+                    break;
+                case this.states.Reaction:
+                    this.reactionTicker += deltaTime;
+
+                    break;
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
+                this.setNewHoveredNode = null;
+                this.setNewHoveredUnit = null;
+                if (this.selectedUnit){
+                    this.selectedUnit.sprite.filters = [];
+                    var node = Game.map.axialMap[this.selectedUnit.currentNode.q][this.selectedUnit.currentNode.r];
+                    node.sprite1.filters = [];
+                    node.sprite2.filters = [];
+                    Graphics.uiContainer.removeChild(this.currentInfoPane);
+                    this.currentInfoPane = null;
+                    this.selectedUnit = null;
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
+            }
+        },
+
+        getTurnMenu: function(){
+            var h = 5;
+            var w = 300;
+
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0xFFFFFF;
+            var style  = AcornSetup.baseStyle2;
+            scene.addChild(gfx);
+            scene.addChild(cont);
+
+            var unit = this.units[this.turnList[0]];
+            if (unit.owner != window.playerID){
+                var name = new PIXI.Text("Enemy Turn", style);
+                name.anchor.x = 0.5;
+                name.position.x = w*0.5;
+                name.position.y = h;
+                name.style.fill = 'red';
+                name = Graphics.fitText(name,w-5);
+                cont.addChild(name);
+                h += name.height + 5;
+            }else{
+                var name = new PIXI.Text(unit.name + '\'s turn!', style);
+                name.style.fill = 'blue';
+                name.anchor.x = 0.5;
+                name.position.x = w*0.5;
+                name.position.y = h;
+                name = Graphics.fitText(name,w-5);
+                cont.addChild(name);
+                h += name.height + 5;
+
+                //action buttons!
+
+                //Move button
+                var moveButton = Graphics.makeUiElement({
+                    text: 'Move',
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/4,h],
+                    clickFunc: function onClick(){
+                        //Do move stuff
+                    }
+                });
+                cont.addChild(moveButton);  
+                //Move text
+                var t = (typeof unit.moveLeft == 'undefined') ? 'Moves left: ???' : 'Moves left: ' + unit.moveLeft;
+                var moveText = new PIXI.Text(t, style);
+                moveText.anchor.x = 0.5;
+                moveText.position.x = w*0.75;
+                moveText.position.y = h;
+                moveText = Graphics.fitText(moveText,w/2-5);
+                cont.addChild(moveText);
+                h += moveButton.height + 10;
+                //Attack button
+
+                //weapon name text
+
+                //Action button
+
+                //Inventory Button
+
+                //Wait button
+
+                //CR%?
+            }
+
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            gfx.lineStyle(3,color,1);
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
+
+            if (unit.owner == window.playerID){
+                gfx.moveTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y-2);
+                gfx.lineTo(moveButton.position.x + moveButton.width/2+2,moveButton.position.y-2);
+                gfx.lineTo(moveButton.position.x + moveButton.width/2+2,moveButton.position.y+moveButton.height+2);
+                gfx.lineTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y+moveButton.height+2);
+                gfx.lineTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y-2);
+            }
+            //create and render the texture and sprite
+            return scene;
+        },
         getTurnBox: function(id){
             var h = 75;
             var w = 150;
@@ -266,7 +494,8 @@
             text = Graphics.fitText(text,w-5);
             cont.addChild(text);
 
-            var text2 = new PIXI.Text('Level ' + Game.units[id].level + ' ' + Game.units[id].classInfo.currentClass, style);
+            var str = Game.units[id].classInfo.currentClass.charAt(0).toUpperCase() + Game.units[id].classInfo.currentClass.substr(1);
+            var text2 = new PIXI.Text('L' + Game.units[id].level + ' ' + str, style);
             text2.anchor.x = 0.5;
             text2.anchor.y = 0.5;
             text2.position.x = w*0.5;
@@ -325,9 +554,11 @@
             cont.addChild(nameText);
 
             //LEVEL AND CLASS
-            var n = 'Level ' + unit.level + ' ' + unit.classInfo.currentClass;
+            var str = unit.classInfo.currentClass.charAt(0).toUpperCase() + unit.classInfo.currentClass.substr(1);
+            var n = 'Level ' + unit.level + ' ' + str;
             if (typeof unit.classInfo.baseClass != 'undefined'){
-                n += ' (' + unit.classInfo.baseClass + ')';
+                var str = unit.classInfo.baseClass.charAt(0).toUpperCase() + unit.classInfo.baseClass.substr(1);
+                n += ' (' + str + ')';
             }
             var lvlClassText = new PIXI.Text(n, style);
             lvlClassText.anchor.x = 0.5;
@@ -534,51 +765,6 @@
             Graphics.worldContainer.addChild(this.currentTurnArrow);*/
         },
 
-        update: function(deltaTime){
-            this.map.update(deltaTime);
-            if (!this.map.rotateData){
-                //set the new currently selected node after mouseover
-                try{
-
-                    if (this.updateUnitsBool || this.map.changedZoom){
-                        this.updateUnits();
-                    }
-                    if (this.setNewHoveredNode && this.selectedUnit == null){
-                        this.setHoveredNode();
-                    }else if(this.setNewHoveredUnit && this.selectedUnit == null){
-                        this.setHoveredUnit();
-                    }
-                }catch(e){
-                    console.log(e)
-                }
-            }else{
-                this.updateUnitsBool = true;
-            }
-            for (var i in this.units){
-                try{
-                    if (!this.units[i].sprite.parent.parent){
-                        //units havent updated properly...
-                        this.updateUnitsBool = true;
-                        return;
-                    }
-                }catch(e){}
-            }
-            if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
-                this.setNewHoveredNode = null;
-                this.setNewHoveredUnit = null;
-                if (this.selectedUnit){
-                    this.selectedUnit.sprite.filters = [];
-                    var node = Game.map.axialMap[this.selectedUnit.currentNode.q][this.selectedUnit.currentNode.r];
-                    node.sprite1.filters = [];
-                    node.sprite2.filters = [];
-                    Graphics.uiContainer.removeChild(this.currentInfoPane);
-                    this.currentInfoPane = null;
-                    this.selectedUnit = null;
-                }
-                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
-            }
-        },
-
         setHoveredNode: function(){
             Game.resetTint();
             this.selectedSprite = this.currentlyMousedOver;
@@ -611,6 +797,7 @@
         setNodeText: function(node){
             var a = this.map.getAxial(node);
             this.currentNode = a;
+
             var t = 1;
             if (!(this.map.currentRotation%2)){t = 2}
             var s = a['sprite' + t];
@@ -623,6 +810,7 @@
             }else if (s.tint == this.map.noLosTint){
                 t = 'NO LOS';
             }
+            t = 'Node ' + a.q + ',' + a.r + '   ' + t;
             this.nodeText.visible = true;
             this.nodeInfo.visible = true;
             this.nodeInfo.text = t + '     Height: ' + a.h + '    Type: ' + a.tile;

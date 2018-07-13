@@ -10,6 +10,14 @@
             strokeThickness: 2,
         },
 
+        baseStyle2: {
+            font: '32px Sigmar One',
+            fill: '#AACCDD',
+            align: 'left',
+            stroke: '#000000',
+            strokeThickness: 2,
+        },
+
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
                 console.log('Connected to server: Info Received');
@@ -52,6 +60,21 @@
                 Game.initUI(); 
                 Game.getLineOfSight();
             });
+
+            Acorn.Net.on('startGame', function(data) {
+                //Game has started!
+                Game.timePerTurn = data.timePerTurn;
+                Game.timePerReaction = data.timePerReaction;
+                Game.delayBetweenStates = data.delay;
+                Game.startGame();
+            });
+            Acorn.Net.on('newTurnOrder', function(data) {
+                //get the new turn order at the beginning of each turn
+                console.log(data);
+                Game.turnList = data.turnList;
+                Game.newTurnOrder(data.turnList);
+            });
+
             Acorn.Net.on('editMap', function (data) {
                 console.log(data);
                 if (data.found){

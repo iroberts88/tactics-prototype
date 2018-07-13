@@ -12,6 +12,7 @@ var Unit = function(){
     this.maximumEnergy = null;
 
     this.move = null;
+    this.moveLeft = null;
     this.jump = null;
     this.power = null;
     this.skill = null;
@@ -394,6 +395,7 @@ Unit.prototype.init = function(data) {
         }
     }
     this.inventory.maxWeight.set();
+    this.moveLeft = this.move.value;
 
     this.reset();
 };
@@ -503,6 +505,7 @@ Unit.prototype.getClientData = function(){
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
+    data.charge = this.charge;
     data.usedAbilitySlots = this.usedAbilitySlots;
     data.level = this.level;
     data.health = this.currentHealth;

@@ -547,13 +547,14 @@
             });
             sprite.on('pointerover', function onMove(e){
                 if (Game.map.rotateData){return;}
+                if (Game.selectedNode != null){return;}
                 Game.resetTint();
                 Game.setNewHoveredNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                 Game.currentlyMousedOver = sprite;
             }); 
             sprite.on('pointerout', function onMove(e){
                 if (Game.selectedNode == null){
-                if (Game.map.rotateData){return;}
+                    if (Game.map.rotateData){return;}
                     var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                     var a = Game.map.getAxial(cubeNode);
                     a.sprite1.filters = [];
@@ -561,6 +562,7 @@
                     Game.nodeInfo.visible = false;
                     Game.nodeText.visible = false;
                 }
+
             });
         }
     }

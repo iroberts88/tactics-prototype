@@ -35,8 +35,21 @@ var GameSession = function (engine) {
         PostGame: 'postGame'
     }
 
-    this.turnTicker = 0;
-    this.timePerTurn = 60; //1 minute turns?
+    this.currentInGameState = 'betweenTurns';
+    this.inGameStates = {
+        WaitingForTurnInfo: 'waitingForTurnInfo',
+        WaitingForReactionInfo: 'waitingForReactionInfo',
+        BetweenTurns: 'betweenTurns'
+    }
+
+    this.gameHasStarted = false;
+
+    this.ticker = 0;
+    this.timePerTurn = 10; //1 minute turns?
+    this.timeInBetweenTurns = 1.5;
+
+    this.reactionTicker = 0;
+    this.timePerReaction = 30;
 };
 
 GameSession.prototype.init = function (data) {
@@ -58,13 +71,13 @@ GameSession.prototype.tick = function(deltaTime) {
 
     switch(this.currentState){
         case this.gameStates.PreGame:
-            this.tickPreGame();
+            this.tickPreGame(deltaTime);
             break;
         case this.gameStates.InGame:
-            this.tickInGame();
+            this.tickInGame(deltaTime);
             break;
         case this.gameStates.PostGame:
-            this.tickPostGame();
+            this.tickPostGame(deltaTime);
             break;
     }
 
@@ -72,7 +85,7 @@ GameSession.prototype.tick = function(deltaTime) {
     this.clearQueue();
 }
 
-GameSession.prototype.tickPreGame = function() {
+GameSession.prototype.tickPreGame = function(deltaTime) {
 
     //check if both players are ready then change state
     var playersReady = 0
@@ -113,16 +126,50 @@ GameSession.prototype.tickPreGame = function() {
             }
             this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList});
         }
-
+        this.ticker = 0;
         this.currentState = this.gameStates.InGame;
     }
 }
 
-GameSession.prototype.tickInGame = function() {
-    
+GameSession.prototype.tickInGame = function(deltaTime) {
+    if (!this.gameHasStarted){
+        this.queueData('startGame',{delay: this.timeInBetweenTurns,timePerTurn: this.timePerTurn,timePerReaction: this.timePerReaction});
+        this.gameHasStarted = true;
+        return;
+    }
+    switch(this.currentInGameState){
+        case this.inGameStates.WaitingForTurnInfo:
+            this.ticker += deltaTime;
+            if (this.ticker >= this.timePerTurn){
+                this.ticker = 0;
+                //process turn and get new Turn order
+                this.currentInGameState = this.inGameStates.BetweenTurns;
+                //first unit has completed the turn??
+                //TODO this should be done in the actual turn parsing
+                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
+                this.getTurnOrder();
+                var turnList = [];
+                for (var i = 0; i < this.turnOrder.length;i++){
+                    turnList.push(this.turnOrder[i].id);
+                }
+                this.queueData('newTurnOrder',{turnList:turnList});
+            }
+            break;
+        case this.inGameStates.WaitingForReactionInfo:
+            break;
+        case this.inGameStates.BetweenTurns:
+            this.ticker += deltaTime;
+            if (this.ticker >= this.timeInBetweenTurns){
+                this.ticker = 0;
+                this.currentInGameState = this.inGameStates.WaitingForTurnInfo;
+            }
+            break;
+
+
+    }
 }
 
-GameSession.prototype.tickPostGame = function() {
+GameSession.prototype.tickPostGame = function(deltaTime) {
     
 }
 
