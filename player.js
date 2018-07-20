@@ -191,6 +191,21 @@ Player.prototype.setupSocket = function() {
                             console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
                         }
                         break;
+                    case 'move':
+                        console.log(data);
+                        //make sure it's the players turn
+
+                        //send the data to gameSession and execute the move
+
+                        break;
+                    case 'attack':
+                        break;
+                    case 'ability':
+                        break;
+                    case 'item': 
+                        break;
+                    case 'end':
+                        break;
                }
             }else{
                 //player is not in a game currently - main menu commands

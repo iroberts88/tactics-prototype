@@ -45,7 +45,7 @@ var GameSession = function (engine) {
     this.gameHasStarted = false;
 
     this.ticker = 0;
-    this.timePerTurn = 10; //1 minute turns?
+    this.timePerTurn = 90; //1 minute turns?
     this.timeInBetweenTurns = 1.5;
 
     this.reactionTicker = 0;
@@ -59,7 +59,7 @@ GameSession.prototype.init = function (data) {
     for (var i in this.gameEngine.maps){
         names.push(i);
     }
-    var name = names[Math.floor(Math.random()*names.length)];
+    var name = 'testMap';//names[Math.floor(Math.random()*names.length)];
     //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);

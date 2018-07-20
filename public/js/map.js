@@ -536,6 +536,10 @@
             sprite.on('pointerdown', function onClick(e){
                 if (Game.map.rotateData){return;}
                 var node = Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r];
+                if (Game.moveActive){
+                    Game.tryToMove(node);
+                    return;
+                }
                 if (node.unit){
                     Game.selectUnit(node.unit);
                 }
@@ -547,6 +551,30 @@
             });
             sprite.on('pointerover', function onMove(e){
                 if (Game.map.rotateData){return;}
+                //movement is active...
+                if (Game.moveActive){
+                    Graphics.worldPrimitives.clear();
+                    movePossible = false;
+                    for (var i = 0; i < Game.moveNodesActive.length;i++){
+                        if (sprite.axialCoords.q == Game.moveNodesActive[i].q && sprite.axialCoords.r == Game.moveNodesActive[i].r){
+                            movePossible = true;
+                        }
+                    }
+                    if (movePossible){
+                        var unit = Game.units[Game.turnList[0]]; 
+                        Graphics.worldPrimitives.lineStyle(3,0xFFFF00,1);
+                        var t = 1;
+                        if (!(Game.map.currentRotation%2)){t = 2}
+                        var sp = 'sprite' + t;
+                        var a = unit.currentNode;
+                        var path = Game.map.findPath(Game.map.getCube(unit.currentNode),Game.map.getCube(Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r]),{startingUnit:Game.units[Game.turnList[0]]});
+                        Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-Game.map.TILE_HEIGHT*(a.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]);
+                        for (var i = 1; i < path.length;i++){
+                            var a = Game.map.getAxial(path[i]);
+                            Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-Game.map.TILE_HEIGHT*(a.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]);
+                        }
+                    }
+                }
                 if (Game.selectedNode != null){return;}
                 Game.resetTint();
                 Game.setNewHoveredNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
@@ -607,7 +635,10 @@
         var cubeNode = [center.x+this.cubeDirections[4][0]*radius,center.y+this.cubeDirections[4][1]*radius,center.z+this.cubeDirections[4][2]*radius];
         for (var i = 0; i < 6;i++){
             for (var j = 0; j < radius;j++){
-                results.push(cubeNode);
+                try{
+                    var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
+                    results.push(cubeNode);
+                }catch(e){}
                 var d = this.cubeDirections[i];
                 cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
             }
@@ -677,13 +708,16 @@
         }
     }
 
-    Map.prototype.findPath = function(startNode,endNode,skip,maxJump){
+    Map.prototype.findPath = function(startNode,endNode,options,skip,maxJump){
 
         //A* search
         //start = starting axial node;
         //end = ending axial node;
+        //OPTIONS
         //skip - nodes to skip (for delete in map editor) TODO - the game version probably shouldnt have this
         //maxJump - the maximum height diff for a neighboring node to be viable
+        //startingUnit
+
         //returns empty array if no path exists
         //returns path array if path exists [node,node,node,...]
 
@@ -697,8 +731,14 @@
         endNode.h = 0;
         endNode.parent = null;
 
-        if (typeof maxJump == 'undefined'){
-            maxJump = 99;
+        if (typeof options.maxJump == 'undefined'){
+            options.maxJump = 99;
+        }
+        if (typeof options.skip == 'undefined'){
+            options.skip = null;
+        }
+        if (typeof options.startingUnit == 'undefined'){
+            options.startingUnit = null;
         }
 
         var openList   = [];
@@ -741,7 +781,14 @@
                 //first check if the node exists
                 if (node){
                     var axial = this.getAxial(node);
-                    if(this.findGraphNode(closedList,node) || node == skip || node.deleted || axial.h - currentAxial.h > maxJump) {
+                    //check units on this node
+                    if (options.startingUnit && axial.unit){
+                        if (axial.unit.owner != options.startingUnit.owner){
+                            // not a valid node to process, skip to next neighbor
+                            continue;
+                        }
+                    }
+                    if(this.findGraphNode(closedList,node) || node == options.skip || node.deleted || axial.h - currentAxial.h > options.maxJump) {
                         // not a valid node to process, skip to next neighbor
                         continue;
                     }
@@ -852,15 +899,13 @@
     }
     Map.prototype.move = function(x,y){
 
-        Graphics.worldContainer.position.x = Math.max(-Graphics.width/2,Math.min(Graphics.worldContainer.position.x+x,Graphics.width/2));
-        Graphics.worldContainer.position.y = Math.max(-Graphics.height/2,Math.min(Graphics.worldContainer.position.y+y,Graphics.height/2));
+        Graphics.world.position.x = Math.max(-Graphics.width/2,Math.min(Graphics.world.position.x+x,Graphics.width/2));
+        Graphics.world.position.y = Math.max(-Graphics.height/2,Math.min(Graphics.world.position.y+y,Graphics.height/2));
 
         //this.container1.position.x = Math.max(0,Math.min(this.container1.position.x+x,Graphics.width));
         //this.container2.position.x = this.container1.position.x;
         //this.container1.position.y = Math.max(0,Math.min(this.container1.position.y+y,Graphics.height));
         //this.container2.position.y = this.container1.position.y;
-        //Graphics.worldPrimitives.position.x = Graphics.worldContainer.position.x;
-        //Graphics.worldPrimitives.position.y = Graphics.worldContainer.position.y;
     }
     Map.prototype.update = function(deltaTime){
     	if (this.rotateData){
@@ -878,6 +923,7 @@
                 if (!(this.currentRotation%2)){t = 2}
                 Graphics.worldContainer.addChild(this['container' + t]);
                 this['container' + t].children = this.updateSprites(this['container' + t].children,true);
+                Graphics.worldPrimitives.clear();
             }
             this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
             this.container2.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);

@@ -1299,7 +1299,7 @@
                                         var neighbor2 = this.map.getCubeNeighbor(cube,j);
                                         if (neighbor && neighbor2){
                                             if (!neighbor.deleted && !neighbor2.deleted){
-                                                var arr = this.map.findPath(neighbor,neighbor2,cube);
+                                                var arr = this.map.findPath(neighbor,neighbor2,{skip:cube});
                                                 if (arr.length == 0){
                                                     isAPath = false;
                                                 }
@@ -1347,7 +1347,7 @@
                             if (this.pathToolData.endNode != this.map.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z]){
                                 this.pathToolData.endNode = this.map.cubeMap[this.currentlyMousedOver.cubeCoords.x][this.currentlyMousedOver.cubeCoords.y][this.currentlyMousedOver.cubeCoords.z];
                                 //get a new path
-                                this.pathToolData.currentPath = this.map.findPath(this.pathToolData.startNode,this.pathToolData.endNode,null,this.pathToolData.jumpHeight);
+                                this.pathToolData.currentPath = this.map.findPath(this.pathToolData.startNode,this.pathToolData.endNode,{maxJump:this.pathToolData.jumpHeight});
                             }
                             if (this.pathToolData.currentPath){
                                 if (this.pathToolData.currentPath.length > 0){  

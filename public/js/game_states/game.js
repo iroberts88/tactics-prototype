@@ -71,6 +71,12 @@
 
         losAngle: 1e-6,
 
+        moveNodesActive: [], //contains the currently tinted move sprites
+        moveActive: false,//movement active?
+        movePathDrawn: false,
+
+        uiWindows: [], //array containing active UI components?
+
         init: function() {
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
@@ -254,6 +260,8 @@
 
             //Menu
 
+            Graphics.worldPrimitives.position.x = Graphics.width/2;
+            Graphics.worldPrimitives.position.y = Graphics.height/2;
         },
 
         startGame: function(){
@@ -289,6 +297,12 @@
             this.turnMenu.position.x = 180;
             this.turnMenu.position.y = 25;
             Graphics.uiContainer.addChild(this.turnMenu);
+
+            if (this.moveActive){
+                this.moveActive = false;
+                this.moveNodesActive = [];
+                Graphics.worldPrimitives.clear();
+            }
 
         },
 
@@ -350,7 +364,6 @@
                     break;
                 case this.states.Reaction:
                     this.reactionTicker += deltaTime;
-
                     break;
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
@@ -365,13 +378,32 @@
                     this.currentInfoPane = null;
                     this.selectedUnit = null;
                 }
+                if (this.moveActive){
+                    this.moveActive = false;
+                    this.moveNodesActive = [];
+                    Graphics.worldPrimitives.clear();
+                }
+                for (var i = 0; i < this.uiWindows.length;i++){
+                    Graphics.uiContainer.removeChild(this.uiWindows[i]);
+                    this.uiWindows.splice(i,1);
+                }
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
             }
         },
 
-        getTurnMenu: function(){
+        tryToMove: function(node){
+            //check if the move is actually valid
+            var valid = false;
+            if (this.moveActive){
+                for (var i = 0; i < this.moveNodesActive.length;i++){
+                    if (node.q == Game.moveNodesActive[i].q && node.r == Game.moveNodesActive[i].r){
+                        valid = true;
+                    }
+                }
+            }
+            //add the move confirmation window
             var h = 5;
-            var w = 300;
+            var w = 400;
 
             var scene = new PIXI.Container();
             var cont = new PIXI.Container();
@@ -381,6 +413,81 @@
             scene.addChild(gfx);
             scene.addChild(cont);
 
+            var text = new PIXI.Text("Move " + this.units[this.turnList[0]].name + ' to node ' + node.q + ',' + node.r + '?', style);
+            text.anchor.x = 0.5;
+            text.position.x = w*0.5;
+            text.position.y = h;
+            text.style.fill = 'red';
+            text = Graphics.fitText(text,w-5);
+            cont.addChild(text);
+            h += text.height + 5;
+      
+            var confirmButton = Graphics.makeUiElement({
+                text: 'Yes',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                anchor: [0.5,0],
+                position: [w/4,h],
+                clickFunc: function onClick(){
+                    console.log('Send Move!!');
+                    Acorn.Net.socket_.emit('playerUpdate',{command: 'move',
+                        q: node.q,
+                        r: node.r
+                    });
+                    Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+                }
+            });
+            confirmButton.node = node;
+            cont.addChild(confirmButton);  
+
+            var cancelButton = Graphics.makeUiElement({
+                text: 'No',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                anchor: [0.5,0],
+                position: [w*0.75,h],
+                clickFunc: function onClick(){
+                    Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+                }
+            });
+            cont.addChild(cancelButton); 
+            h += cancelButton.height + 10;
+              
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            gfx.lineStyle(3,color,1);
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
+            this.drawBoxAround(confirmButton,gfx);
+            this.drawBoxAround(cancelButton,gfx);
+
+            //add it to uiWindows
+            scene.position.x = Graphics.width/2-w/2;
+            scene.position.y = Graphics.height/4-h/2;
+            Graphics.uiContainer.addChild(scene);
+            this.uiWindows.push(scene);
+        },
+
+        getTurnMenu: function(){
+            var h = 5;
+            var w = 325;
+
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0xFFFFFF;
+            var style  = AcornSetup.baseStyle2;
+            scene.addChild(gfx);
+            scene.addChild(cont);
+            scene.turnMenuElements = {
+
+            }
             var unit = this.units[this.turnList[0]];
             if (unit.owner != window.playerID){
                 var name = new PIXI.Text("Enemy Turn", style);
@@ -390,6 +497,7 @@
                 name.style.fill = 'red';
                 name = Graphics.fitText(name,w-5);
                 cont.addChild(name);
+                scene.turnMenuElements.name = name;
                 h += name.height + 5;
             }else{
                 var name = new PIXI.Text(unit.name + '\'s turn!', style);
@@ -398,6 +506,7 @@
                 name.position.x = w*0.5;
                 name.position.y = h;
                 name = Graphics.fitText(name,w-5);
+                scene.turnMenuElements.name = name;
                 cont.addChild(name);
                 h += name.height + 5;
 
@@ -412,9 +521,11 @@
                     anchor: [0.5,0],
                     position: [w/4,h],
                     clickFunc: function onClick(){
-                        //Do move stuff
+                        Game.moveActive = true;
+                        Game.getMoveNodes();
                     }
                 });
+                scene.turnMenuElements.moveButton = moveButton;
                 cont.addChild(moveButton);  
                 //Move text
                 var t = (typeof unit.moveLeft == 'undefined') ? 'Moves left: ???' : 'Moves left: ' + unit.moveLeft;
@@ -424,17 +535,77 @@
                 moveText.position.y = h;
                 moveText = Graphics.fitText(moveText,w/2-5);
                 cont.addChild(moveText);
+                scene.turnMenuElements.moveText = moveText;
                 h += moveButton.height + 10;
                 //Attack button
-
+                var attackButton = Graphics.makeUiElement({
+                    text: 'Attack',
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/4,h],
+                    clickFunc: function onClick(){
+                        //Do move stuff
+                    }
+                });
+                scene.turnMenuElements.attackButton = attackButton;
+                cont.addChild(attackButton); 
                 //weapon name text
-
+                var t = (unit.weapon == null) ? 'Unarmed' : unit.inventory.items[unit.weapon].name;
+                var attackText = new PIXI.Text(t, style);
+                attackText.anchor.x = 0.5;
+                attackText.position.x = w*0.75;
+                attackText.position.y = h;
+                attackText = Graphics.fitText(attackText,w/2-5);
+                cont.addChild(attackText);
+                scene.turnMenuElements.attackText = attackText;
+                h += attackButton.height + 10;
                 //Action button
-
+                var actionButton = Graphics.makeUiElement({
+                    text: 'Action',
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/2,h],
+                    clickFunc: function onClick(){
+                        //Do move stuff
+                    }
+                });
+                scene.turnMenuElements.actionButton = actionButton;
+                cont.addChild(actionButton);
+                h += actionButton.height + 10;
                 //Inventory Button
-
+                var inventoryButton = Graphics.makeUiElement({
+                    text: 'Inventory',
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/2,h],
+                    clickFunc: function onClick(){
+                        //Do move stuff
+                    }
+                });
+                scene.turnMenuElements.inventoryButton = inventoryButton;
+                cont.addChild(inventoryButton);
+                h += inventoryButton.height + 10;
                 //Wait button
-
+                var waitButton = Graphics.makeUiElement({
+                    text: 'End Turn',
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/2,h],
+                    clickFunc: function onClick(){
+                        //Do move stuff
+                    }
+                });
+                scene.turnMenuElements.waitButton = waitButton;
+                cont.addChild(waitButton);
+                h += waitButton.height + 10;
                 //CR%?
             }
 
@@ -449,15 +620,43 @@
             gfx.lineTo(2,2);
 
             if (unit.owner == window.playerID){
-                gfx.moveTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y-2);
-                gfx.lineTo(moveButton.position.x + moveButton.width/2+2,moveButton.position.y-2);
-                gfx.lineTo(moveButton.position.x + moveButton.width/2+2,moveButton.position.y+moveButton.height+2);
-                gfx.lineTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y+moveButton.height+2);
-                gfx.lineTo(moveButton.position.x - moveButton.width/2-2,moveButton.position.y-2);
+                this.drawBoxAround(moveButton,gfx);
+                this.drawBoxAround(attackButton,gfx);
+                this.drawBoxAround(actionButton,gfx);
+                this.drawBoxAround(inventoryButton,gfx);
+                this.drawBoxAround(waitButton,gfx);
             }
             //create and render the texture and sprite
             return scene;
         },
+        drawBoxAround: function(button,gfx){
+            gfx.moveTo(button.position.x - button.width/2-2,button.position.y-2);
+            gfx.lineTo(button.position.x + button.width/2+2,button.position.y-2);
+            gfx.lineTo(button.position.x + button.width/2+2,button.position.y+button.height+2);
+            gfx.lineTo(button.position.x - button.width/2-2,button.position.y+button.height+2);
+            gfx.lineTo(button.position.x - button.width/2-2,button.position.y-2);
+        },
+
+        getMoveNodes: function(){
+            var unit = this.units[this.turnList[0]];
+            var possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),unit.moveLeft);
+            var start;
+            var end;
+            var pathArr;
+            for(var i = 0; i < possibleNodes.length;i++){
+                start = this.map.getCube(unit.currentNode);
+                end = this.map.cubeMap[possibleNodes[i][0]][possibleNodes[i][1]][possibleNodes[i][2]];
+                if (this.map.getAxial(end).unit != null){
+                    continue;
+                }
+                pathArr = this.map.findPath(start,end,{maxJump:unit.jump,startingUnit:unit});
+                if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
+                    var axial = this.map.getAxial(end);
+                    this.moveNodesActive.push(axial);
+                }
+            }
+        },
+
         getTurnBox: function(id){
             var h = 75;
             var w = 150;
