@@ -59,6 +59,7 @@
                     var t = 1;
                     if (!(window.currentGameMap.currentRotation%2)){t = 2}
                     window.currentGameMap['container' + t].children = window.currentGameMap.updateSprites(window.currentGameMap['container' + t].children);
+                    Game.addOverlaySprites();
                     window.currentGameMap.changedZoom = true;
                 }
             }else{

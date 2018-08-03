@@ -219,7 +219,8 @@
                 'ice_tile2',
                 'sand_tile1',
                 'sand_tile2',
-                'arrow'
+                'overlay1',
+                'overlay2'
             ];
 
             //add all textures to resources

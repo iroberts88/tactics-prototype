@@ -144,6 +144,7 @@
             }
             this.maxSize = this.maxSize*2;
             this.updateSprites(this.container2.children);
+            Game.addOverlaySprites();
             Graphics.worldContainer.addChild(this.container2);
             if (data.sz1){
                 for (var i = 0; i < data.sz1.length;i++){
@@ -432,6 +433,7 @@
         Graphics.worldPrimitives.position.y = Graphics.height/2;
     }
 	Map.prototype.updateSprites = function(arr, resetTint){
+        Game.removeOverlaySprites();
         if (typeof resetTint == 'undefined'){
             resetTint = false;
         }
@@ -567,7 +569,7 @@
                         if (!(Game.map.currentRotation%2)){t = 2}
                         var sp = 'sprite' + t;
                         var a = unit.currentNode;
-                        var path = Game.map.findPath(Game.map.getCube(unit.currentNode),Game.map.getCube(Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r]),{startingUnit:Game.units[Game.turnList[0]]});
+                        var path = Game.map.findPath(Game.map.getCube(unit.currentNode),Game.map.getCube(Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r]),{maxJump: Game.units[Game.turnList[0]].jump,startingUnit:Game.units[Game.turnList[0]]});
                         Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-Game.map.TILE_HEIGHT*(a.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]);
                         for (var i = 1; i < path.length;i++){
                             var a = Game.map.getAxial(path[i]);
@@ -923,6 +925,7 @@
                 if (!(this.currentRotation%2)){t = 2}
                 Graphics.worldContainer.addChild(this['container' + t]);
                 this['container' + t].children = this.updateSprites(this['container' + t].children,true);
+                Game.addOverlaySprites();
                 Graphics.worldPrimitives.clear();
             }
             this.container1.rotation = this.rotateData.extraRot + this.rotateData.angle * (this.rotateData.t/this.rotateData.time);
@@ -942,7 +945,11 @@
             h:0,
             tile: 'base',
             deleted: false,
-            unit: null
+            unit: null,
+            sprite1: null,
+            sprite2: null,
+            overlaySprite1: null,
+            overlaySprite2: null
         }
     }
 

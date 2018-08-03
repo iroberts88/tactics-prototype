@@ -86,11 +86,13 @@ HexMap.prototype.initCubeMap = function(){
 //returns a cube node when given an axial node
 HexMap.prototype.getCube = function(axialNode){
     return this.cubeMap[axialNode.q][-axialNode.q-axialNode.r][axialNode.r];
-}
+};
+
 //returns an axial node when given a cube node
 HexMap.prototype.getAxial = function(cubeNode){
     return this.axialMap[cubeNode.x][cubeNode.z];
-}
+};
+
 //finds the neighbor of a cube node in <dir> direction
 HexMap.prototype.getCubeNeighbor = function(cubeNode,direction){
     var d = this.cubeDirections[direction];
@@ -100,7 +102,8 @@ HexMap.prototype.getCubeNeighbor = function(cubeNode,direction){
         console.log(e);
     }
     return null;
-}
+};
+
 //finds the diagonal neighbor of a cube node in <dir> direction
 HexMap.prototype.getCubeDiagonalNeighbor = function(cubeNode,direction){
     try{
@@ -109,7 +112,8 @@ HexMap.prototype.getCubeDiagonalNeighbor = function(cubeNode,direction){
     }catch(e){
         return false;
     }
-},
+};
+
 //finds the neighbor of an axial node in <dir> direction
 HexMap.prototype.getAxialNeighbor = function(axialNode,direction){
     try{
@@ -118,7 +122,8 @@ HexMap.prototype.getAxialNeighbor = function(axialNode,direction){
     }catch(e){
         return false;
     }
-}
+};
+
 HexMap.prototype.cubeRing = function(center,radius){
     //return a list of all nodes in a ring around a center node
     if (!radius){return [[center.x,center.y,center.z]];}
@@ -132,7 +137,8 @@ HexMap.prototype.cubeRing = function(center,radius){
         }
     }
     return results;
-}
+};
+
 HexMap.prototype.cubeSpiral = function(center,radius){
     var results = [];
     for (var k = 0; k <= radius;k++){
@@ -145,10 +151,12 @@ HexMap.prototype.cubeSpiral = function(center,radius){
         }
     }
     return results;
-}
+};
+
 HexMap.prototype.cubeDistance = function(a,b){
     return Math.round(Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y),Math.abs(a.z-b.z)));
-}
+};
+
 HexMap.prototype.cubeRound = function(cube){
     var rx = Math.trunc(Math.round(cube.x));
     var ry = Math.trunc(Math.round(cube.y));
@@ -196,13 +204,17 @@ HexMap.prototype.cubeLerp = function(a,b,t){
     }
 }
 
-HexMap.prototype.findPath = function(startNode,endNode,skip,maxJump){
-
+HexMap.prototype.findPath = function(startNode,endNode,options){
+    console.log(startNode);
+    console.log(endNode);
     //A* search
     //start = starting axial node;
     //end = ending axial node;
+    //OPTIONS
     //skip - nodes to skip (for delete in map editor) TODO - the game version probably shouldnt have this
     //maxJump - the maximum height diff for a neighboring node to be viable
+    //startingUnit
+
     //returns empty array if no path exists
     //returns path array if path exists [node,node,node,...]
 
@@ -216,8 +228,14 @@ HexMap.prototype.findPath = function(startNode,endNode,skip,maxJump){
     endNode.h = 0;
     endNode.parent = null;
 
-    if (typeof maxJump == 'undefined'){
-        maxJump = 99;
+    if (typeof options.maxJump == 'undefined'){
+        options.maxJump = 99;
+    }
+    if (typeof options.skip == 'undefined'){
+        options.skip = null;
+    }
+    if (typeof options.startingUnit == 'undefined'){
+        options.startingUnit = null;
     }
 
     var openList   = [];
@@ -260,7 +278,14 @@ HexMap.prototype.findPath = function(startNode,endNode,skip,maxJump){
             //first check if the node exists
             if (node){
                 var axial = this.getAxial(node);
-                if(this.findGraphNode(closedList,node) || node == skip || node.deleted || axial.h - currentAxial.h > maxJump) {
+                //check units on this node
+                if (options.startingUnit && axial.unit){
+                    if (axial.unit.owner != options.startingUnit.owner){
+                        // not a valid node to process, skip to next neighbor
+                        continue;
+                    }
+                }
+                if(this.findGraphNode(closedList,node) || node == options.skip || node.deleted || axial.h - currentAxial.h > options.maxJump) {
                     // not a valid node to process, skip to next neighbor
                     continue;
                 }
@@ -304,7 +329,8 @@ HexMap.prototype.findPath = function(startNode,endNode,skip,maxJump){
 
     // No result was found -- empty array signifies failure to find path
     return [];
-}
+};
+
 HexMap.prototype.removeGraphNode =  function(arr,node){
     //for use in findPath
     for (var i = 0;i < arr.length;i++){

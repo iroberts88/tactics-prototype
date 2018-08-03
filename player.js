@@ -153,7 +153,15 @@ Player.prototype.getLosOfNode = function(map,node){
     }
 };
 
-
+Player.prototype.hasUnit = function(id){
+    //returns true if player has a unit with the given id
+    for (var i = 0; i < this.user.characters.length;i++){
+        if (this.user.characters[i].id == id){
+            return true;
+        }
+    }
+    return false;
+}
 Player.prototype.onDisconnect = function(callback) {
     this.onDisconnectHandler = callback;
 };
@@ -192,19 +200,48 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case 'move':
-                        console.log(data);
-                        //make sure it's the players turn
-
+                        //make sure the unit at the top of the turn order is the player's
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                            return;
+                        }
                         //send the data to gameSession and execute the move
-
+                        that.gameSession.unitMove(data);
                         break;
                     case 'attack':
+                        console.log(data);
+                        //make sure the unit at the top of the turn order is the player's
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                            return;
+                        }
+                        //send the data to gameSession and execute the attack
+                        that.gameSession.unitAttack(data);
                         break;
                     case 'ability':
+                        console.log(data);
+                        //make sure the unit at the top of the turn order is the player's
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                            return;
+                        }
+                        //send the data to gameSession and execute the ability
+                        that.gameSession.unitAbility(data);
                         break;
                     case 'item': 
+                        console.log(data);
+                        //make sure the unit at the top of the turn order is the player's
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                            return;
+                        }
+                        //send the data to gameSession and execute the item
+                        that.gameSession.unitItem(data);
                         break;
                     case 'end':
+                        console.log(data);
+                        //make sure the unit at the top of the turn order is the player's
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                            return;
+                        }
+                        //send the data to gameSession and execute the attack
+                        that.gameSession.unitEnd(data);
                         break;
                }
             }else{
@@ -488,7 +525,7 @@ Player.prototype.setupSocket = function() {
             }
         }catch(e){
             console.log("Player Update Error");
-            console.log(e);
+            that.gameEngine.debug(that,{'id': 'error', 'error': e.stack});
         }
     });
 

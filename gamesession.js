@@ -276,6 +276,43 @@ GameSession.prototype.getTurnOrder = function(){
     }
 }
 
+////////////////////////////////////////////////////////////////
+//                  Unit Turn Functions
+////////////////////////////////////////////////////////////////
+GameSession.prototype.unitMove = function(data){
+    var unit = this.allUnits[this.turnOrder[0].id];
+    var node = this.map.getCube(data);
+    var path = this.map.findPath(this.map.getCube(unit.currentNode),node,{startingUnit: unit,maxJump:unit.jump.value})
+    console.log("path length: " + path.length);
+
+    //TODO check reactions for each moved node
+
+    //set the new node for the unit
+
+    //send down the action info to all players in the battle
+}
+                        
+GameSession.prototype.unitAttack = function(data){
+
+}
+                        
+GameSession.prototype.unitAbility = function(data){
+
+}
+                       
+GameSession.prototype.unitItem = function(data){
+
+}
+                      
+GameSession.prototype.unitEnd = function(data){
+
+}
+
+
+////////////////////////////////////////////////////////////////
+//                  Socket Functions
+////////////////////////////////////////////////////////////////
+
 GameSession.prototype.handleDisconnect = function(p,toEngine){
     //remove players and delete session
     console.log("Game " + this.id + ' has ended');

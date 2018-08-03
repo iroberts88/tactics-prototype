@@ -77,6 +77,9 @@
 
         uiWindows: [], //array containing active UI components?
 
+        currentActionData: null,
+
+        overlaySprites: [],
         init: function() {
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
@@ -301,6 +304,7 @@
             if (this.moveActive){
                 this.moveActive = false;
                 this.moveNodesActive = [];
+                this.resetOverlaySprites();
                 Graphics.worldPrimitives.clear();
             }
 
@@ -332,6 +336,13 @@
                 }
             }else{
                 this.updateUnitsBool = true;
+            }
+            if (this.currentActionData){
+                var func = Actions.getAction(this.currentActionData.action);
+                var endAction = func(deltaTime,this.currentActionData);
+                if (endAction){
+                    this.currentActionData = null;
+                }
             }
             for (var i in this.units){
                 try{
@@ -381,6 +392,7 @@
                 if (this.moveActive){
                     this.moveActive = false;
                     this.moveNodesActive = [];
+                    this.resetOverlaySprites();
                     Graphics.worldPrimitives.clear();
                 }
                 for (var i = 0; i < this.uiWindows.length;i++){
@@ -653,10 +665,55 @@
                 if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
                     var axial = this.map.getAxial(end);
                     this.moveNodesActive.push(axial);
+                    axial.overlaySprite1 = Graphics.getSprite('overlay1');
+                    axial.overlaySprite1.anchor.x = 0.5;
+                    axial.overlaySprite1.anchor.y = 0.5;
+                    axial.overlaySprite1.tint = 0x0FFFF0;
+                    axial.overlaySprite1.overlay = axial.sprite1;
+                    axial.overlaySprite2 = Graphics.getSprite('overlay2');
+                    axial.overlaySprite2.anchor.x = 0.5;
+                    axial.overlaySprite2.anchor.y = 0.5;
+                    axial.overlaySprite2.tint = 0x0FFFF0;
+                    axial.overlaySprite2.overlay = axial.sprite2;
+                    this.overlaySprites.push({q:axial.q,r:axial.r});
+                    this.addOverlaySprites();
                 }
             }
         },
-
+        addOverlaySprites(){
+            //add the overlay sprites to the map, setting the correct scale and position   
+            for (var i = 0;i < this.overlaySprites.length;i++){
+                var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
+                node.overlaySprite1.scale.x = this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                node.overlaySprite1.scale.y = this.map.YSCALE_SETTINGS[this.map.currentYScaleSetting]*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                node.overlaySprite1.position.x = node.sprite1.position.x;
+                node.overlaySprite1.position.y = (Game.map.TILE_HEIGHT*this.map.YSCALE_SETTINGS[this.map.currentYScaleSetting]*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]) + node.sprite1.position.y-Game.map.TILE_HEIGHT*(node.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting];
+                node.overlaySprite2.scale.x = this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                node.overlaySprite2.scale.y = this.map.YSCALE_SETTINGS[this.map.currentYScaleSetting]*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                node.overlaySprite2.position.x = node.sprite2.position.x;
+                node.overlaySprite2.position.y = (Game.map.TILE_HEIGHT*this.map.YSCALE_SETTINGS[this.map.currentYScaleSetting]*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]) + node.sprite2.position.y-Game.map.TILE_HEIGHT*(node.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting];
+                this.map.container1.addChildAt(node.overlaySprite1,(this.map.container1.getChildIndex(node.sprite1)+1));
+                this.map.container2.addChildAt(node.overlaySprite2,(this.map.container2.getChildIndex(node.sprite2)+1));
+            }
+        },
+        removeOverlaySprites(){
+            //remove overlay sprites, but keep them in the node ect
+            for (var i = 0;i < this.overlaySprites.length;i++){
+                var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
+                this.map.container1.removeChild(node.overlaySprite1);
+                this.map.container2.removeChild(node.overlaySprite2);
+            }
+        },
+        resetOverlaySprites(){
+            for (var i = 0;i < this.overlaySprites.length;i++){
+                var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
+                this.map.container1.removeChild(node.overlaySprite1);
+                this.map.container2.removeChild(node.overlaySprite2);
+                node.overlaySprite1 = null;
+                node.overlaySprite2 = null;
+            }
+            this.overlaySprites = [];
+        },
         getTurnBox: function(id){
             var h = 75;
             var w = 150;
