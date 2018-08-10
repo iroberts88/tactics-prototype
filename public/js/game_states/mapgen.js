@@ -1018,7 +1018,7 @@
                     var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                     var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                     for (var i = 0;i < arr.length;i++){
-                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                        var c = arr[i];
                         var a = this.map.getAxial(c);
                         var t = 1;
                         if (!(this.map.currentRotation%2)){t = 2}
@@ -1054,7 +1054,7 @@
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var a = this.map.getAxial(c);
                                     if (a.h < lowest){
                                         lowest = a.h;
@@ -1062,7 +1062,7 @@
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var c = arr[i];
                                         var a = this.map.getAxial(c);
                                         if (a.h == lowest && a.h < this.map.MAX_NODE_HEIGHT){
                                             //all the lowest nodes, increase height!
@@ -1085,7 +1085,7 @@
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var a = this.map.getAxial(c);
                                     if (a.h > highest){
                                         highest = a.h;
@@ -1093,7 +1093,7 @@
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var c = arr[i];
                                         var a = this.map.getAxial(c);
                                         if (a.h == highest && a.h > 0){
                                             //all the highest nodes, decrease height
@@ -1118,7 +1118,7 @@
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var a = this.map.getAxial(c);
                                     if (a.h < lowest){
                                         lowest = a.h;
@@ -1126,7 +1126,7 @@
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var c = arr[i];
                                         var a = this.map.getAxial(c);
                                         if (a.h == lowest && a.h < this.map.MAX_NODE_HEIGHT){
                                             //all the lowest nodes, increase height!
@@ -1146,7 +1146,7 @@
                                     var arr = this.map.cubeRing(cubeNode,this.toolSize-1 + j);
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var c = arr[i];
                                             var a = this.map.getAxial(c);
                                             if (a.h < ringLowest){
                                                 ringLowest = a.h;
@@ -1155,7 +1155,7 @@
                                     }
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var c = arr[i];
                                             var a = this.map.getAxial(c);
                                             if (a.h == ringLowest && a.h < this.map.MAX_NODE_HEIGHT && ringLowest < lowest){
                                                 //all the lowest nodes, increase height!
@@ -1182,7 +1182,7 @@
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var a = this.map.getAxial(c);
                                     if (a.h > highest){
                                         highest = a.h;
@@ -1190,7 +1190,7 @@
                                 }
                                 for (var i = 0;i < arr.length;i++){
                                     try{
-                                        var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                        var c = arr[i];
                                         var a = this.map.getAxial(c);
                                         if (a.h == highest && a.h > 0){
                                             //all the highest nodes, decrease height
@@ -1210,7 +1210,7 @@
                                     var arr = this.map.cubeRing(cubeNode,this.toolSize-1 + (j*-1));
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var c = arr[i];
                                             var a = this.map.getAxial(c);
                                             if (a.h > ringHighest){
                                                 ringHighest = a.h;
@@ -1219,7 +1219,7 @@
                                     }
                                     for (var i = 0;i < arr.length;i++){
                                         try{
-                                            var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                            var c = arr[i];
                                             var a = this.map.getAxial(c);
                                             if (a.h == ringHighest && a.h > 0 && ringHighest > highest){
                                                 //all the lowest nodes, decrease height!
@@ -1250,7 +1250,7 @@
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var a = this.map.getAxial(c);
                                     var n = 1;
                                     if (Math.round(Math.random())){n = -1}
@@ -1275,7 +1275,7 @@
                             var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                             var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                             for (var i = 0;i < arr.length;i++){
-                                var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                var c = arr[i][0];
                                 var a = this.map.getAxial(c);
                                 if (a.tile != this.currentTileType){
                                     a.sprite1.texture = this.map.tileTextures[this.currentTileType][1][a.h];
@@ -1441,34 +1441,13 @@
                             }
                             break;
                         case 'los':
-                            //Un-Comment below to show lines drawn to each node
-
-                            /*var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
-                            var aNode = this.map.getAxial(cubeNode);
-                            var arr = this.map.cubeSpiral(cubeNode,this.map.maxSize);
-                            for (var i = 0;i < arr.length;i++){
-                                var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                                var cPos = {
-                                    x: c.x + 1e-6,
-                                    y: c.y + 1e-6,
-                                    z: c.z + -2e-6,
-                                }
-                                var r1 = this.map.cubeLineDraw(cubeNode,cPos);
-                                var a = this.map.getAxial(r1[r1.length-1]);
-                                var t = 1;
-                                    if (!(this.map.currentRotation%2)){t = 2}
-                                    var sp = 'sprite' + t;
-                                Graphics.uiPrimitives2.lineStyle(3,0xFFFF00,1);
-                                Graphics.uiPrimitives2.moveTo(aNode[sp].position.x,aNode[sp].position.y-this.map.TILE_HEIGHT*(aNode.h+1));
-                                Graphics.uiPrimitives2.lineTo(a[sp].position.x,a[sp].position.y-this.map.TILE_HEIGHT*(a.h+1));
-                            }*/
                             if (this.dragStart && this.losToolData.losShown == false){
                                 var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                                 var aNode = this.map.getAxial(cubeNode);
                                 var aH = aNode.h + this.char_height;
                                 var arr = this.map.cubeSpiral(cubeNode,this.map.maxSize);
                                 for (var i = 0;i < arr.length;i++){
-                                    var c = this.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                                    var c = arr[i];
                                     var cPos = {
                                         x: c.x + this.losAngle,
                                         y: c.y + this.losAngle,

@@ -122,6 +122,7 @@
       "weight": 2,
       "eqData": {
         "damage": 21,
+        "range": 1,
         "onEquip": [],
         "onHit": [],
         "onFire": []
@@ -142,6 +143,7 @@
       "weight": 9,
       "eqData": {
         "damage": 30,
+        "range": 1,
         "onEquip": [],
         "onHit": [
           {
@@ -256,6 +258,7 @@
       "name": "Rocket Sledge",
       "weight": 14,
       "eqData": {
+        "range": 1,
         "damage": 39,
         "onEquip": [],
         "onHit": [],

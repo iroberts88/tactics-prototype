@@ -1,5 +1,6 @@
 //map
 var HexMap = function(session){
+    this.MAX_HEIGHT = 25;
     this.gameSession = session;
     this.axialDirections = [
         [1,0],[1,-1],[0,-1],
@@ -15,8 +16,8 @@ var HexMap = function(session){
     ];
 
     this.cardinalDirections = [
-        'Southeast','Northeast','North',
-        'Northwest','Southwest','South'
+        'Northeast','Southeast','South',
+        'Southwest','Northwest','North'
     ];
     this.startZone1 = [];
     this.startZone2 = [];
@@ -65,6 +66,7 @@ HexMap.prototype.initCubeMap = function(){
     //Take an axial map and create its cube map counterpart
     for (var i in this.axialMap){
         for (var j in this.axialMap[i]){
+            //get LOS first
             if (typeof this.cubeMap[i] == 'undefined'){
                 this.cubeMap[i] = {}
             }
@@ -124,14 +126,42 @@ HexMap.prototype.getAxialNeighbor = function(axialNode,direction){
     }
 };
 
+//returns the direction when moving from one axial node to another
+HexMap.prototype.getNewDirectionAxial = function(startNode,endNode){
+    var qMove = startNode.q - endNode.q;
+    var rMove = startNode.r - endNode.r;
+    for (var i = 0; i < this.axialDirections.length;i++){
+        if (qMove == this.axialDirections[i][0] && rMove == this.axialDirections[i][1]){
+            return i;
+        }
+    }
+    return null;
+};
+
+//returns the direction when moving from one cube node to another
+HexMap.prototype.getNewDirectionCube = function(startNode,endNode){
+    var xMove = startNode.x - endNode.x;
+    var yMove = startNode.y - endNode.y;
+    var zMove = startNode.z - endNode.z;
+    for (var i = 0; i < this.cubeDirections.length;i++){
+        if (xMove == this.cubeDirections[i][0] && yMove == this.cubeDirections[i][1] && zMove == this.cubeDirections[i][2]){
+            return i;
+        }
+    }
+    return null;
+};
+
 HexMap.prototype.cubeRing = function(center,radius){
     //return a list of all nodes in a ring around a center node
-    if (!radius){return [[center.x,center.y,center.z]];}
+    if (!radius){return [center];}
     var results = [];
     var cubeNode = [center.x+this.cubeDirections[4][0]*radius,center.y+this.cubeDirections[4][1]*radius,center.z+this.cubeDirections[4][2]*radius];
     for (var i = 0; i < 6;i++){
         for (var j = 0; j < radius;j++){
-            results.push(cubeNode);
+            try{
+                var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
+                results.push(c);
+            }catch(e){}
             var d = this.cubeDirections[i];
             cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
         }
@@ -146,7 +176,7 @@ HexMap.prototype.cubeSpiral = function(center,radius){
         for (var i = 0; i < arr.length;i++){
             try{
                 var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                results.push(arr[i]);
+                results.push(c);
             }catch(e){}
         }
     }
@@ -205,8 +235,6 @@ HexMap.prototype.cubeLerp = function(a,b,t){
 }
 
 HexMap.prototype.findPath = function(startNode,endNode,options){
-    console.log(startNode);
-    console.log(endNode);
     //A* search
     //start = starting axial node;
     //end = ending axial node;
@@ -395,7 +423,7 @@ HexMap.prototype.getAxialNode = function(q,r){
         h:0, //height value
         tile: 'base', //tile type
         deleted: false, //the node is deleted from the map and not visible
-        unit: null //use when a player is on the node
+        unit: null, //use when a player is on the node
     }
 }
 

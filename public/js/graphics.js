@@ -339,6 +339,13 @@
                 button.position.y = data.position[1];
                 button.anchor.x = data.anchor[0];
                 button.anchor.y = data.anchor[1];
+                if (typeof data.fontSize != 'undefined'){
+                    button.style.fontSize = data.fontSize;
+                }
+                if (typeof data.wrap != 'undefined'){
+                    button.style.wordWrap = true;
+                    button.style.wordWrapWidth = data.wrap;
+                }
             }
 
             // OPTIONAL data.interactive

@@ -41,17 +41,21 @@
             [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
         ];
         this.cardinalDirections = [
-            'Southeast','Northeast','North',
-            'Northwest','Southwest','South'
+            'Northeast','Southeast','South',
+            'Southwest','Northwest','North'
+        ];
+        this.cardinalDirectionsAbrv = [
+            'NE','SE','S',
+            'SW','NW','N'
         ];
         this.spriteStartingDirections = {
-            'Southeast': 10,
-            'Northeast': 8,
-            'North': 6,
-            'Northwest': 4,
-            'Southwest': 2,
-            'South': 0
-        }
+            'Southeast': 8,
+            'Northeast': 10,
+            'North': 0,
+            'Northwest': 2,
+            'Southwest': 4,
+            'South': 6
+        };
         this.dirArray = ['d','dl','dl','l','ul','ul','u','ul','ul','l','dl','dl'];
         this.maxSize = 0;
         this.startZone1 = [];
@@ -187,7 +191,7 @@
         this.container1.interactive = true;
         this.container2 = new PIXI.Container();
         this.container2.interactive = true;
-        var cAverages ={};
+        var cAverages ={}; //Center averages. this will calculate the average of all positions for tiles to determine the center rotation point
 
         for (var i = 0; i <12;i++){
             cAverages[i] = {};
@@ -486,7 +490,7 @@
                 var cubeNode = MapGen.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                 var arr = MapGen.map.cubeSpiral(cubeNode,MapGen.toolSize-1);
                 for (var i = 0;i < arr.length;i++){
-                    var c = MapGen.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                    var c = arr[i];
                     var a = MapGen.map.getAxial(c);
                     var t = 1;
                     if (!(MapGen.map.currentRotation%2)){t = 2}
@@ -515,7 +519,7 @@
                     var cubeNode = MapGen.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                     var arr = MapGen.map.cubeSpiral(cubeNode,MapGen.toolSize-1);
                     for (var i = 0;i < arr.length;i++){
-                        var c = MapGen.map.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
+                        var c = arr[i];
                         var a = MapGen.map.getAxial(c);
                         var t = 1;
                         if (!(MapGen.map.currentRotation%2)){t = 2}
@@ -540,6 +544,10 @@
                 var node = Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r];
                 if (Game.moveActive){
                     Game.tryToMove(node);
+                    return;
+                }
+                if (Game.attackActive){
+                    Game.tryToAttack(node);
                     return;
                 }
                 if (node.unit){
@@ -630,16 +638,27 @@
             return false;
         }
     }
+    //returns the direction when moving from one axial node to another
+    Map.prototype.getNewDirectionAxial = function(startNode,endNode){
+        var qMove = startNode.q - endNode.q;
+        var rMove = startNode.r - endNode.r;
+        for (var i = 0; i < this.axialDirections.length;i++){
+            if (qMove == this.axialDirections[i][0] && rMove == this.axialDirections[i][1]){
+                return i;
+            }
+        }
+        return null;
+    };
     Map.prototype.cubeRing = function(center,radius){
         //return a list of all nodes in a ring around a center node
-        if (!radius){return [[center.x,center.y,center.z]];}
+        if (!radius){return [center];}
         var results = [];
         var cubeNode = [center.x+this.cubeDirections[4][0]*radius,center.y+this.cubeDirections[4][1]*radius,center.z+this.cubeDirections[4][2]*radius];
         for (var i = 0; i < 6;i++){
             for (var j = 0; j < radius;j++){
                 try{
                     var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
-                    results.push(cubeNode);
+                    results.push(c);
                 }catch(e){}
                 var d = this.cubeDirections[i];
                 cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
@@ -652,10 +671,7 @@
         for (var k = 0; k <= radius;k++){
             var arr = this.cubeRing(center,k);
             for (var i = 0; i < arr.length;i++){
-                try{
-                    var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                    results.push(arr[i]);
-                }catch(e){}
+                results.push(arr[i]);
             }
         }
         return results;
@@ -934,6 +950,7 @@
                 this.container1.rotation = 0;
                 this.container2.rotation = 0;
                 this.rotateData = null;
+                Game.updateCompass();
             }
 
         }

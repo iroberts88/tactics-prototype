@@ -81,6 +81,7 @@ var Unit = function(){
 
     this.charge = null;
 
+    this.height = 2;
 }
 
 Unit.prototype.reset = function(){
@@ -505,13 +506,11 @@ Unit.prototype.getClientData = function(){
     data.name = this.name;
     data.sex = this.sex
     data.id = this.id;
-    data.charge = this.charge;
     data.usedAbilitySlots = this.usedAbilitySlots;
     data.level = this.level;
     data.health = this.currentHealth;
     data.energy = this.currentEnergy;
     data.shields = this.currentShields;
-    data.charge = this.charge;
     data.currentNode = this.minCurrentNode();
     data.direction = this.direction
     data.classInfo = {};
@@ -780,6 +779,11 @@ Unit.prototype.addAp = function(classID,amt){
         console.log("unable to mod ap");
         console.log(e);
     }
+}
+Unit.prototype.newNode = function(node){
+    this.currentNode.unit = null;
+    this.currentNode = node;
+    this.currentNode.unit = this;
 }
 Unit.prototype.update = function(dt) {
 

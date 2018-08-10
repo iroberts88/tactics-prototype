@@ -57,8 +57,10 @@
                     Game.units[unit.id] = unit;
                     unit.sprite.tint = 0xfcfcfc;
                 }
-                Game.initUI(); 
-                Game.getLineOfSight();
+                for (var i = 0;i<data.turnPercent.length;i++){
+                    Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
+                }
+                Game.initUI();
             });
 
             Acorn.Net.on('startGame', function(data) {
@@ -72,6 +74,9 @@
                 //get the new turn order at the beginning of each turn
                 console.log(data);
                 Game.turnList = data.turnList;
+                for (var i = 0;i<data.turnPercent.length;i++){
+                    Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
+                }
                 Game.newTurnOrder(data.turnList);
             });
 
@@ -267,11 +272,20 @@
                     }
                 }
             });
+
+            Acorn.Net.on('action', function (data) {
+                console.log('Perform battle action!');
+                console.log(data);
+                Game.performingAction = true;
+                Game.turnMenu.visible = false;
+                Game.currentAction = new Actions();
+                Game.currentAction.init(data.actionData);
+            });
+
             Acorn.Net.on('debug', function (data) {
                 console.log('sever ERROR debug');
                 console.log(data);
             });
-
 
             Acorn.Net.on('ping', function (data) {
               Settings.stats.pingReturn();

@@ -45,7 +45,7 @@ var GameSession = function (engine) {
     this.gameHasStarted = false;
 
     this.ticker = 0;
-    this.timePerTurn = 90; //1 minute turns?
+    this.timePerTurn = 15; //1 minute turns?
     this.timeInBetweenTurns = 1.5;
 
     this.reactionTicker = 0;
@@ -102,29 +102,24 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
         //send down unit info
         for (var p in this.players){
             var player = this.players[p];
-            player.getLineOfSight(this.map);
             var myUnits = [];
             var otherUnits = [];
             var turnList = [];
+            var turnPercent = [];
             for (var i = 0; i < this.allUnitIds.length;i++){
                 var unit = this.allUnits[this.allUnitIds[i]];
                 if (player.myUnits[unit.id]){
                     myUnits.push(unit.getClientData());
                 }else{
                     var data = unit.getLessClientData();
-                    if (!player.visibleNodes[unit.currentNode.nodeid]){
-                        data.visible = false;
-                        data.currentNode = null;
-                    }else{
-                        data.visible = true;
-                    }
                     otherUnits.push(data);
                 }
             }
             for (var i = 0; i < this.turnOrder.length;i++){
                 turnList.push(this.turnOrder[i].id);
+                turnPercent.push(this.allUnits[this.turnOrder[i].id].charge/this.chargeMax);
             }
-            this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList});
+            this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList,turnPercent:turnPercent});
         }
         this.ticker = 0;
         this.currentState = this.gameStates.InGame;
@@ -149,10 +144,12 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                 this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
                 this.getTurnOrder();
                 var turnList = [];
+                var turnPercent = [];
                 for (var i = 0; i < this.turnOrder.length;i++){
                     turnList.push(this.turnOrder[i].id);
+                    turnPercent.push(this.allUnits[this.turnOrder[i].id].charge/this.chargeMax);
                 }
-                this.queueData('newTurnOrder',{turnList:turnList});
+                this.queueData('newTurnOrder',{turnList:turnList,turnPercent:turnPercent});
             }
             break;
         case this.inGameStates.WaitingForReactionInfo:
@@ -266,6 +263,7 @@ GameSession.prototype.getTurnOrder = function(){
     this.turnOrder = [];
     for (var i = 0; i < this.allUnitIds.length;i++){
         var unit = this.allUnits[this.allUnitIds[i]];
+        unit.moveLeft = unit.move.value;
         this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
     }
     this.turnOrder = this.turnSort(this.turnOrder);
@@ -281,15 +279,50 @@ GameSession.prototype.getTurnOrder = function(){
 ////////////////////////////////////////////////////////////////
 GameSession.prototype.unitMove = function(data){
     var unit = this.allUnits[this.turnOrder[0].id];
-    var node = this.map.getCube(data);
-    var path = this.map.findPath(this.map.getCube(unit.currentNode),node,{startingUnit: unit,maxJump:unit.jump.value})
+    var player = unit.owner.id;
+    var enemyPlayer;
+    for (var playerid in this.players){
+        if (playerid != player){
+            enemyPlayer = playerid;
+        }
+    }
+    var playerData = [];
+    var enemyPlayerData = [];
+    var endingNode = this.map.getCube(data);
+    var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value})
     console.log("path length: " + path.length);
+    var stopped = false;
+    for (var i = 1; i < path.length;i++){
+        if (unit.moveLeft <= 0){
+            //the unit is out of moves
+            unit.newNode(this.map.getAxial(path[i-1]));
+            stopped = true;
+            break;
+        }
+        var nextNode = path[i];
+        //TODO check reactions for each moved node
 
-    //TODO check reactions for each moved node
-
-    //set the new node for the unit
+        //set the new node for the unit
+        var dir = this.map.getNewDirectionCube(path[i-1],path[i]);
+        if (dir){
+            unit.direction = this.map.cardinalDirections[dir];
+        }
+        playerData.push({
+            action: 'move',
+            unitID: unit.id,
+            x: path[i].x,
+            y: path[i].y,
+            z: path[i].z,
+        });
+        unit.moveLeft -= 1;
+        console.log(unit.moveLeft);
+    }
+    if (!stopped){
+        unit.newNode(this.map.getAxial(path[path.length-1]));
+    }
 
     //send down the action info to all players in the battle
+    this.queueData('action',{actionData:playerData});
 }
                         
 GameSession.prototype.unitAttack = function(data){

@@ -71,13 +71,22 @@
 
         losAngle: 1e-6,
 
-        moveNodesActive: [], //contains the currently tinted move sprites
+        moveNodesActive: [], //contains the currently SHOWN move sprites
         moveActive: false,//movement active?
         movePathDrawn: false,
+
+        attackActive: false,
+        attackNodesActive: [],
+
+        endActive: false,
+        endNodesActive: [],
 
         uiWindows: [], //array containing active UI components?
 
         currentActionData: null,
+
+        compass: null,
+        compassComponents: [],
 
         overlaySprites: [],
         init: function() {
@@ -189,6 +198,7 @@
             Graphics.uiContainer.addChild(this.battleStartText);
             this.battleStartText.visible = false;
             window.currentGameMap = this.map;
+
             Graphics.showLoadingMessage(false);
         },
 
@@ -215,6 +225,9 @@
                 this.units[i].infoPane = this.getUnitInfoPane(i);
                 var overFunc = function(e){
                     Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                    if (Game.attackActive){
+                        Game.tryToAttack(Game.units[e.currentTarget.unitID].currentNode);
+                    }
                 }
                 this.units[i].sprite.on('pointerdown',overFunc);
                 this.units[i].sprite.on('pointerover', Game.filtersOn);
@@ -249,7 +262,60 @@
             //Current Turn window
 
             //Compass
-
+            this.compass = new PIXI.Container();
+            this.compass.position.x = Graphics.width/12;
+            this.compass.position.y = Graphics.height*0.9;
+            Graphics.uiContainer.addChild(this.compass);
+            this.compassComponents = [];
+            var scale = 2.3;
+            for (var i = 0; i < this.map.cardinalDirections.length;i++){
+                var cont = {};
+                var extra = 1.15;
+                cont.sprite = Graphics.getSprite('overlay2');
+                this.compass.addChild(cont.sprite);
+                cont.sprite.cDir = i;
+                //get rotated positions?
+                var startX = this.map.TILE_SIZE*scale * 1.5 * this.map.cubeDirections[i][0]*extra;
+                var startY = this.map.TILE_SIZE*scale * Math.sqrt(3) * (this.map.cubeDirections[i][1]+this.map.cubeDirections[i][0]/2)*extra;
+                cont.sprite.position.x = startX;
+                cont.sprite.position.y = startY;
+                cont.sprite.scale.x = scale;
+                cont.sprite.scale.y = scale;
+                cont.sprite.anchor.x = 0.5;
+                cont.sprite.anchor.y = 0.5;
+                cont.sprite.tint = '0xADADAD';
+                cont.sprite.interactive = true;
+                cont.sprite.buttonMode = true;
+                var overFunc = function(e){
+                    Game.tryToEnd(Game.map.cardinalDirections[e.currentTarget.cDir]);
+                }
+                cont.sprite.on('pointerdown',overFunc);
+                cont.rotatedPositions = {};
+                cont.text = new PIXI.Text(this.map.cardinalDirectionsAbrv[i],AcornSetup.baseStyle2);
+                cont.text.anchor.x = 0.5;
+                cont.text.anchor.y = 0.5;
+                cont.text.position.x = startX;
+                cont.text.position.y = startY-this.map.TILE_HEIGHT*scale;
+                this.compass.addChild(cont.text);
+                var flatCube = [this.map.cubeDirections[i][0],this.map.cubeDirections[i][1],this.map.cubeDirections[i][2]];
+                var pointCube = [this.map.cubeDirections[i][0],this.map.cubeDirections[i][1],this.map.cubeDirections[i][2]];
+                for (var j = 0; j < 12;j++){
+                    if (j%2 == 0){
+                        cont.rotatedPositions[j] = {
+                            x: this.map.TILE_SIZE*scale * 1.5 * flatCube[0]*extra,
+                            y: this.map.TILE_SIZE*scale * Math.sqrt(3) * (flatCube[1]+flatCube[0]/2)*extra
+                        }
+                        flatCube = [-flatCube[2],-flatCube[0],-flatCube[1]];
+                    }else{
+                        cont.rotatedPositions[j] = {
+                            x:this.map.TILE_SIZE*scale * Math.sqrt(3) * (pointCube[0]+(pointCube[1]/2))*extra,
+                            y:this.map.TILE_SIZE*scale * 1.5 * pointCube[1]*extra
+                        }
+                        pointCube = [-pointCube[2],-pointCube[0],-pointCube[1]];
+                    }
+                }
+                this.compassComponents.push(cont);
+            }
             //Time/player turn
             this.timeText = Graphics.makeUiElement({
                 text: '',
@@ -266,7 +332,20 @@
             Graphics.worldPrimitives.position.x = Graphics.width/2;
             Graphics.worldPrimitives.position.y = Graphics.height/2;
         },
-
+        updateCompass: function(){
+            for (var i = 0; i < this.compassComponents.length;i++){
+                var cr = this.map.currentRotation;
+                var component = this.compassComponents[i];
+                console.log(component)
+                var t = 1;
+                if (!(cr%2)){t = 2}
+                component.sprite.texture = Graphics.getResource('overlay' + t);
+                component.sprite.position.x = component.rotatedPositions[cr].x;
+                component.sprite.position.y = component.rotatedPositions[cr].y;
+                component.text.position.x = component.rotatedPositions[cr].x;
+                component.text.position.y = component.rotatedPositions[cr].y-this.map.TILE_HEIGHT*2.3;
+            }
+        },
         startGame: function(){
             //the first turn starts
             this.betweenStateTicker = 0;
@@ -274,11 +353,20 @@
             this.reactionTicker = 0;
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
+            this.resetTurnMenu();
+        },
+        resetTurnMenu: function(){
+            if (this.turnMenu){
+                if (this.turnMenu.parent == Graphics.uiContainer){
+                    Graphics.uiContainer.removeChild(this.turnMenu);
+                }
+            }
             this.turnMenu = this.getTurnMenu();
             this.turnMenu.position.x = 180;
             this.turnMenu.position.y = 25;
             Graphics.uiContainer.addChild(this.turnMenu);
         },
+
         newTurnOrder: function(arr){
             //set timer
             this.timeText.visible = false
@@ -287,27 +375,30 @@
             this.reactionTicker = 0;
             this.currentState = this.states.BetweenStates;
             Graphics.uiContainer.removeChild(this.turnMenu);
-            for (var i = 0; i < arr.length;i++){
-                for (var j = 0; j < this.turnListSprites.length;j++){
-                    if (this.turnListSprites[j].unitID == arr[i]){
-                        var sprite = this.turnListSprites[j];
-                        sprite.position.x = 25;
-                        sprite.position.y = 25 + i*75;
+
+            for (var i = 0; i < this.turnListSprites.length;i++){
+                Graphics.uiContainer.removeChild(this.turnListSprites[i]);
+            }
+            this.turnListSprites = [];
+            for (var i = 0; i < this.turnList.length;i++){
+                //create box
+                var sprite = this.getTurnBox(this.turnList[i]);
+                sprite.position.x = 25;
+                sprite.position.y = 25 + i*75;
+                Graphics.uiContainer.addChild(sprite);
+                this.turnListSprites.push(sprite);
+                var overFunc = function(e){
+                    Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                    if (Game.attackActive){
+                        Game.tryToAttack(Game.units[e.currentTarget.unitID].currentNode);
                     }
                 }
-            }
-            this.turnMenu = this.getTurnMenu();
-            this.turnMenu.position.x = 180;
-            this.turnMenu.position.y = 25;
-            Graphics.uiContainer.addChild(this.turnMenu);
-
-            if (this.moveActive){
-                this.moveActive = false;
-                this.moveNodesActive = [];
-                this.resetOverlaySprites();
-                Graphics.worldPrimitives.clear();
-            }
-
+                sprite.on('pointerdown',overFunc);
+                sprite.on('pointerover', Game.filtersOn);
+                sprite.on('pointerout', Game.filtersOff);
+            }   
+            this.resetTurnMenu()
+            this.clearOverlaySprites();
         },
 
         update: function(deltaTime){
@@ -337,12 +428,8 @@
             }else{
                 this.updateUnitsBool = true;
             }
-            if (this.currentActionData){
-                var func = Actions.getAction(this.currentActionData.action);
-                var endAction = func(deltaTime,this.currentActionData);
-                if (endAction){
-                    this.currentActionData = null;
-                }
+            if (this.performingAction){
+                this.currentAction.update(deltaTime);
             }
             for (var i in this.units){
                 try{
@@ -389,12 +476,7 @@
                     this.currentInfoPane = null;
                     this.selectedUnit = null;
                 }
-                if (this.moveActive){
-                    this.moveActive = false;
-                    this.moveNodesActive = [];
-                    this.resetOverlaySprites();
-                    Graphics.worldPrimitives.clear();
-                }
+                this.clearOverlaySprites();
                 for (var i = 0; i < this.uiWindows.length;i++){
                     Graphics.uiContainer.removeChild(this.uiWindows[i]);
                     this.uiWindows.splice(i,1);
@@ -413,7 +495,82 @@
                     }
                 }
             }
-            //add the move confirmation window
+            if (!valid){
+                return;
+            }
+            
+            var text = "Move " + this.units[this.turnList[0]].name + ' to node ' + node.q + ',' + node.r + '?';
+            var y = function(){
+                console.log('Send Move!!');
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'move',
+                    q: node.q,
+                    r: node.r
+                });
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var n = function(){
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var s = this.getConfirmationWindow(text,y,n,node);
+            Graphics.uiContainer.addChild(s);
+            this.uiWindows.push(s);
+        },
+        tryToAttack: function(node){
+            //check if the attack is actually valid
+            var valid = false;
+            if (this.attackActive){
+                for (var i = 0; i < this.attackNodesActive.length;i++){
+                    if (node.q == Game.attackNodesActive[i].q && node.r == Game.attackNodesActive[i].r && Game.attackNodesActive[i].unit){
+                        valid = true;
+                    }
+                }
+            }
+            if (!valid){
+                return;
+            }
+            
+            var text = "Attack " + node.unit.name + ' with ' + this.units[this.turnList[0]].inventory.items[this.units[this.turnList[0]].weapon].name + '?';
+            var y = function(){
+                console.log('Send attack!!');
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'attack',
+                    q: node.q,
+                    r: node.r
+                });
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var n = function(){
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var s = this.getConfirmationWindow(text,y,n,node);
+            Graphics.uiContainer.addChild(s);
+            this.uiWindows.push(s);
+        },
+
+        tryToEnd: function(dir){
+            //check if its your unit
+            if (this.units[this.turnList[0]].owner != window.playerID){
+                return;
+            }
+            
+            var text = "End " + this.units[this.turnList[0]].name + 's turn facing ' + dir + '?';
+            var y = function(){
+                console.log('Send end command!!');
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'endTurn'});
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var n = function(){
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var s = this.getConfirmationWindow(text,y,n,null);
+            Graphics.uiContainer.addChild(s);
+            this.uiWindows.push(s);
+        },
+
+        getConfirmationWindow: function(text,yesFunc,noFunc,node){
+            //get the confirmatin window for move/attack/end etc.
+            //text is the text above the window
+            //yesFunc is the click function for Confirm
+            //noFunc is the click function for Cancel
             var h = 5;
             var w = 400;
 
@@ -425,7 +582,7 @@
             scene.addChild(gfx);
             scene.addChild(cont);
 
-            var text = new PIXI.Text("Move " + this.units[this.turnList[0]].name + ' to node ' + node.q + ',' + node.r + '?', style);
+            var text = new PIXI.Text(text, style);
             text.anchor.x = 0.5;
             text.position.x = w*0.5;
             text.position.y = h;
@@ -441,14 +598,7 @@
                 buttonMode: true,
                 anchor: [0.5,0],
                 position: [w/4,h],
-                clickFunc: function onClick(){
-                    console.log('Send Move!!');
-                    Acorn.Net.socket_.emit('playerUpdate',{command: 'move',
-                        q: node.q,
-                        r: node.r
-                    });
-                    Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
-                }
+                clickFunc: yesFunc
             });
             confirmButton.node = node;
             cont.addChild(confirmButton);  
@@ -460,9 +610,7 @@
                 buttonMode: true,
                 anchor: [0.5,0],
                 position: [w*0.75,h],
-                clickFunc: function onClick(){
-                    Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
-                }
+                clickFunc: noFunc
             });
             cont.addChild(cancelButton); 
             h += cancelButton.height + 10;
@@ -482,8 +630,8 @@
             //add it to uiWindows
             scene.position.x = Graphics.width/2-w/2;
             scene.position.y = Graphics.height/4-h/2;
-            Graphics.uiContainer.addChild(scene);
-            this.uiWindows.push(scene);
+
+            return scene;
         },
 
         getTurnMenu: function(){
@@ -525,18 +673,29 @@
                 //action buttons!
 
                 //Move button
-                var moveButton = Graphics.makeUiElement({
-                    text: 'Move',
-                    style: style,
-                    interactive: true,
-                    buttonMode: true,
-                    anchor: [0.5,0],
-                    position: [w/4,h],
-                    clickFunc: function onClick(){
-                        Game.moveActive = true;
-                        Game.getMoveNodes();
-                    }
-                });
+                if (unit.moveLeft == 0){
+                    var moveButton = Graphics.makeUiElement({
+                        text: 'Move',
+                        style: style,
+                        anchor: [0.5,0],
+                        position: [w/4,h]
+                    });
+                    moveButton.style.fill = 'red';
+                }else{
+                    var moveButton = Graphics.makeUiElement({
+                        text: 'Move',
+                        style: style,
+                        interactive: true,
+                        buttonMode: true,
+                        anchor: [0.5,0],
+                        position: [w/4,h],
+                        clickFunc: function onClick(){
+                            Game.clearOverlaySprites();
+                            Game.moveActive = true;
+                            Game.getMoveNodes();
+                        }
+                    });
+                }
                 scene.turnMenuElements.moveButton = moveButton;
                 cont.addChild(moveButton);  
                 //Move text
@@ -558,7 +717,9 @@
                     anchor: [0.5,0],
                     position: [w/4,h],
                     clickFunc: function onClick(){
-                        //Do move stuff
+                        Game.clearOverlaySprites();
+                        Game.attackActive = true;
+                        Game.getAttackNodes();
                     }
                 });
                 scene.turnMenuElements.attackButton = attackButton;
@@ -605,15 +766,12 @@
                 h += inventoryButton.height + 10;
                 //Wait button
                 var waitButton = Graphics.makeUiElement({
-                    text: 'End Turn',
+                    text: 'Click a direction on the compass to end your turn early!',
+                    wrap: w*0.9,
+                    fontSize: 14,
                     style: style,
-                    interactive: true,
-                    buttonMode: true,
                     anchor: [0.5,0],
                     position: [w/2,h],
-                    clickFunc: function onClick(){
-                        //Do move stuff
-                    }
                 });
                 scene.turnMenuElements.waitButton = waitButton;
                 cont.addChild(waitButton);
@@ -636,7 +794,6 @@
                 this.drawBoxAround(attackButton,gfx);
                 this.drawBoxAround(actionButton,gfx);
                 this.drawBoxAround(inventoryButton,gfx);
-                this.drawBoxAround(waitButton,gfx);
             }
             //create and render the texture and sprite
             return scene;
@@ -657,7 +814,7 @@
             var pathArr;
             for(var i = 0; i < possibleNodes.length;i++){
                 start = this.map.getCube(unit.currentNode);
-                end = this.map.cubeMap[possibleNodes[i][0]][possibleNodes[i][1]][possibleNodes[i][2]];
+                end = possibleNodes[i];
                 if (this.map.getAxial(end).unit != null){
                     continue;
                 }
@@ -679,6 +836,47 @@
                     this.addOverlaySprites();
                 }
             }
+        },
+        getAttackNodes: function(){
+            var unit = this.units[this.turnList[0]];
+            var weapon = unit.inventory.items[unit.weapon];
+            var possibleNodes = null;
+            if (typeof weapon.eqData.range == 'number'){
+                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.range);
+                for (var i = possibleNodes.length-1; i >= 0;i--){
+                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.range){
+                        possibleNodes.splice(i,1);
+                    }
+                }
+            }else{
+                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.rangeMax);
+                for (var i = possibleNodes.length-1; i >= 0;i--){
+                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.rangeMin){
+                        possibleNodes.splice(i,1);
+                    }
+                }
+            }
+            for(var i = 0; i < possibleNodes.length;i++){
+                //TODO calculate possible nodes here??
+                console.log(i);
+                console.log(possibleNodes)
+                var axial = this.map.getAxial(possibleNodes[i]);
+                this.attackNodesActive.push(axial);
+                axial.overlaySprite1 = Graphics.getSprite('overlay1');
+                axial.overlaySprite1.anchor.x = 0.5;
+                axial.overlaySprite1.anchor.y = 0.5;
+                axial.overlaySprite1.tint = 0xFF0000;
+                axial.overlaySprite1.overlay = axial.sprite1;
+                axial.overlaySprite2 = Graphics.getSprite('overlay2');
+                axial.overlaySprite2.anchor.x = 0.5;
+                axial.overlaySprite2.anchor.y = 0.5;
+                axial.overlaySprite2.tint = 0xFF0000;
+                axial.overlaySprite2.overlay = axial.sprite2;
+                this.overlaySprites.push({q:axial.q,r:axial.r});
+                this.addOverlaySprites();
+            }
+        },
+        getEndNodes: function(){
         },
         addOverlaySprites(){
             //add the overlay sprites to the map, setting the correct scale and position   
@@ -704,7 +902,13 @@
                 this.map.container2.removeChild(node.overlaySprite2);
             }
         },
-        resetOverlaySprites(){
+        clearOverlaySprites(){
+            //remove all
+            this.moveActive = false;
+            this.moveNodesActive = [];
+            this.attackActive = false;
+            this.attackNodesActive = [];
+            Graphics.worldPrimitives.clear();
             for (var i = 0;i < this.overlaySprites.length;i++){
                 var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
                 this.map.container1.removeChild(node.overlaySprite1);
@@ -755,10 +959,36 @@
             text2.anchor.x = 0.5;
             text2.anchor.y = 0.5;
             text2.position.x = w*0.5;
-            text2.position.y = h*0.66;
+            text2.position.y = h*0.64;
+            text2.style.fontSize = 12;
             text2.style.fill = Graphics.pallette.color1;
             text2 = Graphics.fitText(text2,w-5);
             cont.addChild(text2);
+
+            //charge text
+            var hPer = 0.85;
+            var chargeStr = Game.units[id].chargePercent + ' %';
+            var chargeText = new PIXI.Text(chargeStr, style);
+            chargeText.anchor.x = 0.5;
+            chargeText.anchor.y = 0.5;
+            chargeText.position.x = w*0.5;
+            chargeText.position.y = h*hPer-3;
+            chargeText.style.fill = Graphics.pallette.color1;
+            chargeText.style.fontSize = 14;
+            cont.addChild(chargeText);
+
+            //draw charge bar
+            var hPer = 0.85;
+            gfx.lineStyle(1,0x00BA00,1);
+            gfx.beginFill(0x00BA00,1);
+            gfx.drawRect(5,h*hPer - 6,(w-10)*(Game.units[id].chargePercent/100),12);
+            gfx.endFill();
+            gfx.lineStyle(1,0x000000,1);
+            gfx.moveTo(5,h*hPer - 6);
+            gfx.lineTo(w-5,h*hPer - 6);
+            gfx.lineTo(w-5,h*hPer + 6);
+            gfx.lineTo(5,h*hPer + 6);
+            gfx.lineTo(5,h*hPer - 6);
 
             //create and render the texture and sprite
             var texture = PIXI.RenderTexture.create(w,h);
@@ -771,6 +1001,10 @@
 
             var overFunc = function(e){
                 Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                if (Game.attackActive){
+                    Game.tryToAttack(node);
+                    Game.units[e.currentTarget.unitID].currentNode
+                }
             }
             sprite.on('pointerdown',overFunc);
 
@@ -1130,9 +1364,14 @@
                 if (!(this.map.currentRotation%2)){t = 2}
                 var cont = 'container' + t;
                 var sp = 'sprite' + t;
+                var ol = 'overlaySprite' + t;
                 sprite.position.x = node[sp].position.x;
                 sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
-                this.map[cont].addChildAt(sprite,this.map[cont].getChildIndex(node[sp])+1);
+                if (node[ol]){
+                    this.map[cont].addChildAt(sprite,this.map[cont].getChildIndex(node[ol])+1);
+                }else{
+                    this.map[cont].addChildAt(sprite,this.map[cont].getChildIndex(node[sp])+1);
+                }
                 sprite.gotoAndPlay(frame);
                 this.updateUnitsBool = false;
                 this.map.changedZoom = false;
@@ -1153,9 +1392,9 @@
             aNode.sprite1.tint = this.map.noLosTint;
             aNode.sprite2.tint = this.map.noLosTint;
             var aH = aNode.h;
-            var startingHeight = 3;
+            var startingHeight = 0;
             if (aNode.unit != null){
-                //startingHeight = 3// if there is a unit on the node, add unit height
+                startingHeight = aNode.unit.height;
             }
             aH += startingHeight;
             for (var u in this.units){
@@ -1178,7 +1417,11 @@
                 var highestAngle = 0;
                 for (var j = 1; j < r1.length;j++){
                     var a = this.map.getAxial(r1[j]);
-                    var h = (j==(r1.length-1)) ? (a.h+3) : a.h; //TODO actual unit height?
+                    var endingHeight = 0;
+                    if (a.unit != null){
+                        endingHeight = a.unit.height;
+                    }
+                    var h = (j==(r1.length-1)) ? (a.h+endingHeight) : a.h; //TODO actual unit height?
                     var angle = 0;
                     if (h > aH){
                         angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
@@ -1201,7 +1444,11 @@
                 highestAngle = 0;
                 for (var j = 1; j < r2.length;j++){
                     var a = this.map.getAxial(r2[j]);
-                    var h = (j==(r2.length-1)) ? (a.h+3): a.h;//TODO actual unit height?
+                    var endingHeight = 0;
+                    if (a.unit != null){
+                        endingHeight = a.unit.height;
+                    }
+                    var h = (j==(r2.length-1)) ? (a.h+endingHeight) : a.h; //TODO actual unit height?
                     var angle = 0;
                     if (h > aH){
                         angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);

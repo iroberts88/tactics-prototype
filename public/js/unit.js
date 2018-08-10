@@ -65,6 +65,10 @@
         this.infoPane = null;
 
         this.visible = null;
+
+        this.chargePercent = null;
+
+        this.height = 2;
     };
 
     Unit.prototype.init = function(data) {
@@ -99,6 +103,8 @@
         this.willpower = data.willpower;
         this.intelligence = data.intelligence;
         this.charisma = data.charisma;
+
+        this.chargePercent = 0;
 
         this.physicalRes = data.physicalRes;
         this.heatRes = data.heatRes;
@@ -153,7 +159,26 @@
 
         this.usedAbilitySlots = data.usedAbilitySlots;
     };
-
+    Unit.prototype.setChargePercent = function(val){
+        console.log(val);
+        if (val > 1){
+            val = 1;
+        }
+        this.chargePercent = Math.round(val*100)
+    }
+    Unit.prototype.setNewDirection = function(direction){
+        var frame = this.sprite.currentFrame;
+        this.direction = direction;
+        var dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
+        this.sprite.textures = Graphics.getResource('unit_base_'+ dir + '_');
+        this.sprite.scale.x = 0.6 * window.currentGameMap.ZOOM_SETTINGS[window.currentGameMap.currentZoomSetting];
+        this.sprite.scale.y = 0.6 * window.currentGameMap.ZOOM_SETTINGS[window.currentGameMap.currentZoomSetting];
+        var p = (window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations
+        if (p >= 1 && p <= 5){
+            this.sprite.scale.x = -0.6 * window.currentGameMap.ZOOM_SETTINGS[window.currentGameMap.currentZoomSetting];
+        }
+        this.sprite.gotoAndPlay(frame)
+    };
     Unit.prototype.setCurrentNode = function(q,r,map){
         this.currentNode = map.axialMap[q][r];
     };
