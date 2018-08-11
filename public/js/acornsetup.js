@@ -72,7 +72,6 @@
             });
             Acorn.Net.on('newTurnOrder', function(data) {
                 //get the new turn order at the beginning of each turn
-                console.log(data);
                 Game.turnList = data.turnList;
                 for (var i = 0;i<data.turnPercent.length;i++){
                     Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);

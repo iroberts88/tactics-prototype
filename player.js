@@ -111,6 +111,7 @@ Player.prototype.setupSocket = function() {
                         that.gameSession.unitMove(data);
                         break;
                     case 'attack':
+                        console.log('attacking...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
@@ -120,6 +121,7 @@ Player.prototype.setupSocket = function() {
                         that.gameSession.unitAttack(data);
                         break;
                     case 'ability':
+                        console.log('using an ability...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
@@ -129,6 +131,7 @@ Player.prototype.setupSocket = function() {
                         that.gameSession.unitAbility(data);
                         break;
                     case 'item': 
+                        console.log("Inventory action");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
@@ -137,7 +140,8 @@ Player.prototype.setupSocket = function() {
                         //send the data to gameSession and execute the item
                         that.gameSession.unitItem(data);
                         break;
-                    case 'end':
+                    case 'endTurn':
+                        console.log("ending turn...");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         if (!that.hasUnit(that.gameSession.turnOrder[0].id)){

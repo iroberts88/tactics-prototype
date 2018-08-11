@@ -143,9 +143,9 @@ function init() {
     Graphics.app.ticker.add(function update(){
         Settings.stats.begin();
         if (Player.globalCDTicker > 0){
-            Player.globalCDTicker -= Graphics.app.ticker.elapsedMS/2000;
+            Player.globalCDTicker -= Graphics.app.ticker.elapsedMS/1000;
         }
-        Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/2000); //update the current state
+        Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
         Graphics.app.renderer.render(Graphics.app.stage);
 
         //TODO Put this stuff in the correct state!

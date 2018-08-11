@@ -1,4 +1,6 @@
 
+
+
 (function(window) {
     Game = {
 
@@ -7,12 +9,12 @@
         delayBetweenStates: null,
 
         betweenStateTicker: 0,
-        turnTicker: 0,
-        reactionTicker: 0,
+        turnTicker: Date.now(),
+        reactionTicker: Date.now(),
         currentState: 'idle',
         states: {
             Idle: 'idle',
-            BetweenStates: 'BetweenStates',
+            BetweenStates: 'betweenStates',
             Turn: 'turn',
             Reaction: 'reaction'
         },
@@ -89,6 +91,7 @@
         compassComponents: [],
 
         overlaySprites: [],
+
         init: function() {
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
@@ -349,8 +352,8 @@
         startGame: function(){
             //the first turn starts
             this.betweenStateTicker = 0;
-            this.turnTicker = 0;
-            this.reactionTicker = 0;
+            this.turnTicker = Date.now();
+            this.reactionTicker = Date.now();
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
             this.resetTurnMenu();
@@ -371,8 +374,8 @@
             //set timer
             this.timeText.visible = false
             this.betweenStateTicker = 0;
-            this.turnTicker = 0;
-            this.reactionTicker = 0;
+            this.turnTicker = Date.now();
+            this.reactionTicker = Date.now();
             this.currentState = this.states.BetweenStates;
             Graphics.uiContainer.removeChild(this.turnMenu);
 
@@ -384,7 +387,7 @@
                 //create box
                 var sprite = this.getTurnBox(this.turnList[i]);
                 sprite.position.x = 25;
-                sprite.position.y = 25 + i*75;
+                sprite.position.y = 25 + i * 75;
                 Graphics.uiContainer.addChild(sprite);
                 this.turnListSprites.push(sprite);
                 var overFunc = function(e){
@@ -399,6 +402,7 @@
             }   
             this.resetTurnMenu()
             this.clearOverlaySprites();
+            Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
         },
 
         update: function(deltaTime){
@@ -452,16 +456,21 @@
                     }
                     break;
                 case this.states.Turn:
-                    this.turnTicker += deltaTime;
-                    this.timeText.text = 'Time left: ' + (this.timePerTurn - Math.floor(this.turnTicker));
-                    if (this.turnTicker >= this.timePerTurn){
+                    var time = Math.floor((Date.now() - this.turnTicker) / 1000);
+                    console.log(time)
+                    this.timeText.text = 'Time left: ' + (this.timePerTurn - time);
+                    if (time >= this.timePerTurn){
                         this.currentState = this.states.Idle;
                         this.timeText.visible = false;
-                        this.turnTicker = 0;
                     }
                     break;
                 case this.states.Reaction:
-                    this.reactionTicker += deltaTime;
+                    var time = Math.floor((Date.now() - this.reactionTicker) / 1000);
+                    //this.timeText.text = 'Time left: ' + (this.timePerTurn - time);
+                    if (time >= this.timePerReaction){
+                        this.currentState = this.states.Idle;
+                        //this.timeText.visible = false;
+                    }
                     break;
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){

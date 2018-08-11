@@ -419,9 +419,9 @@ Unit.prototype.levelUp = function(update){
     this.skill.base += this.dexterity.base*0.2;
     this.skill.base += this.charisma.base*0.05;
     this.skill.set(update);
-    this.speed.base += 1;
-    this.speed.base += this.agility.base*0.1;
-    this.speed.base += this.charisma.base*0.025;
+    this.speed.base += 4;
+    this.speed.base += this.agility.base*0.5;
+    this.speed.base += this.charisma.base*0.12;
     this.speed.set(update);
     this.maximumEnergy.base += 1;
     this.maximumEnergy.base += this.willpower.base*0.1;

@@ -160,7 +160,6 @@
         this.usedAbilitySlots = data.usedAbilitySlots;
     };
     Unit.prototype.setChargePercent = function(val){
-        console.log(val);
         if (val > 1){
             val = 1;
         }
