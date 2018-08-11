@@ -457,7 +457,6 @@
                     break;
                 case this.states.Turn:
                     var time = Math.floor((Date.now() - this.turnTicker) / 1000);
-                    console.log(time)
                     this.timeText.text = 'Time left: ' + (this.timePerTurn - time);
                     if (time >= this.timePerTurn){
                         this.currentState = this.states.Idle;
