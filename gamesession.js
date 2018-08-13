@@ -97,6 +97,10 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
 
     if (playersReady == this.playerCount){
         console.log('Players ready - initializing game');
+        for (var i = 0; i < this.allUnitIds.length;i++){
+            var unit = this.allUnits[this.allUnitIds[i]];
+            unit.reset();
+        }
         this.getTurnOrder();
 
         //send down unit info
@@ -108,7 +112,6 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
             var turnPercent = [];
             for (var i = 0; i < this.allUnitIds.length;i++){
                 var unit = this.allUnits[this.allUnitIds[i]];
-                unit.reset();
                 if (player.myUnits[unit.id]){
                     myUnits.push(unit.getClientData());
                 }else{
