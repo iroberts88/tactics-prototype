@@ -15,6 +15,18 @@
             x: 0,
             y: 0
         }
+        this.numbers = {
+            0: true,
+            1: true,
+            2: true,
+            3: true,
+            4: true,
+            5: true,
+            6: true,
+            7: true,
+            8: true,
+            9: true,
+        }
     };
 
     Tooltip.prototype.set = function(data){
@@ -87,6 +99,8 @@
                     }else if (nextWord.text.charAt(0) == '{'){
                         nextWord.style.fill = 0x42f450;
                         nextWord.text = nextWord.text.slice(1,nextWord.text.length-1) + '';
+                    }else if (this.numbers[nextWord.text.charAt(0)]){
+                        nextWord.style.fill = 0xfcd174;
                     }
                     nextWord.anchor.x = 0.5;
                     nextWord.anchor.y = 0.5;
@@ -145,6 +159,7 @@
         var overFunc = function(e){
             if (!e.currentTarget.tooltipAdded){
                 Graphics.uiContainer2.addChild(e.currentTarget.tooltip.sprite);
+                Game.currentToolTip = e.currentTarget.tooltip.sprite;
                 e.currentTarget.tooltipAdded = true;
             }
             e.currentTarget.tooltip.sprite.position.x =  e.currentTarget.tooltip.position.x;
@@ -153,6 +168,7 @@
         var outFunc = function(e){
             if (e.currentTarget.tooltipAdded){
                 Graphics.uiContainer2.removeChild(e.currentTarget.tooltip.sprite);
+                Game.currentToolTip = null;
                 e.currentTarget.tooltipAdded = false;
             }
         }
@@ -216,6 +232,23 @@
             }
         }
         element.tooltip.set({
+            owner: element,
+            ttArray: ttArray,
+            alpha: 0.5
+        });
+    };
+
+    Tooltip.prototype.setAbilityTooltip = function(element,ability){
+        // element = the element containing the tooltip
+        //a = the ability to work on
+        var ttArray = [{text: ability.description}];
+        if (typeof ability.sCost != 'undefined'){ttArray.push({text: "{Slot Cost:} " + ability.sCost})}
+        if (typeof ability.eCost != 'undefined'){ttArray.push({text: "{Energy Cost:} " + ability.eCost})}
+        if (typeof ability.range != 'undefined'){ttArray.push({text: "{Range:} " + ability.range})}
+        if (typeof ability.radius != 'undefined'){ttArray.push({text: "{Radius:} " + ability.radius})}
+        if (typeof ability.type != 'undefined'){ttArray.push({text: "{Type:} " + ability.type})}
+        if (typeof ability.speed != 'undefined'){ttArray.push({text: "{Speed:} " + ability.speed})}
+        this.set({
             owner: element,
             ttArray: ttArray,
             alpha: 0.5

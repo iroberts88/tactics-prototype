@@ -125,18 +125,7 @@
                     interactive: true
                 });
                 aName.tooltip = new Tooltip();
-                var ttArray = [{text: ability.description}];
-                if (typeof ability.sCost != 'undefined'){ttArray.push({text: "{Slot Cost:} " + ability.sCost})}
-                if (typeof ability.eCost != 'undefined'){ttArray.push({text: "{Energy Cost:} " + ability.eCost})}
-                if (typeof ability.range != 'undefined'){ttArray.push({text: "{Range:} " + ability.range})}
-                if (typeof ability.radius != 'undefined'){ttArray.push({text: "{Radius:} " + ability.radius})}
-                if (typeof ability.type != 'undefined'){ttArray.push({text: "{Type:} " + ability.type})}
-                if (typeof ability.speed != 'undefined'){ttArray.push({text: "{Speed:} " + ability.speed})}
-                aName.tooltip.set({
-                    owner: aName,
-                    ttArray: ttArray,
-                    alpha: 0.5
-                });
+                aName.tooltip.setAbilityTooltip(aName,ability);
                 if (aName.position.y + aName.height > Graphics.height){
                     if (this.bounds > (aName.position.y + aName.height - Graphics.height) * -1 - 10){
                         this.bounds = (aName.position.y + aName.height - Graphics.height) * -1 - 10;                   

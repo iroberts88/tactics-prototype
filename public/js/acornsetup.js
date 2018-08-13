@@ -281,6 +281,12 @@
                 Game.currentAction.init(data.actionData);
             });
 
+            Acorn.Net.on('setMoveLeft', function (data) {
+                if (typeof Game.units[data.unit] != 'undefined'){
+                    Game.units[data.unit].moveLeft = data.val;
+                }
+            });
+
             Acorn.Net.on('debug', function (data) {
                 console.log('sever ERROR debug');
                 console.log(data);

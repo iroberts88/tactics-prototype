@@ -166,18 +166,7 @@
                 Graphics.uiContainer.addChild(cName);
 
                 cName.tooltip = new Tooltip();
-                var ttArray = [{text: ablArr[i].description}];
-                if (typeof ablArr[i].sCost != 'undefined'){ttArray.push({text: "{Slot Cost:} " + ablArr[i].sCost})}
-                if (typeof ablArr[i].eCost != 'undefined'){ttArray.push({text: "{Energy Cost:} " + ablArr[i].eCost})}
-                if (typeof ablArr[i].range != 'undefined'){ttArray.push({text: "{Range:} " + ablArr[i].range})}
-                if (typeof ablArr[i].radius != 'undefined'){ttArray.push({text: "{Radius:} " + ablArr[i].radius})}
-                if (typeof ablArr[i].type != 'undefined'){ttArray.push({text: "{Type:} " + ablArr[i].type})}
-                if (typeof ablArr[i].speed != 'undefined'){ttArray.push({text: "{Speed:} " + ablArr[i].speed})}
-                cName.tooltip.set({
-                    owner: cName,
-                    ttArray: ttArray,
-                    alpha: 0.5
-                });
+                cName.tooltip.setAbilityTooltip(cName,ablArr[i]);
                 
                 if (cName.position.y + cName.height > Graphics.height){
                     this.bounds = (cName.position.y + cName.height - Graphics.height) * -1 - 10;

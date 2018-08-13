@@ -80,8 +80,8 @@
         attackActive: false,
         attackNodesActive: [],
 
-        endActive: false,
-        endNodesActive: [],
+        abilityActive: false,
+        abilityNodesActive: [],
 
         uiWindows: [], //array containing active UI components?
 
@@ -91,6 +91,9 @@
         compassComponents: [],
 
         overlaySprites: [],
+
+        currentConfirmWindow: null,
+        currentToolTip: null,
 
         init: function() {
             this.drawBG();
@@ -399,7 +402,7 @@
                 sprite.on('pointerdown',overFunc);
                 sprite.on('pointerover', Game.filtersOn);
                 sprite.on('pointerout', Game.filtersOff);
-            }   
+            }
             this.resetTurnMenu()
             this.clearOverlaySprites();
             Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
@@ -475,6 +478,12 @@
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
                 this.setNewHoveredNode = null;
                 this.setNewHoveredUnit = null;
+                if (this.abilityMenu){
+                    if (this.abilityMenu.parent == Graphics.uiContainer){
+                        Graphics.uiContainer.removeChild(this.abilityMenu);
+                        this.abilityMenu = null;
+                    }
+                }
                 if (this.selectedUnit){
                     this.selectedUnit.sprite.filters = [];
                     var node = Game.map.axialMap[this.selectedUnit.currentNode.q][this.selectedUnit.currentNode.r];
@@ -489,7 +498,23 @@
                     Graphics.uiContainer.removeChild(this.uiWindows[i]);
                     this.uiWindows.splice(i,1);
                 }
+                if (this.currentConfirmWindow){
+                    Graphics.uiContainer.removeChild(this.currentConfirmWindow);
+                }
+                if (this.currentToolTip){
+                    Graphics.uiContainer2.removeChild(this.currentToolTip);
+                    this.currentToolTip = null;
+                }
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
+            }
+
+            if (Acorn.Input.isPressed(Acorn.Input.Key.INTERACT)){
+                if (this.currentConfirmWindow){
+                    var e = {currentTarget: this.currentConfirmWindow.confirmButton};
+                    console.log(e)
+                    this.currentConfirmWindow.confirmButton.clickFunc(e);
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.INTERACT, false);
             }
         },
 
@@ -599,7 +624,7 @@
             cont.addChild(text);
             h += text.height + 5;
       
-            var confirmButton = Graphics.makeUiElement({
+            scene.confirmButton = Graphics.makeUiElement({
                 text: 'Yes',
                 style: style,
                 interactive: true,
@@ -608,8 +633,8 @@
                 position: [w/4,h],
                 clickFunc: yesFunc
             });
-            confirmButton.node = node;
-            cont.addChild(confirmButton);  
+            scene.confirmButton.node = node;
+            cont.addChild(scene.confirmButton);
 
             var cancelButton = Graphics.makeUiElement({
                 text: 'No',
@@ -632,13 +657,13 @@
             gfx.lineTo(w-2,h-2);
             gfx.lineTo(2,h-2);
             gfx.lineTo(2,2);
-            this.drawBoxAround(confirmButton,gfx);
+            this.drawBoxAround(scene.confirmButton,gfx);
             this.drawBoxAround(cancelButton,gfx);
 
             //add it to uiWindows
             scene.position.x = Graphics.width/2-w/2;
             scene.position.y = Graphics.height/4-h/2;
-
+            this.currentConfirmWindow = scene;
             return scene;
         },
 
@@ -751,7 +776,12 @@
                     anchor: [0.5,0],
                     position: [w/2,h],
                     clickFunc: function onClick(){
-                        //Do move stuff
+                        Game.clearOverlaySprites();
+                        Game.abilityActive = true;
+                        Game.abilityMenu = Game.getAbilityMenu(Game.units[Game.turnList[0]]);
+                        Game.abilityMenu.position.x = Game.turnMenu.position.x;
+                        Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
+                        Graphics.uiContainer.addChild(Game.abilityMenu);
                     }
                 });
                 scene.turnMenuElements.actionButton = actionButton;
@@ -766,7 +796,12 @@
                     anchor: [0.5,0],
                     position: [w/2,h],
                     clickFunc: function onClick(){
-                        //Do move stuff
+                        Game.clearOverlaySprites();
+                        Game.abilityActive = true;
+                        Game.abilityMenu = Game.getItemMenu(Game.units[Game.turnList[0]]);
+                        Game.abilityMenu.position.x = Game.turnMenu.position.x;
+                        Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
+                        Graphics.uiContainer.addChild(Game.abilityMenu);
                     }
                 });
                 scene.turnMenuElements.inventoryButton = inventoryButton;
@@ -884,7 +919,165 @@
                 this.addOverlaySprites();
             }
         },
-        getEndNodes: function(){
+        getAbilityMenu: function(unit){
+            //return a ui window for the given unit's ability list
+            var h = 5;
+            var w = 325;
+
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0xFFFFFF;
+            var style  = AcornSetup.baseStyle2;
+            scene.addChild(gfx);
+            scene.addChild(cont);
+            //
+            if (typeof unit.classInfo.equippedAbilities == 'undefined'){
+                //you dont have the full info for this unit. No ability menu available
+                return null;
+            }
+
+            var abText = new PIXI.Text('Choose an ability!', style);
+            abText.style.fill = 'blue';
+            abText.anchor.x = 0.5;
+            abText.position.x = w*0.5;
+            abText.position.y = h;
+            abText = Graphics.fitText(abText,w-5);
+            cont.addChild(abText);
+            h += abText.height + 5;
+            cont.uiElements = [];
+            for (var ability in unit.classInfo.equippedAbilities){
+                var aInfo = null
+                for (var cl in unit.classInfo.allClassAbilities){
+                    for (var i = 0; i < unit.classInfo.allClassAbilities[cl].length;i++){
+                        if (unit.classInfo.allClassAbilities[cl][i].id == ability){
+                            aInfo = unit.classInfo.allClassAbilities[cl][i]
+                        }
+                    }
+                }
+                if (!aInfo){
+                    console.log('couldnt find ability: ' + ability);
+                }else{
+                    //do stuff with ability here
+                    if (aInfo.type == 'passive' || aInfo.type == 'reaction'){
+                        continue;
+                    }
+                    var clickFunc = function(e){
+                        console.log('clicked! ' + e.currentTarget.abilityInfo.name);
+                    }
+                    var mOverFunc = function(e){
+                        console.log('moused over!! ' + e.currentTarget.abilityInfo.name);
+                    }
+                    var ablButton = Graphics.makeUiElement({
+                        text: aInfo.name,
+                        style: style,
+                        interactive: true,
+                        buttonMode: true,
+                        anchor: [0.5,0],
+                        position: [w/2,h],
+                        clickFunc: clickFunc,
+                        mOverFunc: mOverFunc
+
+                    });
+                    while(ablButton.width > w - 10){
+                        ablButton.scale.x = ablButton.scale.x*0.95;
+                        ablButton.scale.y = ablButton.scale.y*0.95;
+                    }
+                    ablButton.tooltip = new Tooltip();
+                    ablButton.tooltip.setAbilityTooltip(ablButton,aInfo);
+                    ablButton.abilityInfo = aInfo;
+                    ablButton.toolTipShown = false;
+                    cont.addChild(ablButton);
+                    cont.uiElements.push(ablButton);
+                    h += ablButton.height + 10;
+                }
+            }
+            
+
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            gfx.lineStyle(3,color,1);
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
+
+            //create and render the texture and sprite
+            return scene;
+        },
+        getItemMenu: function(unit){
+            //return a ui window for the given unit's ability list
+            var h = 5;
+            var w = 325;
+
+            var scene = new PIXI.Container();
+            var cont = new PIXI.Container();
+            var gfx = new PIXI.Graphics();
+            var color = 0xFFFFFF;
+            var style  = AcornSetup.baseStyle2;
+            scene.addChild(gfx);
+            scene.addChild(cont);
+            //
+            if (!unit.inventory){
+                //you dont have the full info for this unit. No item menu available
+                return null;
+            }
+
+            var abText = new PIXI.Text('Choose an Item!', style);
+            abText.style.fill = 'blue';
+            abText.anchor.x = 0.5;
+            abText.position.x = w*0.5;
+            abText.position.y = h;
+            abText = Graphics.fitText(abText,w-5);
+            cont.addChild(abText);
+            h += abText.height + 5;
+            cont.uiElements = [];
+            for (var i = 0; i < unit.inventory.items.length;i++){
+                var item = unit.inventory.items[i];
+                var clickFunc = function(e){
+                    console.log('clicked! ' + e.currentTarget.itemInfo.name);
+                }
+                var mOverFunc = function(e){
+                    console.log('moused over!! ' + e.currentTarget.itemInfo.name);
+                }
+                var iButton = Graphics.makeUiElement({
+                    text: item.name,
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,
+                    anchor: [0.5,0],
+                    position: [w/2,h],
+                    clickFunc: clickFunc,
+                    mOverFunc: mOverFunc
+
+                });
+                while(iButton.width > w - 10){
+                    iButton.scale.x = iButton.scale.x*0.95;
+                    iButton.scale.y = iButton.scale.y*0.95;
+                }
+                iButton.tooltip = new Tooltip();
+                iButton.tooltip.getItemTooltip(iButton,item);
+                iButton.itemInfo = item;
+                cont.addChild(iButton);
+                cont.uiElements.push(iButton);
+                h += iButton.height + 10;
+            }
+            
+
+            gfx.beginFill(color,0.3);
+            gfx.drawRect(0,0,w,h);
+            gfx.endFill();
+            gfx.lineStyle(3,color,1);
+            gfx.moveTo(2,2);
+            gfx.lineTo(w-2,2);
+            gfx.lineTo(w-2,h-2);
+            gfx.lineTo(2,h-2);
+            gfx.lineTo(2,2);
+
+            //create and render the texture and sprite
+            return scene;
         },
         addOverlaySprites(){
             //add the overlay sprites to the map, setting the correct scale and position   
@@ -1243,7 +1436,7 @@
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
                         'silver', 'teal', 'white', 'yellow'
                     ];
-            Graphics.drawBG('gray', 'gray');
+            Graphics.drawBG('#689aff', '#c9deff');
 
         },
         

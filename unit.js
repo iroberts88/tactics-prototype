@@ -86,17 +86,13 @@ var Unit = function(){
 
 Unit.prototype.reset = function(){
     //things that reset with each new game
-
+    this.moveLeft = this.move.value;
     //shields
     this.currentShields = this.maximumShields.value;
 
     //health and energy
     this.currentEnergy = this.maximumEnergy.value;
     this.currentHealth = this.maximumHealth.value;
-
-    //Map
-    this.currentNode = null;
-    this.direction = null;
 
     //death
     this.dead = false;
@@ -396,11 +392,17 @@ Unit.prototype.init = function(data) {
         }
     }
     this.inventory.maxWeight.set();
-    this.moveLeft = this.move.value;
 
     this.reset();
 };
 
+Unit.prototype.setMoveLeft = function(val){
+    this.moveLeft = val;
+    if (this.moveLeft < 0){
+        this.moveLeft = 0;
+    }
+    this.owner.gameSession.queueData('setMoveLeft',{unit: this.id,val: this.moveLeft});
+};
 Unit.prototype.levelUp = function(update){
     //TODO save these values just in case the numbers change?
     this.power.base += 5;

@@ -17,6 +17,8 @@ var requestAnimFrame = (function(){
 var mainObj = this;
 mainObj.playerId = 'none';
 
+var initialized = false;
+
 $(function() {
 
     //Configure fonts
@@ -127,6 +129,10 @@ function checkReady() {
 
 function init() {
     //do some stuff after Graphics and network are initialized
+    if (initialized){
+        return;
+    }
+    
     lastTime = Date.now();
 
     //Init Console
@@ -171,7 +177,8 @@ function init() {
             Acorn.Input.setValue(Acorn.Input.Key.YSCALE2, false);
         }
         Settings.stats.end();
-    })
+    });
+    initialized = true;
 }
 
 //set up acorn game states

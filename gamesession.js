@@ -45,7 +45,7 @@ var GameSession = function (engine) {
     this.gameHasStarted = false;
 
     this.ticker = 0;
-    this.timePerTurn = 15; //1 minute turns?
+    this.timePerTurn = 75; //1 minute turns?
     this.timeInBetweenTurns = 1.5;
 
     this.reactionTicker = 0;
@@ -108,6 +108,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
             var turnPercent = [];
             for (var i = 0; i < this.allUnitIds.length;i++){
                 var unit = this.allUnits[this.allUnitIds[i]];
+                unit.reset();
                 if (player.myUnits[unit.id]){
                     myUnits.push(unit.getClientData());
                 }else{
@@ -260,10 +261,13 @@ GameSession.prototype.turnSort = function(arr){
     return smaller.concat(larger);
 }
 GameSession.prototype.getTurnOrder = function(){
+    //new turn
+    if (this.turnOrder.length){
+        this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
+    }
     this.turnOrder = [];
     for (var i = 0; i < this.allUnitIds.length;i++){
         var unit = this.allUnits[this.allUnitIds[i]];
-        unit.moveLeft = unit.move.value;
         this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
     }
     this.turnOrder = this.turnSort(this.turnOrder);
@@ -292,6 +296,7 @@ GameSession.prototype.unitMove = function(data){
     var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value})
     console.log("path length: " + path.length);
     var stopped = false;
+    console.log(unit.moveLeft);
     for (var i = 1; i < path.length;i++){
         if (unit.moveLeft <= 0){
             //the unit is out of moves
@@ -315,7 +320,6 @@ GameSession.prototype.unitMove = function(data){
             z: path[i].z,
         });
         unit.moveLeft -= 1;
-        console.log(unit.moveLeft);
     }
     if (!stopped){
         unit.newNode(this.map.getAxial(path[path.length-1]));
