@@ -14,8 +14,11 @@ var Unit = function(){
     this.move = null;
     this.moveLeft = null;
     this.jump = null;
+
     this.power = null;
     this.skill = null;
+    this.tactics = null;
+
     this.abilitySlots = null;
     this.usedAbilitySlots = null;
     //attributes
@@ -198,6 +201,15 @@ Unit.prototype.init = function(data) {
     this.skill = new Attribute();
     this.skill.init({
         'id': 'ski',
+        'owner': this,
+        'value': 10,
+        'min': 0,
+        'max': 9999
+    });
+
+    this.tactics = new Attribute();
+    this.tactics.init({
+        'id': 'tac',
         'owner': this,
         'value': 10,
         'min': 0,
@@ -416,6 +428,10 @@ Unit.prototype.levelUp = function(update){
     this.abilitySlots.base += 1;
     this.abilitySlots.base += this.intelligence.base*0.1;
     this.abilitySlots.base += this.charisma.base*0.02;
+    this.tactics.base += 5;
+    this.tactics.base += this.intelligence.base*0.2;
+    this.tactics.base += this.charisma.base*0.05;
+    this.tactics.set(update);
     this.abilitySlots.set(update);
     this.skill.base += 5;
     this.skill.base += this.dexterity.base*0.2;
@@ -441,6 +457,7 @@ Unit.prototype.getDBObj = function(){
     dbObj.jump = this.jump.base;
     dbObj.power = this.power.base;
     dbObj.skill = this.skill.base;
+    dbObj.tactics = this.tactics.base;
     dbObj.speed = this.speed.base;
     dbObj.abilitySlots = this.abilitySlots.base;
     //attributes
@@ -668,6 +685,12 @@ Unit.prototype.getStat = function(id){
                 break;
             case 'skl':
                 return this.skill;
+                break;
+            case 'tactics':
+                return this.tactics;
+                break;
+            case 'tac':
+                return this.tactics;
                 break;
             case 'move':
                 return this.move;

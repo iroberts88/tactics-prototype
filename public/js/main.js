@@ -44,6 +44,7 @@ $(function() {
 
     // initialize Graphics
     document.body.style.margin = "0px 0px 0px 0px";
+    Utils.init();
     Graphics.init(1920, 1080);
     Graphics.onReady(function() {
         Graphics.resourcesReady = true;

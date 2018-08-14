@@ -3,7 +3,7 @@
     AcornSetup = {
         
         baseStyle: {
-            font: '64px Sigmar One',
+            font: '64px Verdana',
             fill: Graphics.pallette.color1,
             align: 'left',
             stroke: '#000000',
@@ -11,7 +11,7 @@
         },
 
         baseStyle2: {
-            font: '32px Sigmar One',
+            font: '32px Verdana',
             fill: '#AACCDD',
             align: 'left',
             stroke: '#000000',

@@ -148,7 +148,7 @@
         createUnitInfoPane: function(unit){
             var x = 0;
             var y = 0;
-            var maxWidth = 0;
+            var maxWidth = 360;
             var maxHeight = 0;
             var container = new PIXI.Container();
             var name = new PIXI.Text(unit.name,this.style);
@@ -162,7 +162,8 @@
                 ["E:   ", unit.maximumEnergy],
                 ["Pwr:   ", unit.power],
                 ["Skl:   ", unit.skill],
-                ["Slots:   ", unit.usedAbilitySlots + '/' + unit.abilitySlots]
+                ["Tac:   ", unit.tactics],
+                ["Abl:   ", unit.usedAbilitySlots + '/' + unit.abilitySlots]
             ];
             var attr2 = [
                 ["Str:   ", unit.strength],
@@ -179,18 +180,14 @@
                 ["Spd:  ", unit.speed]
             ];
             var level = new PIXI.Text('  LvL  ' + unit.level + '        ' + unit.classInfo.currentClass + " (" + unit.sex.substring(0,1).toUpperCase() + ")",this.style);
-            level.position.x = x;
+            level.position.x = maxWidth/2;
             level.position.y = y;
-            level.anchor.x = 0;
+            level.anchor.x = 0.5;
             level.anchor.y = 0;
+            Graphics.fitText(level,maxWidth)
             y += level.height;
             container.addChild(level);
-            if (level.width > maxWidth){
-                maxWidth = level.width;
-            }
-            if (name.width > maxWidth){
-                maxWidth = name.width;
-            }
+            Graphics.fitText(name,maxWidth);
             var fSize = 16;
             for (var j = 0; j < attr1.length;j++){
                 var a = new PIXI.Text(attr1[j][0] + attr1[j][1],this.style);

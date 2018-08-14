@@ -618,11 +618,9 @@ Player.prototype.setupSocket = function() {
                         console.log('Unable to add item ' + commands[2]);
                     }
                     break;
-                case '-to':
-                    try{
-                        that.gameSession.getTurnOrder();
-                    }catch(e){
-                        console.log(e);
+                case '-next':
+                    if(that.gameSession){
+                        that.gameSession.ticker = that.gameSession.timePerTurn;
                     }
                     break;
             }

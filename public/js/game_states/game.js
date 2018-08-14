@@ -7,11 +7,11 @@
         timePerTurn: null,
         timePerReaction: null,
         delayBetweenStates: null,
-
         betweenStateTicker: 0,
         turnTicker: Date.now(),
         reactionTicker: Date.now(),
         currentState: 'idle',
+
         states: {
             Idle: 'idle',
             BetweenStates: 'betweenStates',
@@ -342,7 +342,6 @@
             for (var i = 0; i < this.compassComponents.length;i++){
                 var cr = this.map.currentRotation;
                 var component = this.compassComponents[i];
-                console.log(component)
                 var t = 1;
                 if (!(cr%2)){t = 2}
                 component.sprite.texture = Graphics.getResource('overlay' + t);
@@ -883,22 +882,7 @@
         getAttackNodes: function(){
             var unit = this.units[this.turnList[0]];
             var weapon = unit.inventory.items[unit.weapon];
-            var possibleNodes = null;
-            if (typeof weapon.eqData.range == 'number'){
-                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.range);
-                for (var i = possibleNodes.length-1; i >= 0;i--){
-                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.range){
-                        possibleNodes.splice(i,1);
-                    }
-                }
-            }else{
-                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.rangeMax);
-                for (var i = possibleNodes.length-1; i >= 0;i--){
-                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.rangeMin){
-                        possibleNodes.splice(i,1);
-                    }
-                }
-            }
+            var possibleNodes = this.getWeaponNodes(unit,weapon);
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
                 console.log(i);
@@ -914,6 +898,85 @@
                 axial.overlaySprite2.anchor.x = 0.5;
                 axial.overlaySprite2.anchor.y = 0.5;
                 axial.overlaySprite2.tint = 0xFF0000;
+                axial.overlaySprite2.overlay = axial.sprite2;
+                this.overlaySprites.push({q:axial.q,r:axial.r});
+                this.addOverlaySprites();
+            }
+        },
+        getWeaponNodes: function(unit,weapon){
+            let possibleNodes = null;
+            if (typeof weapon.eqData.range == 'number'){
+                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.range);
+                for (var i = possibleNodes.length-1; i >= 0;i--){
+                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.range){
+                        possibleNodes.splice(i,1);
+                    }
+                }
+            }else{
+                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.rangeMax);
+                for (var i = possibleNodes.length-1; i >= 0;i--){
+                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.rangeMin){
+                        possibleNodes.splice(i,1);
+                    }
+                }
+            }
+            return possibleNodes;
+        },
+        
+        getAbilityNodes: function(ability){
+            var unit = this.units[this.turnList[0]];
+            var possibleNodes = null;
+            switch(ability.range){
+                case 'self':
+                    //this should pop up a confirm window immediately
+                    break;
+                case 'melee':
+                    var weapon = unit.getWeapon();
+                    if (weapon.type == 'gun'){
+                        return;
+                    }
+                    console.log(weapon);
+                    possibleNodes = this.getWeaponNodes(unit,weapon);
+                    break;
+                case 'ranged':
+                    var weapon = unit.getWeapon();
+                    if (weapon.type == 'weapon'){
+                        return;
+                    }
+                    console.log(weapon);
+                    possibleNodes = this.getWeaponNodes(unit,weapon);
+                    break;
+                case 'weapon':
+                    var weapon = unit.getWeapon();
+                    possibleNodes = this.getWeaponNodes(unit,weapon);
+                    break;
+                default:
+                    //range is a special string, parse for ability distance
+                    var range = Utils.parseRange(ability.range);
+                    var d = Utils.parseRangeCode(unit,range.d);
+                    possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),d);
+                    for (var i = 0; i < possibleNodes.length;i++){
+                        if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                            possibleNodes.splice(i,1);
+                            i -= 1;
+                        }
+                    }
+                    break;
+            }
+            Game.abilityActive = true;
+            for(var i = 0; i < possibleNodes.length;i++){
+                //TODO calculate possible nodes here??
+                var axial = this.map.getAxial(possibleNodes[i]);
+                this.abilityNodesActive.push(axial);
+                axial.overlaySprite1 = Graphics.getSprite('overlay1');
+                axial.overlaySprite1.anchor.x = 0.5;
+                axial.overlaySprite1.anchor.y = 0.5;
+                axial.overlaySprite1.tint = 0xFFFF00;
+                axial.overlaySprite1.overlay = axial.sprite1;
+                axial.overlaySprite2 = Graphics.getSprite('overlay2');
+                axial.overlaySprite2.anchor.x = 0.5;
+                axial.overlaySprite2.anchor.y = 0.5;
+                axial.overlaySprite2.tint = 0xFFFF00;
                 axial.overlaySprite2.overlay = axial.sprite2;
                 this.overlaySprites.push({q:axial.q,r:axial.r});
                 this.addOverlaySprites();
@@ -964,9 +1027,8 @@
                     }
                     var clickFunc = function(e){
                         console.log('clicked! ' + e.currentTarget.abilityInfo.name);
-                    }
-                    var mOverFunc = function(e){
-                        console.log('moused over!! ' + e.currentTarget.abilityInfo.name);
+                        Game.clearOverlaySprites();
+                        Game.getAbilityNodes(e.currentTarget.abilityInfo);
                     }
                     var ablButton = Graphics.makeUiElement({
                         text: aInfo.name,
@@ -975,8 +1037,7 @@
                         buttonMode: true,
                         anchor: [0.5,0],
                         position: [w/2,h],
-                        clickFunc: clickFunc,
-                        mOverFunc: mOverFunc
+                        clickFunc: clickFunc
 
                     });
                     while(ablButton.width > w - 10){
@@ -1109,6 +1170,8 @@
             this.moveNodesActive = [];
             this.attackActive = false;
             this.attackNodesActive = [];
+            this.abilityActive = false;
+            this.abilityNodesActive = [];
             Graphics.worldPrimitives.clear();
             for (var i = 0;i < this.overlaySprites.length;i++){
                 var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
@@ -1126,8 +1189,13 @@
             var cont = new PIXI.Container();
             var gfx = new PIXI.Graphics();
             var color = 0x0000FF;
-            var style  = AcornSetup.baseStyle;
-            style.fill = 'white';
+            var style  = {
+                font: '64px Sigmar One',
+                fill: 'white',
+                align: 'left',
+                stroke: '#000000',
+                strokeThickness: 2,
+            }
             if (this.units[id].owner != window.playerID){
                 color = 0xFF0000;
             }
@@ -1310,14 +1378,14 @@
             cont.addChild(shText);
 
             var style2 = {
-                font: '24px Sigmar One',
+                font: '20px Verdana',
                 fill: Graphics.pallette.color1,
                 align: 'left',
                 stroke: '#000000',
                 strokeThickness: 2,
             };
             //MOVE
-            var n = (typeof unit.move == 'undefined') ? 'MOV: ???' : 'MOV: ' + unit.move;
+            var n = (typeof unit.move == 'undefined') ? 'Move: ???' : 'Move: ' + unit.move;
             var movText = new PIXI.Text(n, style2);
             movText = Graphics.fitText(movText,w/3-5);
             movText.position.x = 10;
@@ -1325,7 +1393,7 @@
             cont.addChild(movText);
 
             //JUMP
-            var n = (typeof unit.jump == 'undefined') ? 'JMP: ???' : 'JMP: ' + unit.jump;
+            var n = (typeof unit.jump == 'undefined') ? 'Jump: ???' : 'Jump: ' + unit.jump;
             var jmpText = new PIXI.Text(n, style2);
             jmpText = Graphics.fitText(jmpText,w/3-5);
             jmpText.position.x = 10;
@@ -1333,7 +1401,7 @@
             cont.addChild(jmpText);
 
             //SPEED
-            var n = (typeof unit.speed == 'undefined') ? 'SPD: ???' : 'SPD: ' + unit.speed;
+            var n = (typeof unit.speed == 'undefined') ? 'Speed: ???' : 'Speed: ' + unit.speed;
             var spdText = new PIXI.Text(n, style2);
             spdText = Graphics.fitText(spdText,w/3-5);
             spdText.position.x = 10;
@@ -1341,81 +1409,82 @@
             cont.addChild(spdText);
 
             //POWER
-            var n = (typeof unit.power == 'undefined') ? 'POW: ???' : 'POW: ' + unit.power;
+            var n = (typeof unit.power == 'undefined') ? 'Power: ???' : 'Power: ' + unit.power;
             var powText = new PIXI.Text(n, style2);
             powText = Graphics.fitText(powText,w/3-5);
             powText.position.x = 10;
-            powText.position.y = spdText.position.y + spdText.height;
+            powText.position.y = spdText.position.y + spdText.height*2;
             cont.addChild(powText);
 
             //SKILL
-            var n = (typeof unit.skill == 'undefined') ? 'SKL: ???' : 'SKL: ' + unit.skill;
+            var n = (typeof unit.skill == 'undefined') ? 'Skill: ???' : 'Skill: ' + unit.skill;
             var sklText = new PIXI.Text(n, style2);
             sklText = Graphics.fitText(sklText,w/3-5);
             sklText.position.x = 10;
             sklText.position.y = powText.position.y + powText.height;
             cont.addChild(sklText);
 
+            //TACTICS
+            var n = (typeof unit.tactics == 'undefined') ? 'Tactics: ???' : 'Tactics: ' + unit.tactics;
+            var tacText = new PIXI.Text(n, style2);
+            tacText = Graphics.fitText(tacText,w/3-5);
+            tacText.position.x = 10;
+            tacText.position.y = sklText.position.y + sklText.height;
+            cont.addChild(tacText);
+
             //STRENGTH
             var n = (typeof unit.strength == 'undefined') ? 'STR: ???' : 'STR: ' + unit.strength;
             var strText = new PIXI.Text(n, style2);
-            strText.anchor.x = 0.5;
             strText = Graphics.fitText(strText,w/3-5);
-            strText.position.x = w/2;
-            strText.position.y = sY + barHeight/2 + 20;
+            strText.position.x = 10;
+            strText.position.y = tacText.position.y + tacText.height*2;
             cont.addChild(strText);
 
             //ENDURANCE
             var n = (typeof unit.endurance == 'undefined') ? 'END: ???' : 'END: ' + unit.endurance;
             var endText = new PIXI.Text(n, style2);
-            endText.anchor.x = 0.5;
             endText = Graphics.fitText(endText,w/3-5);
-            endText.position.x = w/2;
+            endText.position.x = 10;
             endText.position.y = strText.position.y + strText.height;
             cont.addChild(endText);
 
             //DEXTERITY
             var n = (typeof unit.dexterity == 'undefined') ? 'DEX: ???' : 'DEX: ' + unit.dexterity;
             var dexText = new PIXI.Text(n, style2);
-            dexText.anchor.x = 0.5;
             dexText = Graphics.fitText(dexText,w/3-5);
-            dexText.position.x = w/2;
+            dexText.position.x = 10;
             dexText.position.y = endText.position.y + endText.height;
             cont.addChild(dexText);
 
             //AGILITY
             var n = (typeof unit.agility == 'undefined') ? 'AGI: ???' : 'AGI: ' + unit.agility;
             var agiText = new PIXI.Text(n, style2);
-            agiText.anchor.x = 1;
             agiText = Graphics.fitText(agiText,w/3-5);
-            agiText.position.x = w-10;
-            agiText.position.y = sY + barHeight/2 + 20;
+            agiText.position.x = 10;
+            agiText.position.y = dexText.position.y + dexText.height;
             cont.addChild(agiText);
 
             //INTELLIGENCE
             var n = (typeof unit.intelligence == 'undefined') ? 'INT: ???' : 'INT: ' + unit.intelligence;
             var intText = new PIXI.Text(n, style2);
-            intText.anchor.x = 1;
             intText = Graphics.fitText(intText,w/3-5);
-            intText.position.x = w-10;
+            intText.position.x = 10;
             intText.position.y = agiText.position.y + agiText.height;
             cont.addChild(intText);
 
             //WILLPOWER
             var n = (typeof unit.willpower == 'undefined') ? 'WIL: ???' : 'WIL: ' + unit.willpower;
             var wilText = new PIXI.Text(n, style2);
-            wilText.anchor.x = 1;
             wilText = Graphics.fitText(wilText,w/3-5);
-            wilText.position.x = w-10;
+            wilText.position.x = 10;
             wilText.position.y = intText.position.y + intText.height;
             cont.addChild(wilText);
 
             //CHARISMA
             var n = (typeof unit.charisma == 'undefined') ? 'CHA: ???' : 'CHA: ' + unit.charisma;
             var chaText = new PIXI.Text(n, style2);
-            chaText.anchor.x = 1;
             chaText = Graphics.fitText(chaText,w/3-5);
-            chaText.position.x = w-10;
+            chaText.position.x = 10;
             chaText.position.y = wilText.position.y + wilText.height;
             cont.addChild(chaText);
 

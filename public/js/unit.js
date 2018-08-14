@@ -17,6 +17,7 @@
         this.jump = null;
         this.power = null;
         this.skill = null;
+        this.tactics = null;
         this.abilitySlots = null;
         //shields
         this.currentShields = null;
@@ -94,6 +95,7 @@
         this.jump = data.jump;
         this.power = data.power;
         this.skill = data.skill;
+        this.tactics = data.tactics;
         this.speed = data.speed;
         this.abilitySlots = data.abilitySlots;
         this.strength = data.strength;
@@ -159,11 +161,27 @@
 
         this.usedAbilitySlots = data.usedAbilitySlots;
     };
+    Unit.prototype.getWeapon = function(){
+        if (this.weapon >= 0){
+            return this.inventory.items[this.weapon];
+        }else{
+            return {
+                amount:1,
+                classes:"ALL",
+                description:"Hand to hand combat",
+                eqData:{range: 1, damage: 10},
+                itemID:"weapon_fists",
+                name:"Fists",
+                type:"weapon",
+                weight:0
+            }
+        }
+    };
     Unit.prototype.setChargePercent = function(val){
         if (val > 1){
             val = 1;
         }
-        this.chargePercent = Math.round(val*100)
+        this.chargePercent = Math.round(val*100);
     }
     Unit.prototype.setNewDirection = function(direction){
         var frame = this.sprite.currentFrame;
@@ -249,6 +267,9 @@
                     break;
                 case 'skl':
                     this.skill = amt;
+                    break;
+                case 'tac':
+                    this.tactics = amt;
                     break;
                 case 'mov':
                     this.move = amt;
