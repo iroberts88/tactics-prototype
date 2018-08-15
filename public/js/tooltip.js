@@ -5,7 +5,7 @@
         this.texture = null;
         this.sprite = null;
         this.style1 = {
-            font: '20px Sigmar One', 
+            font: '20px Verdana', 
             fill: 'white', 
             align: 'left',
             wordWrap: true,

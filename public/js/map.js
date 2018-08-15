@@ -966,7 +966,8 @@
             sprite1: null,
             sprite2: null,
             overlaySprite1: null,
-            overlaySprite2: null
+            overlaySprite2: null,
+            mouseOverNodes: null
         }
     }
 

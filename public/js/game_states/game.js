@@ -81,6 +81,7 @@
         attackNodesActive: [],
 
         abilityActive: false,
+        abilityInfo: null,
         abilityNodesActive: [],
 
         uiWindows: [], //array containing active UI components?
@@ -928,7 +929,7 @@
             var possibleNodes = null;
             switch(ability.range){
                 case 'self':
-                    //this should pop up a confirm window immediately
+                    //this should pop up a confirm window immediately?
                     break;
                 case 'melee':
                     var weapon = unit.getWeapon();
@@ -952,9 +953,8 @@
                     break;
                 default:
                     //range is a special string, parse for ability distance
-                    var range = Utils.parseRange(ability.range);
-                    var d = Utils.parseRangeCode(unit,range.d);
-                    possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),d);
+                    var range = Utils.parseRange(unit,ability.range);
+                    possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
                     for (var i = 0; i < possibleNodes.length;i++){
                         if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
                             possibleNodes.splice(i,1);
@@ -971,15 +971,21 @@
                 axial.overlaySprite1 = Graphics.getSprite('overlay1');
                 axial.overlaySprite1.anchor.x = 0.5;
                 axial.overlaySprite1.anchor.y = 0.5;
-                axial.overlaySprite1.tint = 0xFFFF00;
+                axial.overlaySprite1.tint = 0x0FFFF0;
                 axial.overlaySprite1.overlay = axial.sprite1;
                 axial.overlaySprite2 = Graphics.getSprite('overlay2');
                 axial.overlaySprite2.anchor.x = 0.5;
                 axial.overlaySprite2.anchor.y = 0.5;
-                axial.overlaySprite2.tint = 0xFFFF00;
+                axial.overlaySprite2.tint = 0x0FFFF0;
                 axial.overlaySprite2.overlay = axial.sprite2;
                 this.overlaySprites.push({q:axial.q,r:axial.r});
                 this.addOverlaySprites();
+
+                //now find the possible radius nodes and add them to axial.mouseOverNodes
+                switch (ability.radius){
+                    default:
+                        break;
+                }
             }
         },
         getAbilityMenu: function(unit){

@@ -119,7 +119,7 @@
                 Utils.getRandomTint();
             }
         },
-        parseRange: function(range){
+        parseRange: function(unit,range){
             var results = {
                 d: 0, //distnace
                 h: 0, //height
@@ -165,22 +165,22 @@
             if (sString == 'self'){
                 results.s = true;
             }
-            results.d = dString;
-            results.h = hString;
+            results.d = Utils.parseStringCode(unit,dString);
+            results.h = Utils.parseStringCode(unit,hString);
             return results;
         },
-        parseRangeCode: function(unit,code){
+        parseStringCode: function(unit,code){
             if (code.charAt(0) != '<'){
                 return parseInt(code);
             }else{
-                code = code.substring(1,code.length-1);
+                _code = code.substring(1,code.length-1);
                 var cArr = [];
                 //seperate the code into numbers,operators, and attr codes
-                var currentType = this.getType(code.charAt(0));
+                var currentType = this.getType(_code.charAt(0));
                 var str = '';
-                for (var i = 0; i < code.length;i++){
-                    if (this.getType(code.charAt(i)) == currentType){
-                        str += code.charAt(i);
+                for (var i = 0; i < _code.length;i++){
+                    if (this.getType(_code.charAt(i)) == currentType){
+                        str += _code.charAt(i);
                     }else{
                         if (currentType == 'a'){
                             cArr.push(this.getAttr(unit,str));
@@ -189,8 +189,8 @@
                         }else{
                             cArr.push(str);
                         }
-                        str = code.charAt(i);
-                        currentType = this.getType(code.charAt(i));
+                        str = _code.charAt(i);
+                        currentType = this.getType(_code.charAt(i));
                     }
                 }
                 if (currentType == 'a'){
