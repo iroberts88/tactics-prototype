@@ -275,10 +275,9 @@
             Acorn.Net.on('action', function (data) {
                 console.log('Perform battle action!');
                 console.log(data);
-                Game.performingAction = true;
-                Game.turnMenu.visible = false;
-                Game.currentAction = new Actions();
-                Game.currentAction.init(data.actionData);
+                var action = new Actions();
+                action.init(data.actionData);
+                Game.actions.push(action);
             });
 
             Acorn.Net.on('setMoveLeft', function (data) {

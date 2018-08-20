@@ -82,16 +82,18 @@
 
         abilityActive: false,
         abilityInfo: null,
-        abilityNodesActive: [],
+        abilityNodes: {},
+        abilityRadiusNodes: [],
 
         uiWindows: [], //array containing active UI components?
 
         currentActionData: null,
+        actions: [],
 
         compass: null,
         compassComponents: [],
 
-        overlaySprites: [],
+        overlaySprites: {},
 
         currentConfirmWindow: null,
         currentToolTip: null,
@@ -385,6 +387,9 @@
             for (var i = 0; i < this.turnListSprites.length;i++){
                 Graphics.uiContainer.removeChild(this.turnListSprites[i]);
             }
+            if (this.abilityActive){
+                Graphics.uiContainer.removeChild(this.abilityMenu);
+            }
             this.turnListSprites = [];
             for (var i = 0; i < this.turnList.length;i++){
                 //create box
@@ -435,8 +440,14 @@
             }else{
                 this.updateUnitsBool = true;
             }
-            if (this.performingAction){
-                this.currentAction.update(deltaTime);
+            if (this.actions.length){
+                Game.turnMenu.visible = false;
+                this.actions[0].update(deltaTime);
+                if (this.actions[0].end || this.actions[0].actions.length == 0){
+                    this.actions.splice(0,1);
+                    Game.resetTurnMenu();
+                    Game.turnMenu.visible = true;
+                }
             }
             for (var i in this.units){
                 try{
@@ -511,7 +522,6 @@
             if (Acorn.Input.isPressed(Acorn.Input.Key.INTERACT)){
                 if (this.currentConfirmWindow){
                     var e = {currentTarget: this.currentConfirmWindow.confirmButton};
-                    console.log(e)
                     this.currentConfirmWindow.confirmButton.clickFunc(e);
                 }
                 Acorn.Input.setValue(Acorn.Input.Key.INTERACT, false);
@@ -865,17 +875,8 @@
                 if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
                     var axial = this.map.getAxial(end);
                     this.moveNodesActive.push(axial);
-                    axial.overlaySprite1 = Graphics.getSprite('overlay1');
-                    axial.overlaySprite1.anchor.x = 0.5;
-                    axial.overlaySprite1.anchor.y = 0.5;
-                    axial.overlaySprite1.tint = 0x0FFFF0;
-                    axial.overlaySprite1.overlay = axial.sprite1;
-                    axial.overlaySprite2 = Graphics.getSprite('overlay2');
-                    axial.overlaySprite2.anchor.x = 0.5;
-                    axial.overlaySprite2.anchor.y = 0.5;
-                    axial.overlaySprite2.tint = 0x0FFFF0;
-                    axial.overlaySprite2.overlay = axial.sprite2;
-                    this.overlaySprites.push({q:axial.q,r:axial.r});
+                    axial.setOverlaySprites(0x0FFFF0);
+                    this.overlaySprites[axial.id] = axial;
                     this.addOverlaySprites();
                 }
             }
@@ -886,21 +887,10 @@
             var possibleNodes = this.getWeaponNodes(unit,weapon);
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
-                console.log(i);
-                console.log(possibleNodes)
                 var axial = this.map.getAxial(possibleNodes[i]);
                 this.attackNodesActive.push(axial);
-                axial.overlaySprite1 = Graphics.getSprite('overlay1');
-                axial.overlaySprite1.anchor.x = 0.5;
-                axial.overlaySprite1.anchor.y = 0.5;
-                axial.overlaySprite1.tint = 0xFF0000;
-                axial.overlaySprite1.overlay = axial.sprite1;
-                axial.overlaySprite2 = Graphics.getSprite('overlay2');
-                axial.overlaySprite2.anchor.x = 0.5;
-                axial.overlaySprite2.anchor.y = 0.5;
-                axial.overlaySprite2.tint = 0xFF0000;
-                axial.overlaySprite2.overlay = axial.sprite2;
-                this.overlaySprites.push({q:axial.q,r:axial.r});
+                axial.setOverlaySprites(0xFF0000);
+                this.overlaySprites[axial.id] = axial;
                 this.addOverlaySprites();
             }
         },
@@ -930,13 +920,13 @@
             switch(ability.range){
                 case 'self':
                     //this should pop up a confirm window immediately?
+
                     break;
                 case 'melee':
                     var weapon = unit.getWeapon();
                     if (weapon.type == 'gun'){
                         return;
                     }
-                    console.log(weapon);
                     possibleNodes = this.getWeaponNodes(unit,weapon);
                     break;
                 case 'ranged':
@@ -944,7 +934,6 @@
                     if (weapon.type == 'weapon'){
                         return;
                     }
-                    console.log(weapon);
                     possibleNodes = this.getWeaponNodes(unit,weapon);
                     break;
                 case 'weapon':
@@ -967,22 +956,42 @@
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
                 var axial = this.map.getAxial(possibleNodes[i]);
-                this.abilityNodesActive.push(axial);
-                axial.overlaySprite1 = Graphics.getSprite('overlay1');
-                axial.overlaySprite1.anchor.x = 0.5;
-                axial.overlaySprite1.anchor.y = 0.5;
-                axial.overlaySprite1.tint = 0x0FFFF0;
-                axial.overlaySprite1.overlay = axial.sprite1;
-                axial.overlaySprite2 = Graphics.getSprite('overlay2');
-                axial.overlaySprite2.anchor.x = 0.5;
-                axial.overlaySprite2.anchor.y = 0.5;
-                axial.overlaySprite2.tint = 0x0FFFF0;
-                axial.overlaySprite2.overlay = axial.sprite2;
-                this.overlaySprites.push({q:axial.q,r:axial.r});
+                this.abilityNodes[axial.q + ',' + axial.r] = axial;
+                axial.setOverlaySprites(0x0FFFF0);
+                this.overlaySprites[axial.id] = axial;
                 this.addOverlaySprites();
 
                 //now find the possible radius nodes and add them to axial.mouseOverNodes
-                switch (ability.radius){
+                axial.mouseOverNodes = [];
+                if (!ability.radius){
+                    axial.mouseOverNodes.push(axial);
+                    continue;
+                }
+                var n = Utils.getRadiusN(unit,ability.radius);
+                var type = Utils.getRadiusType(ability.radius);
+                switch (type){
+                    case 'circle':
+                        var mONodes = this.map.cubeSpiral(this.map.getCube(axial),n-1);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(this.map.getAxial(mONodes[j]));
+                        }
+                        break;
+                    case 'line':
+                        break;
+                    case 'cone':
+                        break;
+                    case 'cone2':
+                        break;
+                    case 'cone3':
+                        break;
+                    case 'cone4':
+                        break;
+                    case 'cone5':
+                        break;
+                    case 'cir+diag':
+                        break;
+                    case 'diagonals':
+                        break;
                     default:
                         break;
                 }
@@ -992,7 +1001,6 @@
             //return a ui window for the given unit's ability list
             var h = 5;
             var w = 325;
-
             var scene = new PIXI.Container();
             var cont = new PIXI.Container();
             var gfx = new PIXI.Graphics();
@@ -1000,12 +1008,10 @@
             var style  = AcornSetup.baseStyle2;
             scene.addChild(gfx);
             scene.addChild(cont);
-            //
             if (typeof unit.classInfo.equippedAbilities == 'undefined'){
                 //you dont have the full info for this unit. No ability menu available
                 return null;
             }
-
             var abText = new PIXI.Text('Choose an ability!', style);
             abText.style.fill = 'blue';
             abText.anchor.x = 0.5;
@@ -1148,7 +1154,7 @@
         },
         addOverlaySprites(){
             //add the overlay sprites to the map, setting the correct scale and position   
-            for (var i = 0;i < this.overlaySprites.length;i++){
+            for (var i in this.overlaySprites){
                 var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
                 node.overlaySprite1.scale.x = this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
                 node.overlaySprite1.scale.y = this.map.YSCALE_SETTINGS[this.map.currentYScaleSetting]*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
@@ -1164,7 +1170,7 @@
         },
         removeOverlaySprites(){
             //remove overlay sprites, but keep them in the node ect
-            for (var i = 0;i < this.overlaySprites.length;i++){
+            for (var i in this.overlaySprites){
                 var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
                 this.map.container1.removeChild(node.overlaySprite1);
                 this.map.container2.removeChild(node.overlaySprite2);
@@ -1177,16 +1183,17 @@
             this.attackActive = false;
             this.attackNodesActive = [];
             this.abilityActive = false;
-            this.abilityNodesActive = [];
+            this.abilityNodes = {};
+            this.abilityRadiusNodes = [];
             Graphics.worldPrimitives.clear();
-            for (var i = 0;i < this.overlaySprites.length;i++){
+            for (var i in this.overlaySprites){
                 var node = this.map.axialMap[this.overlaySprites[i].q][this.overlaySprites[i].r];
                 this.map.container1.removeChild(node.overlaySprite1);
                 this.map.container2.removeChild(node.overlaySprite2);
                 node.overlaySprite1 = null;
                 node.overlaySprite2 = null;
             }
-            this.overlaySprites = [];
+            this.overlaySprites = {};
         },
         getTurnBox: function(id){
             var h = 75;
@@ -1535,6 +1542,41 @@
             Game.resetTint();
             this.selectedSprite = this.currentlyMousedOver;
             this.setNodeText(Game.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z]);
+            if (Game.abilityActive){
+                var node = Game.map.axialMap[this.selectedSprite.axialCoords.q][this.selectedSprite.axialCoords.r];
+                if (node.mouseOverNodes){
+                    for (var i = 0; i < Game.abilityRadiusNodes.length;i++){
+                        //remove any ability nodes that are NOT part of the selection nodes
+                        //reset the color of the ones that are
+                        var n = Game.abilityRadiusNodes[i];
+                        if (Game.abilityNodes[n.id]){
+                            Game.abilityNodes[n.id].overlaySprite1.tint = 0x0FFFF0;
+                            Game.abilityNodes[n.id].overlaySprite2.tint = 0x0FFFF0;
+                        }else{
+                            this.map.container1.removeChild(n.overlaySprite1);
+                            this.map.container2.removeChild(n.overlaySprite2);
+                            n.overlaySprite1 = null;
+                            n.overlaySprite2 = null;
+                            delete this.overlaySprites[n.id];
+                        }
+                    }
+                    Game.abilityRadiusNodes = [];
+                    //set new abilityRadiusNodes
+                    this.removeOverlaySprites();
+                    for (var i = 0; i < node.mouseOverNodes.length;i++){
+                        var n = node.mouseOverNodes[i];
+                        if (Game.abilityNodes[n.q+','+n.r]){
+                            n.overlaySprite1.tint = 0xFF0000;
+                            n.overlaySprite2.tint = 0xFF0000;
+                        }else{
+                            n.setOverlaySprites(0xFF0000);
+                            this.overlaySprites[n.id] = n;
+                        }
+                        Game.abilityRadiusNodes.push(n);
+                    }
+                    this.addOverlaySprites();
+                }
+            }
             this.setNewHoveredNode = 0;
         },
         setHoveredUnit: function(){

@@ -118,7 +118,8 @@
                     if (typeof this.axialMap[i] == 'undefined'){
                         this.axialMap[i] = {};
                     }
-                    var node = this.getAxialNode(i,j);
+                    var node = new Node();
+                    node.init(i,j);
                     this.axialMap[i][j] = node;
                     this.axialMap[i][j].h = data.mapData[i][j].h;
                     this.axialMap[i][j].deleted = data.mapData[i][j].deleted;
@@ -538,6 +539,7 @@
             var filtersOff = function() {
                 this.filters = []
             }
+
             sprite.clicked = false;
             sprite.on('pointerdown', function onClick(e){
                 if (Game.map.rotateData){return;}
@@ -550,15 +552,23 @@
                     Game.tryToAttack(node);
                     return;
                 }
+                if (Game.abilityActive){
+                    Game.tryToAbility(node);
+                    return;
+                }
                 if (node.unit){
                     Game.selectUnit(node.unit);
                 }
             });
+
             sprite.on('pointerup', function onClick(e){
 
             });
+
             sprite.on('pointerupoutside', function onClick(e){
+
             });
+
             sprite.on('pointerover', function onMove(e){
                 if (Game.map.rotateData){return;}
                 //movement is active...
@@ -589,7 +599,8 @@
                 Game.resetTint();
                 Game.setNewHoveredNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
                 Game.currentlyMousedOver = sprite;
-            }); 
+            });
+
             sprite.on('pointerout', function onMove(e){
                 if (Game.selectedNode == null){
                     if (Game.map.rotateData){return;}
@@ -955,21 +966,41 @@
 
         }
     }
-    Map.prototype.getAxialNode = function(q,r){
-        return {
-            q:q,
-            r:r,
-            h:0,
-            tile: 'base',
-            deleted: false,
-            unit: null,
-            sprite1: null,
-            sprite2: null,
-            overlaySprite1: null,
-            overlaySprite2: null,
-            mouseOverNodes: null
-        }
-    }
 
     window.Map = Map;
 })(window);
+
+
+(function(window) {
+
+    var Node = function(){}
+
+    Node.prototype.init = function(q,r){
+        this.q =q;
+        this.r =r;
+        this.h =0;
+        this.tile = 'base';
+        this.deleted = false;
+        this.unit = null;
+        this.sprite1 = null;
+        this.sprite2 = null;
+        this.overlaySprite1 = null;
+        this.overlaySprite2 = null;
+        this.mouseOverNodes = null;
+        this.id = q+','+r;
+    }
+    Node.prototype.setOverlaySprites = function(tint){
+        this.overlaySprite1 = Graphics.getSprite('overlay1');
+        this.overlaySprite1.anchor.x = 0.5;
+        this.overlaySprite1.anchor.y = 0.5;
+        this.overlaySprite1.tint = tint;
+        this.overlaySprite1.overlay = this.sprite1;
+        this.overlaySprite2 = Graphics.getSprite('overlay2');
+        this.overlaySprite2.anchor.x = 0.5;
+        this.overlaySprite2.anchor.y = 0.5;
+        this.overlaySprite2.tint = tint;
+        this.overlaySprite2.overlay = this.sprite2;
+    }
+    window.Node = Node;
+})(window);
+

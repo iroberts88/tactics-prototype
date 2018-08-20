@@ -7,7 +7,7 @@
         operators: {},
         init: function(){
             var n = '1234567890';
-            var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
             var o = '+-/*';
             for (var i = 0; i < n.length;i++){
                 this.numbers[n.charAt(i)] = true;
@@ -208,7 +208,7 @@
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '/'){
-                        var n = Math.ceil(cArr[i-1] / cArr[i+1]);
+                        var n = Math.floor(cArr[i-1] / cArr[i+1]);
                         cArr.splice(i-1,3,n);
                     }
                 }
@@ -217,8 +217,8 @@
                         var n = cArr[i-1] + cArr[i+1];
                         cArr.splice(i-1,3,n);
                     }
-                    if (cArr[i] == '+'){
-                        var n = cArr[i-1] + cArr[i+1];
+                    if (cArr[i] == '-'){
+                        var n = cArr[i-1] - cArr[i+1];
                         cArr.splice(i-1,3,n);
                     }
                 }
@@ -267,9 +267,36 @@
             if (this.letters[char]){return 'a';}
             if (this.numbers[char]){return 'n';}
             if (this.operators[char]){return 'o';}
-            console.log("ERROR")
+            console.log("ERROR");
             console.log(char);
             return null;
+        },
+        getRadiusType: function(str){
+            var result = '';
+            var start = false;
+            for (var i = 0; i < str.length;i++){
+                if (start){
+                    result = result + str.charAt(i);
+                }else if (str.charAt(i) == ' '){
+                    start = true;
+                }
+            }
+            if (result == ''){
+                return 'circle';
+            }
+            return result;
+        },
+        getRadiusN: function(unit,str){
+            var rString = '';
+            for (var i = 0; i < str.length;i++){
+                if (str.charAt(i) == ' '){
+                    break;
+                }else{
+                    rString += str.charAt(i);
+                }
+            }
+            var result = Utils.parseStringCode(unit,rString);
+            return parseInt(result);
         }
     };
     window.Utils = Utils;

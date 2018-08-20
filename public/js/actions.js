@@ -14,13 +14,7 @@
         this.actionIndex = 0;
     };
     Actions.prototype.update = function(dt){
-        if (this.end || this.actions.length == 0){
-            Game.performingAction = false;
-            Game.currentAction = null;
-            Game.resetTurnMenu();
-            return;
-        }
-        if (this.currentAction == null){
+        if (this.currentAction == null && this.actionIndex < this.actions.length){
             this.currentAction = this.actions[this.actionIndex];
         }else{
             var actionFunc = this.getAction(this.currentAction.action);
