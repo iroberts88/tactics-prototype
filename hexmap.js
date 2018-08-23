@@ -26,10 +26,6 @@ var HexMap = function(session){
 }
 
 HexMap.prototype.init = function(data){
-	this.axialMap = {};
-	this.cubeMap = {};
-
-
     //generate the map using axial coordinates
     this.axialMap = {};
     //then set up the cube map
@@ -66,7 +62,6 @@ HexMap.prototype.initCubeMap = function(){
     //Take an axial map and create its cube map counterpart
     for (var i in this.axialMap){
         for (var j in this.axialMap[i]){
-            //get LOS first
             if (typeof this.cubeMap[i] == 'undefined'){
                 this.cubeMap[i] = {}
             }
@@ -78,7 +73,10 @@ HexMap.prototype.initCubeMap = function(){
                 x: parseInt(i),
                 y: parseInt(-i-j),
                 z: parseInt(j),
-                deleted: this.axialMap[i][j].deleted
+                q: parseInt(i),
+                r: parseInt(j),
+                deleted: this.axialMap[i][j].deleted,
+                h: this.axialMap[i][j].h
             }
             this.cubeMap[node.x][node.y][node.z] = node;
         }
@@ -174,10 +172,7 @@ HexMap.prototype.cubeSpiral = function(center,radius){
     for (var k = 0; k <= radius;k++){
         var arr = this.cubeRing(center,k);
         for (var i = 0; i < arr.length;i++){
-            try{
-                var c = this.cubeMap[arr[i][0]][arr[i][1]][arr[i][2]];
-                results.push(c);
-            }catch(e){}
+            results.push(this.getAxial(arr[i]));
         }
     }
     return results;
@@ -233,7 +228,83 @@ HexMap.prototype.cubeLerp = function(a,b,t){
         z: this.lerp(a.z,b.z,t)
     }
 }
+HexMap.prototype.getLOS = function(startNode,endNode){
+    var unit1 = startNode.unit;
+    var aH = unit1.height + startNode.h;
+    var unit2 = endNode.unit;
 
+    var cPos = {
+        x: endNode.x + this.losAngle,
+        y: endNode.y + this.losAngle,
+        z: endNode.z + -this.losAngle*2,
+    }
+    var cNeg = {
+        x: endNode.x + -this.losAngle,
+        y: endNode.y + -this.losAngle,
+        z: endNode.z + this.losAngle,
+    }
+    var r1 = this.cubeLineDraw(startNode,cPos);
+    var r2 = this.cubeLineDraw(startNode,cNeg);
+    var blocked1 = false;
+    var blocked2 = false;
+    var highestAngle = 0;
+    console.log(r1);
+    for (var j = 1; j < r1.length;j++){
+        var a = this.getAxial(r1[j]);
+        var h = (j==(r1.length-1)) ? (a.h+unit2.height) : a.h;
+        var angle = 0;
+        if (h > aH){
+            angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+        }else if (h < aH){
+            angle = (180/Math.PI)*Math.atan(j/(aH-h));
+        }else{
+            angle = 90;
+        }
+        if (highestAngle < angle){
+            highestAngle = angle;
+            blocked1 = false;
+        }else{
+            if (angle < highestAngle){
+                blocked1 = true;
+            }else{
+                blocked1 = false;
+            }
+        }
+    }
+    highestAngle = 0;
+    for (var j = 1; j < r2.length;j++){
+        var a = this.getAxial(r2[j]);
+        var h = (j==(r2.length-1)) ? (a.h+unit2.height): a.h;
+        var angle = 0;
+        if (h > aH){
+            angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
+        }else if (h < aH){
+            angle = (180/Math.PI)*Math.atan(j/(aH-h));
+        }else{
+            angle = 90;
+        }
+        if (highestAngle < angle){
+            highestAngle = angle;
+            blocked2 = false;
+        }else{
+            if (angle < highestAngle){
+                blocked2 = true;
+            }else{
+                blocked2 = false;
+            }
+        }
+    }
+    if (blocked1 && blocked2){
+        //Full cover / no LoS
+        return 'none';
+    }else if ((!blocked1 && !blocked2) == false){
+        //partial cover / partial los
+        return 'partial';
+    }else{
+        //NO COVER / Full los
+        return 'full';
+    }
+}
 HexMap.prototype.findPath = function(startNode,endNode,options){
     //A* search
     //start = starting axial node;
@@ -418,8 +489,11 @@ HexMap.prototype.merge = function(left,right){
 HexMap.prototype.getAxialNode = function(q,r){
     return {
         nodeid: this.gameSession.getId(),
-        q:q, //q coord
-        r:r, //r coord
+        q:parseInt(q), //q coord
+        r:parseInt(r), //r coord
+        x:parseInt(q),
+        y:parseInt((q*-1)-r),
+        z:parseInt(r),
         h:0, //height value
         tile: 'base', //tile type
         deleted: false, //the node is deleted from the map and not visible

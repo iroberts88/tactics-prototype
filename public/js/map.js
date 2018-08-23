@@ -49,12 +49,12 @@
             'SW','NW','N'
         ];
         this.spriteStartingDirections = {
-            'Southeast': 8,
-            'Northeast': 10,
-            'North': 0,
-            'Northwest': 2,
-            'Southwest': 4,
-            'South': 6
+            'Southeast': 2,
+            'Northeast': 4,
+            'North': 6,
+            'Northwest': 8,
+            'Southwest': 10,
+            'South': 0
         };
         this.dirArray = ['d','dl','dl','l','ul','ul','u','ul','ul','l','dl','dl'];
         this.maxSize = 0;
@@ -651,8 +651,8 @@
     }
     //returns the direction when moving from one axial node to another
     Map.prototype.getNewDirectionAxial = function(startNode,endNode){
-        var qMove = startNode.q - endNode.q;
-        var rMove = startNode.r - endNode.r;
+        var qMove = endNode.q - startNode.q;
+        var rMove = endNode.r - startNode.r;
         for (var i = 0; i < this.axialDirections.length;i++){
             if (qMove == this.axialDirections[i][0] && rMove == this.axialDirections[i][1]){
                 return i;
@@ -670,7 +670,9 @@
                 try{
                     var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
                     results.push(c);
-                }catch(e){}
+                }catch(e){
+
+                }
                 var d = this.cubeDirections[i];
                 cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
             }

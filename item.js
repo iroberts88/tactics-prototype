@@ -47,11 +47,13 @@ Item.prototype.getClientData = function(){
         case 'weapon':
             data.eqData.range = this.eqData.range;
             data.eqData.damage = this.eqData.damage;
+            data.eqData.damageType = this.eqData.damageType;
             break;
         case 'gun':
             data.eqData.rangeMin = this.eqData.rangeMin;
             data.eqData.rangeMax = this.eqData.rangeMax;
             data.eqData.damage = this.eqData.damage;
+            data.eqData.damageType = this.eqData.damageType;
             break;
         case 'shield':
             data.eqData.recharge = this.eqData.recharge;
@@ -86,6 +88,10 @@ Item.prototype.init = function(data) {
     this.constantEffectText = data.constantEffectText;
 };
 
+Item.prototype.getWeaponNodes = function(map,node){
+    return this.eqData.getWeaponNodes(map,node);
+};
+
 exports.Item = Item;
 
 var Equipment = function(){}
@@ -96,6 +102,7 @@ Equipment.prototype.init = function(data) {
     this.rangeMax = (typeof data.rangeMax != 'undefined') ? data.rangeMax : null;
     this.range = (typeof data.range != 'undefined') ? data.range : null;
     this.damage = (typeof data.damage != 'undefined') ? data.damage : null;
+    this.damageType = (typeof data.damageType != 'undefined') ? data.damageType : 'phys';
     //shield
     this.recharge = (typeof data.recharge != 'undefined') ? data.recharge : null;
     this.delay = (typeof data.delay != 'undefined') ? data.delay : null;
@@ -109,6 +116,27 @@ Equipment.prototype.init = function(data) {
     this.onDepleted = (typeof data.onDepleted != 'undefined') ? data.onDepleted : null;
     this.onFullRecharge = (typeof data.onFullRecharge != 'undefined') ? data.onFullRecharge : null;
 
+};
+
+Equipment.prototype.getWeaponNodes = function(map,node){
+    let possibleNodes = [];
+    if (this.range){
+        possibleNodes = map.cubeSpiral(node,parseInt(this.range));
+        for (var i = possibleNodes.length-1; i >= 0;i--){
+            console.log(possibleNodes.length);
+            if (map.cubeDistance(possibleNodes[i],node) < parseInt(this.range)){
+                possibleNodes.splice(i,1);
+            }
+        }
+    }else{
+        possibleNodes = map.cubeSpiral(node,parseInt(this.rangeMax));
+        for (var i = possibleNodes.length-1; i >= 0;i--){
+            if (map.cubeDistance(possibleNodes[i],node) < parseInt(this.rangeMin)){
+                possibleNodes.splice(i,1);
+            }
+        }
+    }
+    return possibleNodes;
 };
 
 

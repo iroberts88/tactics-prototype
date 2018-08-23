@@ -69,6 +69,10 @@
 
         this.chargePercent = null;
 
+        this.damageText = [];
+        this.dmgTextTime = 1.5;
+        this.actionBubble = null;
+        this.actionBubbleTime = 2.0
         this.height = 2;
     };
 

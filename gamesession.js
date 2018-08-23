@@ -293,7 +293,7 @@ GameSession.prototype.unitMove = function(data){
             enemyPlayer = playerid;
         }
     }
-    var playerData = [];
+    var actionData = [];
     var enemyPlayerData = [];
     var endingNode = this.map.getCube(data);
     var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value})
@@ -315,7 +315,7 @@ GameSession.prototype.unitMove = function(data){
         if (dir){
             unit.direction = this.map.cardinalDirections[dir];
         }
-        playerData.push({
+        actionData.push({
             action: 'move',
             unitID: unit.id,
             x: path[i].x,
@@ -329,13 +329,74 @@ GameSession.prototype.unitMove = function(data){
     }
 
     //send down the action info to all players in the battle
-    this.queueData('action',{actionData:playerData});
+    this.queueData('action',{actionData:actionData});
 }
                         
 GameSession.prototype.unitAttack = function(data){
+    var unit = this.allUnits[this.turnOrder[0].id];
+    var player = unit.owner.id;
+    var node = this.map.axialMap[data.q][data.r];
+    if (!node.unit){return;} //node doesnt have a unit? (some weapons might ignore this?)
+    var weapon = unit.getWeapon();
+    var validNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
+    var actionData = [];
+    //check if the node is a valid node
+    var valid = false;
+    var losMod = 1.0;
+    for (var i = 0; i < validNodes.length;i++){
+        if (validNodes[i].q == node.q && validNodes[i].r == node.r){
+            //check LOS
+            var los = this.map.getLOS(unit.currentNode,node);
+            console.log(los);
+            if (los == 'full'){
+                valid = true;
+            }else if (los == 'partial'){
+                valid = true;
+                losMod = 0.5;
+            }else if (los == 'none'){
+                valid = false
+                actionData.push({
+                    action: 'noLos',
+                    unitID: unit.id
+                });
+            }
+        }
+    }
+    if (!valid){
+        return;
+    }
+    //check for pre-attack reactions
 
+    //get directional mod
+    var dMod = 1.0;
+
+    var tMod = 1.0;
+    if (weapon.type == 'gun'){
+        tMod += unit.skill.value/100;
+    }else if (weapon.type == 'weapon'){
+        tMod += unit.power.value/100;
+    } 
+    //execute attack
+    unit.damage(weapon.eqData.damageType,Math.round((weapon.eqData.damage*tMod)*losMod*dMod));
+    actionData.push({
+        action: 'attack',
+        unitID: unit.id,
+        unitInfo: [
+            {
+                target: node.unit.id,
+                newHealth: node.unit.currentHealth,
+                newShields: node.unit.currentShields
+            }
+        ]
+    });
+    //check for post-attack reactions
+
+    //set new direction
+
+    //send down action data
+    this.queueData('action',{actionData:actionData});
 }
-                        
+                      
 GameSession.prototype.unitAbility = function(data){
 
 }
@@ -345,7 +406,29 @@ GameSession.prototype.unitItem = function(data){
 }
                       
 GameSession.prototype.unitEnd = function(data){
-
+    var unit = this.allUnits[this.turnOrder[0].id];
+    var player = unit.owner.id;
+    var enemyPlayer;
+    //check correct facing
+    var valid = false;
+    for(var i = 0; i < this.map.cardinalDirections.length;i++){
+        if (this.map.cardinalDirections[i] == data.direction){
+            valid = true;
+            unit.direction = data.direction;
+            console.log(unit.direction);
+        }
+    }
+    if (!valid){return;}
+    var actionData = [{
+        action: 'face',
+        unitID: unit.id,
+        direction: data.direction
+    }];
+    if (this.currentInGameState == this.inGameStates.WaitingForTurnInfo){
+        this.ticker = this.timePerTurn;
+    }
+    //send down the action info to all players in the battle
+    this.queueData('action',{actionData:actionData});
 }
 
 

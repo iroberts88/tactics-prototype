@@ -408,6 +408,38 @@ Unit.prototype.init = function(data) {
     this.reset();
 };
 
+Unit.prototype.damage = function(type,value){
+    console.log(value);
+    switch(type){
+        case 'grav':
+            break;
+        case 'elec':
+            break;
+        case 'pois':
+            break;
+        case 'corr':
+            break;
+        case 'cold':
+            break;
+        case 'heat':
+            break;
+        case 'radi':
+            break;
+        case 'puls':
+            break;
+        default:
+            if (this.currentShields < value){
+                value -= this.currentShields;
+                this.currentShields = 0;
+            }else{
+                this.currentShields -= value;
+                value = 0;
+            }
+            this.currentHealth -= value;
+            break;
+    }
+};
+
 Unit.prototype.setMoveLeft = function(val){
     this.moveLeft = val;
     if (this.moveLeft < 0){
@@ -810,6 +842,22 @@ Unit.prototype.newNode = function(node){
     this.currentNode = node;
     this.currentNode.unit = this;
 }
+Unit.prototype.getWeapon = function(){
+        if (this.weapon >= 0){
+            return this.inventory.items[this.weapon];
+        }else{
+            return {
+                amount:1,
+                classes:"ALL",
+                description:"Hand to hand combat",
+                eqData:{range: 1, damage: 10},
+                itemID:"weapon_fists",
+                name:"Fists",
+                type:"weapon",
+                weight:0
+            }
+        }
+    };
 Unit.prototype.update = function(dt) {
 
 }

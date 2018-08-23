@@ -4,7 +4,10 @@
 
     Actions.prototype.actionEnums = {
         Test: 'test',
-        Move: 'move'
+        Move: 'move',
+        Face: 'face',
+        Attack: 'attack',
+        NoLOS: 'noLos'
     };
 
     Actions.prototype.init = function(actions){
@@ -42,6 +45,15 @@
             case this.actionEnums.Move:
                 return this.move;
                 break;
+            case this.actionEnums.Face:
+                return this.face;
+                break;
+            case this.actionEnums.Attack:
+                return this.attack;
+                break;
+            case this.actionEnums.NoLos:
+                return this.noLos;
+                break;
             default:
                 return this.test;
                 break;
@@ -56,7 +68,7 @@
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
         }
-        console.log(data.ticker);
+        console.log(data);
         data.ticker += dt;
         if (data.ticker > 0.5){
             actions.endAction();
@@ -99,6 +111,22 @@
                 data.newNode.unit = data.unit;
             }
         }
+    };
+    Actions.prototype.face = function(dt,actions,data){
+        //change the unit's facing and end
+        console.log(data);
+        Game.units[data.unitID].setNewDirection(data.direction);
+        actions.endAction();
+    };
+
+    Actions.prototype.attack = function(dt,actions,data){
+        //change the unit's facing and end
+        actions.endAction();
+    };
+
+    Actions.prototype.noLos = function(dt,actions,data){
+        //change the unit's facing and end
+        actions.endAction();
     };
 
     window.Actions = Actions;

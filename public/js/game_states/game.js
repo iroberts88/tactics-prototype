@@ -237,6 +237,9 @@
                     if (Game.attackActive){
                         Game.tryToAttack(Game.units[e.currentTarget.unitID].currentNode);
                     }
+                    if (Game.abilityActive){
+                        Game.tryToAbility(Game.units[e.currentTarget.unitID].currentNode);
+                    }
                 }
                 this.units[i].sprite.on('pointerdown',overFunc);
                 this.units[i].sprite.on('pointerover', Game.filtersOn);
@@ -282,7 +285,6 @@
                 var extra = 1.15;
                 cont.sprite = Graphics.getSprite('overlay2');
                 this.compass.addChild(cont.sprite);
-                cont.sprite.cDir = i;
                 //get rotated positions?
                 var startX = this.map.TILE_SIZE*scale * 1.5 * this.map.cubeDirections[i][0]*extra;
                 var startY = this.map.TILE_SIZE*scale * Math.sqrt(3) * (this.map.cubeDirections[i][1]+this.map.cubeDirections[i][0]/2)*extra;
@@ -293,18 +295,19 @@
                 cont.sprite.anchor.x = 0.5;
                 cont.sprite.anchor.y = 0.5;
                 cont.sprite.tint = '0xADADAD';
-                cont.sprite.interactive = true;
-                cont.sprite.buttonMode = true;
-                var overFunc = function(e){
-                    Game.tryToEnd(Game.map.cardinalDirections[e.currentTarget.cDir]);
-                }
-                cont.sprite.on('pointerdown',overFunc);
                 cont.rotatedPositions = {};
                 cont.text = new PIXI.Text(this.map.cardinalDirectionsAbrv[i],AcornSetup.baseStyle2);
                 cont.text.anchor.x = 0.5;
                 cont.text.anchor.y = 0.5;
                 cont.text.position.x = startX;
                 cont.text.position.y = startY-this.map.TILE_HEIGHT*scale;
+                cont.text.cDir = i;
+                cont.text.interactive = true;
+                cont.text.buttonMode = true;
+                var overFunc = function(e){
+                    Game.tryToEnd(Game.map.cardinalDirections[e.currentTarget.cDir]);
+                }
+                cont.text.on('pointerdown',overFunc);
                 this.compass.addChild(cont.text);
                 var flatCube = [this.map.cubeDirections[i][0],this.map.cubeDirections[i][1],this.map.cubeDirections[i][2]];
                 var pointCube = [this.map.cubeDirections[i][0],this.map.cubeDirections[i][1],this.map.cubeDirections[i][2]];
@@ -545,6 +548,9 @@
             var text = "Move " + this.units[this.turnList[0]].name + ' to node ' + node.q + ',' + node.r + '?';
             var y = function(){
                 console.log('Send Move!!');
+                if (!Game.moveActive){
+                    return;
+                }
                 Acorn.Net.socket_.emit('playerUpdate',{command: 'move',
                     q: node.q,
                     r: node.r
@@ -575,7 +581,62 @@
             var text = "Attack " + node.unit.name + ' with ' + this.units[this.turnList[0]].inventory.items[this.units[this.turnList[0]].weapon].name + '?';
             var y = function(){
                 console.log('Send attack!!');
+                if (!Game.attackActive){
+                    return;
+                }
                 Acorn.Net.socket_.emit('playerUpdate',{command: 'attack',
+                    q: node.q,
+                    r: node.r
+                });
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+                Game.attackActive = false;
+            }
+            var n = function(){
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var s = this.getConfirmationWindow(text,y,n,node);
+            Graphics.uiContainer.addChild(s);
+            this.uiWindows.push(s);
+        },
+        tryToAbility: function(node){
+            //check if the attack is actually valid
+            console.log(node);
+            var valid = false;
+            if (this.abilityActive){
+                if (this.abilityNodes[node.id]){
+                    valid = true;
+                    //test target type here?
+                    switch(Game.abilityInfo.type){
+                        case 'anyhex':
+                            //always valid
+                            break;
+                        case 'singleunit':
+                            if (!node.unit){
+                                valid = false;
+                            }
+                            break;
+                        case 'openhex':
+                            if (node.unitaa){
+                                valid = false;
+                            }
+                            break;
+                        default:
+                            return;
+                    }
+                }
+            }
+            if (!valid){
+                return;
+            }
+            
+            var text = "Use " + Game.abilityInfo.name + ' on the selected node?';
+            var y = function(){
+                console.log('Send ability!!');
+                if (!Game.abilityActive){
+                    return;
+                }
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'ability',
+                    abilityid: Game.abilityInfo.id,
                     q: node.q,
                     r: node.r
                 });
@@ -598,7 +659,7 @@
             var text = "End " + this.units[this.turnList[0]].name + 's turn facing ' + dir + '?';
             var y = function(){
                 console.log('Send end command!!');
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'endTurn'});
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'endTurn',direction:dir});
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
             var n = function(){
@@ -953,6 +1014,7 @@
                     break;
             }
             Game.abilityActive = true;
+            Game.abilityInfo = ability;
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
                 var axial = this.map.getAxial(possibleNodes[i]);
@@ -1098,7 +1160,7 @@
                 return null;
             }
 
-            var abText = new PIXI.Text('Choose an Item!', style);
+            var abText = new PIXI.Text('Choose an Item! (not implemented)', style);
             abText.style.fill = 'blue';
             abText.anchor.x = 0.5;
             abText.position.x = w*0.5;
@@ -1182,6 +1244,9 @@
             this.moveNodesActive = [];
             this.attackActive = false;
             this.attackNodesActive = [];
+            if (Game.abilityActive){
+                Graphics.uiContainer.removeChild(Game.abilityMenu);
+            }
             this.abilityActive = false;
             this.abilityNodes = {};
             this.abilityRadiusNodes = [];
@@ -1192,6 +1257,7 @@
                 this.map.container2.removeChild(node.overlaySprite2);
                 node.overlaySprite1 = null;
                 node.overlaySprite2 = null;
+                node.mouseOverNodes = null;
             }
             this.overlaySprites = {};
         },
