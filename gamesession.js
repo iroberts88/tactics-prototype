@@ -365,22 +365,23 @@ GameSession.prototype.unitAttack = function(data){
     if (!valid){
         return;
     }
-    //check for pre-attack reactions
+    //TODO check for pre-attack reactions
 
     //get directional mod
-    var dMod = 1.0;
-
+    var d = this.map.getDMod(unit.currentNode,node);
     var tMod = 1.0;
     if (weapon.type == 'gun'){
         tMod += unit.skill.value/100;
     }else if (weapon.type == 'weapon'){
         tMod += unit.power.value/100;
-    } 
+    }
     //execute attack
-    unit.damage(weapon.eqData.damageType,Math.round((weapon.eqData.damage*tMod)*losMod*dMod));
+    node.unit.damage(weapon.eqData.damageType,Math.round((weapon.eqData.damage*tMod)*losMod*d.dMod));
     actionData.push({
         action: 'attack',
         unitID: unit.id,
+        weapon: weapon.name,
+        newDir: d.newDir,
         unitInfo: [
             {
                 target: node.unit.id,
@@ -389,16 +390,14 @@ GameSession.prototype.unitAttack = function(data){
             }
         ]
     });
-    //check for post-attack reactions
-
-    //set new direction
+    //TODO check for post-attack reactions
 
     //send down action data
     this.queueData('action',{actionData:actionData});
 }
                       
 GameSession.prototype.unitAbility = function(data){
-
+    console.log(data);
 }
                        
 GameSession.prototype.unitItem = function(data){
@@ -415,7 +414,6 @@ GameSession.prototype.unitEnd = function(data){
         if (this.map.cardinalDirections[i] == data.direction){
             valid = true;
             unit.direction = data.direction;
-            console.log(unit.direction);
         }
     }
     if (!valid){return;}

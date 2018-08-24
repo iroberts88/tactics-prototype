@@ -203,7 +203,67 @@
     Unit.prototype.setCurrentNode = function(q,r,map){
         this.currentNode = map.axialMap[q][r];
     };
-    
+    Unit.prototype.addDmgText = function(n){
+        var str = n.toString();
+        var sprites = [];
+        var text = new PIXI.Text(str,AcornSetup.baseStyle3);
+        var xPos = 0;
+        var yPos = -text.height/2;
+        text.anchor.x = 0.5;
+        text.anchor.y = 0.5;
+        Graphics.world.addChild(text);
+        sprites.push(text);
+        this.damageText.push({
+            t: Date.now(),
+            x: xPos,
+            y: yPos,
+            sprite: text
+        });
+    };
+    Unit.prototype.addActionBubble = function(str){
+        var scene = new PIXI.Container();
+        var cont = new PIXI.Container();
+        var gfx = new PIXI.Graphics();
+        var style  = {
+            font: '16px Sigmar One',
+            fill: 'white',
+            align: 'left',
+            stroke: '#000000',
+            strokeThickness: 2,
+        }
+        scene.addChild(gfx);
+        scene.addChild(cont);
+
+        var text = new PIXI.Text(str, style);
+        text.position.x = 0;
+        text.position.y = 0;
+        cont.addChild(text);
+
+        //draw BG Fill
+        gfx.lineStyle(1,0x000000,0.0);
+        gfx.beginFill(0x000000,0.5);
+        gfx.drawRect(0,0,text.width,text.height);
+        gfx.endFill();
+        //draw outline
+        gfx.lineStyle(3,0xFFFFFF,1);
+        gfx.moveTo(0,0);
+        gfx.lineTo(text.width,0);
+        gfx.lineTo(text.width,text.height);
+        gfx.lineTo(0,text.height);
+        gfx.lineTo(0,0);
+
+        //create and render the texture and sprite
+        var texture = PIXI.RenderTexture.create(text.width,text.height);
+        var renderer = new PIXI.CanvasRenderer();
+        Graphics.app.renderer.render(scene,texture);
+        var sprite = new PIXI.Sprite(texture);
+        sprite.anchor.x = 0.5;
+        Graphics.world.addChild(sprite);
+        this.actionBubble = {
+            t: Date.now(),
+            sprite: sprite
+        };
+    };
     Unit.prototype.equip = function(index) {
         var item = this.inventory.items[index];
         if (item.type == 'weapon' || item.type == 'gun'){
@@ -320,6 +380,27 @@
             console.log(e);
         }
     };
-
+    Unit.prototype.update = function(deltaTime){
+        for (var i = 0; i < this.damageText.length;i++){
+            var dt = this.damageText[i];
+            dt.sprite.position.x = Graphics.width/2 + this.sprite.position.x + dt.x;
+            dt.sprite.position.y = Graphics.height/2 + this.sprite.position.y + dt.y;
+            dt.y -= 0.5;
+            dt.t += deltaTime;
+            if (Date.now() - dt.t  > 2000){
+                Graphics.world.removeChild(dt.sprite);
+                this.damageText.splice(i,1);
+            }
+        }
+        if (this.actionBubble){
+            this.actionBubble.sprite.position.x = Graphics.width/2 + this.sprite.position.x;
+            this.actionBubble.sprite.position.y = Graphics.height/2 + this.sprite.position.y - this.sprite.height - 25;
+            this.actionBubble.t += deltaTime;
+            if (Date.now() - this.actionBubble.t  > 2000){
+                Graphics.world.removeChild(this.actionBubble.sprite);
+                this.actionBubble = null;
+            }
+        }
+    }
     window.Unit = Unit;
 })(window);

@@ -14,11 +14,25 @@ var HexMap = function(session){
         [+2, -1, -1], [+1, +1, -2], [-1, +2, -1], 
         [-2, +1, +1], [-1, -1, +2], [+1, -2, +1]
     ];
-
     this.cardinalDirections = [
         'Northeast','Southeast','South',
         'Southwest','Northwest','North'
     ];
+    this.cardinalDirectionPositions = {
+        'Northeast': 0,
+        'Southeast': 1,
+        'South': 2,
+        'Southwest': 3,
+        'Northwest': 4,
+        'North': 5
+    }
+    this.dModEnums = {
+        //damage multiplicators for directional attacks
+        Behind: 2.0,
+        BehindSide: 1.5,
+        FrontSide: 1.0,
+        Front: 0.75
+    };
     this.startZone1 = [];
     this.startZone2 = [];
 
@@ -226,6 +240,50 @@ HexMap.prototype.cubeLerp = function(a,b,t){
         x: this.lerp(a.x,b.x,t),
         y: this.lerp(a.y,b.y,t),
         z: this.lerp(a.z,b.z,t)
+    }
+}
+HexMap.prototype.getDMod = function(start,end){
+    var dMod = 1.0; 
+    var cPos = {
+        x: end.x + this.losAngle,
+        y: end.y + this.losAngle,
+        z: end.z + -this.losAngle*2,
+    }
+    var cNeg = {
+        x: end.x + -this.losAngle,
+        y: end.y + -this.losAngle,
+        z: end.z + this.losAngle,
+    }
+    var r1 = this.cubeLineDraw(start,cPos);
+    var r2 = this.cubeLineDraw(start,cNeg);
+    var d1 = this.getNewDirectionCube(end,r1[r1.length-2]);
+    var d2 = this.getNewDirectionCube(end,r2[r2.length-2]);
+    console.log(d1);
+    console.log(d2);
+    var dEnd = this.cardinalDirectionPositions[end.unit.direction];
+    console.log(dEnd);
+    var dMod1 = this._getDMod(d1,dEnd);
+    var dMod2 = this._getDMod(d2,dEnd);
+    dMod *= ((dMod1+dMod2)/2)
+    return {
+        dMod: dMod,
+        newDir: this.cardinalDirections[d1]
+    }
+}
+HexMap.prototype._getDMod = function(dir1,dir2){
+    
+    var val = Math.abs(dir2-dir1);
+    if (val > 3){
+        val = 6-val;
+    }
+    if (val == 0){
+        return this.dModEnums.Behind;
+    }else if (val == 1){
+        return this.dModEnums.BehindSide;
+    }else if (val == 2){
+        return this.dModEnums.FrontSide;
+    }else if (val == 3){
+        return this.dModEnums.Front;
     }
 }
 HexMap.prototype.getLOS = function(startNode,endNode){

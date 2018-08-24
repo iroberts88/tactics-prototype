@@ -460,6 +460,7 @@
                         return;
                     }
                 }catch(e){}
+                this.units[i].update(deltaTime);
             }
             //update timers
             switch (this.currentState){
@@ -1414,17 +1415,17 @@
             gfx.lineStyle(3,0xFF0000,0);
             gfx.beginFill(0xFF0000,0.5);
             var percentage = unit.currentHealth/unit.maximumHealth;
-            gfx.drawRect(10,hY-barHeight/2,w-20*percentage,barHeight);
+            gfx.drawRect(10,hY-barHeight/2,(w-20)*percentage,barHeight);
             gfx.endFill();
             gfx.lineStyle(3,0xFFFF00,0);
             gfx.beginFill(0xFFFF00,0.5);
             var percentage = unit.currentEnergy/unit.maximumEnergy;
-            gfx.drawRect(10,eY-barHeight/2,w-20*percentage,barHeight);
+            gfx.drawRect(10,eY-barHeight/2,(w-20)*percentage,barHeight);
             gfx.endFill();
             gfx.lineStyle(3,0x00D0FF,0);
             gfx.beginFill(0x00D0FF,0.5);
             var percentage = unit.currentShields/unit.maximumShields;
-            gfx.drawRect(10,sY-barHeight/2,w-20*percentage,barHeight);
+            gfx.drawRect(10,sY-barHeight/2,(w-20)*percentage,barHeight);
             gfx.endFill();
             gfx.lineStyle(1,0xFFFFFF,1);
             gfx.drawRect(10,hY-barHeight/2,w-20,barHeight);

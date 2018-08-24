@@ -3,6 +3,7 @@ var Attribute = require('./attribute.js').Attribute;
 var Unit = function(){
     this.id = null;
     this.owner = null;
+    this.engine = null;
     this.name = null;
     this.sex = null;
     //Unit Stats
@@ -85,6 +86,7 @@ var Unit = function(){
     this.charge = null;
 
     this.height = 2;
+
 }
 
 Unit.prototype.reset = function(){
@@ -112,6 +114,7 @@ Unit.prototype.init = function(data) {
     this.name = data.name;
     this.sex = data.sex;
     this.owner = data.owner;
+    this.engine = data.owner.gameEngine;
     this.id = data.id;
 
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
@@ -411,21 +414,21 @@ Unit.prototype.init = function(data) {
 Unit.prototype.damage = function(type,value){
     console.log(value);
     switch(type){
-        case 'grav':
+        case this.engine.dmgTypeEnums.Gravity:
             break;
-        case 'elec':
+        case this.engine.dmgTypeEnums.Electric:
             break;
-        case 'pois':
+        case this.engine.dmgTypeEnums.Poison:
             break;
-        case 'corr':
+        case this.engine.dmgTypeEnums.Corrosive:
             break;
-        case 'cold':
+        case this.engine.dmgTypeEnums.Heat:
             break;
-        case 'heat':
+        case this.engine.dmgTypeEnums.Cold:
             break;
-        case 'radi':
+        case this.engine.dmgTypeEnums.Radiation:
             break;
-        case 'puls':
+        case this.engine.dmgTypeEnums.Pulse:
             break;
         default:
             if (this.currentShields < value){

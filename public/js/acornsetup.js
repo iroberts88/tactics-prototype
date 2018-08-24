@@ -18,6 +18,14 @@
             strokeThickness: 2,
         },
 
+        baseStyle3: {
+            font: '18px Sigmar One',
+            fill: '#AACCDD',
+            align: 'left',
+            stroke: '#000000',
+            strokeThickness: 2,
+        },
+
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
                 console.log('Connected to server: Info Received');

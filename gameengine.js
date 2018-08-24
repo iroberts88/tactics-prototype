@@ -37,6 +37,19 @@ var GameEngine = function() {
     this.hashSalt = 'Salt makes things taste better';
 
     this.debugList = {}; //used avoid multiple debug chains in tick()
+    
+    this.dmgTypeEnums = {
+        Physical: 'phys',
+        Explosive: 'expl',
+        Gravity: 'grav',
+        Electric: 'elec',
+        Poison: 'pois',
+        Corrosive: 'corr',
+        Cold: 'cold',
+        Heat: 'heat',
+        Radiation: 'radi',
+        Pulse: 'puls'
+    }
 }
 
 GameEngine.prototype.init = function () {

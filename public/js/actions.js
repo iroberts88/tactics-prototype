@@ -120,12 +120,29 @@
     };
 
     Actions.prototype.attack = function(dt,actions,data){
-        //change the unit's facing and end
-        actions.endAction();
+        if (typeof data.ticker == 'undefined'){
+            Game.units[data.unitID].addActionBubble(data.weapon);
+            Game.units[data.unitID].setNewDirection(data.newDir);
+            data.ticker = 0;
+        }
+        data.ticker += dt;
+        if (data.ticker >= 1.5){
+            for (var i = 0; i < data.unitInfo.length;i++){
+                var u = Game.units[data.unitInfo[i].target];
+                var total = 0;
+                total += u.currentHealth - data.unitInfo[i].newHealth;
+                total += u.currentShields - data.unitInfo[i].newShields;
+                u.currentHealth = data.unitInfo[i].newHealth;
+                u.currentShields = data.unitInfo[i].newShields;
+                u.addDmgText(total);
+                u.infoPane = Game.getUnitInfoPane(data.unitInfo[i].target);
+            }
+            actions.endAction();
+        }
     };
 
     Actions.prototype.noLos = function(dt,actions,data){
-        //change the unit's facing and end
+        Game.units[data.unitID].addActionBubble('No Line of Sight!');
         actions.endAction();
     };
 
