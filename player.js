@@ -114,7 +114,8 @@ Player.prototype.setupSocket = function() {
                         console.log('attacking...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                        //also check that the session is awaiting turn info and not between turns
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id) || that.gameSession.currentInGameState != that.gameSession.inGameStates.WaitingForTurnInfo){
                             return;
                         }
                         //send the data to gameSession and execute the attack
@@ -124,7 +125,8 @@ Player.prototype.setupSocket = function() {
                         console.log('using an ability...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                        //also check that the session is awaiting turn info and not between turns
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id) || that.gameSession.currentInGameState != that.gameSession.inGameStates.WaitingForTurnInfo){
                             return;
                         }
                         //send the data to gameSession and execute the ability
@@ -134,7 +136,8 @@ Player.prototype.setupSocket = function() {
                         console.log("Inventory action");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                        //also check that the session is awaiting turn info and not between turns
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id) || that.gameSession.currentInGameState != that.gameSession.inGameStates.WaitingForTurnInfo){
                             return;
                         }
                         //send the data to gameSession and execute the item
@@ -144,7 +147,8 @@ Player.prototype.setupSocket = function() {
                         console.log("ending turn...");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.gameSession.turnOrder[0].id)){
+                        //also check that the session is awaiting turn info and not between turns
+                        if (!that.hasUnit(that.gameSession.turnOrder[0].id) || that.gameSession.currentInGameState != that.gameSession.inGameStates.WaitingForTurnInfo){
                             return;
                         }
                         //send the data to gameSession and execute the attack

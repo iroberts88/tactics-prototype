@@ -87,6 +87,18 @@
           "speed": "instant"
         },
         {
+          "sCost": 4,
+          "name": "Cheer",
+          "description": "Increase <AGI> for all allies in the radius by 1 and <SPD> by 10%",
+          "range": "self",
+          "ApCost": 75,
+          "id": "cheer",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "1",
+          "speed": "instant"
+        },
+        {
           "name": "Climber",
           "description": "Add <STR/4> to your <JMP> passively",
           "ApCost": 125,
@@ -179,6 +191,18 @@
           "speed": "instant"
         },
         {
+          "sCost": 4,
+          "name": "Direct",
+          "description": "Increase <INT> for all allies in the radius by 1 and <TAC> by 10%",
+          "range": "self",
+          "ApCost": 75,
+          "id": "direct",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "1",
+          "speed": "instant"
+        },
+        {
           "sCost": 5,
           "name": "Repair",
           "description": "Repair a mechanical unit for <15+DEX*2%> max health",
@@ -222,7 +246,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10> circle",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 8,
@@ -234,7 +260,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10> circle",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 8,
@@ -246,7 +274,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 8,
@@ -258,7 +288,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 8,
@@ -270,7 +302,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10> circle",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 8,
@@ -282,7 +316,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 20,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 12,
@@ -294,7 +330,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 40,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 12,
@@ -306,7 +344,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 40,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "sCost": 15,
@@ -318,7 +358,9 @@
           "type": "anyhex",
           "radius": "<2+INT/10>",
           "eCost": 50,
-          "speed": "instant"
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
         },
         {
           "name": "Cybernetics: Legs",
@@ -392,12 +434,12 @@
         {
           "sCost": 4,
           "name": "Bolster",
-          "description": "Increase all stats for all allies in the radius by 1",
+          "description": "Increase <STR> for all allies in the radius by 1 and <POW> by 10%",
           "range": "self",
           "ApCost": 75,
           "id": "bolster",
           "type": "singleunit",
-          "radius": "<CHA/2> circle",
+          "radius": "<1+CHA/5> circle",
           "eCost": "1",
           "speed": "instant"
         },
@@ -407,7 +449,7 @@
           "description": "Increase <SKL> by <WIL/2%+WIL*2>",
           "range": "self",
           "ApCost": 100,
-          "id": "focus",
+          "id": "aim",
           "type": "singleunit",
           "eCost": "1",
           "speed": "instant"
@@ -418,7 +460,7 @@
           "description": "Increase <POW> by <WIL/2%+WIL*2>",
           "range": "self",
           "ApCost": 100,
-          "id": "focus",
+          "id": "shout",
           "type": "singleunit",
           "eCost": "1",
           "speed": "instant"
@@ -648,6 +690,18 @@
           "id": "concentrate",
           "type": "singleunit",
           "eCost": 20,
+          "speed": "instant"
+        },
+        {
+          "sCost": 4,
+          "name": "Influence",
+          "description": "Increase <CHA> for all allies in the radius by 2",
+          "range": "self",
+          "ApCost": 75,
+          "id": "bolster",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "1",
           "speed": "instant"
         }
       ],

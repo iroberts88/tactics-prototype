@@ -824,6 +824,15 @@ Unit.prototype.modStat = function(id,amt){
         console.log(e);
     }
 };
+Unit.prototype.modStatPercent = function(id,amt){
+    try{
+        this.getStat(id).pMod += amt;
+        this.getStat(id).set(true);
+    }catch(e){
+        console.log("unable to mod stat " + id);
+        console.log(e);
+    }
+};
 Unit.prototype.addAp = function(classID,amt){
     try{
         this.classInfo.ap[classID] += amt;
@@ -846,21 +855,29 @@ Unit.prototype.newNode = function(node){
     this.currentNode.unit = this;
 }
 Unit.prototype.getWeapon = function(){
-        if (this.weapon >= 0){
-            return this.inventory.items[this.weapon];
-        }else{
-            return {
-                amount:1,
-                classes:"ALL",
-                description:"Hand to hand combat",
-                eqData:{range: 1, damage: 10},
-                itemID:"weapon_fists",
-                name:"Fists",
-                type:"weapon",
-                weight:0
-            }
+    if (this.weapon >= 0){
+        return this.inventory.items[this.weapon];
+    }else{
+        return {
+            amount:1,
+            classes:"ALL",
+            description:"Hand to hand combat",
+            eqData:{range: 1, damage: 10},
+            itemID:"weapon_fists",
+            name:"Fists",
+            type:"weapon",
+            weight:0
         }
-    };
+    }
+};
+
+Unit.prototype.getAbility = function(str){
+    if (!this.classInfo.equippedAbilities[str] || typeof this.classInfo.equippedAbilities[str] == 'undefined'){
+        return null;
+    }
+    return this.engine.abilities[str];
+};
+
 Unit.prototype.update = function(dt) {
 
 }

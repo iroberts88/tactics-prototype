@@ -60,10 +60,11 @@
             BACKSPACE: 12,
             SCROLLUP: 13,
             SCROLLDOWN: 14,
-            CANCEL: 15
+            CANCEL: 15,
+            INTERACT: 16
         },
-        keysPressed: [],
-        keyBindings: [],
+        keysPressed: {},
+        keyBindings: {},
 
         // Mouse inputs
         mouse: {

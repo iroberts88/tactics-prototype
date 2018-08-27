@@ -211,7 +211,7 @@ HexMap.prototype.cubeRound = function(cube){
         rz = parseInt(-rx-ry);
     }
     return {
-        x:rx,
+        x: rx,
         y: ry,
         z: rz
     }
@@ -286,10 +286,33 @@ HexMap.prototype._getDMod = function(dir1,dir2){
         return this.dModEnums.Front;
     }
 }
-HexMap.prototype.getLOS = function(startNode,endNode){
+HexMap.prototype.getAngle = function(startHeight,endHeight,length){
+    //get the angle between two nodes - for use in getLOS()
+    if (endHeight > startHeight){
+        return 90 + (180/Math.PI)*Math.atan((endHeight-startHeight)/length);
+    }else if (endHeight < startHeight){
+        return (180/Math.PI)*Math.atan(length/(startHeight-endHeight));
+    }else{
+        return 90;
+    }
+}
+HexMap.prototype.getDAngle = function(sNode,eNode){
+    //get the angle between two nodes - for use in getLOS()
+    var dX = eNode.q-sNode.q;
+    var dY = eNode.r-sNode.r;
+    console.log('derp ' + dY + ', ' + dX)
+    if (dX == 0 || dY == 0){
+        return 0;
+    }
+    return Math.abs(Math.tan(dY/dX));
+}
+HexMap.prototype.getLOS = function(startNode,endNode,newUnit){
     var unit1 = startNode.unit;
     var aH = unit1.height + startNode.h;
     var unit2 = endNode.unit;
+    if (typeof newUnit == 'undefined'){
+        newUnit = null;
+    }
 
     var cPos = {
         x: endNode.x + this.losAngle,
@@ -303,20 +326,34 @@ HexMap.prototype.getLOS = function(startNode,endNode){
     }
     var r1 = this.cubeLineDraw(startNode,cPos);
     var r2 = this.cubeLineDraw(startNode,cNeg);
+
     var blocked1 = false;
     var blocked2 = false;
     var highestAngle = 0;
-    console.log(r1);
+
+    var r1Unit = null; // the first unit the projectile will hit on the path to the target
+    var r2Unit = null;
     for (var j = 1; j < r1.length;j++){
         var a = this.getAxial(r1[j]);
         var h = (j==(r1.length-1)) ? (a.h+unit2.height) : a.h;
-        var angle = 0;
-        if (h > aH){
-            angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
-        }else if (h < aH){
-            angle = (180/Math.PI)*Math.atan(j/(aH-h));
-        }else{
-            angle = 90;
+        var angle = this.getAngle(aH,h,j);
+        if (a.unit && j!=r1.length-1){
+            //not the target node, check if the unit is blocking
+            console.log('Not unit?!')
+            var angle1 = this.getAngle(aH,(a.h+a.unit.height),j);
+            var angle2 = this.getAngle(aH,(a.h+unit2.height),(r1.length-1));
+            console.log(angle1 + ', ' + angle2);
+            if (angle1 == angle2){
+                //unit is blocking
+                var dAngle1 = this.getDAngle(startNode,endNode);
+                var dAngle2 = this.getDAngle(startNode,a);
+                console.log(dAngle1 + ', ' + dAngle2);
+
+                if (dAngle1 == dAngle2){
+                    console.log(dAngle1 + ', ' + dAngle2);
+                    return this.getLOS(startNode,a,a.unit.id);
+                }
+            }
         }
         if (highestAngle < angle){
             highestAngle = angle;
@@ -333,14 +370,7 @@ HexMap.prototype.getLOS = function(startNode,endNode){
     for (var j = 1; j < r2.length;j++){
         var a = this.getAxial(r2[j]);
         var h = (j==(r2.length-1)) ? (a.h+unit2.height): a.h;
-        var angle = 0;
-        if (h > aH){
-            angle = 90 + (180/Math.PI)*Math.atan((h-aH)/j);
-        }else if (h < aH){
-            angle = (180/Math.PI)*Math.atan(j/(aH-h));
-        }else{
-            angle = 90;
-        }
+        var angle = this.getAngle(aH,h,j);
         if (highestAngle < angle){
             highestAngle = angle;
             blocked2 = false;
@@ -354,13 +384,13 @@ HexMap.prototype.getLOS = function(startNode,endNode){
     }
     if (blocked1 && blocked2){
         //Full cover / no LoS
-        return 'none';
+        return ['none',newUnit];
     }else if ((!blocked1 && !blocked2) == false){
         //partial cover / partial los
-        return 'partial';
+        return ['partial',newUnit];
     }else{
         //NO COVER / Full los
-        return 'full';
+        return ['full',newUnit];
     }
 }
 HexMap.prototype.findPath = function(startNode,endNode,options){

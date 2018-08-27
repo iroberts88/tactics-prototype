@@ -15,6 +15,26 @@
         "detrimental"
       ],
       "instant": false
+    },
+    {
+      "description": "Unit is hidden until revealed or an action is taken",
+      "duration": null,
+      "name": "Stealth",
+      "actionsOnImmediate": [
+        {
+          "action": "hide"
+        }
+      ],
+      "actionsOnEnd": [
+        {
+          "action": "reveal"
+        }
+      ],
+      "buffid": "buff_stealth",
+      "tags": [
+        "positive","stealth"
+      ],
+      "instant": false
     }
   ]
 }

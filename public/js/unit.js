@@ -258,6 +258,9 @@
         Graphics.app.renderer.render(scene,texture);
         var sprite = new PIXI.Sprite(texture);
         sprite.anchor.x = 0.5;
+        if (this.actionBubble){
+            Graphics.world.removeChild(this.actionBubble.sprite);
+        }
         Graphics.world.addChild(sprite);
         this.actionBubble = {
             t: Date.now(),
@@ -397,6 +400,7 @@
             this.actionBubble.sprite.position.y = Graphics.height/2 + this.sprite.position.y - this.sprite.height - 25;
             this.actionBubble.t += deltaTime;
             if (Date.now() - this.actionBubble.t  > 2000){
+                console.log("removing!");
                 Graphics.world.removeChild(this.actionBubble.sprite);
                 this.actionBubble = null;
             }

@@ -27,6 +27,7 @@ var GameEngine = function() {
     this.items = {};
     this.buffs = {};
     this.classes = {};
+    this.abilities = {};
     this.abilityIndex = {};
     this.playerCount = 0;
     //variables for ID's
@@ -138,7 +139,12 @@ GameEngine.prototype.loadClasses = function(arr) {
         this.classes[arr[i].classid] = arr[i];
         //fill in the abiliy index for quick access
         for (var j = 0; j < this.classes[arr[i].classid].abilities.length;j++){
-            this.abilityIndex[this.classes[arr[i].classid].abilities[j].id] = [this.classes[arr[i].classid].classid,j];
+            if (this.abilities[this.classes[arr[i].classid].abilities[j].id]){
+                console.log("DUPLICATE: " + this.classes[arr[i].classid].abilities[j].id);
+            }else{
+                this.abilities[this.classes[arr[i].classid].abilities[j].id] = this.classes[arr[i].classid].abilities[j];
+                this.abilityIndex[this.classes[arr[i].classid].abilities[j].id] = [this.classes[arr[i].classid].classid,j];
+            }
         }
     }
     console.log('loaded ' + arr.length + ' Classes from db');

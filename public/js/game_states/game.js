@@ -515,6 +515,7 @@
                 }
                 if (this.currentConfirmWindow){
                     Graphics.uiContainer.removeChild(this.currentConfirmWindow);
+                    this.currentConfirmWindow = null;
                 }
                 if (this.currentToolTip){
                     Graphics.uiContainer2.removeChild(this.currentToolTip);
@@ -601,7 +602,6 @@
         },
         tryToAbility: function(node){
             //check if the attack is actually valid
-            console.log(node);
             var valid = false;
             if (this.abilityActive){
                 if (this.abilityNodes[node.id]){
@@ -979,10 +979,12 @@
         getAbilityNodes: function(ability){
             var unit = this.units[this.turnList[0]];
             var possibleNodes = null;
+            var selfNode = null;
             switch(ability.range){
                 case 'self':
                     //this should pop up a confirm window immediately?
-
+                    var selfNode = unit.currentNode;
+                    possibleNodes = [unit.currentNode];
                     break;
                 case 'melee':
                     var weapon = unit.getWeapon();
@@ -1058,6 +1060,14 @@
                     default:
                         break;
                 }
+            }
+            if (selfNode){
+                //immediately do the node action
+                Game.setNewHoveredNode = selfNode;
+                var t = 1;
+                if (!(this.map.currentRotation%2)){t = 2}
+                Game.currentlyMousedOver = selfNode['sprite' + t];
+                Game.tryToAbility(selfNode);
             }
         },
         getAbilityMenu: function(unit){
@@ -1679,13 +1689,7 @@
             a.sprite1.filters = [Game.map.outlineFilter];
             a.sprite2.filters = [Game.map.outlineFilter];
             //set node info text
-            var t = 'Full LOS';
-            if (s.tint == this.map.partialTint){
-                t = 'Partial LOS'
-            }else if (s.tint == this.map.noLosTint){
-                t = 'NO LOS';
-            }
-            t = 'Node ' + a.q + ',' + a.r + '   ' + t;
+            var t = 'Node ' + a.q + ',' + a.r + '   ' ;
             this.nodeText.visible = true;
             this.nodeInfo.visible = true;
             this.nodeInfo.text = t + '     Height: ' + a.h + '    Type: ' + a.tile;

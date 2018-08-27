@@ -3,6 +3,7 @@
 //----------------------------------------------------------------
 
 var Player = require('./player.js').Player,
+    Actions = require('./actions.js').Actions,
     HexMap = require('./hexmap.js').HexMap;
 
 var AWS = require("aws-sdk");
@@ -50,6 +51,9 @@ var GameSession = function (engine) {
 
     this.reactionTicker = 0;
     this.timePerReaction = 30;
+    this.letters = {};
+    this.numbers = {};
+    this.operators = {};
 };
 
 GameSession.prototype.init = function (data) {
@@ -63,6 +67,18 @@ GameSession.prototype.init = function (data) {
     //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
+    var n = '1234567890';
+    var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    var o = '+-/*';
+    for (var i = 0; i < n.length;i++){
+        this.numbers[n.charAt(i)] = true;
+    }
+    for (var i = 0; i < l.length;i++){
+        this.letters[l.charAt(i)] = true;
+    }
+    for (var i = 0; i < o.length;i++){
+        this.operators[o.charAt(i)] = true;
+    }
 };
 
 
@@ -348,17 +364,22 @@ GameSession.prototype.unitAttack = function(data){
             //check LOS
             var los = this.map.getLOS(unit.currentNode,node);
             console.log(los);
-            if (los == 'full'){
+            if (los[1]){
+                // Hits another unit!!
+                node = this.allUnits[los[1]].currentNode;
+            }
+            if (los[0] == 'full'){
                 valid = true;
-            }else if (los == 'partial'){
+            }else if (los[0] == 'partial'){
                 valid = true;
                 losMod = 0.5;
-            }else if (los == 'none'){
+            }else if (los[0] == 'none'){
                 valid = false
                 actionData.push({
                     action: 'noLos',
                     unitID: unit.id
                 });
+                this.queueData('action',{actionData:actionData});
             }
         }
     }
@@ -397,7 +418,57 @@ GameSession.prototype.unitAttack = function(data){
 }
                       
 GameSession.prototype.unitAbility = function(data){
-    console.log(data);
+    //check if ability is valid and execute
+    var unit = this.allUnits[this.turnOrder[0].id];
+    var ability = unit.getAbility(data.abilityid);
+    var player = unit.owner.id;
+    var node = this.map.axialMap[data.q][data.r];
+    var actionData = [];
+    switch(ability.range){
+        case 'self':
+            //this should pop up a confirm window immediately?
+            possibleNodes = [unit.currentNode];
+            break;
+        case 'melee':
+            var weapon = unit.getWeapon();
+            if (weapon.type == 'gun'){
+                return;
+            }
+            possibleNodes = this.getWeaponNodes(unit,weapon);
+            break;
+        case 'ranged':
+            var weapon = unit.getWeapon();
+            if (weapon.type == 'weapon'){
+                return;
+            }
+            possibleNodes = this.getWeaponNodes(unit,weapon);
+            break;
+        case 'weapon':
+            var weapon = unit.getWeapon();
+            possibleNodes = this.getWeaponNodes(unit,weapon);
+            break;
+        default:
+            //range is a special string, parse for ability distance
+            var range = this.parseRange(unit,ability.range);
+            possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
+            for (var i = 0; i < possibleNodes.length;i++){
+                if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                    possibleNodes.splice(i,1);
+                    i -= 1;
+                }
+            }
+            break;
+    }
+    console.log(possibleNodes.length)
+    for (var i = 0; i < possibleNodes.length;i++){
+        if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
+            //node is valid!
+            //execute the ability!!
+            var aFunc = Actions.getAbility(ability.id);
+            aFunc(unit,this,data);
+        }
+    }
+    console.log(ability);
 }
                        
 GameSession.prototype.unitItem = function(data){
@@ -429,7 +500,157 @@ GameSession.prototype.unitEnd = function(data){
     this.queueData('action',{actionData:actionData});
 }
 
-
+GameSession.prototype.parseRange = function(unit,range){
+    var results = {
+        d: 0, //distnace
+        h: 0, //height
+        s: false //self
+    };
+    //get distance
+    var dString = '';
+    var start = 0
+    for (var i = start; i < range.length;i++){
+        if (range.charAt(i) == ' '){
+            continue;
+        }else if (range.charAt(i) == '|'){
+            start = i+1;
+            break;
+        }else{
+            dString += range.charAt(i);
+        }
+    }
+    //get height
+    var hString = '';
+    for (var i = start; i < range.length;i++){
+        if (range.charAt(i) == ' '){
+            continue;
+        }else if (range.charAt(i) == '|'){
+            start = i+1;
+            break;
+        }else{
+            hString += range.charAt(i);
+        }
+    }
+    //get self?
+    var sString = '';
+    for (var i = start; i < range.length;i++){
+        if (range.charAt(i) == ' '){
+            continue;
+        }else if (range.charAt(i) == '|'){
+            start = i+1;
+            break;
+        }else{
+            sString += range.charAt(i);
+        }
+    }
+    if (sString == 'self'){
+        results.s = true;
+    }
+    results.d = Utils.parseStringCode(unit,dString);
+    results.h = Utils.parseStringCode(unit,hString);
+    return results;
+},
+GameSession.prototype.parseStringCode = function(unit,code){
+    if (code.charAt(0) != '<'){
+        return parseInt(code);
+    }else{
+        _code = code.substring(1,code.length-1);
+        var cArr = [];
+        //seperate the code into numbers,operators, and attr codes
+        var currentType = this.getType(_code.charAt(0));
+        var str = '';
+        for (var i = 0; i < _code.length;i++){
+            if (this.getType(_code.charAt(i)) == currentType){
+                str += _code.charAt(i);
+            }else{
+                if (currentType == 'a'){
+                    cArr.push(this.getAttr(unit,str));
+                }else if (currentType == 'n'){
+                    cArr.push(parseInt(str));
+                }else{
+                    cArr.push(str);
+                }
+                str = _code.charAt(i);
+                currentType = this.getType(_code.charAt(i));
+            }
+        }
+        if (currentType == 'a'){
+            cArr.push(this.getAttr(unit,str));
+        }else if (currentType == 'n'){
+            cArr.push(parseInt(str));
+        }else{
+            cArr.push(str);
+        }
+        for (var i = 0; i < cArr.length;i++){
+            if (cArr[i] == '*'){
+                var n = cArr[i-1] * cArr[i+1];
+                cArr.splice(i-1,3,n);
+            }
+        }
+        for (var i = 0; i < cArr.length;i++){
+            if (cArr[i] == '/'){
+                var n = Math.floor(cArr[i-1] / cArr[i+1]);
+                cArr.splice(i-1,3,n);
+            }
+        }
+        for (var i = 0; i < cArr.length;i++){
+            if (cArr[i] == '+'){
+                var n = cArr[i-1] + cArr[i+1];
+                cArr.splice(i-1,3,n);
+            }
+            if (cArr[i] == '-'){
+                var n = cArr[i-1] - cArr[i+1];
+                cArr.splice(i-1,3,n);
+            }
+        }
+        return(cArr[0]);   
+    }
+};
+GameSession.prototype.getAttr = function(unit,str){
+    switch(str){
+        case 'MOV':
+            return unit.move.value;
+            break;
+        case 'JMP':
+            return unit.jump.value;
+            break;
+        case 'SPD':
+            return unit.speed.value;
+            break;
+        case 'STR':
+            return unit.strength.value;
+            break;
+        case 'END':
+            return unit.endurance.value;
+            break;
+        case 'DEX':
+            return unit.dexterity.value;
+            break;
+        case 'AGI':
+            return unit.agility.value;
+            break;
+        case 'INT':
+            return unit.intelligence.value;
+            break;
+        case 'WIL':
+            return unit.willpower.value;
+            break;
+        case 'CHA':
+            return unit.charisma.value;
+            break;
+        default:
+            console.log("Unable to find attr string");
+            return 0;
+    }
+};
+GameSession.prototype.getType = function(char){
+    if (this.letters[char]){return 'a';}
+    if (this.numbers[char]){return 'n';}
+    if (this.operators[char]){return 'o';}
+    console.log("ERROR @ session.getType");
+    console.log(char);
+    return null;
+};
 ////////////////////////////////////////////////////////////////
 //                  Socket Functions
 ////////////////////////////////////////////////////////////////

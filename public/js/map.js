@@ -978,8 +978,11 @@
     var Node = function(){}
 
     Node.prototype.init = function(q,r){
-        this.q =q;
-        this.r =r;
+        this.q = q;
+        this.r = r;
+        this.x = q;
+        this.y = ((q*-1)-r);
+        this.z = r;
         this.h =0;
         this.tile = 'base';
         this.deleted = false;
