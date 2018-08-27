@@ -4,7 +4,7 @@ var Buff = require('./buff.js').Buff;
 ActionEnums = {
 	AlterStat: 'alterStat',
 	AlterStatPercent: 'alterStatPercent',
-	Hide: 'hide'
+	SetHidden: 'setHidden'
 };
 
 AbilityEnums = {
@@ -15,7 +15,7 @@ AbilityEnums = {
 var Actions = function(){}
 
 //-----------------------------------------------------------------------------------------------|
-//                                   Item On-Equip Functions                                     |
+//                                      Item/Buff Functions                                      |
 //-----------------------------------------------------------------------------------------------|
 
 Actions.prototype.alterStat = function(unit,data){
@@ -34,10 +34,13 @@ Actions.prototype.alterStatPercent = function(unit,data){
 	}
 }
 
-//-----------------------------------------------------------------------------------------------|
-//                                     Unit Buff Functions                                       |
-//-----------------------------------------------------------------------------------------------|
-
+Actions.prototype.alterStatPercent = function(unit,data){
+	if (data.reverse){
+		unit.modStatPercent(data.stat,data.value*-1);
+	}else{
+		unit.modStatPercent(data.stat,data.value);
+	}
+}
 
 Actions.prototype.getAction = function(a){
 	switch(a){
@@ -47,8 +50,8 @@ Actions.prototype.getAction = function(a){
 		case ActionEnums.AlterStatPercent:
 			return this.alterStatPercent;
 			break;
-		case ActionEnums.Hide:
-			return this.hide;
+		case ActionEnums.setHidden:
+			return this.setHidden;
 			break;
 	}
 }
@@ -69,12 +72,12 @@ Actions.prototype.stealth = function(unit,session,data){
 
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
-        "action": "alterStatePercent",
+        "action": "alterStatPercent",
         "stat": "speed"
         "value": -(50-unit.agility*2)/100
 	});
 	buff.actionsOnEnd.push({
-        "action": "alterStatePercent",
+        "action": "alterStatPercent",
         "stat": "speed"
         "value": (50-unit.agility*2)/100
 	});
