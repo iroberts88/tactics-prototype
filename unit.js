@@ -4,6 +4,7 @@ var Unit = function(){
     this.id = null;
     this.owner = null;
     this.engine = null;
+    this.session = null;
     this.name = null;
     this.sex = null;
     //Unit Stats
@@ -72,6 +73,7 @@ var Unit = function(){
     this.currentEnergy = null;
     this.currentHealth = null;
 
+    this.hidden = false;
     //Map
     this.currentNode = null;
     this.direction = null;
@@ -87,6 +89,11 @@ var Unit = function(){
 
     this.height = 2;
 
+    this.casting = false;
+    this.isCastTimer = false;
+
+    this.actionUsed = false;
+    this.moveUsed = false;
 }
 
 Unit.prototype.reset = function(){
@@ -102,6 +109,8 @@ Unit.prototype.reset = function(){
     //death
     this.dead = false;
     this.down = false;
+
+    this.hidden = false;
 
     //charge
     this.charge = 0;
@@ -223,7 +232,7 @@ Unit.prototype.init = function(data) {
         'id': 'spd',
         'owner': this,
         'value': 100,
-        'min': 0,
+        'min': 10,
         'max': 999,
         formula: function(){
             //Speed is reduced by 10% per weight over limit
@@ -409,6 +418,12 @@ Unit.prototype.init = function(data) {
     this.inventory.maxWeight.set();
 
     this.reset();
+};
+Unit.prototype.endTurn = function(){
+    //tick all buffs
+    for (var i = 0; i < this.buffs.length;i++){
+        this.buffs[i].tick();
+    }
 };
 
 Unit.prototype.damage = function(type,value){
@@ -596,6 +611,9 @@ Unit.prototype.getLessClientData = function(){
     data.health = this.currentHealth;
     data.energy = this.currentEnergy;
     data.shields = this.currentShields;
+    data.move = this.move.value;
+    data.jump = this.jump.value;
+    data.speed = this.speed.value;
     data.maximumHealth = this.maximumHealth.value;
     data.maximumShields = this.maximumShields.value;
     data.maximumEnergy = this.maximumEnergy.value;
@@ -876,6 +894,19 @@ Unit.prototype.getAbility = function(str){
         return null;
     }
     return this.engine.abilities[str];
+};
+
+Unit.prototype.removeBuffsWithTag = function(tag){
+    for(var i = 0;i < this.buffs.length;i++){
+        var buff = this.buffs[i];
+        for (var j = 0; j < buff.tags.length;j++){
+            if (buff.tags[j] == tag){
+                console.log('removing...')
+                buff.ticker = buff.duration;
+                buff.tick();
+            }
+        }
+    }
 };
 
 Unit.prototype.update = function(dt) {

@@ -61,12 +61,12 @@
                     if (confirm('Clear all equipped abilities?')){
                         Acorn.Net.socket_.emit('playerUpdate',{
                             'command': 'clearAbilities',
-                            'unitID': e.currentTarget.unitID
+                            'unitid': e.currentTarget.unitid
                         });
                     }
                 }
             });
-            this.clearButton.unitID = this.unitInfo.id;
+            this.clearButton.unitid = this.unitInfo.id;
             this.clearButton.style.fontSize = 80
             this.clearButton.position.x = 25 + this.clearButton.width/2;
             this.clearButton.position.y = 25 + this.clearButton.height/2;
@@ -151,7 +151,7 @@
                             //check AP then send to client
                             Acorn.Net.socket_.emit('playerUpdate',{
                                 'command': 'unEquipAbility',
-                                'unitID': EquipAbilities.unitInfo.id,
+                                'unitid': EquipAbilities.unitInfo.id,
                                 'classID': EquipAbilities.fromClass,
                                 'ablID': e.currentTarget.abl.id
                             });
@@ -178,7 +178,7 @@
                             if (EquipAbilities.unitInfo.abilitySlots-EquipAbilities.unitInfo.usedAbilitySlots >= e.currentTarget.abl.sCost){
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'equipAbility',
-                                    'unitID': EquipAbilities.unitInfo.id,
+                                    'unitid': EquipAbilities.unitInfo.id,
                                     'classID': EquipAbilities.fromClass,
                                     'ablID': e.currentTarget.abl.id
                                 });
@@ -206,7 +206,7 @@
         equipAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data['unitID']){
+                if (Player.units[i].id == data['unitid']){
                     unit = Player.units[i];
                 }
             }
@@ -218,7 +218,7 @@
         unEquipAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data['unitID']){
+                if (Player.units[i].id == data['unitid']){
                     unit = Player.units[i];
                 }
             }
@@ -230,7 +230,7 @@
         clearAbilities: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data['unitID']){
+                if (Player.units[i].id == data['unitid']){
                     unit = Player.units[i];
                 }
             }

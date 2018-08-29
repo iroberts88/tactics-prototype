@@ -22,19 +22,22 @@
       "name": "Stealth",
       "actionsOnImmediate": [
         {
-          "action": "hide"
+          "action": "setHidden"
         }
       ],
       "actionsOnEnd": [
         {
-          "action": "reveal"
+          "action": "setHidden",
+          "reverse": true
         }
       ],
       "buffid": "buff_stealth",
       "tags": [
-        "positive","stealth"
+        "positive","stealth","removeOnAction","removeOnDamage","removeOnContact"
       ],
-      "instant": false
+      "instant": false,
+      "noTicks": true,
+      "effect": "hidden"
     }
   ]
 }

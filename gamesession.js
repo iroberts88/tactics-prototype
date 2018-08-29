@@ -24,7 +24,6 @@ var GameSession = function (engine) {
     this.allUnits = {};
     this.turnOrder = [];
     this.chargeMax = 1000000;
-    this.allUnitIds = [];
     //variables for ID's
     this.idIterator = 0;
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
@@ -46,7 +45,7 @@ var GameSession = function (engine) {
     this.gameHasStarted = false;
 
     this.ticker = 0;
-    this.timePerTurn = 75; //1 minute turns?
+    this.timePerTurn = 60; //1 minute turns?
     this.timeInBetweenTurns = 1.5;
 
     this.reactionTicker = 0;
@@ -113,9 +112,9 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
 
     if (playersReady == this.playerCount){
         console.log('Players ready - initializing game');
-        for (var i = 0; i < this.allUnitIds.length;i++){
-            var unit = this.allUnits[this.allUnitIds[i]];
-            unit.reset();
+        
+        for (var i in this.allUnits){
+            this.allUnits[i].reset();
         }
         this.getTurnOrder();
 
@@ -126,8 +125,9 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
             var otherUnits = [];
             var turnList = [];
             var turnPercent = [];
-            for (var i = 0; i < this.allUnitIds.length;i++){
-                var unit = this.allUnits[this.allUnitIds[i]];
+            
+            for (var i in this.allUnits){
+                var unit = this.allUnits[i];
                 if (player.myUnits[unit.id]){
                     myUnits.push(unit.getClientData());
                 }else{
@@ -137,7 +137,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
             }
             for (var i = 0; i < this.turnOrder.length;i++){
                 turnList.push(this.turnOrder[i].id);
-                turnPercent.push(this.allUnits[this.turnOrder[i].id].charge/this.chargeMax);
+                turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
             }
             this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList,turnPercent:turnPercent});
         }
@@ -157,17 +157,25 @@ GameSession.prototype.tickInGame = function(deltaTime) {
             this.ticker += deltaTime;
             if (this.ticker >= this.timePerTurn){
                 this.ticker = 0;
+                this.allUnits[this.turnOrder[0].id].endTurn();
                 //process turn and get new Turn order
                 this.currentInGameState = this.inGameStates.BetweenTurns;
                 //first unit has completed the turn??
-                //TODO this should be done in the actual turn parsing
-                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
+                if (this.allUnits[this.turnOrder[0].id].moveUsed){
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/4;
+                    this.allUnits[this.turnOrder[0].id].moveUsed = false;
+                }
+                if (this.allUnits[this.turnOrder[0].id].actionUsed){
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/4;
+                    this.allUnits[this.turnOrder[0].id].actionUsed = false;
+                }
+                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/2;
                 this.getTurnOrder();
                 var turnList = [];
                 var turnPercent = [];
                 for (var i = 0; i < this.turnOrder.length;i++){
                     turnList.push(this.turnOrder[i].id);
-                    turnPercent.push(this.allUnits[this.turnOrder[i].id].charge/this.chargeMax);
+                    turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
                 }
                 this.queueData('newTurnOrder',{turnList:turnList,turnPercent:turnPercent});
             }
@@ -225,7 +233,6 @@ GameSession.prototype.gameStart = function(){
         this.queuePlayer(player,"mapInfo", {mapData: this.mapData});
         for (var i = 0; i < 5;i++){
             var uid = player.user.characters[i].id;
-            this.allUnitIds.push(uid);
             this.allUnits[uid] = player.user.characters[i];
             player.myUnits[uid] = uid;
             //init unit health/etc
@@ -281,24 +288,49 @@ GameSession.prototype.turnSort = function(arr){
 }
 GameSession.prototype.getTurnOrder = function(){
     //new turn
-    if (this.turnOrder.length){
-        this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
+    if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
+        if (!this.allUnits[this.turnOrder[0].id].isCastTimer){
+            this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
+        }
     }
     this.turnOrder = [];
-    for (var i = 0; i < this.allUnitIds.length;i++){
-        var unit = this.allUnits[this.allUnitIds[i]];
-        this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
+    for (var i in this.allUnits){
+        var unit = this.allUnits[i];
+        if (unit.isCastTimer){
+            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed, id: unit.id});
+        }else{
+            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
+        }
     }
     this.turnOrder = this.turnSort(this.turnOrder);
 
-    for (var i = 0; i < this.allUnitIds.length;i++){
-        var unit = this.allUnits[this.allUnitIds[i]];
-        unit.charge += this.turnOrder[0].val*unit.speed.value;
+    for (var i in this.allUnits){
+        var unit = this.allUnits[i];
+        if (unit.isCastTimer){
+            unit.charge += this.turnOrder[0].val*unit.speed;
+        }else{
+            unit.charge += this.turnOrder[0].val*unit.speed.value;
+        }
+    }
+    //now check if the new turn is a cast time
+    if (this.allUnits[this.turnOrder[0].id].isCastTimer){
+        var abl = this.allUnits[this.turnOrder[0].id];
+        //Do the ability!!
+        abl.data.actionData = [];
+        this.allUnits[abl.unitid].removeBuffsWithTag('removeOnAction');
+        var aFunc = Actions.getAbility(abl.abilityData.id);
+        aFunc(this.allUnits[abl.unitid],this,abl.data);
+        this.queueData('action',{actionData:abl.data.actionData});
+
+        this.queueData('removeUnit',{unitid: this.turnOrder[0].id});
+        this.allUnits[abl.unitid].casting = null;
+        delete this.allUnits[this.turnOrder[0].id];
+        this.getTurnOrder();
     }
 }
 
 ////////////////////////////////////////////////////////////////
-//                  Unit Turn Functions
+//                  Unit Turn Functions                        /
 ////////////////////////////////////////////////////////////////
 GameSession.prototype.unitMove = function(data){
     var unit = this.allUnits[this.turnOrder[0].id];
@@ -314,9 +346,32 @@ GameSession.prototype.unitMove = function(data){
     var endingNode = this.map.getCube(data);
     var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value})
     console.log("path length: " + path.length);
+    console.log("checking for hidden units...");
+    for (var i = 0; i < path.length;i++){
+        var a = this.map.getAxial(path[i]);
+        if (a.unit){
+            if (a.unit.hidden && a.unit.owner != unit.owner){
+                //hidden unit!
+                path = path.slice(0,i);
+                var keepGoing = true;
+                a.unit.removeBuffsWithTag('removeOnContact');
+                while(keepGoing){
+                    if (path.length <=1){
+                        return;
+                    }else if (path[path.length-1].unit){
+                        path.pop();
+                    }else{
+                        keepGoing = false;
+                    }
+
+                }
+            }
+        }
+    }
     var stopped = false;
     console.log(unit.moveLeft);
     for (var i = 1; i < path.length;i++){
+        unit.moveUsed = true;
         if (unit.moveLeft <= 0){
             //the unit is out of moves
             unit.newNode(this.map.getAxial(path[i-1]));
@@ -333,7 +388,7 @@ GameSession.prototype.unitMove = function(data){
         }
         actionData.push({
             action: 'move',
-            unitID: unit.id,
+            unitid: unit.id,
             x: path[i].x,
             y: path[i].y,
             z: path[i].z,
@@ -345,11 +400,21 @@ GameSession.prototype.unitMove = function(data){
     }
 
     //send down the action info to all players in the battle
-    this.queueData('action',{actionData:actionData});
+    if (unit.hidden){
+        //unless the unit is hidden
+        for (var i in this.players){
+            if (i == player){
+                this.queuePlayer(this.players[i],'action',{actionData:actionData});
+            }
+        }
+    }else{
+        this.queueData('action',{actionData:actionData});
+    }
 }
                         
 GameSession.prototype.unitAttack = function(data){
     var unit = this.allUnits[this.turnOrder[0].id];
+    if (unit.actionUsed){return;}
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
     if (!node.unit){return;} //node doesnt have a unit? (some weapons might ignore this?)
@@ -371,13 +436,18 @@ GameSession.prototype.unitAttack = function(data){
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
+                actionData.push({
+                    action: 'dmgText',
+                    text: 'Partial LOS',
+                    unitid: node.unit.id
+                });
                 valid = true;
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
                 actionData.push({
                     action: 'noLos',
-                    unitID: unit.id
+                    unitid: unit.id
                 });
                 this.queueData('action',{actionData:actionData});
             }
@@ -386,6 +456,7 @@ GameSession.prototype.unitAttack = function(data){
     if (!valid){
         return;
     }
+    unit.removeBuffsWithTag('removeOnAction');
     //TODO check for pre-attack reactions
 
     //get directional mod
@@ -400,7 +471,7 @@ GameSession.prototype.unitAttack = function(data){
     node.unit.damage(weapon.eqData.damageType,Math.round((weapon.eqData.damage*tMod)*losMod*d.dMod));
     actionData.push({
         action: 'attack',
-        unitID: unit.id,
+        unitid: unit.id,
         weapon: weapon.name,
         newDir: d.newDir,
         unitInfo: [
@@ -413,6 +484,11 @@ GameSession.prototype.unitAttack = function(data){
     });
     //TODO check for post-attack reactions
 
+    unit.actionUsed = true;
+    actionData.push({
+        action: 'actionUsed',
+        unitid: unit.id
+    });
     //send down action data
     this.queueData('action',{actionData:actionData});
 }
@@ -420,10 +496,11 @@ GameSession.prototype.unitAttack = function(data){
 GameSession.prototype.unitAbility = function(data){
     //check if ability is valid and execute
     var unit = this.allUnits[this.turnOrder[0].id];
+    if (unit.actionUsed){return;}
     var ability = unit.getAbility(data.abilityid);
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
-    var actionData = [];
+    data.actionData = [];
     switch(ability.range){
         case 'self':
             //this should pop up a confirm window immediately?
@@ -459,16 +536,52 @@ GameSession.prototype.unitAbility = function(data){
             }
             break;
     }
-    console.log(possibleNodes.length)
     for (var i = 0; i < possibleNodes.length;i++){
         if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
             //node is valid!
             //execute the ability!!
-            var aFunc = Actions.getAbility(ability.id);
-            aFunc(unit,this,data);
+            console.log(ability)
+            if (typeof ability.speed == 'undefined' || ability.speed == 'instant'){
+                unit.removeBuffsWithTag('removeOnAction');
+                var aFunc = Actions.getAbility(ability.id);
+                aFunc(unit,this,data);
+            }else{
+                //The ability has a cast time
+                //add cast time to the turn order and start casting!
+                abData = {
+                    id: this.gameEngine.getId(),
+                    isCastTimer: true,
+                    abilityData: ability,
+                    unitid: unit.id,
+                    data: data,
+                    speed: ability.speed,
+                    charge: 0
+                }
+                this.allUnits[abData.id] = abData;
+                unit.casting = abData.id;
+                this.queueData('addCastTimer',{
+                    id: abData.id,
+                    isCastTimer: true,
+                    unitid: unit.id,
+                    abilityName: ability.name,
+                    speed: ability.speed,
+                    data: data,
+                    charge: 0
+                });
+                data.actionData.push({
+                    action: 'dmgText',
+                    unitid: unit.id,
+                    text: 'casting...'
+                })
+            }
         }
     }
-    console.log(ability);
+    unit.actionUsed = true;
+    data.actionData.push({
+        action: 'actionUsed',
+        unitid: unit.id
+    });
+    this.queueData('action',{actionData:data.actionData});
 }
                        
 GameSession.prototype.unitItem = function(data){
@@ -490,14 +603,24 @@ GameSession.prototype.unitEnd = function(data){
     if (!valid){return;}
     var actionData = [{
         action: 'face',
-        unitID: unit.id,
+        unitid: unit.id,
         direction: data.direction
     }];
     if (this.currentInGameState == this.inGameStates.WaitingForTurnInfo){
         this.ticker = this.timePerTurn;
     }
-    //send down the action info to all players in the battle
-    this.queueData('action',{actionData:actionData});
+    //send down the action info to all players in the battle//send down the action info to all players in the battle
+    if (unit.hidden){
+        //unless the unit is hidden
+        for (var i in this.players){
+            if (i == player){
+                this.queuePlayer(this.players[i],'action',{actionData:actionData});
+            }
+        }
+    }else{
+        this.queueData('action',{actionData:actionData});
+    }
+    unit.endTurn();
 }
 
 GameSession.prototype.parseRange = function(unit,range){
@@ -546,8 +669,8 @@ GameSession.prototype.parseRange = function(unit,range){
     if (sString == 'self'){
         results.s = true;
     }
-    results.d = Utils.parseStringCode(unit,dString);
-    results.h = Utils.parseStringCode(unit,hString);
+    results.d = this.parseStringCode(unit,dString);
+    results.h = this.parseStringCode(unit,hString);
     return results;
 },
 GameSession.prototype.parseStringCode = function(unit,code){

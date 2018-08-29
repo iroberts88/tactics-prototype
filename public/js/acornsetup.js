@@ -49,6 +49,25 @@
                 }
 
             });
+
+            Acorn.Net.on('newTurnOrder', function(data) {
+                //get the new turn order at the beginning of each turn
+                Game.turnList = data.turnList;
+                for (var i = 0;i<data.turnPercent.length;i++){
+                    if (Game.units[Game.turnList[i]].isCastTimer){
+                        Game.units[Game.turnList[i]].charge = data.turnPercent[i];
+                    }else{
+                        Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
+                    }
+                }
+                Game.newTurnOrder(data.turnList);
+            });
+
+            Acorn.Net.on('addCastTimer', function(data) {
+                //get the new turn order at the beginning of each turn
+                Game.units[data.id] = data;
+            });
+
             Acorn.Net.on('unitInfo', function(data) {
                 //get the data for the units on the map
                 console.log(data);
@@ -76,15 +95,8 @@
                 Game.timePerTurn = data.timePerTurn;
                 Game.timePerReaction = data.timePerReaction;
                 Game.delayBetweenStates = data.delay;
+                Player.inGame = true;
                 Game.startGame();
-            });
-            Acorn.Net.on('newTurnOrder', function(data) {
-                //get the new turn order at the beginning of each turn
-                Game.turnList = data.turnList;
-                for (var i = 0;i<data.turnPercent.length;i++){
-                    Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
-                }
-                Game.newTurnOrder(data.turnList);
             });
 
             Acorn.Net.on('editMap', function (data) {
@@ -266,11 +278,15 @@
             Acorn.Net.on('setUnitStat', function (data) {
                 console.log('setting unit stat');
                 console.log(data);
-                Player.setUnitStat(data);
+                if (Player.inGame){
+                    Game.units[data.unit].setStat(data.stat,data.amt)
+                }else{
+                    Player.setUnitStat(data);
+                }
             });
             Acorn.Net.on('modAp', function (data) {
                 for (var i = 0; i < Player.units.length; i++){
-                    if (data['unitID'] == Player.units[i].id){
+                    if (data['unitid'] == Player.units[i].id){
                         for (var j in Player.units[i].classInfo.ap){
                             if (j == data['classID']){
                                 Player.units[i].classInfo.ap[j] = data['value'];
@@ -286,6 +302,52 @@
                 var action = new Actions();
                 action.init(data.actionData);
                 Game.actions.push(action);
+            });
+
+            Acorn.Net.on('addBuff', function (data) {
+                console.log('adding buff!');
+                console.log(data);
+            });
+
+            Acorn.Net.on('hideUnit', function (data) {
+                console.log(data);
+                if (typeof Game.units[data.unitid] != 'undefined'){
+                    if (Game.units[data.unitid].owner == mainObj.playerID){
+                        Game.units[data.unitid].sprite.alpha = 0.5;
+                    }else{
+                        var t = 1;
+                        if (!(Game.map.currentRotation%2)){t = 2}
+                        Game.map['container'+t].removeChild(Game.units[data.unitid].sprite);
+                        Game.units[data.unitid].visible = false;
+                        Game.units[data.unitid].currentNode.unit = null;
+                        Game.units[data.unitid].currentNode = null;
+                    }
+                }
+            });
+
+            Acorn.Net.on('removeUnit', function (data) {
+                console.log(data);
+                if (typeof Game.units[data.unitid] != 'undefined'){
+                    if (Game.units[data.unitid].isCastTimer){
+                        delete Game.units[data.unitid];
+                    }
+                }
+            });
+
+            Acorn.Net.on('revealUnit', function (data) {
+                console.log(data);
+                if (typeof Game.units[data.unitid] != 'undefined'){
+                    if (!Game.units[data.unitid].visible){
+                        var t = 1;
+                        if (!(Game.map.currentRotation%2)){t = 2}
+                        Game.map['container'+t].addChild(Game.units[data.unitid].sprite);
+                        Game.units[data.unitid].visible = true;
+                    }
+                    Game.units[data.unitid].sprite.alpha = 1;
+                    Game.units[data.unitid].setCurrentNode(data.q,data.r,Game.map);
+                    Game.units[data.unitid].setNewDirection(data.direction);
+                    Game.updateUnitsBool = true;
+                }
             });
 
             Acorn.Net.on('setMoveLeft', function (data) {

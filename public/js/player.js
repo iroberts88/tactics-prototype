@@ -6,6 +6,7 @@
     	inventory: null,
         globalCD: 0.15,
         globalCDTicker: 0,
+        inGame: false,
 
         init: function(data){
             this.units = [];

@@ -22,19 +22,19 @@
         {
           "sCost": 8,
           "name": "Flare",
-          "description": "Reveal stealthed/hidden units and items in the area",
+          "description": "Reveal stealthed/hidden units and items in the area. Units in the area will face the center node",
           "range": "5|5|self",
           "ApCost": 50,
           "id": "flare",
           "type": "anyhex",
-          "radius": "<2+INT/4> circle",
+          "radius": "<2+INT/3> circle",
           "eCost": 5,
           "speed": "1000"
         },
         {
           "sCost": 15,
           "name": "Stealth",
-          "description": "Become stealthed until the end of your next turn, or until damaged or revealed. Your speed is reduced by <50-AGI*2%>",
+          "description": "Become stealthed until the end of your next turn, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>",
           "range": "self",
           "ApCost": 100,
           "id": "stealth",
@@ -89,7 +89,7 @@
         {
           "sCost": 4,
           "name": "Cheer",
-          "description": "Increase <AGI> for all allies in the radius by 1 and <SPD> by 10%",
+          "description": "Increase <AGI> for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "cheer",
@@ -193,7 +193,7 @@
         {
           "sCost": 4,
           "name": "Direct",
-          "description": "Increase <INT> for all allies in the radius by 1 and <TAC> by 10%",
+          "description": "Increase <INT> for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "direct",
@@ -434,7 +434,7 @@
         {
           "sCost": 4,
           "name": "Bolster",
-          "description": "Increase <STR> for all allies in the radius by 1 and <POW> by 10%",
+          "description": "Increase <STR> for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "bolster",
@@ -698,7 +698,7 @@
           "description": "Increase <CHA> for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
-          "id": "bolster",
+          "id": "influence",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
           "eCost": "1",

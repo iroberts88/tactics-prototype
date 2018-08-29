@@ -4,6 +4,7 @@
 (function(window) {
     Game = {
 
+        chargeMax: 1000000,
         timePerTurn: null,
         timePerReaction: null,
         delayBetweenStates: null,
@@ -21,27 +22,27 @@
         currentNode: null,
         outlineFilterRed: new PIXI.filters.OutlineFilter(2, 0xff9999),
         filtersOn: function (e) {
-            if (Game.selectedUnit){
+            if (Game.selectedUnit || Game.units[e.currentTarget.unitid].isCastTimer){
                 return;
             }
             Game.resetTint();
-            Game.units[e.currentTarget.unitID].sprite.filters = [Game.outlineFilterRed];
+            Game.units[e.currentTarget.unitid].sprite.filters = [Game.outlineFilterRed];
             var t = 1;
             if (!(Game.map.currentRotation%2)){t = 2}
-            if (Game.units[e.currentTarget.unitID].currentNode){
-                Game.setNewHoveredNode = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
-                Game.currentlyMousedOver = Game.units[e.currentTarget.unitID].currentNode['sprite' + t];
+            if (Game.units[e.currentTarget.unitid].currentNode){
+                Game.setNewHoveredNode = Game.units[e.currentTarget.unitid].currentNode['sprite' + t];
+                Game.currentlyMousedOver = Game.units[e.currentTarget.unitid].currentNode['sprite' + t];
             }else{
-                Game.setNewHoveredUnit = Game.units[e.currentTarget.unitID];
+                Game.setNewHoveredUnit = Game.units[e.currentTarget.unitid];
             }
         },
 
         filtersOff: function(e) {
-            if (Game.selectedUnit){
+            if (Game.selectedUnit || Game.units[e.currentTarget.unitid].isCastTimer){
                 return;
             }
             Game.resetTint();
-            Game.units[e.currentTarget.unitID].sprite.filters = [];
+            Game.units[e.currentTarget.unitid].sprite.filters = [];
         },
 
         map: null,
@@ -214,6 +215,9 @@
         initUI: function(){
             //initialize the units and every UI element
             for (var i in this.units){
+                if (this.units[i].isCastTimer){
+                    continue;
+                }
                 var x = 0;
                 var y = 0;
                 var t = 1;
@@ -233,12 +237,13 @@
                 this.units[i].sprite.buttonMode = true;
                 this.units[i].infoPane = this.getUnitInfoPane(i);
                 var overFunc = function(e){
-                    Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                    if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
+                    Game.selectUnit(Game.units[e.currentTarget.unitid]);
                     if (Game.attackActive){
-                        Game.tryToAttack(Game.units[e.currentTarget.unitID].currentNode);
+                        Game.tryToAttack(Game.units[e.currentTarget.unitid].currentNode);
                     }
                     if (Game.abilityActive){
-                        Game.tryToAbility(Game.units[e.currentTarget.unitID].currentNode);
+                        Game.tryToAbility(Game.units[e.currentTarget.unitid].currentNode);
                     }
                 }
                 this.units[i].sprite.on('pointerdown',overFunc);
@@ -255,6 +260,7 @@
             this.turnListSprites = [];
             for (var i = 0; i < this.turnList.length;i++){
                 //create box
+                if (i > 9){break;}
                 var sprite = this.getTurnBox(this.turnList[i]);
                 sprite.position.x = 25;
                 sprite.position.y = 25 + i*75;
@@ -393,24 +399,41 @@
             if (this.abilityActive){
                 Graphics.uiContainer.removeChild(this.abilityMenu);
             }
+            var turnList = [];
+            var unitList = []
+            for (var i in this.units){
+                if (this.units[i].actionUsed){
+                    this.units[i].actionUsed = false;
+                }
+                unitList.push({
+                    id: this.units[i].id,
+                    spd: this.units[i].speed,
+                    cr: this.units[i].cr
+                });
+            }
+            //TODO get the actual turn list...
+
             this.turnListSprites = [];
             for (var i = 0; i < this.turnList.length;i++){
                 //create box
+                if (i > 9){break;}
                 var sprite = this.getTurnBox(this.turnList[i]);
                 sprite.position.x = 25;
                 sprite.position.y = 25 + i * 75;
                 Graphics.uiContainer.addChild(sprite);
                 this.turnListSprites.push(sprite);
                 var overFunc = function(e){
-                    Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                    if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
+                    Game.selectUnit(Game.units[e.currentTarget.unitid]);
                     if (Game.attackActive){
-                        Game.tryToAttack(Game.units[e.currentTarget.unitID].currentNode);
+                        Game.tryToAttack(Game.units[e.currentTarget.unitid].currentNode);
                     }
                 }
                 sprite.on('pointerdown',overFunc);
                 sprite.on('pointerover', Game.filtersOn);
                 sprite.on('pointerout', Game.filtersOff);
             }
+
             this.resetTurnMenu()
             this.clearOverlaySprites();
             Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
@@ -453,6 +476,9 @@
                 }
             }
             for (var i in this.units){
+                if (this.units[i].isCastTimer){
+                    continue;
+                }
                 try{
                     if (!this.units[i].sprite.parent.parent){
                         //units havent updated properly...
@@ -814,19 +840,29 @@
                 scene.turnMenuElements.moveText = moveText;
                 h += moveButton.height + 10;
                 //Attack button
-                var attackButton = Graphics.makeUiElement({
-                    text: 'Attack',
-                    style: style,
-                    interactive: true,
-                    buttonMode: true,
-                    anchor: [0.5,0],
-                    position: [w/4,h],
-                    clickFunc: function onClick(){
-                        Game.clearOverlaySprites();
-                        Game.attackActive = true;
-                        Game.getAttackNodes();
-                    }
-                });
+                if (unit.actionUsed){
+                    var attackButton = Graphics.makeUiElement({
+                        text: 'Attack',
+                        style: style,
+                        anchor: [0.5,0],
+                        position: [w/4,h]
+                    });
+                    attackButton.style.fill = 'red';
+                }else{
+                    var attackButton = Graphics.makeUiElement({
+                        text: 'Attack',
+                        style: style,
+                        interactive: true,
+                        buttonMode: true,
+                        anchor: [0.5,0],
+                        position: [w/4,h],
+                        clickFunc: function onClick(){
+                            Game.clearOverlaySprites();
+                            Game.attackActive = true;
+                            Game.getAttackNodes();
+                        }
+                    });
+                }
                 scene.turnMenuElements.attackButton = attackButton;
                 cont.addChild(attackButton); 
                 //weapon name text
@@ -840,42 +876,62 @@
                 scene.turnMenuElements.attackText = attackText;
                 h += attackButton.height + 10;
                 //Action button
-                var actionButton = Graphics.makeUiElement({
-                    text: 'Action',
-                    style: style,
-                    interactive: true,
-                    buttonMode: true,
-                    anchor: [0.5,0],
-                    position: [w/2,h],
-                    clickFunc: function onClick(){
-                        Game.clearOverlaySprites();
-                        Game.abilityActive = true;
-                        Game.abilityMenu = Game.getAbilityMenu(Game.units[Game.turnList[0]]);
-                        Game.abilityMenu.position.x = Game.turnMenu.position.x;
-                        Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
-                        Graphics.uiContainer.addChild(Game.abilityMenu);
-                    }
-                });
+                if (unit.actionUsed){
+                    var actionButton = Graphics.makeUiElement({
+                        text: 'Action',
+                        style: style,
+                        anchor: [0.5,0],
+                        position: [w/2,h]
+                    });
+                    actionButton.style.fill = 'red';
+                }else{
+                    var actionButton = Graphics.makeUiElement({
+                        text: 'Action',
+                        style: style,
+                        interactive: true,
+                        buttonMode: true,
+                        anchor: [0.5,0],
+                        position: [w/2,h],
+                        clickFunc: function onClick(){
+                            Game.clearOverlaySprites();
+                            Game.abilityActive = true;
+                            Game.abilityMenu = Game.getAbilityMenu(Game.units[Game.turnList[0]]);
+                            Game.abilityMenu.position.x = Game.turnMenu.position.x;
+                            Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
+                            Graphics.uiContainer.addChild(Game.abilityMenu);
+                        }
+                    });
+                }
                 scene.turnMenuElements.actionButton = actionButton;
                 cont.addChild(actionButton);
                 h += actionButton.height + 10;
                 //Inventory Button
-                var inventoryButton = Graphics.makeUiElement({
-                    text: 'Inventory',
-                    style: style,
-                    interactive: true,
-                    buttonMode: true,
-                    anchor: [0.5,0],
-                    position: [w/2,h],
-                    clickFunc: function onClick(){
-                        Game.clearOverlaySprites();
-                        Game.abilityActive = true;
-                        Game.abilityMenu = Game.getItemMenu(Game.units[Game.turnList[0]]);
-                        Game.abilityMenu.position.x = Game.turnMenu.position.x;
-                        Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
-                        Graphics.uiContainer.addChild(Game.abilityMenu);
-                    }
-                });
+                if (unit.actionUsed){
+                    var inventoryButton = Graphics.makeUiElement({
+                        text: 'Inventory',
+                        style: style,
+                        anchor: [0.5,0],
+                        position: [w/2,h]
+                    });
+                    inventoryButton.style.fill = 'red';
+                }else{
+                    var inventoryButton = Graphics.makeUiElement({
+                        text: 'Inventory',
+                        style: style,
+                        interactive: true,
+                        buttonMode: true,
+                        anchor: [0.5,0],
+                        position: [w/2,h],
+                        clickFunc: function onClick(){
+                            Game.clearOverlaySprites();
+                            Game.abilityActive = true;
+                            Game.abilityMenu = Game.getItemMenu(Game.units[Game.turnList[0]]);
+                            Game.abilityMenu.position.x = Game.turnMenu.position.x;
+                            Game.abilityMenu.position.y = Game.turnMenu.position.y + 10 + Game.turnMenu.height;
+                            Graphics.uiContainer.addChild(Game.abilityMenu);
+                        }
+                    });
+                }
                 scene.turnMenuElements.inventoryButton = inventoryButton;
                 cont.addChild(inventoryButton);
                 h += inventoryButton.height + 10;
@@ -1114,6 +1170,11 @@
                         console.log('clicked! ' + e.currentTarget.abilityInfo.name);
                         Game.clearOverlaySprites();
                         Game.getAbilityNodes(e.currentTarget.abilityInfo);
+                        if (e.currentTarget.tooltipAdded){
+                            Graphics.uiContainer2.removeChild(e.currentTarget.tooltip.sprite);
+                            Game.currentToolTip = null;
+                            e.currentTarget.tooltipAdded = false;
+                        }
                     }
                     var ablButton = Graphics.makeUiElement({
                         text: aInfo.name,
@@ -1280,13 +1341,17 @@
             var gfx = new PIXI.Graphics();
             var color = 0x0000FF;
             var style  = {
-                font: '64px Sigmar One',
+                font: '32px Sigmar One',
                 fill: 'white',
                 align: 'left',
                 stroke: '#000000',
                 strokeThickness: 2,
             }
-            if (this.units[id].owner != window.playerID){
+            if (this.units[id].isCastTimer){
+                if (this.units[this.units[id].unitid].owner != window.playerID){
+                    color = 0xFF0000;
+                }
+            }else if (this.units[id].owner != window.playerID){
                 color = 0xFF0000;
             }
             gfx.beginFill(color,0.3);
@@ -1303,8 +1368,23 @@
             gfx.lineTo(2,h-2);
             gfx.lineTo(2,2);
 
-
-            var text = new PIXI.Text(Game.units[id].name, style);
+            var txt1 = '';
+            var txt2 = '';
+            var txt3 = '';
+            var cPer = 0;
+            if (this.units[id].isCastTimer){
+                txt1 = Game.units[id].abilityName;
+                txt2 = '(' +Game.units[Game.units[id].unitid].name + ')';
+                cPer = Math.round((Game.units[id].charge/Game.chargeMax));
+                if (cPer > 1){cPer = 1}
+                txt3 = cPer + ' %';
+            }else{
+                txt1 = Game.units[id].name;
+                txt2 = 'L' + Game.units[id].level + ' ' + Game.units[id].classInfo.currentClass.charAt(0).toUpperCase() + Game.units[id].classInfo.currentClass.substr(1);
+                txt3 = Game.units[id].chargePercent + ' %';
+                cPer = (Game.units[id].chargePercent/100);
+            }
+            var text = new PIXI.Text(txt1, style);
             text.anchor.x = 0.5;
             text.anchor.y = 0.5;
             text.position.x = w*0.5;
@@ -1313,8 +1393,7 @@
             text = Graphics.fitText(text,w-5);
             cont.addChild(text);
 
-            var str = Game.units[id].classInfo.currentClass.charAt(0).toUpperCase() + Game.units[id].classInfo.currentClass.substr(1);
-            var text2 = new PIXI.Text('L' + Game.units[id].level + ' ' + str, style);
+            var text2 = new PIXI.Text(txt2, style);
             text2.anchor.x = 0.5;
             text2.anchor.y = 0.5;
             text2.position.x = w*0.5;
@@ -1327,7 +1406,7 @@
             //charge text
             var hPer = 0.85;
             var chargeStr = Game.units[id].chargePercent + ' %';
-            var chargeText = new PIXI.Text(chargeStr, style);
+            var chargeText = new PIXI.Text(txt3, style);
             chargeText.anchor.x = 0.5;
             chargeText.anchor.y = 0.5;
             chargeText.position.x = w*0.5;
@@ -1340,7 +1419,7 @@
             var hPer = 0.85;
             gfx.lineStyle(1,0x00BA00,1);
             gfx.beginFill(0x00BA00,1);
-            gfx.drawRect(5,h*hPer - 6,(w-10)*(Game.units[id].chargePercent/100),12);
+            gfx.drawRect(5,h*hPer - 6,(w-10)*cPer,12);
             gfx.endFill();
             gfx.lineStyle(1,0x000000,1);
             gfx.moveTo(5,h*hPer - 6);
@@ -1356,13 +1435,14 @@
             var sprite = new PIXI.Sprite(texture);
             sprite.interactive = true;
             sprite.buttonMode = true;
-            sprite.unitID = id;
+            sprite.unitid = id;
 
             var overFunc = function(e){
-                Game.selectUnit(Game.units[e.currentTarget.unitID]);
+                if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
+                Game.selectUnit(Game.units[e.currentTarget.unitid]);
                 if (Game.attackActive){
                     Game.tryToAttack(node);
-                    Game.units[e.currentTarget.unitID].currentNode
+                    Game.units[e.currentTarget.unitid].currentNode
                 }
             }
             sprite.on('pointerdown',overFunc);
@@ -1583,7 +1663,7 @@
             var renderer = new PIXI.CanvasRenderer();
             Graphics.app.renderer.render(scene,texture);
             var sprite = new PIXI.Sprite(texture);
-            sprite.unitID = id;
+            sprite.unitid = id;
 
             return sprite;
         },
@@ -1731,6 +1811,9 @@
 
         updateUnits: function(){
             for (var i in this.units){
+                if (this.units[i].isCastTimer){
+                    continue;
+                }
                 var sprite = this.units[i].sprite;
                 var unit = this.units[i];
                 if (!unit.visible){
@@ -1787,7 +1870,7 @@
             }
             aH += startingHeight;
             for (var u in this.units){
-                if (this.units[u].owner != playerID){continue;}
+                if (this.units[u].owner != window.playerID){continue;}
                 var c = this.map.getCube(this.units[u].currentNode)
                 var cPos = {
                     x: c.x + this.losAngle,

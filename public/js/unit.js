@@ -68,9 +68,11 @@
         this.visible = null;
 
         this.chargePercent = null;
-
+        this.cr = 0;
+        
         this.damageText = [];
         this.dmgTextTime = 1.5;
+        this.actionUsed = false;
         this.actionBubble = null;
         this.actionBubbleTime = 2.0
         this.height = 2;
@@ -140,7 +142,7 @@
             var dir = '';
             dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
             this.sprite = Graphics.getSprite('unit_base_'+ dir + '_');
-            this.sprite.unitID = this.id;
+            this.sprite.unitid = this.id;
             this.sprite.pSprite = true;
             this.sprite.scale.x = 0.6;
             this.sprite.scale.y = 0.6;
@@ -182,10 +184,11 @@
         }
     };
     Unit.prototype.setChargePercent = function(val){
-        if (val > 1){
-            val = 1;
+        this.cr = val;
+        if (val > Game.chargeMax){
+            val = Game.chargeMax;
         }
-        this.chargePercent = Math.round(val*100);
+        this.chargePercent = Math.round((val/Game.chargeMax)*100);
     }
     Unit.prototype.setNewDirection = function(direction){
         var frame = this.sprite.currentFrame;
@@ -202,6 +205,7 @@
     };
     Unit.prototype.setCurrentNode = function(q,r,map){
         this.currentNode = map.axialMap[q][r];
+        map.axialMap[q][r].unit = this;
     };
     Unit.prototype.addDmgText = function(n){
         var str = n.toString();
@@ -288,6 +292,7 @@
         }
     };
     Unit.prototype.setStat = function(id,amt){
+        console.log(id + '   ' + amt)
         try{
             switch(id){
                 case 'sh':
@@ -382,6 +387,10 @@
             console.log("unable to get stat " + id);
             console.log(e);
         }
+        if (Game.units[this.id]){
+            console.log('what');
+            this.infoPane = Game.getUnitInfoPane(this.id);
+        }
     };
     Unit.prototype.update = function(deltaTime){
         for (var i = 0; i < this.damageText.length;i++){
@@ -400,7 +409,6 @@
             this.actionBubble.sprite.position.y = Graphics.height/2 + this.sprite.position.y - this.sprite.height - 25;
             this.actionBubble.t += deltaTime;
             if (Date.now() - this.actionBubble.t  > 2000){
-                console.log("removing!");
                 Graphics.world.removeChild(this.actionBubble.sprite);
                 this.actionBubble = null;
             }

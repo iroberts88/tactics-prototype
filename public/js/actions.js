@@ -6,8 +6,13 @@
         Test: 'test',
         Move: 'move',
         Face: 'face',
+        Reveal: 'reveal',
+        Hide: 'hide',
         Attack: 'attack',
-        NoLOS: 'noLos'
+        NoLOS: 'noLos',
+        ActionBubble: 'actionBubble',
+        DmgText: 'dmgText',
+        ActionUsed: 'actionUsed'
     };
 
     Actions.prototype.init = function(actions){
@@ -20,8 +25,12 @@
         if (this.currentAction == null && this.actionIndex < this.actions.length){
             this.currentAction = this.actions[this.actionIndex];
         }else{
-            var actionFunc = this.getAction(this.currentAction.action);
-            actionFunc(dt,this,this.currentAction);
+            try{
+                var actionFunc = this.getAction(this.currentAction.action);
+                actionFunc(dt,this,this.currentAction);
+            }catch(e){
+                console.log(e);
+            }
         }
     };
 
@@ -48,11 +57,26 @@
             case this.actionEnums.Face:
                 return this.face;
                 break;
+            case this.actionEnums.Reveal:
+                return this.reveal;
+                break;
+            case this.actionEnums.Hide:
+                return this.hide;
+                break;
+            case this.actionEnums.ActionUsed:
+                return this.actionUsed;
+                break;
             case this.actionEnums.Attack:
                 return this.attack;
                 break;
             case this.actionEnums.NoLos:
                 return this.noLos;
+                break;
+            case this.actionEnums.ActionBubble:
+                return this.actionBubble;
+                break;
+            case this.actionEnums.DmgText:
+                return this.dmgText;
                 break;
             default:
                 return this.test;
@@ -80,7 +104,7 @@
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
             data.speed = 0.33; //seconds it takes to move 1 node
-            data.unit = Game.units[data.unitID];
+            data.unit = Game.units[data.unitid];
             var t = 1;
             if (!(Game.map.currentRotation%2)){t = 2}
             var sp = 'sprite' + t;
@@ -115,14 +139,50 @@
     Actions.prototype.face = function(dt,actions,data){
         //change the unit's facing and end
         console.log(data);
-        Game.units[data.unitID].setNewDirection(data.direction);
+        Game.units[data.unitid].setNewDirection(data.direction);
+        actions.endAction();
+    };
+
+    Actions.prototype.reveal = function(dt,actions,data){
+        //change the unit's facing and end
+        console.log(data);
+        if (typeof Game.units[data.unitid] != 'undefined'){
+            if (!Game.units[data.unitid].visible){
+                var t = 1;
+                if (!(Game.map.currentRotation%2)){t = 2}
+                Game.map['container'+t].addChild(Game.units[data.unitid].sprite);
+                Game.units[data.unitid].visible = true;
+            }
+            Game.units[data.unitid].sprite.alpha = 1;
+            Game.units[data.unitid].setCurrentNode(data.q,data.r,Game.map);
+            Game.units[data.unitid].setNewDirection(data.direction);
+            Game.updateUnitsBool = true;
+        }
+        actions.endAction();
+    };
+
+    Actions.prototype.hide = function(dt,actions,data){
+        //change the unit's facing and end
+        console.log(data);
+        if (typeof Game.units[data.unitid] != 'undefined'){
+            if (Game.units[data.unitid].owner == mainObj.playerID){
+                Game.units[data.unitid].sprite.alpha = 0.5;
+            }else{
+                var t = 1;
+                if (!(Game.map.currentRotation%2)){t = 2}
+                Game.map['container'+t].removeChild(Game.units[data.unitid].sprite);
+                Game.units[data.unitid].visible = false;
+                Game.units[data.unitid].currentNode.unit = null;
+                Game.units[data.unitid].currentNode = null;
+            }
+        }
         actions.endAction();
     };
 
     Actions.prototype.attack = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
-            Game.units[data.unitID].addActionBubble(data.weapon);
-            Game.units[data.unitID].setNewDirection(data.newDir);
+            Game.units[data.unitid].addActionBubble(data.weapon);
+            Game.units[data.unitid].setNewDirection(data.newDir);
             data.ticker = 0;
         }
         data.ticker += dt;
@@ -142,7 +202,20 @@
     };
 
     Actions.prototype.noLos = function(dt,actions,data){
-        Game.units[data.unitID].addActionBubble('No Line of Sight!');
+        Game.units[data.unitid].addActionBubble('No Line of Sight!');
+        actions.endAction();
+    };
+
+    Actions.prototype.actionBubble = function(dt,actions,data){
+        Game.units[data.unitid].addActionBubble(data.text);
+        actions.endAction();
+    };
+    Actions.prototype.dmgText = function(dt,actions,data){
+        Game.units[data.unitid].addDmgText(data.text);
+        actions.endAction();
+    };
+    Actions.prototype.actionUsed = function(dt,actions,data){
+        Game.units[data.unitid].actionUsed = true;
         actions.endAction();
     };
 

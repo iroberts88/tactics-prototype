@@ -258,13 +258,13 @@ HexMap.prototype.getDMod = function(start,end){
     var r2 = this.cubeLineDraw(start,cNeg);
     var d1 = this.getNewDirectionCube(end,r1[r1.length-2]);
     var d2 = this.getNewDirectionCube(end,r2[r2.length-2]);
-    console.log(d1);
-    console.log(d2);
-    var dEnd = this.cardinalDirectionPositions[end.unit.direction];
-    console.log(dEnd);
-    var dMod1 = this._getDMod(d1,dEnd);
-    var dMod2 = this._getDMod(d2,dEnd);
-    dMod *= ((dMod1+dMod2)/2)
+    if (end.unit){
+        var dEnd = this.cardinalDirectionPositions[end.unit.direction];
+        console.log(dEnd);
+        var dMod1 = this._getDMod(d1,dEnd);
+        var dMod2 = this._getDMod(d2,dEnd);
+        dMod *= ((dMod1+dMod2)/2)
+    }
     return {
         dMod: dMod,
         newDir: this.cardinalDirections[d1]
@@ -467,7 +467,7 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
                 var axial = this.getAxial(node);
                 //check units on this node
                 if (options.startingUnit && axial.unit){
-                    if (axial.unit.owner != options.startingUnit.owner){
+                    if (axial.unit.owner != options.startingUnit.owner && !axial.unit.hidden){
                         // not a valid node to process, skip to next neighbor
                         continue;
                     }
@@ -574,6 +574,16 @@ HexMap.prototype.merge = function(left,right){
     return result;
 }
 
+HexMap.prototype.getUnitsInRadius = function(center,radius){
+    var nodes = this.cubeSpiral(center,radius);
+    var results = [];
+    for (var i = 0; i < nodes.length;i++){
+        if (nodes[i].unit){
+            results.push(nodes[i]);
+        }
+    }
+    return results;
+}
 HexMap.prototype.getAxialNode = function(q,r){
     return {
         nodeid: this.gameSession.getId(),

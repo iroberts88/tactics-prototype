@@ -253,12 +253,12 @@
                         //attempt to move the item from unit inventory to player inventory
                         Acorn.Net.socket_.emit('playerUpdate',{
                             'command': 'itemToPlayer',
-                            'unitID': e.currentTarget.unitID,
+                            'unitid': e.currentTarget.unitid,
                             'itemIndex': e.currentTarget.itemIndex
                         });
                     }
                 })
-                moveButton.unitID = this.unitInfo.id;
+                moveButton.unitid = this.unitInfo.id;
                 moveButton.itemIndex = i;
                 moveButton.style.fontSize = 20;
                 moveButton.position.x -= moveButton.width;
@@ -284,12 +284,12 @@
                                 //attempt to move the item from unit inventory to player inventory
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'unEquipItem',
-                                    'unitID': e.currentTarget.unitID,
+                                    'unitid': e.currentTarget.unitid,
                                     'itemIndex': e.currentTarget.itemIndex
                                 });
                             }
                         })
-                        unEquipButton.unitID = this.unitInfo.id;
+                        unEquipButton.unitid = this.unitInfo.id;
                         unEquipButton.itemIndex = i;
                         unEquipButton.style.fontSize = 20;
                         unEquipButton.position.x = moveButton.position.x - 40;
@@ -312,12 +312,12 @@
                                 //attempt to move the item from unit inventory to player inventory
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'equipItem',
-                                    'unitID': e.currentTarget.unitID,
+                                    'unitid': e.currentTarget.unitid,
                                     'itemIndex': e.currentTarget.itemIndex
                                 });
                             }
                         })
-                        equipButton.unitID = this.unitInfo.id;
+                        equipButton.unitid = this.unitInfo.id;
                         equipButton.itemIndex = i;
                         equipButton.style.fontSize = 20;
                         equipButton.position.x = moveButton.position.x - 40;
@@ -376,12 +376,12 @@
                         //attempt to move the item from unit inventory to player inventory
                         Acorn.Net.socket_.emit('playerUpdate',{
                             'command': 'itemToUnit',
-                            'unitID': e.currentTarget.unitID,
+                            'unitid': e.currentTarget.unitid,
                             'itemIndex': e.currentTarget.itemIndex
                         });
                     }
                 })
-                moveButton.unitID = this.unitInfo.id;
+                moveButton.unitid = this.unitInfo.id;
                 moveButton.itemIndex = i;
                 moveButton.style.fontSize = 20;
                 moveButton.position.x = amtText.position.x + amtText.width/2 + moveButton.width/2 + 5;

@@ -113,7 +113,7 @@
         learnAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data['unitID']){
+                if (Player.units[i].id == data['unitid']){
                     unit = Player.units[i];
                 }
             }
@@ -190,7 +190,7 @@
                             if (LearnAbilities.unitInfo.classInfo.ap[LearnAbilities.fromClass] >= e.currentTarget.apCost){
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'learnAbility',
-                                    'unitID': e.currentTarget.unitID,
+                                    'unitid': e.currentTarget.unitid,
                                     'classID': e.currentTarget.classID,
                                     'ablID': e.currentTarget.ablID
                                 });
@@ -202,7 +202,7 @@
                     }
                     learnButton.style.fontSize = 32;
                     learnButton.ablID = ablArr[i].id;
-                    learnButton.unitID = this.unitInfo.id;
+                    learnButton.unitid = this.unitInfo.id;
                     learnButton.classID = this.fromClass;
                     learnButton.apCost = ablArr[i].ApCost;
                     Graphics.uiContainer.addChild(learnButton);
