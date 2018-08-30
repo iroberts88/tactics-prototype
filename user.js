@@ -5,6 +5,7 @@
 
 var Inventory = require('./inventory.js').Inventory,
     Unit = require('./unit.js').Unit,
+    Utils = require('./utils.js').Utils,
     ClassInfo = require('./classinfo.js').ClassInfo;
 
 var AWS = require("aws-sdk");
@@ -99,11 +100,21 @@ function User() {
                         var char = new Unit();
                         //init unit
                         var sexes = ['male','female'];
+                        var sex = sexes[Math.floor(Math.random()*sexes.length)];
+                        var nT = sex;
+                        var options = {
+                            'male': ['male','male2','romanMale','romanLastM','egyptian'],
+                            'female': ['female','female2','romanFemale','romanLastF','egyptian']
+                        }
+                        var thing = options[sex][Math.floor(Math.random()*options[sex].length)];
+                        console.log(thing);
+                        var name = '' + Utils.generateName(thing);
+
                         char.init({
                             owner: this.owner,
                             id: this.owner.gameEngine.getId(),
                             abilitySlots: 999,
-                            name: 'Test Character ' + (i+1),
+                            name: name,
                             sex: sexes[Math.floor(Math.random()*sexes.length)],
                             inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield'],
                             weapon: Math.floor(Math.random()*2),
@@ -135,13 +146,13 @@ function User() {
                                 ap = {'Tech': 9999};
                                 break;
                             case 'soldier':
-                                learned = {"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
-                                equipped = {"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
+                                learned = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
+                                equipped = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
                                 ap = {'Soldier': 9999};
                                 break;
                             case 'scout':
-                                learned = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "momentum" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
-                                equipped = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "momentum" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
+                                learned = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
+                                equipped = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
                                 ap = {'Scout': 9999}
                                 break;
                         }

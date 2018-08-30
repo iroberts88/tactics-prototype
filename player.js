@@ -157,7 +157,6 @@ Player.prototype.setupSocket = function() {
                }
             }else{
                 //player is not in a game currently - main menu commands
-                console.log(data);
                 switch(data.command){
                     case 'learnAbility':
                         try{

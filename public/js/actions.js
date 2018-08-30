@@ -12,7 +12,8 @@
         NoLOS: 'noLos',
         ActionBubble: 'actionBubble',
         DmgText: 'dmgText',
-        ActionUsed: 'actionUsed'
+        ActionUsed: 'actionUsed',
+        SetEnergy: 'setEnergy'
     };
 
     Actions.prototype.init = function(actions){
@@ -34,7 +35,7 @@
         }
     };
 
-    Actions.prototype.endAction = function(){
+    Actions.prototype.endAction = function(data){
         this.currentAction = null;
         this.actionIndex += 1;
         if (this.actionIndex == this.actions.length){
@@ -78,6 +79,9 @@
             case this.actionEnums.DmgText:
                 return this.dmgText;
                 break;
+            case this.actionEnums.SetEnergy:
+                return this.setEnergy;
+                break;
             default:
                 return this.test;
                 break;
@@ -92,10 +96,9 @@
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
         }
-        console.log(data);
         data.ticker += dt;
         if (data.ticker > 0.5){
-            actions.endAction();
+            actions.endAction(data);
         }
     };
 
@@ -128,7 +131,7 @@
         if (data.ticker >= data.speed){
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
-            actions.endAction();
+            actions.endAction(data);
             data.unit.moveLeft -= 1;
             data.unit.currentNode = data.newNode;
             if (!data.newNode.unit){
@@ -138,14 +141,12 @@
     };
     Actions.prototype.face = function(dt,actions,data){
         //change the unit's facing and end
-        console.log(data);
         Game.units[data.unitid].setNewDirection(data.direction);
-        actions.endAction();
+        actions.endAction(data);
     };
 
     Actions.prototype.reveal = function(dt,actions,data){
         //change the unit's facing and end
-        console.log(data);
         if (typeof Game.units[data.unitid] != 'undefined'){
             if (!Game.units[data.unitid].visible){
                 var t = 1;
@@ -158,12 +159,11 @@
             Game.units[data.unitid].setNewDirection(data.direction);
             Game.updateUnitsBool = true;
         }
-        actions.endAction();
+        actions.endAction(data);
     };
 
     Actions.prototype.hide = function(dt,actions,data){
         //change the unit's facing and end
-        console.log(data);
         if (typeof Game.units[data.unitid] != 'undefined'){
             if (Game.units[data.unitid].owner == mainObj.playerID){
                 Game.units[data.unitid].sprite.alpha = 0.5;
@@ -176,7 +176,7 @@
                 Game.units[data.unitid].currentNode = null;
             }
         }
-        actions.endAction();
+        actions.endAction(data);
     };
 
     Actions.prototype.attack = function(dt,actions,data){
@@ -195,28 +195,41 @@
                 u.currentHealth = data.unitInfo[i].newHealth;
                 u.currentShields = data.unitInfo[i].newShields;
                 u.addDmgText(total);
+                if (data.unitInfo[i].dead){
+                    Game.units[data.unitInfo[i].target].setDead();
+                    Game.units[data.unitInfo[i].target].currentNode.unit = null;
+                    Game.units[data.unitInfo[i].target].dead = true;
+                    continue;
+                }else if (data.unitInfo[i].fainted){
+                    Game.units[data.unitInfo[i].target].setFainted();
+                }
                 u.infoPane = Game.getUnitInfoPane(data.unitInfo[i].target);
             }
-            actions.endAction();
+            actions.endAction(data);
         }
     };
 
     Actions.prototype.noLos = function(dt,actions,data){
         Game.units[data.unitid].addActionBubble('No Line of Sight!');
-        actions.endAction();
+        actions.endAction(data);
     };
 
     Actions.prototype.actionBubble = function(dt,actions,data){
         Game.units[data.unitid].addActionBubble(data.text);
-        actions.endAction();
+        actions.endAction(data);
     };
     Actions.prototype.dmgText = function(dt,actions,data){
         Game.units[data.unitid].addDmgText(data.text);
-        actions.endAction();
+        actions.endAction(data);
     };
     Actions.prototype.actionUsed = function(dt,actions,data){
         Game.units[data.unitid].actionUsed = true;
-        actions.endAction();
+        actions.endAction(data);
+    };
+    Actions.prototype.setEnergy = function(dt,actions,data){
+        Game.units[data.unitid].currentEnergy = data.val;
+        Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
+        actions.endAction(data);
     };
 
     window.Actions = Actions;

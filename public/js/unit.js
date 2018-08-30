@@ -76,6 +76,21 @@
         this.actionBubble = null;
         this.actionBubbleTime = 2.0
         this.height = 2;
+
+        this.fainted = false;
+        this.dead = false;
+
+        this.onTakeDamage = []; //list of effects when the unit takes damage
+        this.onWeaponAttack = []; //list of effects when the unit makes a weapon attack
+        this.onMove = []; //list of effects when the unit moves
+        this.onEnemyMove = [] //list of effects when an enemy unit moves
+        this.onTurnEnd = [];
+        this.onTargetFaint = [];
+        this.onTargetKill = [];
+        this.onFaint = [];
+        this.onKill = [];
+        this.onTurnStart = [];
+
     };
 
     Unit.prototype.init = function(data) {
@@ -183,6 +198,19 @@
             }
         }
     };
+
+    Unit.prototype.setFainted = function(){
+        this.sprite.rotation = 1.57;
+        this.sprite.position.x -= this.sprite.width/2.2;
+        this.sprite.stop();
+        this.fainted = true;
+    };
+
+    Unit.prototype.setDead = function(){
+        this.sprite.parent.removeChild(this.sprite);
+        this.dead = true;
+    };
+
     Unit.prototype.setChargePercent = function(val){
         this.cr = val;
         if (val > Game.chargeMax){
@@ -201,7 +229,7 @@
         if (p >= 1 && p <= 5){
             this.sprite.scale.x = -0.6 * window.currentGameMap.ZOOM_SETTINGS[window.currentGameMap.currentZoomSetting];
         }
-        this.sprite.gotoAndPlay(frame)
+        this.sprite.gotoAndPlay(frame);
     };
     Unit.prototype.setCurrentNode = function(q,r,map){
         this.currentNode = map.axialMap[q][r];

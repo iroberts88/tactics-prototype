@@ -123,7 +123,6 @@ Equipment.prototype.getWeaponNodes = function(map,node){
     if (this.range){
         possibleNodes = map.cubeSpiral(node,parseInt(this.range));
         for (var i = possibleNodes.length-1; i >= 0;i--){
-            console.log(possibleNodes.length);
             if (map.cubeDistance(possibleNodes[i],node) < parseInt(this.range)){
                 possibleNodes.splice(i,1);
             }

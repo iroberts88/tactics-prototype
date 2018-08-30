@@ -487,6 +487,9 @@
                     }
                 }catch(e){}
                 this.units[i].update(deltaTime);
+                if (this.units[i].dead && this.units[i].damageText.length == 0 && !this.units[i].actionBubble){
+                    delete this.units[i];
+                }
             }
             //update timers
             switch (this.currentState){
@@ -1844,7 +1847,11 @@
                 }else{
                     this.map[cont].addChildAt(sprite,this.map[cont].getChildIndex(node[sp])+1);
                 }
-                sprite.gotoAndPlay(frame);
+                if (unit.fainted){
+                    unit.setFainted();
+                }else{
+                    sprite.gotoAndPlay(frame);
+                }
                 this.updateUnitsBool = false;
                 this.map.changedZoom = false;
             }

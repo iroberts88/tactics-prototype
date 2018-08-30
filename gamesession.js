@@ -53,6 +53,20 @@ var GameSession = function (engine) {
     this.letters = {};
     this.numbers = {};
     this.operators = {};
+
+    this.clientActionEnums = {
+        Test: 'test',
+        Move: 'move',
+        Face: 'face',
+        Reveal: 'reveal',
+        Hide: 'hide',
+        Attack: 'attack',
+        NoLOS: 'noLos',
+        ActionBubble: 'actionBubble',
+        DmgText: 'dmgText',
+        ActionUsed: 'actionUsed',
+        SetEnergy: 'setEnergy'
+    }
 };
 
 GameSession.prototype.init = function (data) {
@@ -296,16 +310,18 @@ GameSession.prototype.getTurnOrder = function(){
     this.turnOrder = [];
     for (var i in this.allUnits){
         var unit = this.allUnits[i];
+        if (unit.dead || unit.fainted){continue;}
         if (unit.isCastTimer){
-            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed, id: unit.id});
+            this.turnOrder.push({val: Math.ceil((this.chargeMax-unit.charge)/unit.speed), id: unit.id});
         }else{
-            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
+            this.turnOrder.push({val: Math.ceil((this.chargeMax-unit.charge)/unit.speed.value), id: unit.id});
         }
     }
     this.turnOrder = this.turnSort(this.turnOrder);
 
     for (var i in this.allUnits){
         var unit = this.allUnits[i];
+        if (unit.dead || unit.fainted){continue;}
         if (unit.isCastTimer){
             unit.charge += this.turnOrder[0].val*unit.speed;
         }else{
@@ -334,6 +350,9 @@ GameSession.prototype.getTurnOrder = function(){
 ////////////////////////////////////////////////////////////////
 GameSession.prototype.unitMove = function(data){
     var unit = this.allUnits[this.turnOrder[0].id];
+    if (unit.fainted || unit.dead){
+        return;
+    }
     var player = unit.owner.id;
     var enemyPlayer;
     for (var playerid in this.players){
@@ -344,9 +363,7 @@ GameSession.prototype.unitMove = function(data){
     var actionData = [];
     var enemyPlayerData = [];
     var endingNode = this.map.getCube(data);
-    var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value})
-    console.log("path length: " + path.length);
-    console.log("checking for hidden units...");
+    var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value});
     for (var i = 0; i < path.length;i++){
         var a = this.map.getAxial(path[i]);
         if (a.unit){
@@ -369,7 +386,6 @@ GameSession.prototype.unitMove = function(data){
         }
     }
     var stopped = false;
-    console.log(unit.moveLeft);
     for (var i = 1; i < path.length;i++){
         unit.moveUsed = true;
         if (unit.moveLeft <= 0){
@@ -387,7 +403,7 @@ GameSession.prototype.unitMove = function(data){
             unit.direction = this.map.cardinalDirections[dir];
         }
         actionData.push({
-            action: 'move',
+            action: this.clientActionEnums.Move,
             unitid: unit.id,
             x: path[i].x,
             y: path[i].y,
@@ -411,97 +427,101 @@ GameSession.prototype.unitMove = function(data){
         this.queueData('action',{actionData:actionData});
     }
 }
-                        
-GameSession.prototype.unitAttack = function(data){
-    var unit = this.allUnits[this.turnOrder[0].id];
-    if (unit.actionUsed){return;}
-    var player = unit.owner.id;
-    var node = this.map.axialMap[data.q][data.r];
-    if (!node.unit){return;} //node doesnt have a unit? (some weapons might ignore this?)
-    var weapon = unit.getWeapon();
-    var validNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
-    var actionData = [];
+GameSession.prototype.executeAttack = function(data){
+    data.unit = this.allUnits[this.turnOrder[0].id];
+    if (data.unit.actionUsed || data.unit.fainted || data.unit.dead){return false;}
+    data.node = this.map.axialMap[data.q][data.r];
+    if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
+    data.weapon = data.unit.getWeapon();
+    var validNodes = data.weapon.getWeaponNodes(this.map,data.unit.currentNode);
     //check if the node is a valid node
     var valid = false;
     var losMod = 1.0;
     for (var i = 0; i < validNodes.length;i++){
-        if (validNodes[i].q == node.q && validNodes[i].r == node.r){
+        if (validNodes[i].q == data.node.q && validNodes[i].r == data.node.r){
             //check LOS
-            var los = this.map.getLOS(unit.currentNode,node);
-            console.log(los);
+            var los = this.map.getLOS(data.unit.currentNode,data.node);
             if (los[1]){
                 // Hits another unit!!
-                node = this.allUnits[los[1]].currentNode;
+                data.node = this.allUnits[los[1]].currentNode;
             }
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
                 actionData.push({
-                    action: 'dmgText',
+                    action: this.clientActionEnums.DmgText,
                     text: 'Partial LOS',
-                    unitid: node.unit.id
+                    unitid: data.node.unit.id
                 });
                 valid = true;
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
                 actionData.push({
-                    action: 'noLos',
-                    unitid: unit.id
+                    action: this.clientActionEnums.NoLos,
+                    unitid: data.unit.id
                 });
                 this.queueData('action',{actionData:actionData});
             }
         }
     }
     if (!valid){
-        return;
+        return false;
     }
-    unit.removeBuffsWithTag('removeOnAction');
+    data.unit.removeBuffsWithTag('removeOnAction');
     //TODO check for pre-attack reactions
 
     //get directional mod
-    var d = this.map.getDMod(unit.currentNode,node);
+    data.d = this.map.getDMod(data.unit.currentNode,data.node);
     var tMod = 1.0;
-    if (weapon.type == 'gun'){
-        tMod += unit.skill.value/100;
-    }else if (weapon.type == 'weapon'){
-        tMod += unit.power.value/100;
+    if (data.weapon.type == 'gun'){
+        tMod += data.unit.skill.value/100;
+    }else if (data.weapon.type == 'weapon'){
+        tMod += data.unit.power.value/100;
     }
     //execute attack
-    node.unit.damage(weapon.eqData.damageType,Math.round((weapon.eqData.damage*tMod)*losMod*d.dMod));
-    actionData.push({
-        action: 'attack',
-        unitid: unit.id,
-        weapon: weapon.name,
-        newDir: d.newDir,
+    data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod));
+    return data;
+}
+GameSession.prototype.unitAttack = function(data){
+    data.actionData = [];
+    data = this.executeAttack(data);
+    if (!data){return;}
+    data.actionData.push({
+        action: this.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: data.weapon.name,
+        newDir: data.d.newDir,
         unitInfo: [
             {
-                target: node.unit.id,
-                newHealth: node.unit.currentHealth,
-                newShields: node.unit.currentShields
+                target: data.node.unit.id,
+                newHealth: data.node.unit.currentHealth,
+                newShields: data.node.unit.currentShields,
+                fainted: data.node.unit.fainted,
+                dead: data.node.unit.dead
             }
         ]
     });
     //TODO check for post-attack reactions
 
-    unit.actionUsed = true;
-    actionData.push({
-        action: 'actionUsed',
-        unitid: unit.id
+    data.unit.actionUsed = true;
+    data.actionData.push({
+        action: this.clientActionEnums.ActionUsed,
+        unitid: data.unit.id
     });
     //send down action data
-    this.queueData('action',{actionData:actionData});
+    this.queueData('action',{actionData:data.actionData});
 }
                       
 GameSession.prototype.unitAbility = function(data){
     //check if ability is valid and execute
     var unit = this.allUnits[this.turnOrder[0].id];
-    if (unit.actionUsed){return;}
-    var ability = unit.getAbility(data.abilityid);
+    if (unit.actionUsed || unit.fainted || unit.dead){return;}
+    data.ability = unit.getAbility(data.abilityid);
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
     data.actionData = [];
-    switch(ability.range){
+    switch(data.ability.range){
         case 'self':
             //this should pop up a confirm window immediately?
             possibleNodes = [unit.currentNode];
@@ -511,22 +531,22 @@ GameSession.prototype.unitAbility = function(data){
             if (weapon.type == 'gun'){
                 return;
             }
-            possibleNodes = this.getWeaponNodes(unit,weapon);
+            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
             break;
         case 'ranged':
             var weapon = unit.getWeapon();
             if (weapon.type == 'weapon'){
                 return;
             }
-            possibleNodes = this.getWeaponNodes(unit,weapon);
+            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
             break;
         case 'weapon':
             var weapon = unit.getWeapon();
-            possibleNodes = this.getWeaponNodes(unit,weapon);
+            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
             break;
         default:
             //range is a special string, parse for ability distance
-            var range = this.parseRange(unit,ability.range);
+            var range = this.parseRange(unit,data.ability.range);
             possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
             for (var i = 0; i < possibleNodes.length;i++){
                 if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
@@ -540,10 +560,26 @@ GameSession.prototype.unitAbility = function(data){
         if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
             //node is valid!
             //execute the ability!!
-            console.log(ability)
-            if (typeof ability.speed == 'undefined' || ability.speed == 'instant'){
+            var energy = this.parseStringCode(unit,data.ability.eCost);
+            if (unit.currentEnergy >= energy){
+                unit.currentEnergy -= energy;
+                data.actionData.push({
+                    action: this.clientActionEnums.SetEnergy,
+                    unitid: unit.id,
+                    val: unit.currentEnergy
+                });
+            }else{
+                data.actionData.push({
+                    action: this.clientActionEnums.DmgText,
+                    unitid: unit.id,
+                    text: 'Not enough energy'
+                });
+                this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+                return;
+            }
+            if (typeof data.ability.speed == 'undefined' || data.ability.speed == 'instant'){
                 unit.removeBuffsWithTag('removeOnAction');
-                var aFunc = Actions.getAbility(ability.id);
+                var aFunc = Actions.getAbility(data.ability.id);
                 aFunc(unit,this,data);
             }else{
                 //The ability has a cast time
@@ -551,10 +587,10 @@ GameSession.prototype.unitAbility = function(data){
                 abData = {
                     id: this.gameEngine.getId(),
                     isCastTimer: true,
-                    abilityData: ability,
+                    abilityData: data.ability,
                     unitid: unit.id,
                     data: data,
-                    speed: ability.speed,
+                    speed: data.ability.speed,
                     charge: 0
                 }
                 this.allUnits[abData.id] = abData;
@@ -563,13 +599,13 @@ GameSession.prototype.unitAbility = function(data){
                     id: abData.id,
                     isCastTimer: true,
                     unitid: unit.id,
-                    abilityName: ability.name,
-                    speed: ability.speed,
+                    abilityName: data.ability.name,
+                    speed: data.ability.speed,
                     data: data,
                     charge: 0
                 });
                 data.actionData.push({
-                    action: 'dmgText',
+                    action: this.clientActionEnums.DmgText,
                     unitid: unit.id,
                     text: 'casting...'
                 })
@@ -578,7 +614,7 @@ GameSession.prototype.unitAbility = function(data){
     }
     unit.actionUsed = true;
     data.actionData.push({
-        action: 'actionUsed',
+        action:this.clientActionEnums.ActionUsed,
         unitid: unit.id
     });
     this.queueData('action',{actionData:data.actionData});
@@ -590,6 +626,7 @@ GameSession.prototype.unitItem = function(data){
                       
 GameSession.prototype.unitEnd = function(data){
     var unit = this.allUnits[this.turnOrder[0].id];
+    if (unit.fainted || unit.dead){return;}
     var player = unit.owner.id;
     var enemyPlayer;
     //check correct facing
@@ -602,7 +639,7 @@ GameSession.prototype.unitEnd = function(data){
     }
     if (!valid){return;}
     var actionData = [{
-        action: 'face',
+        action: this.clientActionEnums.Face,
         unitid: unit.id,
         direction: data.direction
     }];
@@ -620,7 +657,6 @@ GameSession.prototype.unitEnd = function(data){
     }else{
         this.queueData('action',{actionData:actionData});
     }
-    unit.endTurn();
 }
 
 GameSession.prototype.parseRange = function(unit,range){
@@ -674,60 +710,67 @@ GameSession.prototype.parseRange = function(unit,range){
     return results;
 },
 GameSession.prototype.parseStringCode = function(unit,code){
-    if (code.charAt(0) != '<'){
-        return parseInt(code);
-    }else{
-        _code = code.substring(1,code.length-1);
-        var cArr = [];
-        //seperate the code into numbers,operators, and attr codes
-        var currentType = this.getType(_code.charAt(0));
-        var str = '';
-        for (var i = 0; i < _code.length;i++){
-            if (this.getType(_code.charAt(i)) == currentType){
-                str += _code.charAt(i);
-            }else{
-                if (currentType == 'a'){
-                    cArr.push(this.getAttr(unit,str));
-                }else if (currentType == 'n'){
-                    cArr.push(parseInt(str));
-                }else{
-                    cArr.push(str);
-                }
-                str = _code.charAt(i);
-                currentType = this.getType(_code.charAt(i));
-            }
-        }
-        if (currentType == 'a'){
-            cArr.push(this.getAttr(unit,str));
-        }else if (currentType == 'n'){
-            cArr.push(parseInt(str));
-        }else{
-            cArr.push(str);
-        }
-        for (var i = 0; i < cArr.length;i++){
-            if (cArr[i] == '*'){
-                var n = cArr[i-1] * cArr[i+1];
-                cArr.splice(i-1,3,n);
-            }
-        }
-        for (var i = 0; i < cArr.length;i++){
-            if (cArr[i] == '/'){
-                var n = Math.floor(cArr[i-1] / cArr[i+1]);
-                cArr.splice(i-1,3,n);
-            }
-        }
-        for (var i = 0; i < cArr.length;i++){
-            if (cArr[i] == '+'){
-                var n = cArr[i-1] + cArr[i+1];
-                cArr.splice(i-1,3,n);
-            }
-            if (cArr[i] == '-'){
-                var n = cArr[i-1] - cArr[i+1];
-                cArr.splice(i-1,3,n);
-            }
-        }
-        return(cArr[0]);   
+    if (typeof code == 'number'){return code;}
+    if (code.charAt(0) != '<'){return parseInt(code);}
+    _code = code.substring(1,code.length-1);
+    var cArr = [];
+    //seperate the code into numbers,operators, and attr codes
+    var currentType = this.getType(_code.charAt(0));
+    var str = '';
+    var percent = false;
+    if (_code.charAt(_code.length-1) == '%'){
+        percent = true;
+        //code is an energy percentile
+        _code = _code.substring(0,_code.length-1);
     }
+    for (var i = 0; i < _code.length;i++){
+        if (this.getType(_code.charAt(i)) == currentType){
+            str += _code.charAt(i);
+        }else{
+            if (currentType == 'a'){
+                cArr.push(this.getAttr(unit,str));
+            }else if (currentType == 'n'){
+                cArr.push(parseInt(str));
+            }else{
+                cArr.push(str);
+            }
+            str = _code.charAt(i);
+            currentType = this.getType(_code.charAt(i));
+        }
+    }
+    if (currentType == 'a'){
+        cArr.push(this.getAttr(unit,str));
+    }else if (currentType == 'n'){
+        cArr.push(parseInt(str));
+    }else{
+        cArr.push(str);
+    }
+    for (var i = 0; i < cArr.length;i++){
+        if (cArr[i] == '*'){
+            var n = cArr[i-1] * cArr[i+1];
+            cArr.splice(i-1,3,n);
+        }
+    }
+    for (var i = 0; i < cArr.length;i++){
+        if (cArr[i] == '/'){
+            var n = Math.floor(cArr[i-1] / cArr[i+1]);
+            cArr.splice(i-1,3,n);
+        }
+    }
+    for (var i = 0; i < cArr.length;i++){
+        if (cArr[i] == '+'){
+            var n = cArr[i-1] + cArr[i+1];
+            cArr.splice(i-1,3,n);
+        }
+        if (cArr[i] == '-'){
+            var n = cArr[i-1] - cArr[i+1];
+            cArr.splice(i-1,3,n);
+        }
+    }
+    if (percent){
+        return Math.ceil(unit.currentEnergy * (cArr[0]/100));
+    }
+    return(cArr[0]);   
 };
 GameSession.prototype.getAttr = function(unit,str){
     switch(str){

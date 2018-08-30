@@ -111,11 +111,13 @@ process.on('exit', (code) => {
         data.items.push(ge.maps[i]);
     }
     //synchronus file write to update high scores
-    fs.writeFileSync('./db/tactics_maps.json',JSON.stringify(data, null, 2), function(err){
-        if (err){
-            return console.log(err);
-        }
-    });
+    if (data.items.length > 0){
+        fs.writeFileSync('./db/tactics_maps.json',JSON.stringify(data, null, 2), function(err){
+            if (err){
+                return console.log(err);
+            }
+        });
+    }
 });
 
 process.on('SIGINT', function () {

@@ -36,7 +36,7 @@
         "positive","stealth","removeOnAction","removeOnDamage","removeOnContact"
       ],
       "instant": false,
-      "noTicks": true,
+      "tickImmediately": true,
       "effect": "hidden"
     }
   ]

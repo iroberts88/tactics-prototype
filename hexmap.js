@@ -300,7 +300,6 @@ HexMap.prototype.getDAngle = function(sNode,eNode){
     //get the angle between two nodes - for use in getLOS()
     var dX = eNode.q-sNode.q;
     var dY = eNode.r-sNode.r;
-    console.log('derp ' + dY + ', ' + dX)
     if (dX == 0 || dY == 0){
         return 0;
     }
@@ -342,15 +341,11 @@ HexMap.prototype.getLOS = function(startNode,endNode,newUnit){
             console.log('Not unit?!')
             var angle1 = this.getAngle(aH,(a.h+a.unit.height),j);
             var angle2 = this.getAngle(aH,(a.h+unit2.height),(r1.length-1));
-            console.log(angle1 + ', ' + angle2);
             if (angle1 == angle2){
                 //unit is blocking
                 var dAngle1 = this.getDAngle(startNode,endNode);
                 var dAngle2 = this.getDAngle(startNode,a);
-                console.log(dAngle1 + ', ' + dAngle2);
-
                 if (dAngle1 == dAngle2){
-                    console.log(dAngle1 + ', ' + dAngle2);
                     return this.getLOS(startNode,a,a.unit.id);
                 }
             }
@@ -579,6 +574,9 @@ HexMap.prototype.getUnitsInRadius = function(center,radius){
     var results = [];
     for (var i = 0; i < nodes.length;i++){
         if (nodes[i].unit){
+            if (nodes[i].unit.fainted || nodes[i].unit.dead){
+                continue;
+            }
             results.push(nodes[i]);
         }
     }

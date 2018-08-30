@@ -34,12 +34,13 @@
         {
           "sCost": 15,
           "name": "Stealth",
-          "description": "Become stealthed until the end of your next turn, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>",
+          "description": "Become stealthed until the end of your next turn, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn.",
           "range": "self",
           "ApCost": 100,
           "id": "stealth",
           "type": "singleunit",
-          "eCost": 15,
+          "eCost": 0,
+          "tickECost": 15,
           "speed": "instant"
         },
         {
@@ -67,7 +68,7 @@
         {
           "sCost": 12,
           "name": "Quick Attack",
-          "description": "Make a quick attack, entering the turn order at <30+AGI*1.5%>",
+          "description": "Make a speedy attack with your equipped weapon, entering the turn order at <30+AGI*1.5%>",
           "range": "weapon",
           "ApCost": 400,
           "id": "quickAttack",
@@ -104,14 +105,6 @@
           "ApCost": 125,
           "id": "climber",
           "sCost": 10,
-          "type": "passive"
-        },
-        {
-          "name": "Momentum",
-          "description": "Restore <4+END/5%> energy at the end of each turn",
-          "ApCost": 350,
-          "id": "momentum",
-          "sCost": 18,
           "type": "passive"
         },
         {
@@ -572,6 +565,14 @@
           "ApCost": 350,
           "id": "quickDraw",
           "sCost": 10,
+          "type": "passive"
+        },
+        {
+          "name": "Momentum",
+          "description": "Restore <4+END/5%> energy at the end of each turn",
+          "ApCost": 350,
+          "id": "momentum",
+          "sCost": 18,
           "type": "passive"
         }
       ],

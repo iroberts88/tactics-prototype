@@ -94,6 +94,8 @@ var Unit = function(){
 
     this.actionUsed = false;
     this.moveUsed = false;
+
+    this.fainted = false;
 }
 
 Unit.prototype.reset = function(){
@@ -427,7 +429,6 @@ Unit.prototype.endTurn = function(){
 };
 
 Unit.prototype.damage = function(type,value){
-    console.log(value);
     switch(type){
         case this.engine.dmgTypeEnums.Gravity:
             break;
@@ -455,6 +456,13 @@ Unit.prototype.damage = function(type,value){
             }
             this.currentHealth -= value;
             break;
+    }
+    if (this.currentHealth <= 0 && !this.fainted){
+        //death = < -50% hp
+        if (this.currentHealth <= this.maximumHealth.value/-2){
+            this.dead = true;
+        }
+        this.fainted = true;
     }
 };
 

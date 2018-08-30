@@ -334,6 +334,15 @@
                 }
             });
 
+            Acorn.Net.on('unitFainted', function (data) {
+                console.log(data);
+                if (typeof Game.units[data.unitid] != 'undefined'){
+                    if (!Game.units[data.unitid].isCastTimer){
+                        Game.units[data.unitid].setFainted();
+                    }
+                }
+            });
+
             Acorn.Net.on('revealUnit', function (data) {
                 console.log(data);
                 if (typeof Game.units[data.unitid] != 'undefined'){

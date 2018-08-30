@@ -45,15 +45,14 @@ var Buff = function(data){
     if (data.instant === true){
         //the buff will tick once immediately then be removed
         this.duration = 0;
-        this.tickImmediately = true;
     }else if (data.noTicks === true){
         //the buff will tick once immediately but will not tick again until buff ends
         this.noTicks = true;
-        this.tickImmediately = true;
         this.duration = data.duration; //number of turns active
     }else{
         this.duration = data.duration;
     }
+    this.tickImmediately = typeof data.tickImmediately == 'undefined' ? false : data.tickImmediately;
     if (!this.duration){this.duration = Infinity}
     this.timer = 0;
     this.buffEnded = false;
@@ -138,7 +137,10 @@ Buff.prototype.tick = function(){
     this.ticker += 1;
     for (var i = 0;i < this.actionsOnTick.length;i++){
         var action = Actions.getAction(this.actionsOnTick[i].action);
-        action(this.unit, this.actionsOnTick[i]);
+        var end = action(this.unit, this.actionsOnTick[i]);
+        if (end){
+            this.ticker = this.duration;
+        }
     }
     if (this.ticker >= this.duration){
         //The timer is over the max duration. Perform actions on end and end the buff
