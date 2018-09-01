@@ -1194,7 +1194,7 @@
                         ablButton.scale.y = ablButton.scale.y*0.95;
                     }
                     ablButton.tooltip = new Tooltip();
-                    ablButton.tooltip.setAbilityTooltip(ablButton,aInfo);
+                    ablButton.tooltip.setAbilityTooltip(ablButton,aInfo,unit);
                     ablButton.abilityInfo = aInfo;
                     ablButton.toolTipShown = false;
                     cont.addChild(ablButton);

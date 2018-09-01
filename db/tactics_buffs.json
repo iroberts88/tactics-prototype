@@ -17,6 +17,18 @@
       "instant": false
     },
     {
+      "description": "Poison damage per turn",
+      "duration": 3,
+      "name": "poison",
+      "actionsOnTurn": [
+      ],
+      "buffid": "buff_poison",
+      "tags": [
+        "detrimental","elemental","poison"
+      ],
+      "instant": false
+    },
+    {
       "description": "Unit is hidden until revealed or an action is taken",
       "duration": null,
       "name": "Stealth",

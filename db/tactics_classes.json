@@ -68,7 +68,7 @@
         {
           "sCost": 12,
           "name": "Quick Attack",
-          "description": "Make a speedy attack with your equipped weapon, entering the turn order at <30+AGI*1.5%>",
+          "description": "Make a speedy attack with your equipped weapon, entering the turn order at <30+AGI*1.50%> charge",
           "range": "weapon",
           "ApCost": 400,
           "id": "quickAttack",
@@ -90,7 +90,7 @@
         {
           "sCost": 4,
           "name": "Cheer",
-          "description": "Increase <AGI> for all allies in the radius by 2",
+          "description": "Increase agility for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "cheer",
@@ -101,7 +101,7 @@
         },
         {
           "name": "Climber",
-          "description": "Add <STR/4> to your <JMP> passively",
+          "description": "Add <STR/4> to your jump passively",
           "ApCost": 125,
           "id": "climber",
           "sCost": 10,
@@ -110,7 +110,7 @@
         {
           "sCost": 10,
           "name": "Counter Attack",
-          "description": "Use your reaction to make a melee or ranged counterattack when hit",
+          "description": "Use your reaction to make a counterattack when hit",
           "range": "self",
           "ApCost": 500,
           "id": "counterAttack",
@@ -121,7 +121,7 @@
         {
           "sCost": 15,
           "name": "Guile",
-          "description": "Increase the unit's <CHA> by 3",
+          "description": "Increase the unit's charisma by 3",
           "range": "self",
           "ApCost": 300,
           "id": "guile",
@@ -130,18 +130,18 @@
         {
           "sCost": 12,
           "name": "Poison Weapon",
-          "description": "Coat your weapon with poison, causing it's next strike to poison the target. The poison deals <5+INT/3%> of the unit's max health until cured.",
+          "description": "Coat your equipped {melee} weapon with poison, causing your next <INT/2> strikes to poison the target. The poison deals <5+INT/3%> of the unit's max health for 5 turns.",
           "range": "self",
           "ApCost": 350,
           "id": "poisonWeapon",
           "type": "self",
-          "eCost": "<50% current>",
+          "eCost": "75",
           "speed": 350
         },
         {
           "sCost": 15,
           "name": "Interrupt",
-          "description": "Strike a unit with your melee weapon, interrupting any charging ability and reducing the unit's current turn charge by <DEX*3%>",
+          "description": "Strike a unit with your {melee} weapon, reducing the charge of any casting ability by <20+DEX*2%> and reducing the unit's current turn charge by <10+DEX%>",
           "range": "melee",
           "ApCost": 500,
           "id": "interrupt",
@@ -186,7 +186,7 @@
         {
           "sCost": 4,
           "name": "Direct",
-          "description": "Increase <INT> for all allies in the radius by 2",
+          "description": "Increase intelligence for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "direct",
@@ -232,7 +232,7 @@
         {
           "sCost": 8,
           "name": "Flare Grenade",
-          "description": "Lob a grenade that deals 20 base heat damage",
+          "description": "Lob a grenade that deals 20 heat damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "flareGrenade",
@@ -246,7 +246,7 @@
         {
           "sCost": 8,
           "name": "Cryo Grenade",
-          "description": "Lob a grenade that deals 20 base cold damage",
+          "description": "Lob a grenade that deals 20 cold damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "cryoGrenade",
@@ -260,7 +260,7 @@
         {
           "sCost": 8,
           "name": "Grenade",
-          "description": "Lob a grenade that deals 20 base explosive damage",
+          "description": "Lob a grenade that deals 20 explosive damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "grenade",
@@ -274,7 +274,7 @@
         {
           "sCost": 8,
           "name": "Shock Grenade",
-          "description": "Lob a grenade that deals 20 base shock damage",
+          "description": "Lob a grenade that deals 20 shock damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "shockGrenade",
@@ -288,7 +288,7 @@
         {
           "sCost": 8,
           "name": "Corrosive Grenade",
-          "description": "Lob a grenade that deals 20 base acid damage",
+          "description": "Lob a grenade that deals 20 acid damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "corrosiveGrenade",
@@ -302,7 +302,7 @@
         {
           "sCost": 8,
           "name": "Toxic Grenade",
-          "description": "Lob a grenade that deals 20 base poison damage",
+          "description": "Lob a grenade that deals 20 poison damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 100,
           "id": "poisonGrenade",
@@ -316,7 +316,7 @@
         {
           "sCost": 12,
           "name": "EMP Grenade",
-          "description": "Lob a grenade that that deals 30 base pulse damage",
+          "description": "Lob a grenade that that deals 30 pulse damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 200,
           "id": "empGrenade",
@@ -330,7 +330,7 @@
         {
           "sCost": 12,
           "name": "Unstable Grenade",
-          "description": "Lob a grenade that deals 30 base radiation damage",
+          "description": "Lob a grenade that deals 30 radiation damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 200,
           "id": "unstableGrenade",
@@ -344,7 +344,7 @@
         {
           "sCost": 15,
           "name": "Void Grenade",
-          "description": "Lob a grenade that deals 25 base gravity damage",
+          "description": "Lob a grenade that deals 25 gravity damage",
           "range": "<5+STR/4> | <5+STR/4>",
           "ApCost": 250,
           "id": "voidGrenade",
@@ -357,7 +357,7 @@
         },
         {
           "name": "Cybernetics: Legs",
-          "description": "Mechanically enhance unit's legs, increasing <AGI> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's legs, increasing agility by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybLegs",
           "sCost": 15,
@@ -365,7 +365,7 @@
         },
         {
           "name": "Cybernetics: Arms",
-          "description": "Mechanically enhance unit's arms, increasing <STR> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's arms, increasing strength by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybArms",
           "sCost": 15,
@@ -373,7 +373,7 @@
         },
         {
           "name": "Cybernetics: Brain",
-          "description": "Mechanically enhance unit's cerebral cortex, increasing <INT> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's cerebral cortex, increasing intelligence by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybBrain",
           "sCost": 15,
@@ -381,7 +381,7 @@
         },
         {
           "name": "Cybernetics: Eyes",
-          "description": "Mechanically enhance unit's eyes, increasing <DEX> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's eyes, increasing dexterity by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybEyes",
           "sCost": 15,
@@ -389,7 +389,7 @@
         },
         {
           "name": "Cybernetics: Lungs",
-          "description": "Mechanically enhance unit's resperitory system, increasing <END> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's resperitory system, increasing endurance by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybLungs",
           "sCost": 15,
@@ -397,7 +397,7 @@
         },
         {
           "name": "Cybernetics: Heart",
-          "description": "Mechanically enhance unit's body, increasing <WIL> by 3 and making the unit mechanical",
+          "description": "Mechanically enhance unit's body, increasing willpower by 3 and making the unit mechanical",
           "ApCost": 300,
           "id": "cybHeart",
           "sCost": 15,
@@ -427,7 +427,7 @@
         {
           "sCost": 4,
           "name": "Bolster",
-          "description": "Increase <STR> for all allies in the radius by 2",
+          "description": "Increase strength for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "bolster",
@@ -439,7 +439,7 @@
         {
           "sCost": 4,
           "name": "Aim",
-          "description": "Increase <SKL> by <WIL/2%+WIL*2>",
+          "description": "Increase skill by <WIL/2%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "aim",
@@ -450,7 +450,7 @@
         {
           "sCost": 4,
           "name": "Shout",
-          "description": "Increase <POW> by <WIL/2%+WIL*2>",
+          "description": "Increase power by <WIL/2%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "shout",
@@ -461,7 +461,7 @@
         {
           "sCost": 4,
           "name": "Focus",
-          "description": "Increase <TAC> by <WIL/2%+WIL*2>",
+          "description": "Increase tactics by <WIL/2%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "focus",
@@ -472,7 +472,7 @@
         {
           "sCost": 5,
           "name": "Heroic Leap",
-          "description": "Jump to a neighboring hex with a jump distance of <JMP+STR/4> and immediately make an attack with your equipped weapon, dealing <15+CHA*2%> additional damage",
+          "description": "Jump to a neighboring hex with a jump distance of <JMP+STR/3> and immediately make an attack with your equipped weapon, dealing <15+CHA*2%> additional damage",
           "range": "1 | <JMP+STR/4>",
           "ApCost": 100,
           "id": "heroicLeap",
@@ -483,7 +483,7 @@
         {
           "sCost": 5,
           "name": "Heroic Charge",
-          "description": "Charge to a tile with a move of <MOV+AGI/4> and immediately make an attack with your equipped melee weapon, dealing <15+CHA*2%> additional damage",
+          "description": "Charge to a tile with a move of <MOV+AGI/4> and immediately make an attack with your equipped {melee} weapon, dealing <15+CHA*2%> additional damage",
           "range": "<MOV+AGI/4> | <JMP>",
           "ApCost": 100,
           "id": "heroicCharge",
@@ -494,7 +494,7 @@
         {
           "sCost": 5,
           "name": "Power Attack",
-          "description": "Make a melee attack dealing <25+STR/4*2%> Additional Damage",
+          "description": "Make a {melee} attack dealing <25+STR/4*2%> Additional Damage",
           "range": "melee",
           "ApCost": 50,
           "id": "powerAttack",
@@ -505,7 +505,7 @@
         {
           "sCost": 5,
           "name": "Power Shot",
-          "description": "Make a ranged attack dealing <25+DEX*2%> Additional Damage",
+          "description": "Make a {ranged} attack dealing <25+DEX*2%> Additional Damage",
           "range": "ranged",
           "ApCost": 50,
           "id": "powerShot",
@@ -542,7 +542,7 @@
         {
           "sCost": 12,
           "name": "Charge",
-          "description": "Slam an enemy, dealing <STR%> of your <maximum health> as damage and knocking back <STR/3> units",
+          "description": "Slam an enemy, dealing <STR%> of your maximum health as damage and knocking back <STR/3> units",
           "range": "1 | 1",
           "ApCost": 20,
           "id": "charge",
@@ -652,7 +652,7 @@
         {
           "sCost": 8,
           "name": "Precision Strike",
-          "description": "Perform an attack with a melee weapon, striking a vital point to decrease the target’s healing received permanently by <STR*2%>",
+          "description": "Perform an attack with a {melee} weapon, striking a vital point to decrease the target’s healing received permanently by <STR*2%>",
           "range": "melee",
           "ApCost": 80,
           "id": "precisionStrike",
@@ -663,7 +663,7 @@
         {
           "sCost": 8,
           "name": "Cripple",
-          "description": "Perform an attack with a ranged weapon, striking a vital point to decrease the targets next movement by <DEX/2>",
+          "description": "Perform an attack with a {ranged} weapon, striking a vital point to decrease the targets next movement by <DEX/2>",
           "range": "ranged",
           "ApCost": 80,
           "id": "cripple",
@@ -696,7 +696,7 @@
         {
           "sCost": 4,
           "name": "Influence",
-          "description": "Increase <CHA> for all allies in the radius by 2",
+          "description": "Increase charisma for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
           "id": "influence",

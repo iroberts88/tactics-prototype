@@ -74,6 +74,11 @@
                             if (text.charAt(c) == '>' || text.charAt(c) == '}'){
                                 start = c+1;
                                 sI = c;
+                                if (typeof data.unit != 'undefined' && text.charAt(c) == '>'){
+                                    var what = Utils.parseStringCode(data.unit,t);
+                                    console.log(what);
+                                    t = what;
+                                }
                                 var nextWord = new PIXI.Text(t,this.style1);
                                 break;
                             }
@@ -238,7 +243,7 @@
         });
     };
 
-    Tooltip.prototype.setAbilityTooltip = function(element,ability){
+    Tooltip.prototype.setAbilityTooltip = function(element,ability,unit){
         // element = the element containing the tooltip
         //a = the ability to work on
         var ttArray = [{text: ability.description}];
@@ -248,10 +253,12 @@
         if (typeof ability.radius != 'undefined'){ttArray.push({text: "{Radius:} " + ability.radius})}
         if (typeof ability.type != 'undefined'){ttArray.push({text: "{Type:} " + ability.type})}
         if (typeof ability.speed != 'undefined'){ttArray.push({text: "{Speed:} " + ability.speed})}
+        unit = typeof unit == 'undefined' ? null : unit;
         this.set({
             owner: element,
             ttArray: ttArray,
-            alpha: 0.5
+            alpha: 0.5,
+            unit: unit
         });
     }
 

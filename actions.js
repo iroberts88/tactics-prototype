@@ -14,7 +14,8 @@ AbilityEnums = {
 	Flare: 'flare',
 	QuickAttack: 'quickAttack',
 	Agitate: 'agitate',
-	Cheer: 'cheer'
+	Cheer: 'cheer',
+	Interrupt: 'interrupt'
 };
 
 var Actions = function(){}
@@ -251,6 +252,37 @@ Actions.prototype.cheer = function(unit,session,data){
 		}
 	}
 }
+Actions.prototype.interrupt = function(unit,session,data){
+    data = session.executeAttack(data);
+    if (!data){return;}
+    data.actionData.push({
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Interrupt',
+        newDir: data.d.newDir,
+        unitInfo: [
+            {
+                target: data.node.unit.id,
+                newHealth: data.node.unit.currentHealth,
+                newShields: data.node.unit.currentShields,
+                fainted: data.node.unit.fainted,
+                dead: data.node.unit.dead
+            }
+        ]
+    });
+    console.log(data.node.unit.charge);
+    data.node.unit.charge -= session.chargeMax*((10+unit.agility.value)/100);
+    console.log(data.node.unit.charge);
+    if (data.node.unit.charge < 0){
+    	data.node.unit.charge = 0;
+    }
+    //reduce any casting timers!
+    for (var i in session.allUnits){
+    	if (session.allUnits[i].isCastTimer && session.allUnits[i].unitid == data.node.unit.id){
+    		session.allUnits[i].charge -= session.chargeMax*((20+unit.agility.value*2)/100);
+    	}
+    }
+}
 
 Actions.prototype.getAbility = function(a){
 	console.log('getting ability <' + a + '>');
@@ -269,6 +301,9 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.QuickAttack:
 			return this.quickAttack;
+			break;
+		case AbilityEnums.Interrupt:
+			return this.interrupt;
 			break;
 		case AbilityEnums.Stealth:
 			return this.stealth;

@@ -8,7 +8,7 @@
         init: function(){
             var n = '1234567890';
             var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-            var o = '+-/*';
+            var o = '+-/*.';
             for (var i = 0; i < n.length;i++){
                 this.numbers[n.charAt(i)] = true;
             }
@@ -174,9 +174,17 @@
                 return parseInt(code);
             }else{
                 _code = code.substring(1,code.length-1);
+                var percent = false;
+                if (_code.charAt(_code.length-1) == '%'){
+                    percent = true;
+                    _code = _code.substring(0,_code.length-1);
+                }
                 var cArr = [];
                 //seperate the code into numbers,operators, and attr codes
                 var currentType = this.getType(_code.charAt(0));
+                if (!currentType){
+                    console.log(code);
+                }
                 var str = '';
                 for (var i = 0; i < _code.length;i++){
                     if (this.getType(_code.charAt(i)) == currentType){
@@ -191,6 +199,9 @@
                         }
                         str = _code.charAt(i);
                         currentType = this.getType(_code.charAt(i));
+                        if (!currentType){
+                            console.log(code);
+                        }
                     }
                 }
                 if (currentType == 'a'){
@@ -199,6 +210,12 @@
                     cArr.push(parseInt(str));
                 }else{
                     cArr.push(str);
+                }
+                for (var i = 0; i < cArr.length;i++){
+                    if (cArr[i] == '.'){
+                        var n = cArr[i-1] + cArr[i+1]/10;
+                        cArr.splice(i-1,3,n);
+                    }
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '*'){
@@ -221,6 +238,9 @@
                         var n = cArr[i-1] - cArr[i+1];
                         cArr.splice(i-1,3,n);
                     }
+                }
+                if (percent){
+                    return cArr[0] + '%';
                 }
                 return(cArr[0]);   
             }
