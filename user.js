@@ -107,9 +107,7 @@ function User() {
                             'female': ['female','female2','romanFemale','romanLastF','egyptian']
                         }
                         var thing = options[sex][Math.floor(Math.random()*options[sex].length)];
-                        console.log(thing);
                         var name = '' + Utils.generateName(thing);
-
                         char.init({
                             owner: this.owner,
                             id: this.owner.gameEngine.getId(),

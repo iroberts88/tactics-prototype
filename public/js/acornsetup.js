@@ -276,12 +276,16 @@
                 Player.deleteUnit(data);
             });
             Acorn.Net.on('setUnitStat', function (data) {
-                console.log('setting unit stat');
-                console.log(data);
-                if (Player.inGame){
-                    Game.units[data.unit].setStat(data.stat,data.amt)
-                }else{
-                    Player.setUnitStat(data);
+                try{
+                    if (Player.inGame){
+                        Game.units[data.unit].setStat(data.stat,data.amt)
+                    }else{
+                        Player.setUnitStat(data);
+                    }
+                }catch(e){
+                    console.log("Unit stat error");
+                    console.log(e);
+                    console.log(data);
                 }
             });
             Acorn.Net.on('modAp', function (data) {

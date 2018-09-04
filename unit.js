@@ -96,6 +96,17 @@ var Unit = function(){
     this.moveUsed = false;
 
     this.fainted = false;
+
+    this.onTakeDamage = []; //list of effects when the unit takes damage
+    this.onWeaponAttack = []; //list of effects when the unit makes a weapon attack
+    this.onMove = []; //list of effects when the unit moves
+    this.onEnemyMove = [] //list of effects when an enemy unit moves
+    this.onTurnEnd = [];
+    this.onTargetFaint = [];
+    this.onTargetKill = [];
+    this.onFaint = [];
+    this.onKill = [];
+    this.onTurnStart = [];
 }
 
 Unit.prototype.reset = function(){
@@ -149,7 +160,7 @@ Unit.prototype.init = function(data) {
                 var shield = this.owner.inventory.items[this.owner.shield];
                 this.base = Math.ceil(((10*shield.weight) + (100+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
             }
-            return Math.round((this.base*this.pMod)+this.nMod);
+            return Math.round((this.base+this.nMod)*this.pMod);
         }
     });
     //the amount a shield is recharged per turn
@@ -852,8 +863,13 @@ Unit.prototype.modStat = function(id,amt){
 };
 Unit.prototype.modStatPercent = function(id,amt){
     try{
+        console.log(this.getStat(id).value)
+        console.log(this.getStat(id).pMod)
         this.getStat(id).pMod += amt;
         this.getStat(id).set(true);
+        console.log(this.getStat(id).value)
+        console.log(this.getStat(id).pMod)
+        console.log(this.getStat(id))
     }catch(e){
         console.log("unable to mod stat " + id);
         console.log(e);

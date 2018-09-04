@@ -34,6 +34,7 @@ Actions.prototype.alterStat = function(unit,data){
 }
 
 Actions.prototype.alterStatPercent = function(unit,data){
+	
 	if (data.reverse){
 		unit.modStatPercent(data.stat,data.value*-1);
 	}else{

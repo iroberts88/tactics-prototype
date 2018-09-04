@@ -1275,7 +1275,7 @@
                             var cubeNode = this.map.cubeMap[this.selectedSprite.cubeCoords.x][this.selectedSprite.cubeCoords.y][this.selectedSprite.cubeCoords.z];
                             var arr = this.map.cubeSpiral(cubeNode,this.toolSize-1);
                             for (var i = 0;i < arr.length;i++){
-                                var c = arr[i][0];
+                                var c = arr[i];
                                 var a = this.map.getAxial(c);
                                 if (a.tile != this.currentTileType){
                                     a.sprite1.texture = this.map.tileTextures[this.currentTileType][1][a.h];

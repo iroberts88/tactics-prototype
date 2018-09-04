@@ -165,11 +165,11 @@
             if (sString == 'self'){
                 results.s = true;
             }
-            results.d = Utils.parseStringCode(unit,dString);
-            results.h = Utils.parseStringCode(unit,hString);
+            results.d = Utils.parseStringCode(dString,unit);
+            results.h = Utils.parseStringCode(hString,unit);
             return results;
         },
-        parseStringCode: function(unit,code){
+        parseStringCode: function(code,unit){
             if (code.charAt(0) != '<'){
                 return parseInt(code);
             }else{
@@ -190,8 +190,8 @@
                     if (this.getType(_code.charAt(i)) == currentType){
                         str += _code.charAt(i);
                     }else{
-                        if (currentType == 'a'){
-                            cArr.push(this.getAttr(unit,str));
+                        if (currentType == 'a' && unit){
+                            cArr.push(this.getAttr(str,unit));
                         }else if (currentType == 'n'){
                             cArr.push(parseInt(str));
                         }else{
@@ -204,8 +204,8 @@
                         }
                     }
                 }
-                if (currentType == 'a'){
-                    cArr.push(this.getAttr(unit,str));
+                if (currentType == 'a' && unit){
+                    cArr.push(this.getAttr(str,unit));
                 }else if (currentType == 'n'){
                     cArr.push(parseInt(str));
                 }else{
@@ -213,7 +213,7 @@
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '.'){
-                        var n = cArr[i-1] + cArr[i+1]/10;
+                        var n = cArr[i-1] + cArr[i+1]/100;
                         cArr.splice(i-1,3,n);
                     }
                 }

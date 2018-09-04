@@ -34,7 +34,7 @@
         {
           "sCost": 15,
           "name": "Stealth",
-          "description": "Become stealthed until the end of your next turn, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn.",
+          "description": "Become hidden until you perform an action, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn.",
           "range": "self",
           "ApCost": 100,
           "id": "stealth",

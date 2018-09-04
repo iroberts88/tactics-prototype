@@ -74,10 +74,8 @@
                             if (text.charAt(c) == '>' || text.charAt(c) == '}'){
                                 start = c+1;
                                 sI = c;
-                                if (typeof data.unit != 'undefined' && text.charAt(c) == '>'){
-                                    var what = Utils.parseStringCode(data.unit,t);
-                                    console.log(what);
-                                    t = what;
+                                if (data.unit && text.charAt(c) == '>'){
+                                    t = Utils.parseStringCode(t,data.unit);
                                 }
                                 var nextWord = new PIXI.Text(t,this.style1);
                                 break;

@@ -80,17 +80,6 @@
         this.fainted = false;
         this.dead = false;
 
-        this.onTakeDamage = []; //list of effects when the unit takes damage
-        this.onWeaponAttack = []; //list of effects when the unit makes a weapon attack
-        this.onMove = []; //list of effects when the unit moves
-        this.onEnemyMove = [] //list of effects when an enemy unit moves
-        this.onTurnEnd = [];
-        this.onTargetFaint = [];
-        this.onTargetKill = [];
-        this.onFaint = [];
-        this.onKill = [];
-        this.onTurnStart = [];
-
     };
 
     Unit.prototype.init = function(data) {

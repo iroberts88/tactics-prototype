@@ -29,7 +29,7 @@ Attribute.prototype.init = function(data){
 	this.setValue = 0;
 	//formula for setting the attribute
 	if (typeof data.formula == 'undefined'){
-		this.formula = function(){return Math.round(this.base*this.pMod+this.nMod);};
+		this.formula = function(){return Math.round((this.base+this.nMod)*this.pMod);};
     }else{
     	this.formula = data.formula;
     }
