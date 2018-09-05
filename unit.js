@@ -1,4 +1,5 @@
 var Attribute = require('./attribute.js').Attribute;
+var Item = require('./item.js').Item;
 
 var Unit = function(){
     this.id = null;
@@ -98,7 +99,7 @@ var Unit = function(){
     this.fainted = false;
 
     this.onTakeDamage = []; //list of effects when the unit takes damage
-    this.onWeaponAttack = []; //list of effects when the unit makes a weapon attack
+    this.onAttack = []; //list of effects when the unit makes a weapon attack
     this.onMove = []; //list of effects when the unit moves
     this.onEnemyMove = [] //list of effects when an enemy unit moves
     this.onTurnEnd = [];
@@ -107,6 +108,18 @@ var Unit = function(){
     this.onFaint = [];
     this.onKill = [];
     this.onTurnStart = [];
+
+    this.fists = new Item();
+    this.fists.init({
+        amount:1,
+        classes:"ALL",
+        description:"Hand to hand combat",
+        eqData:{range: 1, damage: 10},
+        itemID:"weapon_fists",
+        name:"Fists",
+        type:"weapon",
+        weight:0
+    });
 }
 
 Unit.prototype.reset = function(){
@@ -126,7 +139,7 @@ Unit.prototype.reset = function(){
     this.hidden = false;
 
     //charge
-    this.charge = 0;
+    this.charge = Math.random();
     //buffs initialize
     this.buffs = [];
 }
@@ -436,36 +449,80 @@ Unit.prototype.endTurn = function(){
     //tick all buffs
     for (var i = 0; i < this.buffs.length;i++){
         this.buffs[i].tick();
+        if (this.buffs[i].buffEnded){
+            this.buffs.splice(i,1);
+            i -= 1;
+        }
     }
 };
 
-Unit.prototype.damage = function(type,value){
+Unit.prototype.damage = function(type,value,aData){
+    //damage based on type
+    if (typeof aData == 'undefined'){
+        aData = [];
+    }
     switch(type){
         case this.engine.dmgTypeEnums.Gravity:
+            value -= value*(this.gravityRes.value/100);
+            var mod = 8/(60/this.inventory.currentWeight);
+            value = Math.ceil(value*mod);
+            this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Electric:
+            value -= value*(this.electricRes.value/100);
+            if (this.currentShields > 0){
+                value = value*2;
+            }
+            this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Poison:
+            value -= value*(this.poisonRes.value/100);
+            this.currentHealth -= value;
             break;
         case this.engine.dmgTypeEnums.Corrosive:
+            value -= value*(this.acidRes.value/100);
+            if (this.mechanical){
+                value = value*2;
+            }
+            this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Heat:
+            value -= value*(this.heatRes.value/100);
+            if (this.human){
+                value = value*2;
+            }
+            this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Cold:
+            value -= value*(this.coldRes.value/100);
             break;
         case this.engine.dmgTypeEnums.Radiation:
-            break;
-        case this.engine.dmgTypeEnums.Pulse:
-            break;
-        default:
-            if (this.currentShields < value){
-                value -= this.currentShields;
-                this.currentShields = 0;
-            }else{
-                this.currentShields -= value;
+            value -= value*(this.radiationRes.value/100);
+            if (this.mechanical){
                 value = 0;
             }
-            this.currentHealth -= value;
+            if (this.human){
+                value = value*3;
+            }
+            this._damage(value);
+            break;
+        case this.engine.dmgTypeEnums.Pulse:
+            value -= value*(this.pulseRes.value/100);
+            if (this.mechanical){
+                value = value*3;
+            }
+            if (this.human){
+                value = 0;
+            }
+            this._damage(value);
+            break;
+        case this.engine.dmgTypeEnums.Explosive:
+            value -= value*(this.physicalRes.value/200);
+            this._damage(value);
+            break;
+        default:
+            value -= value*(this.physicalRes.value/100);
+            this._damage(value);
             break;
     }
     if (this.currentHealth <= 0 && !this.fainted){
@@ -475,8 +532,28 @@ Unit.prototype.damage = function(type,value){
         }
         this.fainted = true;
     }
+    aData.push({
+        action: this.owner.gameSession.clientActionEnums.DmgText,
+        unitid: this.id,
+        text: '-' + value,
+        newShields: this.currentShields,
+        newHealth: this.currentHealth,
+        fainted: this.fainted,
+        type: type,
+        dead:this.dead
+    });
+    return aData;
 };
-
+Unit.prototype._damage = function(value){
+    if (this.currentShields < value){
+        value -= this.currentShields;
+        this.currentShields = 0;
+    }else{
+        this.currentShields -= value;
+        value = 0;
+    }
+    this.currentHealth -= value;
+}
 Unit.prototype.setMoveLeft = function(val){
     this.moveLeft = val;
     if (this.moveLeft < 0){
@@ -485,34 +562,34 @@ Unit.prototype.setMoveLeft = function(val){
     this.owner.gameSession.queueData('setMoveLeft',{unit: this.id,val: this.moveLeft});
 };
 Unit.prototype.levelUp = function(update){
-    //TODO save these values just in case the numbers change?
-    this.power.base += 5;
-    this.power.base += this.strength.base*0.2;
-    this.power.base += this.charisma.base*0.05;
+    //TODO save the values per level just in case the numbers change?
+    this.power.base += 4;
+    this.power.base += this.strength.base*0.49;
+    this.power.base += this.charisma.base*0.09;
+    this.skill.base += 4;
+    this.skill.base += this.dexterity.base*0.49;
+    this.skill.base += this.charisma.base*0.09;
+    this.tactics.base += 4;
+    this.tactics.base += this.intelligence.base*0.49;
+    this.tactics.base += this.charisma.base*0.09;
     this.power.set(update);
-    this.maximumHealth.base += 5
-    this.maximumHealth.base += this.endurance.base*0.28;
-    this.maximumHealth.base += this.charisma.base*0.07;
+    this.tactics.set(update);
+    this.skill.set(update);
+    this.maximumHealth.base += 5;
+    this.maximumHealth.base += this.endurance.base*0.84;
+    this.maximumHealth.base += this.charisma.base*0.13;
     this.maximumHealth.set(update);
     this.abilitySlots.base += 1;
     this.abilitySlots.base += this.intelligence.base*0.1;
     this.abilitySlots.base += this.charisma.base*0.02;
-    this.tactics.base += 5;
-    this.tactics.base += this.intelligence.base*0.2;
-    this.tactics.base += this.charisma.base*0.05;
-    this.tactics.set(update);
     this.abilitySlots.set(update);
-    this.skill.base += 5;
-    this.skill.base += this.dexterity.base*0.2;
-    this.skill.base += this.charisma.base*0.05;
-    this.skill.set(update);
-    this.speed.base += 4;
-    this.speed.base += this.agility.base*0.5;
-    this.speed.base += this.charisma.base*0.12;
+    this.speed.base += 2;
+    this.speed.base += this.agility.base*0.32;
+    this.speed.base += this.charisma.base*0.06;
     this.speed.set(update);
     this.maximumEnergy.base += 1;
-    this.maximumEnergy.base += this.willpower.base*0.1;
-    this.maximumEnergy.base += this.charisma.base*0.025;
+    this.maximumEnergy.base += this.willpower.base*0.4;
+    this.maximumEnergy.base += this.charisma.base*0.1;
     this.maximumEnergy.set(update);
 }
 
@@ -869,7 +946,6 @@ Unit.prototype.modStatPercent = function(id,amt){
         this.getStat(id).set(true);
         console.log(this.getStat(id).value)
         console.log(this.getStat(id).pMod)
-        console.log(this.getStat(id))
     }catch(e){
         console.log("unable to mod stat " + id);
         console.log(e);
@@ -900,16 +976,7 @@ Unit.prototype.getWeapon = function(){
     if (this.weapon >= 0){
         return this.inventory.items[this.weapon];
     }else{
-        return {
-            amount:1,
-            classes:"ALL",
-            description:"Hand to hand combat",
-            eqData:{range: 1, damage: 10},
-            itemID:"weapon_fists",
-            name:"Fists",
-            type:"weapon",
-            weight:0
-        }
+        return this.fists;
     }
 };
 
@@ -927,8 +994,13 @@ Unit.prototype.removeBuffsWithTag = function(tag){
             if (buff.tags[j] == tag){
                 console.log('removing...')
                 buff.ticker = buff.duration;
-                buff.tick();
+                buff.end();
+                continue;
             }
+        }
+        if (buff.buffEnded){
+            this.buffs.splice(i,1);
+            i -= 1;
         }
     }
 };

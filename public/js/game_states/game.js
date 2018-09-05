@@ -646,7 +646,7 @@
                             }
                             break;
                         case 'openhex':
-                            if (node.unitaa){
+                            if (node.unit){
                                 valid = false;
                             }
                             break;
@@ -1375,12 +1375,19 @@
             var txt2 = '';
             var txt3 = '';
             var cPer = 0;
+            var color = Graphics.pallette.color1
             if (this.units[id].isCastTimer){
                 txt1 = Game.units[id].abilityName;
                 txt2 = '(' +Game.units[Game.units[id].unitid].name + ')';
-                cPer = Math.round((Game.units[id].charge/Game.chargeMax));
-                if (cPer > 1){cPer = 1}
-                txt3 = cPer + ' %';
+                cPer = (Game.units[id].charge/Game.chargeMax);
+                if (cPer > 1){
+                    cPer = 1
+                }
+                txt3 = Math.round(cPer*100) + ' %';
+                if (cPer < 0){
+                    cPer = 0;
+                }
+                color = 0xffea84;
             }else{
                 txt1 = Game.units[id].name;
                 txt2 = 'L' + Game.units[id].level + ' ' + Game.units[id].classInfo.currentClass.charAt(0).toUpperCase() + Game.units[id].classInfo.currentClass.substr(1);
@@ -1392,7 +1399,7 @@
             text.anchor.y = 0.5;
             text.position.x = w*0.5;
             text.position.y = h*0.33;
-            text.style.fill = Graphics.pallette.color1;
+            text.style.fill = color;
             text = Graphics.fitText(text,w-5);
             cont.addChild(text);
 

@@ -84,12 +84,7 @@
 
     Unit.prototype.init = function(data) {
         //Set up all stats and attributes
-        this.maximumHealth = data.maximumHealth;
-        this.maximumEnergy = data.maximumEnergy;
-        this.maximumShields = data.maximumShields;
-        //shields stay at null until a shield is equipped?
-
-        this.full = data.full;
+        this.updateInfo(data);
         this.visible = (typeof data.visible == 'undefined') ? true : data.visible;
         this.direction = data.direction;
         if (data.currentNode){
@@ -97,50 +92,8 @@
         }else{
             this.currentNode = data.currentNode;
         }
-        this.currentHealth = data.health;
-        this.currentEnergy = data.energy;
-        this.currentShields = data.shields;
-        this.move = data.move;
-        this.moveLeft = data.move;
-        this.jump = data.jump;
-        this.power = data.power;
-        this.skill = data.skill;
-        this.tactics = data.tactics;
-        this.speed = data.speed;
-        this.abilitySlots = data.abilitySlots;
-        this.strength = data.strength;
-        this.endurance = data.endurance;
-        this.agility = data.agility;
-        this.dexterity = data.dexterity;
-        this.willpower = data.willpower;
-        this.intelligence = data.intelligence;
-        this.charisma = data.charisma;
-
         this.chargePercent = 0;
 
-        this.physicalRes = data.physicalRes;
-        this.heatRes = data.heatRes;
-        this.coldRes = data.coldRes;
-        this.acidRes = data.acidRes;
-        this.poisonRes = data.poisonRes;
-        this.electricRes = data.electricRes;
-        this.pulseRes = data.pulseRes;
-        this.radiationRes = data.radiationRes;
-        this.gravityRes = data.gravityRes;
-
-        this.owner = data.owner;
-        this.name = data.name;
-        this.sex = data.sex;
-        this.id = data.id;
-        if (data.inventory){
-            this.inventory = new Inventory();
-            this.inventory.init(data.inventory);
-        }else{
-            this.inventory = null;
-        }
-        this.level = data.level;
-        this.exp = data.exp;
-        this.classInfo = data.classInfo;
         if (data.direction){
             //initialize the sprite
             var dir = '';
@@ -165,12 +118,65 @@
             this.sprite.tint = colors[this.classInfo.currentClass.toLowerCase()];
             this.sprite.gotoAndPlay(Math.floor(Math.random()*8))
         }
+    };
+
+    Unit.prototype.updateInfo = function(data){
+        this.maximumHealth = data.maximumHealth;
+        this.maximumEnergy = data.maximumEnergy;
+        this.maximumShields = data.maximumShields;
+        //shields stay at null until a shield is equipped?
+
+        this.full = data.full;
+        this.currentHealth = data.health;
+        this.currentEnergy = data.energy;
+        this.currentShields = data.shields;
+        this.move = data.move;
+        this.moveLeft = data.move;
+        this.jump = data.jump;
+        this.power = data.power;
+        this.skill = data.skill;
+        this.tactics = data.tactics;
+        this.speed = data.speed;
+        this.abilitySlots = data.abilitySlots;
+        this.strength = data.strength;
+        this.endurance = data.endurance;
+        this.agility = data.agility;
+        this.dexterity = data.dexterity;
+        this.willpower = data.willpower;
+        this.intelligence = data.intelligence;
+        this.charisma = data.charisma;
+
+        this.physicalRes = data.physicalRes;
+        this.heatRes = data.heatRes;
+        this.coldRes = data.coldRes;
+        this.acidRes = data.acidRes;
+        this.poisonRes = data.poisonRes;
+        this.electricRes = data.electricRes;
+        this.pulseRes = data.pulseRes;
+        this.radiationRes = data.radiationRes;
+        this.gravityRes = data.gravityRes;
+
+        this.owner = data.owner;
+        this.name = data.name;
+        this.sex = data.sex;
+        this.id = data.id;
+        if (data.inventory){
+            this.inventory = new Inventory();
+            this.inventory.init(data.inventory);
+        }else{
+            this.inventory = null;
+        }
+        this.level = data.level;
+        this.exp = data.exp;
+        this.classInfo = data.classInfo;
+        
         this.weapon = data.weapon;
         this.shield = data.shield;
         this.accessory = data.accessory;
 
         this.usedAbilitySlots = data.usedAbilitySlots;
-    };
+    }
+
     Unit.prototype.getWeapon = function(){
         if (this.weapon >= 0){
             return this.inventory.items[this.weapon];
@@ -187,6 +193,7 @@
             }
         }
     };
+
 
     Unit.prototype.setFainted = function(){
         this.sprite.rotation = 1.57;
@@ -224,10 +231,44 @@
         this.currentNode = map.axialMap[q][r];
         map.axialMap[q][r].unit = this;
     };
-    Unit.prototype.addDmgText = function(n){
+    Unit.prototype.addDmgText = function(n,type){
         var str = n.toString();
         var sprites = [];
         var text = new PIXI.Text(str,AcornSetup.baseStyle3);
+        if (typeof type != 'undefined'){
+            switch(type){
+                case 'pois':
+                    text.style.fill = 'green';
+                    break;
+                case 'phys':
+                    text.style.fill = 'red';
+                    break;
+                case 'expl':
+                    text.style.fill = 0xffea84;
+                    break;
+                case 'elec':
+                    text.style.fill = 0x0c00ff;
+                    break;
+                case 'grav':
+                    text.style.fill = 0xd000ff;
+                    break;
+                case 'corr':
+                    text.style.fill = 0x7bff00;
+                    break;
+                case 'cold':
+                    text.style.fill = 0x00c7ff;
+                    break;
+                case 'heat':
+                    text.style.fill = 0xff8800;
+                    break;
+                case 'radi':
+                    text.style.fill = 0x00ffbf;
+                    break;
+                case 'puls':
+                    text.style.fill = 0xc9cbff;
+                    break;
+            }
+        }
         var xPos = 0;
         var yPos = -text.height/2;
         text.anchor.x = 0.5;

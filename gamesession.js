@@ -285,12 +285,14 @@ GameSession.prototype.turnSort = function(arr){
             larger.push(arr[x]);
         }else{
             //values are equal, randomize turn position in pivot array (TODO -- or go by some other metric?)
+            console.log(this.allUnits[arr[x].id].charge)
             if (Math.round(Math.random())){
                 pivotArr.push(arr[x]);
-                this.allUnits[arr[x].id].charge -= (x*0.001);
+
+                this.allUnits[arr[x].id].charge -= 1;
             }else{
                 pivotArr.splice(0,0,arr[x]);
-                this.allUnits[arr[x].id].charge += (x*0.001);
+                this.allUnits[arr[x].id].charge += 1;
             }
         }
     }
@@ -312,9 +314,9 @@ GameSession.prototype.getTurnOrder = function(){
         var unit = this.allUnits[i];
         if (unit.dead || unit.fainted){continue;}
         if (unit.isCastTimer){
-            this.turnOrder.push({val: Math.ceil((this.chargeMax-unit.charge)/unit.speed), id: unit.id});
+            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed, id: unit.id});
         }else{
-            this.turnOrder.push({val: Math.ceil((this.chargeMax-unit.charge)/unit.speed.value), id: unit.id});
+            this.turnOrder.push({val: (this.chargeMax-unit.charge)/unit.speed.value, id: unit.id});
         }
     }
     this.turnOrder = this.turnSort(this.turnOrder);
@@ -323,9 +325,9 @@ GameSession.prototype.getTurnOrder = function(){
         var unit = this.allUnits[i];
         if (unit.dead || unit.fainted){continue;}
         if (unit.isCastTimer){
-            unit.charge += this.turnOrder[0].val*unit.speed;
+            unit.charge += Math.round(this.turnOrder[0].val)*unit.speed;
         }else{
-            unit.charge += this.turnOrder[0].val*unit.speed.value;
+            unit.charge += Math.round(this.turnOrder[0].val)*unit.speed.value;
         }
     }
     //now check if the new turn is a cast time
@@ -448,7 +450,7 @@ GameSession.prototype.executeAttack = function(data){
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
-                actionData.push({
+                data.actionData.push({
                     action: this.clientActionEnums.DmgText,
                     text: 'Partial LOS',
                     unitid: data.node.unit.id
@@ -457,7 +459,7 @@ GameSession.prototype.executeAttack = function(data){
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
-                actionData.push({
+                data.actionData.push({
                     action: this.clientActionEnums.NoLos,
                     unitid: data.unit.id
                 });
@@ -480,27 +482,23 @@ GameSession.prototype.executeAttack = function(data){
         tMod += data.unit.power.value/100;
     }
     //execute attack
-    data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod));
+    for (var i = 0; i < data.unit.onAttack.length;i++){
+        var aFunc = Actions.getAction(data.unit.onAttack[i].action);
+        data.unit.onAttack[i].target = data.node.unit;
+        aFunc(data.unit,data.unit.onAttack[i]);
+    }
+    data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod),data.actionData);
     return data;
 }
 GameSession.prototype.unitAttack = function(data){
     data.actionData = [];
     data = this.executeAttack(data);
     if (!data){return;}
-    data.actionData.push({
+    data.actionData.splice(0,0,{
         action: this.clientActionEnums.Attack,
         unitid: data.unit.id,
         weapon: data.weapon.name,
-        newDir: data.d.newDir,
-        unitInfo: [
-            {
-                target: data.node.unit.id,
-                newHealth: data.node.unit.currentHealth,
-                newShields: data.node.unit.currentShields,
-                fainted: data.node.unit.fainted,
-                dead: data.node.unit.dead
-            }
-        ]
+        newDir: data.d.newDir
     });
     //TODO check for post-attack reactions
 
@@ -580,7 +578,17 @@ GameSession.prototype.unitAbility = function(data){
             if (typeof data.ability.speed == 'undefined' || data.ability.speed == 'instant'){
                 unit.removeBuffsWithTag('removeOnAction');
                 var aFunc = Actions.getAbility(data.ability.id);
-                aFunc(unit,this,data);
+                var success = aFunc(unit,this,data);
+                if (!success){
+                    unit.currentEnergy += energy;
+                    data.actionData = [{
+                        action: this.clientActionEnums.DmgText,
+                        unitid: unit.id,
+                        text: 'Action failed'
+                    }]
+                    this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+                    return;
+                }
             }else{
                 //The ability has a cast time
                 //add cast time to the turn order and start casting!

@@ -260,15 +260,19 @@ HexMap.prototype.getDMod = function(start,end){
     var d2 = this.getNewDirectionCube(end,r2[r2.length-2]);
     if (end.unit){
         var dEnd = this.cardinalDirectionPositions[end.unit.direction];
-        console.log(dEnd);
         var dMod1 = this._getDMod(d1,dEnd);
         var dMod2 = this._getDMod(d2,dEnd);
         dMod *= ((dMod1+dMod2)/2)
     }
-    return {
+    var results = {
         dMod: dMod,
-        newDir: this.cardinalDirections[d1]
+        newDir: null
     }
+    if (typeof this.cardinalDirections[d1] != 'undefined'){
+        results.newDir = this.cardinalDirections[d1];
+    }
+
+    return results;
 }
 HexMap.prototype._getDMod = function(dir1,dir2){
     

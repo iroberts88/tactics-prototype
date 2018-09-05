@@ -187,24 +187,6 @@
         }
         data.ticker += dt;
         if (data.ticker >= 1.5){
-            for (var i = 0; i < data.unitInfo.length;i++){
-                var u = Game.units[data.unitInfo[i].target];
-                var total = 0;
-                total += u.currentHealth - data.unitInfo[i].newHealth;
-                total += u.currentShields - data.unitInfo[i].newShields;
-                u.currentHealth = data.unitInfo[i].newHealth;
-                u.currentShields = data.unitInfo[i].newShields;
-                u.addDmgText(total);
-                if (data.unitInfo[i].dead){
-                    Game.units[data.unitInfo[i].target].setDead();
-                    Game.units[data.unitInfo[i].target].currentNode.unit = null;
-                    Game.units[data.unitInfo[i].target].dead = true;
-                    continue;
-                }else if (data.unitInfo[i].fainted){
-                    Game.units[data.unitInfo[i].target].setFainted();
-                }
-                u.infoPane = Game.getUnitInfoPane(data.unitInfo[i].target);
-            }
             actions.endAction(data);
         }
     };
@@ -215,11 +197,31 @@
     };
 
     Actions.prototype.actionBubble = function(dt,actions,data){
-        Game.units[data.unitid].addActionBubble(data.text);
-        actions.endAction(data);
+        if (typeof data.ticker == 'undefined'){
+            data.ticker = 0;
+            Game.units[data.unitid].addActionBubble(data.text);
+        }
+        data.ticker += dt;
+        if (data.ticker >= 1.5){
+            actions.endAction(data);
+        }
     };
     Actions.prototype.dmgText = function(dt,actions,data){
-        Game.units[data.unitid].addDmgText(data.text);
+        Game.units[data.unitid].addDmgText(data.text,data.type);
+        if (typeof data.newHealth != 'undefined'){
+            Game.units[data.unitid].currentHealth = data.newHealth;
+        }
+        if (typeof data.newShields != 'undefined'){
+            Game.units[data.unitid].currentShields = data.newShields;
+        }
+        if (data.dead && typeof data.dead != 'undefined'){
+            Game.units[data.unitid].setDead();
+            Game.units[data.unitid].currentNode.unit = null;
+            Game.units[data.unitid].dead = true;
+        }else if (data.fainted&& typeof data.fainted != 'undefined'){
+            Game.units[data.unitid].setFainted();
+        }
+        Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
         actions.endAction(data);
     };
     Actions.prototype.actionUsed = function(dt,actions,data){

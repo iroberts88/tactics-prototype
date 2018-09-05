@@ -14,15 +14,17 @@
       "tags": [
         "detrimental"
       ],
-      "instant": false
+      "instant": false,
+      "stackType": "none"
     },
     {
       "description": "Poison damage per turn",
-      "duration": 3,
+      "duration": 5,
       "name": "poison",
       "actionsOnTurn": [
       ],
       "buffid": "buff_poison",
+      "stackType": "none",
       "tags": [
         "detrimental","elemental","poison"
       ],
@@ -32,6 +34,7 @@
       "description": "Unit is hidden until revealed or an action is taken",
       "duration": null,
       "name": "Stealth",
+      "stackType": "none",
       "actionsOnImmediate": [
         {
           "action": "setHidden"
@@ -50,6 +53,18 @@
       "instant": false,
       "tickImmediately": true,
       "effect": "hidden"
+    },
+    {
+      "description": "This unit's weapon is dripping with poison!",
+      "duration": null,
+      "name": "Poisoned Weapon",
+      "stackType": "none",
+      "buffid": "buff_poisonedWeapon",
+      "tags": [
+        "detrimental","removeOnEquipChange"
+      ],
+      "tickImmediately": true,
+      "instant": false
     }
   ]
 }

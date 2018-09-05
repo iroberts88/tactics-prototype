@@ -134,9 +134,8 @@
           "range": "self",
           "ApCost": 350,
           "id": "poisonWeapon",
-          "type": "self",
-          "eCost": "75",
-          "speed": 350
+          "type": "singleunit",
+          "eCost": "75"
         },
         {
           "sCost": 15,
@@ -146,8 +145,7 @@
           "ApCost": 500,
           "id": "interrupt",
           "type": "singleunit",
-          "eCost": 35,
-          "speed": "instant"
+          "eCost": 35
         }
       ],
       "name": "Scout"
@@ -167,7 +165,7 @@
         "move": 0,
         "maximumEnergy": 40,
         "maximumHealth": -20,
-        "speed": -10,
+        "speed": 50,
         "jump": 0
       },
       "abilities": [

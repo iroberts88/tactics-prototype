@@ -29,7 +29,7 @@ var Buff = function(data){
     
     this.stackType = data.stackType;
     //an identifier for how the buff stacks with itself
-    //"None" - buff doesn't stack. adds a completely new instance of the buff
+    //"none" - buff doesn't stack. adds a completely new instance of the buff
     //"Refresh" - removes itself and adds a new copy of the buff
     
     this.debuff = data.debuff;  //bool: false: positive buff, true: negative buff
@@ -64,7 +64,7 @@ var Buff = function(data){
 Buff.prototype.init =  function(data){
     var Actions = require('./actions.js').Actions
     this.unit = data.unit; //the buff will perform actions on this object
-    this.id = data.id;
+    this.id = data.unit.owner.gameSession.getId();
     var add = true;
 
     /*
@@ -132,7 +132,7 @@ Buff.prototype.init =  function(data){
 }
 
 Buff.prototype.tick = function(){
-    var Actions = require('./actions.js').Actions
+    var Actions = require('./actions.js').Actions;
     //new turn, update buffs!
     this.ticker += 1;
     for (var i = 0;i < this.actionsOnTick.length;i++){
@@ -143,13 +143,18 @@ Buff.prototype.tick = function(){
         }
     }
     if (this.ticker >= this.duration){
-        //The timer is over the max duration. Perform actions on end and end the buff
-        for (var i = 0;i < this.actionsOnEnd.length;i++){
-            var action = Actions.getAction(this.actionsOnEnd[i].action);
-            action(this.unit, this.actionsOnEnd[i]);
-        }
-        this.buffEnded = true;
+        this.end();
     }
+}
+
+Buff.prototype.end = function(){
+    var Actions = require('./actions.js').Actions;
+    //The timer is over the max duration. Perform actions on end and end the buff
+    for (var i = 0;i < this.actionsOnEnd.length;i++){
+        var action = Actions.getAction(this.actionsOnEnd[i].action);
+        action(this.unit, this.actionsOnEnd[i]);
+    }
+    this.buffEnded = true;
 }
 
 Buff.prototype.modify = function(data){

@@ -182,9 +182,6 @@
                 var cArr = [];
                 //seperate the code into numbers,operators, and attr codes
                 var currentType = this.getType(_code.charAt(0));
-                if (!currentType){
-                    console.log(code);
-                }
                 var str = '';
                 for (var i = 0; i < _code.length;i++){
                     if (this.getType(_code.charAt(i)) == currentType){
@@ -246,7 +243,7 @@
             }
         },
 
-        getAttr: function(unit,str){
+        getAttr: function(str,unit){
             switch(str){
                 case 'MOV':
                     return unit.move;
@@ -315,7 +312,7 @@
                     rString += str.charAt(i);
                 }
             }
-            var result = Utils.parseStringCode(unit,rString);
+            var result = Utils.parseStringCode(rString,unit);
             return parseInt(result);
         }
     };

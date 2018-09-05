@@ -108,13 +108,13 @@ Equipment.prototype.init = function(data) {
     this.delay = (typeof data.delay != 'undefined') ? data.delay : null;
 
     //all
-    this.onEquip = (typeof data.onEquip != 'undefined') ? data.onEquip : null;
-    this.onFire = (typeof data.onFire != 'undefined') ? data.onFire : null;
-    this.onHit = (typeof data.onHit != 'undefined') ? data.onHit : null;
-    this.onTakeDamage = (typeof data.onTakeDamage != 'undefined') ? data.onTakeDamage : null;
-    this.constant = (typeof data.constant != 'undefined') ? data.constant : null;
-    this.onDepleted = (typeof data.onDepleted != 'undefined') ? data.onDepleted : null;
-    this.onFullRecharge = (typeof data.onFullRecharge != 'undefined') ? data.onFullRecharge : null;
+    this.onEquip = (typeof data.onEquip != 'undefined') ? data.onEquip : [];
+    this.onFire = (typeof data.onFire != 'undefined') ? data.onFire : [];
+    this.onHit = (typeof data.onHit != 'undefined') ? data.onHit : [];
+    this.onTakeDamage = (typeof data.onTakeDamage != 'undefined') ? data.onTakeDamage : [];
+    this.constant = (typeof data.constant != 'undefined') ? data.constant : [];
+    this.onDepleted = (typeof data.onDepleted != 'undefined') ? data.onDepleted : [];
+    this.onFullRecharge = (typeof data.onFullRecharge != 'undefined') ? data.onFullRecharge : [];
 
 };
 

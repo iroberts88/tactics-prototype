@@ -52,6 +52,7 @@
 
             Acorn.Net.on('newTurnOrder', function(data) {
                 //get the new turn order at the beginning of each turn
+                console.log(data);
                 Game.turnList = data.turnList;
                 for (var i = 0;i<data.turnPercent.length;i++){
                     if (Game.units[Game.turnList[i]].isCastTimer){
@@ -360,6 +361,14 @@
                     Game.units[data.unitid].setCurrentNode(data.q,data.r,Game.map);
                     Game.units[data.unitid].setNewDirection(data.direction);
                     Game.updateUnitsBool = true;
+                }
+            });
+
+            Acorn.Net.on('updateUnitInfo', function (data) {
+                console.log(data);
+                if (typeof Game.units[data.unitid] != 'undefined'){
+                    Game.units[data.unitid].updateInfo(data.info);
+                    Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
                 }
             });
 

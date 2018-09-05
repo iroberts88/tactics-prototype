@@ -238,6 +238,11 @@
             if (typeof Graphics.resources[id] === 'undefined'){
                 console.log(id);
                 console.log('-- Graphics resource not found' )
+                try{
+                    whatthe.fuck();
+                }catch(e){
+                    console.log(e.stack);
+                }
                 return Graphics.resources['base_tile1'];
             }else{
                 return Graphics.resources[id];

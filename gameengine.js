@@ -49,7 +49,8 @@ var GameEngine = function() {
         Cold: 'cold',
         Heat: 'heat',
         Radiation: 'radi',
-        Pulse: 'puls'
+        Pulse: 'puls',
+        Explosive: 'expl'
     }
 }
 
