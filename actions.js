@@ -30,7 +30,9 @@ AbilityEnums = {
 	ToxicGrenade: 'toxicGrenade',
 	EmpGrenade: 'empGrenade',
 	UnstableGrenade: 'unstableGrenade',
-	VoidGrenade: 'voidGrenade'
+	VoidGrenade: 'voidGrenade',
+	ResUp: 'resUp',
+	Repair: 'repair'
 };
 
 var Actions = function(){}
@@ -245,20 +247,11 @@ Actions.prototype.flare = function(unit,session,data){
 Actions.prototype.quickAttack = function(unit,session,data){
     data = session.executeAttack(data);
     if (!data){return false;}
-    data.actionData.push({
+    data.actionData.splice(0,0,{
         action: session.clientActionEnums.Attack,
         unitid: data.unit.id,
         weapon: 'Quick Attack',
         newDir: data.d.newDir,
-        unitInfo: [
-            {
-                target: data.node.unit.id,
-                newHealth: data.node.unit.currentHealth,
-                newShields: data.node.unit.currentShields,
-                fainted: data.node.unit.fainted,
-                dead: data.node.unit.dead
-            }
-        ]
     });
     unit.charge += session.chargeMax*(0.3+Math.round(unit.agility.value*1.5)/100);
 	return true;
@@ -319,20 +312,11 @@ Actions.prototype.cheer = function(unit,session,data){
 Actions.prototype.interrupt = function(unit,session,data){
     data = session.executeAttack(data);
     if (!data){return false;}
-    data.actionData.push({
+    data.actionData.splice(0,0,{
         action: session.clientActionEnums.Attack,
         unitid: data.unit.id,
         weapon: 'Interrupt',
-        newDir: data.d.newDir,
-        unitInfo: [
-            {
-                target: data.node.unit.id,
-                newHealth: data.node.unit.currentHealth,
-                newShields: data.node.unit.currentShields,
-                fainted: data.node.unit.fainted,
-                dead: data.node.unit.dead
-            }
-        ]
+        newDir: data.d.newDir
     });
     data.node.unit.charge -= session.chargeMax*((10+unit.agility.value)/100);
     if (data.node.unit.charge < 0){
@@ -525,6 +509,50 @@ Actions.prototype.flareGrenade = function(unit,session,data){
 	data.dmg = 20;
 	return Actions.grenade(unit,session,data);
 }
+
+Actions.prototype.resUp = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(2);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Resist UP'
+	});
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			var percent = unit.willpower.value*4;
+			var buffData = session.gameEngine.buffs["buff_resistUp"];
+			var buff = new Buff(buffData);
+			var resistances = ['hRes','cRes','puRes','poRes','rRes','gRes','aRes','eRes'];
+			for (var j = 0; j <resistances.length;j++){
+				buff.actionsOnImmediate.push({
+			        "action": "alterStat",
+			        "stat": resistances[j],
+			        "value": percent
+				});
+				buff.actionsOnEnd.push({
+			        "action": "alterStat",
+			        "stat": resistances[j],
+			        "value": percent,
+			        "reverse":true
+				});
+			}
+			buff.init({
+			    unit: nodes[i].unit //the buff will perform actions on this object
+			});
+			buff.duration = Math.floor(1+unit.charisma.value/2);
+			data.actionData.push({
+		        action: session.clientActionEnums.DmgText,
+		        unitid: nodes[i].unit.id,
+		        text: 'All res +' + percent + '%'
+		    });
+		}
+	}
+	return true;
+}
+
 Actions.prototype.getAbility = function(a){
 	console.log('getting ability <' + a + '>');
 	switch(a){
@@ -584,6 +612,12 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.VoidGrenade:
 			return this.voidGrenade;
+			break;
+		case AbilityEnums.ResUp:
+			return this.resUp;
+			break;
+		case AbilityEnums.Repair:
+			return this.repair;
 			break;
 		default:
 			return this.testAbility;

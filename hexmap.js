@@ -407,11 +407,11 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
     //Init the start node and the end node
     startNode.f = 0;
     startNode.g = 0;
-    startNode.h = 0;
+    startNode.heu = 0;
     startNode.parent = null;
     endNode.f = 0;
     endNode.g = 0;
-    endNode.h = 0;
+    endNode.heu = 0;
     endNode.parent = null;
 
     if (typeof options.maxJump == 'undefined'){
@@ -480,7 +480,7 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
                     //new node, initialize
                     newNode = true;
                     node.g = 0;
-                    node.h = 0;
+                    node.heu = 0;
                     node.f = 0;
                     node.parent = null;
                 }
@@ -496,7 +496,7 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
                     //take heuristic score
                     //a small amount is added based on height diff 
                     //to avoid paths with too much height variation when possible
-                    node.h = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
+                    node.heu = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
                     openList.push(node);
                 }else if(gScore < node.g) {
                     // We have already seen the node, but last time it had a worse g (distance from start)
@@ -507,7 +507,7 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
                     // Found an optimal (so far) path to this node.  Store info on how we got here and how good it is
                     node.parent = currentNode;
                     node.g = gScore;
-                    node.f = node.g + node.h;
+                    node.f = node.g + node.heu;
                 }
             }
         }

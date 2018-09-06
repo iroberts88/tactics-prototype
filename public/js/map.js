@@ -668,7 +668,7 @@
         for (var i = 0; i < 6;i++){
             for (var j = 0; j < radius;j++){
                 try{
-                    var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
+                    var c = this.getAxial(this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]]);
                     results.push(c);
                 }catch(e){
 
@@ -755,11 +755,11 @@
         //Init the start node and the end node
         startNode.f = 0;
         startNode.g = 0;
-        startNode.h = 0;
+        startNode.heu = 0;
         startNode.parent = null;
         endNode.f = 0;
         endNode.g = 0;
-        endNode.h = 0;
+        endNode.heu = 0;
         endNode.parent = null;
 
         if (typeof options.maxJump == 'undefined'){
@@ -828,7 +828,7 @@
                         //new node, initialize
                         newNode = true;
                         node.g = 0;
-                        node.h = 0;
+                        node.heu = 0;
                         node.f = 0;
                         node.parent = null;
                     }
@@ -844,7 +844,7 @@
                         //take heuristic score
                         //a small amount is added based on height diff 
                         //to avoid paths with too much height variation when possible
-                        node.h = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
+                        node.heu = Math.max(Math.abs(endNode.x-node.x),Math.abs(endNode.y-node.y),Math.abs(endNode.z-node.z)) + (Math.abs(axial.h - currentAxial.h)*0.001);
                         openList.push(node);
                     }else if(gScore < node.g) {
                         // We have already seen the node, but last time it had a worse g (distance from start)
@@ -855,7 +855,7 @@
                         // Found an optimal (so far) path to this node.  Store info on how we got here and how good it is
                         node.parent = currentNode;
                         node.g = gScore;
-                        node.f = node.g + node.h;
+                        node.f = node.g + node.heu;
                     }
                 }
             }
@@ -978,12 +978,12 @@
     var Node = function(){}
 
     Node.prototype.init = function(q,r){
-        this.q = q;
-        this.r = r;
-        this.x = q;
-        this.y = ((q*-1)-r);
-        this.z = r;
-        this.h =0;
+        this.q = parseInt(q);
+        this.r = parseInt(r);
+        this.x = parseInt(q);
+        this.y = parseInt((q*-1)-r);
+        this.z = parseInt(r);
+        this.h = 0;
         this.tile = 'base';
         this.deleted = false;
         this.unit = null;

@@ -155,7 +155,7 @@ Unit.prototype.init = function(data) {
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
     
-    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
+    this.mechanical = (typeof data.mechanical == 'undefined') ? true : data.mechanical;
     this.human = (typeof data.human == 'undefined') ? true : data.human;;
 
     //the maximum shield value
@@ -463,41 +463,45 @@ Unit.prototype.damage = function(type,value,aData){
     }
     switch(type){
         case this.engine.dmgTypeEnums.Gravity:
-            value -= value*(this.gravityRes.value/100);
+            value -= Math.round(value*(this.gravityRes.value/100));
             var mod = 8/(60/this.inventory.currentWeight);
             value = Math.ceil(value*mod);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Electric:
-            value -= value*(this.electricRes.value/100);
+            value -= Math.round(value*(this.electricRes.value/100));
             if (this.currentShields > 0){
                 value = value*2;
             }
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Poison:
-            value -= value*(this.poisonRes.value/100);
+            value -= Math.round(value*(this.poisonRes.value/100));
             this.currentHealth -= value;
             break;
         case this.engine.dmgTypeEnums.Corrosive:
-            value -= value*(this.acidRes.value/100);
+            value -= Math.round(value*(this.acidRes.value/100));
             if (this.mechanical){
                 value = value*2;
             }
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Heat:
-            value -= value*(this.heatRes.value/100);
+            value -= Math.round(value*(this.heatRes.value/100));
             if (this.human){
                 value = value*2;
             }
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Cold:
-            value -= value*(this.coldRes.value/100);
+            console.log('start ' + value);
+            value -= Math.round(value*(this.coldRes.value/100));
+            console.log('end ' + value);
+            console.log('cres: ' + this.coldRes.value);
+            this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Radiation:
-            value -= value*(this.radiationRes.value/100);
+            value -= Math.round(value*(this.radiationRes.value/100));
             if (this.mechanical){
                 value = 0;
             }
@@ -507,7 +511,7 @@ Unit.prototype.damage = function(type,value,aData){
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Pulse:
-            value -= value*(this.pulseRes.value/100);
+            value -= Math.round(value*(this.pulseRes.value/100));
             if (this.mechanical){
                 value = value*3;
             }
@@ -517,11 +521,11 @@ Unit.prototype.damage = function(type,value,aData){
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Explosive:
-            value -= value*(this.physicalRes.value/200);
+            value -= Math.round(value*(this.physicalRes.value/200));
             this._damage(value);
             break;
         default:
-            value -= value*(this.physicalRes.value/100);
+            value -= Math.round(value*(this.physicalRes.value/100));
             this._damage(value);
             break;
     }
@@ -868,7 +872,7 @@ Unit.prototype.getStat = function(id){
             case 'heatRes':
                 return this.heatRes;
                 break;
-            case 'hres':
+            case 'hRes':
                 return this.heatRes;
                 break;
             case 'coldRes':
@@ -901,7 +905,7 @@ Unit.prototype.getStat = function(id){
             case 'puRes':
                 return this.pulseRes;
                 break;
-            case 'readiationRes':
+            case 'radiationRes':
                 return this.radiationRes;
                 break;
             case 'rRes':
@@ -933,6 +937,8 @@ Unit.prototype.modStat = function(id,amt){
     try{
         this.getStat(id).nMod += amt;
         this.getStat(id).set(true);
+        console.log(id);
+        console.log(this.getStat(id).value)
     }catch(e){
         console.log("unable to mod stat " + id);
         console.log(e);

@@ -490,6 +490,10 @@
                 if (this.units[i].dead && this.units[i].damageText.length == 0 && !this.units[i].actionBubble){
                     delete this.units[i];
                 }
+                if (this.units[i].updateInfoPane){
+                    this.units[i].infoPane = this.getUnitInfoPane(i);
+                    this.units[i].updateInfoPane = false;
+                }
             }
             //update timers
             switch (this.currentState){
@@ -982,22 +986,22 @@
 
         getMoveNodes: function(){
             var unit = this.units[this.turnList[0]];
-            var possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),unit.moveLeft);
+            var possibleNodes = this.map.cubeSpiral(unit.currentNode,unit.moveLeft);
             var start;
             var end;
             var pathArr;
             for(var i = 0; i < possibleNodes.length;i++){
-                start = this.map.getCube(unit.currentNode);
+                start = unit.currentNode;
                 end = possibleNodes[i];
-                if (this.map.getAxial(end).unit != null){
+                if (end.unit != null){
                     continue;
                 }
                 pathArr = this.map.findPath(start,end,{maxJump:unit.jump,startingUnit:unit});
                 if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
-                    var axial = this.map.getAxial(end);
-                    this.moveNodesActive.push(axial);
-                    axial.setOverlaySprites(0x0FFFF0);
-                    this.overlaySprites[axial.id] = axial;
+                    this.moveNodesActive.push(end);
+                    console.log(end);
+                    end.setOverlaySprites(0x0FFFF0);
+                    this.overlaySprites[end.id] = end;
                     this.addOverlaySprites();
                 }
             }
@@ -1008,26 +1012,25 @@
             var possibleNodes = this.getWeaponNodes(unit,weapon);
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
-                var axial = this.map.getAxial(possibleNodes[i]);
-                this.attackNodesActive.push(axial);
-                axial.setOverlaySprites(0xFF0000);
-                this.overlaySprites[axial.id] = axial;
+                this.attackNodesActive.push(possibleNodes[i]);
+                possibleNodes[i].setOverlaySprites(0xFF0000);
+                this.overlaySprites[possibleNodes[i].id] = possibleNodes[i];
                 this.addOverlaySprites();
             }
         },
         getWeaponNodes: function(unit,weapon){
             let possibleNodes = null;
             if (typeof weapon.eqData.range == 'number'){
-                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.range);
+                possibleNodes = this.map.cubeSpiral(unit.currentNode,weapon.eqData.range);
                 for (var i = possibleNodes.length-1; i >= 0;i--){
-                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.range){
+                    if (this.map.cubeDistance(possibleNodes[i],unit.currentNode) < weapon.eqData.range){
                         possibleNodes.splice(i,1);
                     }
                 }
             }else{
-                possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),weapon.eqData.rangeMax);
+                possibleNodes = this.map.cubeSpiral(unit.currentNode,weapon.eqData.rangeMax);
                 for (var i = possibleNodes.length-1; i >= 0;i--){
-                    if (this.map.cubeDistance(possibleNodes[i],this.map.getCube(unit.currentNode)) < weapon.eqData.rangeMin){
+                    if (this.map.cubeDistance(possibleNodes[i],unit.currentNode) < weapon.eqData.rangeMin){
                         possibleNodes.splice(i,1);
                     }
                 }
@@ -1066,7 +1069,8 @@
                 default:
                     //range is a special string, parse for ability distance
                     var range = Utils.parseRange(unit,ability.range);
-                    possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
+                    possibleNodes = this.map.cubeSpiral(unit.currentNode,range.d);
+                    console.log(range);
                     for (var i = 0; i < possibleNodes.length;i++){
                         if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
                             possibleNodes.splice(i,1);
@@ -1079,7 +1083,7 @@
             Game.abilityInfo = ability;
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??
-                var axial = this.map.getAxial(possibleNodes[i]);
+                var axial = possibleNodes[i];
                 this.abilityNodes[axial.q + ',' + axial.r] = axial;
                 axial.setOverlaySprites(0x0FFFF0);
                 this.overlaySprites[axial.id] = axial;
@@ -1095,9 +1099,9 @@
                 var type = Utils.getRadiusType(ability.radius);
                 switch (type){
                     case 'circle':
-                        var mONodes = this.map.cubeSpiral(this.map.getCube(axial),n-1);
+                        var mONodes = this.map.cubeSpiral(axial,n-1);
                         for (var j = 0; j < mONodes.length;j++){
-                            axial.mouseOverNodes.push(this.map.getAxial(mONodes[j]));
+                            axial.mouseOverNodes.push(mONodes[j]);
                         }
                         break;
                     case 'line':
@@ -1807,7 +1811,7 @@
                 this.selectedUnit.currentNode.sprite2.filters = [];
             }
             if (u.currentNode){
-                Game.setNodeText(Game.map.getCube(u.currentNode));
+                Game.setNodeText(u.currentNode);
                 u.sprite.filters = [Game.outlineFilterRed];
             }else{
                 u.infoPane.position.x = Graphics.width - 10 - u.infoPane.width;

@@ -65,6 +65,18 @@
       ],
       "tickImmediately": true,
       "instant": false
+    },
+    {
+      "description": "Increased elemental resistances",
+      "duration": null,
+      "name": "Resist UP",
+      "stackType": "none",
+      "buffid": "buff_resistUp",
+      "tags": [
+        "positive","elemental"
+      ],
+      "tickImmediately": true,
+      "instant": false
     }
   ]
 }

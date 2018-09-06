@@ -80,6 +80,8 @@
         this.fainted = false;
         this.dead = false;
 
+        this.updateInfoPane = false;
+
     };
 
     Unit.prototype.init = function(data) {
@@ -413,7 +415,7 @@
                 case 'pRes':
                     this.physicalRes = amt;
                     break;
-                case 'hres':
+                case 'hRes':
                     this.heatRes = amt;
                     break;
                 case 'cRes':
@@ -446,8 +448,7 @@
             console.log(e);
         }
         if (Game.units[this.id]){
-            console.log('what');
-            this.infoPane = Game.getUnitInfoPane(this.id);
+            this.updateInfoPane = true;
         }
     };
     Unit.prototype.update = function(deltaTime){

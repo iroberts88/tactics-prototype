@@ -501,7 +501,6 @@ GameSession.prototype.unitAttack = function(data){
         newDir: data.d.newDir
     });
     //TODO check for post-attack reactions
-
     data.unit.actionUsed = true;
     data.actionData.push({
         action: this.clientActionEnums.ActionUsed,
@@ -554,10 +553,12 @@ GameSession.prototype.unitAbility = function(data){
             }
             break;
     }
+    var gotNode = false;
     for (var i = 0; i < possibleNodes.length;i++){
         if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
             //node is valid!
             //execute the ability!!
+            gotNode = true;
             var energy = this.parseStringCode(unit,data.ability.eCost);
             if (unit.currentEnergy >= energy){
                 unit.currentEnergy -= energy;
@@ -608,7 +609,7 @@ GameSession.prototype.unitAbility = function(data){
                     isCastTimer: true,
                     unitid: unit.id,
                     abilityName: data.ability.name,
-                    speed: data.ability.speed,
+                    speed: data.ability.speede,
                     data: data,
                     charge: 0
                 });
@@ -619,6 +620,15 @@ GameSession.prototype.unitAbility = function(data){
                 })
             }
         }
+    }
+    if (!gotNode){
+        data.actionData.push({
+            action: this.clientActionEnums.DmgText,
+            unitid: unit.id,
+            text: 'got node failed...'
+        });
+        this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+        return;
     }
     unit.actionUsed = true;
     data.actionData.push({
