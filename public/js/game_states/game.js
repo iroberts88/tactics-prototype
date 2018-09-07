@@ -1040,7 +1040,7 @@
         
         getAbilityNodes: function(ability){
             var unit = this.units[this.turnList[0]];
-            var possibleNodes = null;
+            var possibleNodes = [];
             var selfNode = null;
             switch(ability.range){
                 case 'self':
@@ -1069,12 +1069,35 @@
                 default:
                     //range is a special string, parse for ability distance
                     var range = Utils.parseRange(unit,ability.range);
-                    possibleNodes = this.map.cubeSpiral(unit.currentNode,range.d);
+                    if (range.m){
+                        //must be a move path
+                        var pNodes = this.map.cubeSpiral(unit.currentNode,range.d);
+                        for(var i = 0; i < pNodes.length;i++){
+                            start = unit.currentNode;
+                            end = pNodes[i];
+                            if (end.unit != null){
+                                continue;
+                            }
+                            var path = this.map.findPath(start,end,{maxJump:range.h,startingUnit:unit});
+                            if(path.length != 0 && path.length <= range.d){
+                                possibleNodes.push(end);
+                            }
+                        }
+                    }else{
+                        possibleNodes = this.map.cubeSpiral(unit.currentNode,range.d);
+                    }
                     console.log(range);
                     for (var i = 0; i < possibleNodes.length;i++){
-                        if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
-                            possibleNodes.splice(i,1);
-                            i -= 1;
+                        if (ability.projectile){
+                            if (possibleNodes[i].h - unit.currentNode.h > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                                possibleNodes.splice(i,1);
+                                i -= 1;
+                            }
+                        }else{
+                            if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                                possibleNodes.splice(i,1);
+                                i -= 1;
+                            }
                         }
                     }
                     break;

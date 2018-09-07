@@ -165,7 +165,7 @@
         "move": 0,
         "maximumEnergy": 40,
         "maximumHealth": -20,
-        "speed": 50,
+        "speed": -10,
         "jump": 0
       },
       "abilities": [
@@ -419,7 +419,8 @@
         "move": 0,
         "maximumEnergy": -20,
         "maximumHealth": 20,
-        "jump": 0
+        "jump": 0,
+        "speed": 50
       },
       "abilities": [
         {
@@ -470,29 +471,29 @@
         {
           "sCost": 5,
           "name": "Heroic Leap",
-          "description": "Jump to a neighboring hex with a jump distance of <JMP+STR/3> and immediately make an attack with your equipped weapon, dealing <15+CHA*2%> additional damage",
-          "range": "1 | <JMP+STR/4>",
+          "description": "Jump to a neighboring hex with a jump distance of <JMP+STR/2> (minimum 3) and immediately make an attack with your equipped weapon, hitting all units in range dealing <15+CHA%> additional damage",
+          "range": "1 | <JMP+STR/2> (m)",
           "ApCost": 100,
           "id": "heroicLeap",
-          "type": "singleunit",
+          "type": "openhex",
           "eCost": 20,
           "speed": "instant"
         },
         {
           "sCost": 5,
           "name": "Heroic Charge",
-          "description": "Charge to a tile with a move of <MOV+AGI/4> and immediately make an attack with your equipped {melee} weapon, dealing <15+CHA*2%> additional damage",
-          "range": "<MOV+AGI/4> | <JMP>",
+          "description": "Charge to a tile with a move of <MOV+AGI/3> (minimum 2) and immediately make an attack with your equipped {melee} weapon, hitting all units in range dealing <15+CHA%> additional damage",
+          "range": "<MOV+AGI/3> | <JMP> (m)",
           "ApCost": 100,
           "id": "heroicCharge",
-          "type": "singleunit",
+          "type": "openhex",
           "eCost": 20,
           "speed": "instant"
         },
         {
           "sCost": 5,
           "name": "Power Attack",
-          "description": "Make a {melee} attack dealing <25+STR/4*2%> Additional Damage",
+          "description": "Make a {melee} attack dealing <25+STR*2%> Additional Damage",
           "range": "melee",
           "ApCost": 50,
           "id": "powerAttack",
@@ -640,11 +641,11 @@
           "sCost": 10,
           "name": "Sprint",
           "description": "Use your action to move <AGI/2> additional units",
-          "range": "self",
+          "range": "self (m)",
           "ApCost": 125,
           "id": "sprint",
           "type": "singleunit",
-          "eCost": 25,
+          "eCost": 15,
           "speed": "instant"
         },
         {

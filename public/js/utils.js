@@ -123,8 +123,15 @@
             var results = {
                 d: 0, //distnace
                 h: 0, //height
-                s: false //self
+                s: false, //self
+                m: false //is a move path
             };
+            //get path
+            if (range.substring(range.length-3,range.length) == '(m)'){
+                console.log('got it');
+                range = range.substring(0,range.length-3);
+                results.m = true;
+            }
             //get distance
             var dString = '';
             var start = 0

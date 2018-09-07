@@ -350,35 +350,22 @@ GameSession.prototype.getTurnOrder = function(){
 ////////////////////////////////////////////////////////////////
 //                  Unit Turn Functions                        /
 ////////////////////////////////////////////////////////////////
-GameSession.prototype.unitMove = function(data){
-    var unit = this.allUnits[this.turnOrder[0].id];
-    if (unit.fainted || unit.dead){
-        return;
-    }
-    var player = unit.owner.id;
-    var enemyPlayer;
-    for (var playerid in this.players){
-        if (playerid != player){
-            enemyPlayer = playerid;
-        }
-    }
-    var actionData = [];
-    var enemyPlayerData = [];
-    var endingNode = this.map.getCube(data);
-    var path = this.map.findPath(this.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value});
-    for (var i = 0; i < path.length;i++){
-        var a = this.map.getAxial(path[i]);
+
+GameSession.prototype.executeMove = function(data){
+    data.moveUsed = 0;
+    for (var i = 0; i < data.path.length;i++){
+        var a = this.map.getAxial(data.path[i]);
         if (a.unit){
             if (a.unit.hidden && a.unit.owner != unit.owner){
                 //hidden unit!
-                path = path.slice(0,i);
+                data.path = data.path.slice(0,i);
                 var keepGoing = true;
                 a.unit.removeBuffsWithTag('removeOnContact');
                 while(keepGoing){
-                    if (path.length <=1){
+                    if (data.path.length <=1){
                         return;
-                    }else if (path[path.length-1].unit){
-                        path.pop();
+                    }else if (data.path[data.path.length-1].unit){
+                        data.path.pop();
                     }else{
                         keepGoing = false;
                     }
@@ -388,45 +375,69 @@ GameSession.prototype.unitMove = function(data){
         }
     }
     var stopped = false;
-    for (var i = 1; i < path.length;i++){
-        unit.moveUsed = true;
-        if (unit.moveLeft <= 0){
-            //the unit is out of moves
-            unit.newNode(this.map.getAxial(path[i-1]));
-            stopped = true;
-            break;
+    for (var i = 1; i < data.path.length;i++){
+        if (data.isAMove){
+            data.unit.moveUsed = true;
+            if (data.unit.moveLeft <= 0){
+                //the unit is out of moves
+                data.unit.newNode(this.map.getAxial(data.path[i-1]));
+                stopped = true;
+                break;
+            }
         }
-        var nextNode = path[i];
+        var nextNode = data.path[i];
         //TODO check reactions for each moved node
 
         //set the new node for the unit
-        var dir = this.map.getNewDirectionCube(path[i-1],path[i]);
+        var dir = this.map.getNewDirectionCube(data.path[i-1],data.path[i]);
         if (dir){
-            unit.direction = this.map.cardinalDirections[dir];
+            data.unit.direction = this.map.cardinalDirections[dir];
         }
-        actionData.push({
+        data.actionData.push({
             action: this.clientActionEnums.Move,
-            unitid: unit.id,
-            x: path[i].x,
-            y: path[i].y,
-            z: path[i].z,
+            unitid: data.unit.id,
+            x: data.path[i].x,
+            y: data.path[i].y,
+            z: data.path[i].z,
         });
-        unit.moveLeft -= 1;
+        if (data.isAMove){
+            data.moveUsed += 1;
+        }
     }
     if (!stopped){
-        unit.newNode(this.map.getAxial(path[path.length-1]));
+        data.unit.newNode(this.map.getAxial(data.path[data.path.length-1]));
     }
-
+    return data;
+}
+GameSession.prototype.unitMove = function(data){
+    data.unit = this.allUnits[this.turnOrder[0].id];
+    if (data.unit.fainted || data.unit.dead){
+        return;
+    }
+    var player = data.unit.owner.id;
+    var enemyPlayer;
+    for (var playerid in this.players){
+        if (playerid != player){
+            enemyPlayer = playerid;
+        }
+    }
+    data.actionData = [];
+    var enemyPlayerData = [];
+    var endingNode = this.map.getCube(data);
+    data.path = this.map.findPath(this.map.getCube(data.unit.currentNode),endingNode,{startingUnit: data.unit,maxJump:data.unit.jump.value});
+    data.isAMove = true;
+    data = this.executeMove(data);
+    data.unit.moveLeft -= data.moveUsed;
     //send down the action info to all players in the battle
-    if (unit.hidden){
+    if (data.unit.hidden){
         //unless the unit is hidden
         for (var i in this.players){
             if (i == player){
-                this.queuePlayer(this.players[i],'action',{actionData:actionData});
+                this.queuePlayer(this.players[i],'action',{actionData:data.actionData});
             }
         }
     }else{
-        this.queueData('action',{actionData:actionData});
+        this.queueData('action',{actionData:data.actionData});
     }
 }
 GameSession.prototype.executeAttack = function(data){
@@ -487,11 +498,12 @@ GameSession.prototype.executeAttack = function(data){
         data.unit.onAttack[i].target = data.node.unit;
         aFunc(data.unit,data.unit.onAttack[i]);
     }
-    data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod),data.actionData);
+    data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod*data.ablMod),data.actionData);
     return data;
 }
 GameSession.prototype.unitAttack = function(data){
     data.actionData = [];
+    data.ablMod = 1.0;
     data = this.executeAttack(data);
     if (!data){return;}
     data.actionData.splice(0,0,{
@@ -518,6 +530,7 @@ GameSession.prototype.unitAbility = function(data){
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
     data.actionData = [];
+    data.ablMod = 1.0;
     switch(data.ability.range){
         case 'self':
             //this should pop up a confirm window immediately?
@@ -546,9 +559,16 @@ GameSession.prototype.unitAbility = function(data){
             var range = this.parseRange(unit,data.ability.range);
             possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
             for (var i = 0; i < possibleNodes.length;i++){
-                if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
-                    possibleNodes.splice(i,1);
-                    i -= 1;
+                if (data.ability.projectile){
+                    if (possibleNodes[i].h - unit.currentNode.h > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                        possibleNodes.splice(i,1);
+                        i -= 1;
+                    }
+                }else{
+                    if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
+                        possibleNodes.splice(i,1);
+                        i -= 1;
+                    }
                 }
             }
             break;
@@ -683,6 +703,9 @@ GameSession.prototype.parseRange = function(unit,range){
         h: 0, //height
         s: false //self
     };
+    if (range.substring(range.length-3,range.length) == '(m)'){
+        range = range.substring(0,range.length-3);
+    }
     //get distance
     var dString = '';
     var start = 0

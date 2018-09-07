@@ -394,10 +394,10 @@
                 case 'energy':
                     this.maximumEnergy = amt;
                     break;
-                case 'pwr':
+                case 'pow':
                     this.power = amt;
                     break;
-                case 'skl':
+                case 'ski':
                     this.skill = amt;
                     break;
                 case 'tac':
@@ -448,6 +448,7 @@
             console.log(e);
         }
         if (Game.units[this.id]){
+            console.log(this.id);
             this.updateInfoPane = true;
         }
     };

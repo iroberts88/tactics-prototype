@@ -216,7 +216,7 @@ Unit.prototype.init = function(data) {
     this.move.init({
         'id': 'mov',
         'owner': this,
-        'value': 5,
+        'value': 3,
         'min': 0,
         'max': 99
     });
@@ -937,8 +937,6 @@ Unit.prototype.modStat = function(id,amt){
     try{
         this.getStat(id).nMod += amt;
         this.getStat(id).set(true);
-        console.log(id);
-        console.log(this.getStat(id).value)
     }catch(e){
         console.log("unable to mod stat " + id);
         console.log(e);

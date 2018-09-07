@@ -32,7 +32,15 @@ AbilityEnums = {
 	UnstableGrenade: 'unstableGrenade',
 	VoidGrenade: 'voidGrenade',
 	ResUp: 'resUp',
-	Repair: 'repair'
+	Repair: 'repair',
+	Bolster: 'bolster',
+	Aim: 'aim',
+	Shout: 'shout',
+	Focus: 'focus',
+	HeroicLeap: 'heroicLeap',
+	HeroicCharge: 'heroicCharge',
+	PowerShot: 'powerShot',
+	PowerAttack: 'powerAttack'
 };
 
 var Actions = function(){}
@@ -310,6 +318,10 @@ Actions.prototype.cheer = function(unit,session,data){
 	return true;
 }
 Actions.prototype.interrupt = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
     data = session.executeAttack(data);
     if (!data){return false;}
     data.actionData.splice(0,0,{
@@ -553,6 +565,194 @@ Actions.prototype.resUp = function(unit,session,data){
 	return true;
 }
 
+Actions.prototype.bolster = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(unit.charisma.value/5);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Bolster'
+	});
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			nodes[i].unit.strength.nMod += 2;
+			nodes[i].unit.strength.set(true);
+			data.actionData.push({
+		        action: session.clientActionEnums.DmgText,
+		        unitid: nodes[i].unit.id,
+		        text: 'Strength +2'
+		    });
+		}
+	}
+	return true;
+}
+
+Actions.prototype.aim = function(unit,session,data){
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Aim'
+	});
+	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	unit.skill.nMod += val;
+	unit.skill.set(true);
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: unit.id,
+        text: 'Skill +' + val
+    });
+	return true;
+}
+
+Actions.prototype.shout = function(unit,session,data){
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Shout'
+	});
+	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	unit.power.nMod += val;
+	unit.power.set(true);
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: unit.id,
+        text: 'Power +' + val
+    });
+	return true;
+}
+
+Actions.prototype.focus = function(unit,session,data){
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Focus'
+	});
+	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	unit.tactics.nMod += val;
+	unit.tactics.set(true);
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: unit.id,
+        text: 'Tactics +' + val
+    });
+	return true;
+}
+
+Actions.prototype.powerShot = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'gun'){
+    	return false;
+    }
+    data.ablMod = 1+(25+Math.floor(unit.strength.value*2))/100;
+    data = session.executeAttack(data);
+    if (!data){return false;}
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Power Shot',
+        newDir: data.d.newDir
+    });
+	return true;
+}
+
+Actions.prototype.powerAttack = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
+    data.ablMod = 1+(25+Math.floor(unit.dexterity.value*2))/100;
+    data = session.executeAttack(data);
+    if (!data){return false;}
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Power Attack',
+        newDir: data.d.newDir
+    });
+	return true;
+}
+
+Actions.prototype.heroicCharge = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
+	data.unit = unit;
+    var player = data.unit.owner.id;
+    var endingNode = session.map.getCube(data);
+    data.path = session.map.findPath(session.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value});
+    if (data.path.length > (unit.move.value + Math.floor(unit.agility.value/3)+1) || data.path.length <=2){
+    	console.log("invalid Path on heroic charge...");
+    	console.log(data.path);
+    	return false;
+    }
+    data.isAMove = false;
+    data = session.executeMove(data);
+    data.ablMod = 1+(15+Math.floor(unit.charisma.value))/100;
+    //get all within weapon range
+    var nodes = weapon.getWeaponNodes(session.map,unit.currentNode);
+    for (var i = 0; i < nodes.length;i++){
+    	if (nodes[i].unit){
+    		if (nodes[i].unit.owner != unit.owner){
+    			data.q = nodes[i].q;
+    			data.r = nodes[i].r;
+    			data = session.executeAttack(data);
+    		}
+    	}
+    }
+    if (!data){return false;}
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Heroic Charge',
+        newDir: data.d.newDir
+    });
+	return true;
+}
+
+Actions.prototype.heroicLeap = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
+	data.unit = unit;
+    var player = data.unit.owner.id;
+    var endingNode = session.map.getCube(data);
+    data.path = session.map.findPath(session.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:(unit.jump.value + Math.floor(unit.strength.value/2))});
+    if (data.path.length != 2 || data.path[data.path.length-1].h - unit.currentNode.h < 3){
+    	console.log("invalid Path on heroic leap...");
+    	console.log('height 1: ' + unit.currentNode.h);
+    	console.log("height 2: " + data.path[data.path.length-1].h);
+    	console.log(data.path);
+    	return false;
+    }
+    data.isAMove = false;
+    data = session.executeMove(data);
+    data.ablMod = 1+(15+Math.floor(unit.charisma.value))/100;
+    //get all within weapon range
+    //should check unit first?
+    var nodes = weapon.getWeaponNodes(session.map,unit.currentNode);
+    for (var i = 0; i < nodes.length;i++){
+    	if (nodes[i].unit){
+    		if (nodes[i].unit.owner != unit.owner){
+    			data.q = nodes[i].q;
+    			data.r = nodes[i].r;
+    			data = session.executeAttack(data);
+    		}
+    	}
+    }
+    if (!data){return false;}
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Heroic Leap',
+        newDir: data.d.newDir
+    });
+	return true;
+}
+
 Actions.prototype.getAbility = function(a){
 	console.log('getting ability <' + a + '>');
 	switch(a){
@@ -618,6 +818,30 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.Repair:
 			return this.repair;
+			break;
+		case AbilityEnums.Bolster:
+			return this.bolster;
+			break;
+		case AbilityEnums.Aim:
+			return this.aim;
+			break;
+		case AbilityEnums.Shout:
+			return this.shout;
+			break;
+		case AbilityEnums.Focus:
+			return this.focus;
+			break;
+		case AbilityEnums.HeroicCharge:
+			return this.heroicCharge;
+			break;
+		case AbilityEnums.HeroicLeap:
+			return this.heroicLeap;
+			break;
+		case AbilityEnums.PowerShot:
+			return this.powerShot;
+			break;
+		case AbilityEnums.PowerAttack:
+			return this.powerAttack;
 			break;
 		default:
 			return this.testAbility;

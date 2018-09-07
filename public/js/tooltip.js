@@ -81,6 +81,17 @@
                                 break;
                             }
                         }
+                    }else if (text.charAt(start) == '('){
+                        //ignore this
+                        var t= '';
+                        for (var c = start; c < text.length; c++){
+                            if (text.charAt(c) == ')'){
+                                start = c+1;
+                                sI = c;
+                                var nextWord = new PIXI.Text(t,this.style1);
+                                break;
+                            }
+                        }
                     }else{
                         if (sI == text.length-1){
                             var nextWord = new PIXI.Text(text.slice(start),this.style1);
