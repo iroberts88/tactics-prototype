@@ -1,5 +1,6 @@
 var Attribute = require('./attribute.js').Attribute;
-var Item = require('./item.js').Item;
+    Item = require('./item.js').Item,
+    UnitAI = require('./unitai.js').UnitAI;
 
 var Unit = function(){
     this.id = null;
@@ -58,6 +59,8 @@ var Unit = function(){
     this.radiationRes = null;
     this.gravityRes = null;
 
+    this.healMod = null
+
     this.mechanical = null; //a mechanical unit
     this.human = null; //a human unit
 
@@ -93,6 +96,9 @@ var Unit = function(){
     this.casting = false;
     this.isCastTimer = false;
 
+    this.ai = null;
+    this.aiInfo = null;
+
     this.actionUsed = false;
     this.moveUsed = false;
 
@@ -124,7 +130,7 @@ var Unit = function(){
 
 Unit.prototype.reset = function(){
     //things that reset with each new game
-    this.moveLeft = this.move.value;
+    this.moveLeft = 0;
     //shields
     this.currentShields = this.maximumShields.value;
 
@@ -156,7 +162,10 @@ Unit.prototype.init = function(data) {
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
     
     this.mechanical = (typeof data.mechanical == 'undefined') ? true : data.mechanical;
-    this.human = (typeof data.human == 'undefined') ? true : data.human;;
+    this.human = (typeof data.human == 'undefined') ? true : data.human;
+
+    this.ai = (typeof data.ai == 'undefined') ? false : data.ai;
+    this.aiInfo = data.aiInfo;
 
     //the maximum shield value
     this.maximumShields = new Attribute();
@@ -411,6 +420,14 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 100
     });
+    this.healMod = new Attribute();
+    this.healMod.init({
+        'id': 'hMod',
+        'owner': this,
+        'value': 0,
+        'min': -100,
+        'max': 100
+    });
 
     this.expMod = new Attribute();
     this.expMod.init({
@@ -427,8 +444,10 @@ Unit.prototype.init = function(data) {
         owner: this
     });
     this.inventory.setGameEngine(this.owner.gameEngine);
-    for (var i = 0; i < data.inventory.length;i++){
-        this.inventory.addItemUnit(data.inventory[i]);
+    if (typeof data.inventory != 'undefined'){
+        for (var i = 0; i < data.inventory.length;i++){
+            this.inventory.addItemUnit(data.inventory[i]);
+        }
     }
 
     this.inventory.equip(data.weapon);
@@ -454,6 +473,7 @@ Unit.prototype.endTurn = function(){
             i -= 1;
         }
     }
+    this.moveLeft = 0;
 };
 
 Unit.prototype.damage = function(type,value,aData){
@@ -524,6 +544,20 @@ Unit.prototype.damage = function(type,value,aData){
             value -= Math.round(value*(this.physicalRes.value/200));
             this._damage(value);
             break;
+        case this.engine.dmgTypeEnums.Healing:
+            value += Math.round(value*(this.healMod.value/100));
+            if (this.currentHealth <= 0){
+                this.currentHealth += value;
+                if (this.currentHealth > 0){
+                    this.currentHealth = 0;
+                }
+            }else{
+                this.currentHealth += value;
+            }
+            if (this.currentHealth > this.maximumHealth.value){
+                this.currentHealth = this.maximumHealth.value;
+            }
+            break;
         default:
             value -= Math.round(value*(this.physicalRes.value/100));
             this._damage(value);
@@ -533,13 +567,18 @@ Unit.prototype.damage = function(type,value,aData){
         //death = < -50% hp
         if (this.currentHealth <= this.maximumHealth.value/-2){
             this.dead = true;
+            //TODO kill unit...
         }
         this.fainted = true;
+    }
+    var txt = '-' + value;
+    if (type == this.engine.dmgTypeEnums.Healing){
+        txt = '+' + value;
     }
     aData.push({
         action: this.owner.gameSession.clientActionEnums.DmgText,
         unitid: this.id,
-        text: '-' + value,
+        text: txt,
         newShields: this.currentShields,
         newHealth: this.currentHealth,
         fainted: this.fainted,
@@ -559,7 +598,7 @@ Unit.prototype._damage = function(value){
     this.currentHealth -= value;
 }
 Unit.prototype.setMoveLeft = function(val){
-    this.moveLeft = val;
+    this.moveLeft += val;
     if (this.moveLeft < 0){
         this.moveLeft = 0;
     }
@@ -653,6 +692,13 @@ Unit.prototype.getDBObj = function(){
     dbObj.usedAbilitySlots = this.usedAbilitySlots;
     return dbObj;
 }
+Unit.prototype.setCurrentNode = function(node){
+    if (this.currentNode){
+        this.currentNode.unit = null;
+    }
+    this.currentNode = node;
+    node.unit = this;
+}
 Unit.prototype.minCurrentNode = function(){
     if (this.currentNode == null){
         return null;
@@ -686,6 +732,7 @@ Unit.prototype.getClientData = function(){
     data.weapon = this.weapon;
     data.shield = this.shield;
     data.accessory = this.accessory;
+    data.ai = this.ai;
     for (var cI in this.classInfo){
         if (cI != 'unit'){data.classInfo[cI] = this.classInfo[cI]}
     }
@@ -725,6 +772,7 @@ Unit.prototype.getLessClientData = function(){
     data.shield = this.shield;
     data.accessory = this.accessory;
     data.class = this.classInfo.currentClass;
+    data.ai = this.ai;
     return data;
 
 }

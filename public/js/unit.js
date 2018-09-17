@@ -117,7 +117,13 @@
                 'medic': 0x00FF00,
                 'scout': 0x42f1f4
             };
-            this.sprite.tint = colors[this.classInfo.currentClass.toLowerCase()];
+            if (this.classInfo.currentClass == ''){
+                this.sprite.scale.x = 0.5;
+                this.sprite.scale.y = 0.5;
+                this.sprite.tint = 0x000000;
+            }else{
+                this.sprite.tint = colors[this.classInfo.currentClass.toLowerCase()];
+            }
             this.sprite.gotoAndPlay(Math.floor(Math.random()*8))
         }
     };
@@ -197,11 +203,22 @@
     };
 
 
-    Unit.prototype.setFainted = function(){
-        this.sprite.rotation = 1.57;
-        this.sprite.position.x -= this.sprite.width/2.2;
-        this.sprite.stop();
-        this.fainted = true;
+    Unit.prototype.setFainted = function(bool){
+        if (bool){
+            this.sprite.rotation = 1.57;
+            this.sprite.position.x -= this.sprite.width/2.2;
+            this.sprite.stop();
+            this.fainted = true;
+        }else{
+            this.sprite.rotation = 0;
+            var node = Game.map.axialMap[this.currentNode.q][this.currentNode.r];
+            var t = 1;
+            if (!(Game.map.currentRotation%2)){t = 2}
+            var sp = 'sprite' + t;
+            this.sprite.position.x = node[sp].position.x;
+            this.sprite.gotoAndPlay(1);
+            this.fainted = false;
+        }
     };
 
     Unit.prototype.setDead = function(){
@@ -258,7 +275,7 @@
                     text.style.fill = 0x7bff00;
                     break;
                 case 'cold':
-                    text.style.fill = 0x00c7ff;
+                    text.style.fill = 0xFFFFFF;
                     break;
                 case 'heat':
                     text.style.fill = 0xff8800;
@@ -269,10 +286,16 @@
                 case 'puls':
                     text.style.fill = 0xc9cbff;
                     break;
+                case 'heal':
+                    text.style.fill = 0x00c7ff;
+                    break;
             }
         }
         var xPos = 0;
         var yPos = -text.height/2;
+        if (this.damageText.length){
+            yPos = this.damageText[this.damageText.length-1].y - text.height;
+        }
         text.anchor.x = 0.5;
         text.anchor.y = 0.5;
         Graphics.world.addChild(text);
@@ -385,7 +408,7 @@
                 case 'wil':
                     this.willpower = amt;
                     break;
-                case 'char':
+                case 'cha':
                     this.charisma = amt;
                     break;
                 case 'hp':

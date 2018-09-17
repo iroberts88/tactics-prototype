@@ -219,28 +219,33 @@
                     if (cArr[i] == '.'){
                         var n = cArr[i-1] + cArr[i+1]/100;
                         cArr.splice(i-1,3,n);
+                        i-=1;
                     }
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '*'){
                         var n = cArr[i-1] * cArr[i+1];
                         cArr.splice(i-1,3,n);
+                        i-=1;
                     }
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '/'){
                         var n = Math.floor(cArr[i-1] / cArr[i+1]);
                         cArr.splice(i-1,3,n);
+                        i-=1;
                     }
                 }
                 for (var i = 0; i < cArr.length;i++){
                     if (cArr[i] == '+'){
                         var n = cArr[i-1] + cArr[i+1];
                         cArr.splice(i-1,3,n);
+                        i-=1;
                     }
                     if (cArr[i] == '-'){
                         var n = cArr[i-1] - cArr[i+1];
                         cArr.splice(i-1,3,n);
+                        i-=1;
                     }
                 }
                 if (percent){

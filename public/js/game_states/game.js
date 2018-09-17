@@ -211,47 +211,49 @@
 
             Graphics.showLoadingMessage(false);
         },
-
+        addUnit: function(unit){
+            var x = 0;
+            var y = 0;
+            var t = 1;
+            if (!(this.map.currentRotation%2)){t = 2}
+            var cont = 'container' + t;
+            var sp = 'sprite' + t;
+            if (unit.visible){
+                //SET CURRENT NODE
+                var node = this.map.axialMap[unit.currentNode.q][unit.currentNode.r];
+                unit.setCurrentNode(unit.currentNode.q,unit.currentNode.r,this.map);
+                node.unit = unit;
+                unit.sprite.position.x = node[sp].position.x;
+                unit.sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
+                this.map[cont].addChildAt(unit.sprite,this.map[cont].getChildIndex(node[sp])+1);
+            }
+            unit.sprite.interactive = true;
+            unit.sprite.buttonMode = true;
+            unit.infoPane = this.getUnitInfoPane(unit.id);
+            var overFunc = function(e){
+                if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
+                Game.selectUnit(Game.units[e.currentTarget.unitid]);
+                if (Game.attackActive){
+                    Game.tryToAttack(Game.units[e.currentTarget.unitid].currentNode);
+                }
+                if (Game.abilityActive){
+                    Game.tryToAbility(Game.units[e.currentTarget.unitid].currentNode);
+                }
+            }
+            unit.sprite.on('pointerdown',overFunc);
+            unit.sprite.on('pointerover', Game.filtersOn);
+            unit.sprite.on('pointerout', Game.filtersOff);
+            if (!unit.visible){
+                unit.sprite.visible = false;
+            }
+        },
         initUI: function(){
             //initialize the units and every UI element
             for (var i in this.units){
                 if (this.units[i].isCastTimer){
                     continue;
                 }
-                var x = 0;
-                var y = 0;
-                var t = 1;
-                if (!(this.map.currentRotation%2)){t = 2}
-                var cont = 'container' + t;
-                var sp = 'sprite' + t;
-                if (this.units[i].visible){
-                    //SET CURRENT NODE
-                    var node = this.map.axialMap[this.units[i].currentNode.q][this.units[i].currentNode.r];
-                    this.units[i].setCurrentNode(this.units[i].currentNode.q,this.units[i].currentNode.r,this.map);
-                    node.unit = this.units[i];
-                    this.units[i].sprite.position.x = node[sp].position.x;
-                    this.units[i].sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
-                    this.map[cont].addChildAt(this.units[i].sprite,this.map[cont].getChildIndex(node[sp])+1);
-                }
-                this.units[i].sprite.interactive = true;
-                this.units[i].sprite.buttonMode = true;
-                this.units[i].infoPane = this.getUnitInfoPane(i);
-                var overFunc = function(e){
-                    if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
-                    Game.selectUnit(Game.units[e.currentTarget.unitid]);
-                    if (Game.attackActive){
-                        Game.tryToAttack(Game.units[e.currentTarget.unitid].currentNode);
-                    }
-                    if (Game.abilityActive){
-                        Game.tryToAbility(Game.units[e.currentTarget.unitid].currentNode);
-                    }
-                }
-                this.units[i].sprite.on('pointerdown',overFunc);
-                this.units[i].sprite.on('pointerover', Game.filtersOn);
-                this.units[i].sprite.on('pointerout', Game.filtersOff);
-                if (!this.units[i].visible){
-                    this.units[i].sprite.visible = false;
-                }
+                this.addUnit(this.units[i])
             }
 
             //UI Elements
@@ -489,8 +491,7 @@
                 this.units[i].update(deltaTime);
                 if (this.units[i].dead && this.units[i].damageText.length == 0 && !this.units[i].actionBubble){
                     delete this.units[i];
-                }
-                if (this.units[i].updateInfoPane){
+                }else if (this.units[i].updateInfoPane){
                     this.units[i].infoPane = this.getUnitInfoPane(i);
                     this.units[i].updateInfoPane = false;
                 }
@@ -1882,7 +1883,7 @@
                     this.map[cont].addChildAt(sprite,this.map[cont].getChildIndex(node[sp])+1);
                 }
                 if (unit.fainted){
-                    unit.setFainted();
+                    unit.setFainted(true);
                 }else{
                     sprite.gotoAndPlay(frame);
                 }

@@ -77,6 +77,30 @@
       ],
       "tickImmediately": true,
       "instant": false
+    },
+    {
+      "description": "Increased speed for 1 turn",
+      "duration": null,
+      "name": "Resuscitate",
+      "stackType": "none",
+      "buffid": "buff_resuscitate",
+      "tags": [
+        "positive"
+      ],
+      "tickImmediately": true,
+      "instant": false
+    },
+    {
+      "description": "Increased shield maximum",
+      "duration": null,
+      "name": "Shield Boost",
+      "stackType": "none",
+      "buffid": "buff_shieldBoost",
+      "tags": [
+        "positive","shield"
+      ],
+      "tickImmediately": true,
+      "instant": false
     }
   ]
 }

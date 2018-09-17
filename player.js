@@ -163,7 +163,7 @@ Player.prototype.setupSocket = function() {
                             //get the unit
                             var cID = data['classID'];
                             var aID = data['ablID'];
-                            var uID = data['unitID'];
+                            var uID = data['unitid'];
                             var unit;
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == uID){
@@ -201,7 +201,7 @@ Player.prototype.setupSocket = function() {
                             //get the unit
                             var cID = data['classID'];
                             var aID = data['ablID'];
-                            var uID = data['unitID'];
+                            var uID = data['unitid'];
                             var unit;
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == uID){
@@ -239,7 +239,7 @@ Player.prototype.setupSocket = function() {
                             //get the unit
                             var cID = data['classID'];
                             var aID = data['ablID'];
-                            var uID = data['unitID'];
+                            var uID = data['unitid'];
                             var unit;
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == uID){
@@ -271,7 +271,7 @@ Player.prototype.setupSocket = function() {
                     case 'clearAbilities':
                         try{
                             //get the unit
-                            var uID = data['unitID'];
+                            var uID = data['unitid'];
                             var unit;
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == uID){
@@ -315,7 +315,7 @@ Player.prototype.setupSocket = function() {
                         break;
                     case 'itemToUnit':
                         try{
-                            var unit = that.getUnit(data.unitID);
+                            var unit = that.getUnit(data.unitid);
                             var itemID = that.user.inventory.items[data.itemIndex].itemID;
                             //add item to unit
                             if (unit.inventory.addItemUnit(itemID,1, true)){
@@ -328,7 +328,7 @@ Player.prototype.setupSocket = function() {
                         break;
                     case 'itemToPlayer':
                         try{
-                            var unit = that.getUnit(data.unitID);
+                            var unit = that.getUnit(data.unitid);
                             itemID = unit.inventory.items[data.itemIndex].itemID;
                             //add item to player
                             that.user.inventory.addItem(itemID,1, true);
@@ -341,7 +341,7 @@ Player.prototype.setupSocket = function() {
                     case 'equipItem':
                         console.log(data);
                         try{
-                            var unit = that.getUnit(data.unitID);
+                            var unit = that.getUnit(data.unitid);
                             //add item to player
                             unit.inventory.equip(data.itemIndex, true);
                         }catch(e){
@@ -351,7 +351,7 @@ Player.prototype.setupSocket = function() {
                     case 'unEquipItem':
                         console.log(data);
                         try{
-                            var unit = that.getUnit(data.unitID);
+                            var unit = that.getUnit(data.unitid);
                             //add item to player
                             unit.inventory.unEquip(data.itemIndex, true);
                         }catch(e){
@@ -556,7 +556,7 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-maxAp':
                     // max a character's AP
-                    // -maxAp <unitID>
+                    // -maxAp <unitid>
                     try{
                         if (commands[1] == 'all'){
                             for (var i = 0; i < that.user.characters.length;i++){
@@ -593,7 +593,7 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-addItemUnit':
                     // attempt to add an item to unit inventory
-                    // -addItemUnit <unitID> <itemID> <optional:amount>
+                    // -addItemUnit <unitid> <itemID> <optional:amount>
                     try{
                         var amt = 1;
                         if (typeof commands[3] != 'undefined'){

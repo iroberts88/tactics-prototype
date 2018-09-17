@@ -285,7 +285,6 @@ GameSession.prototype.turnSort = function(arr){
             larger.push(arr[x]);
         }else{
             //values are equal, randomize turn position in pivot array (TODO -- or go by some other metric?)
-            console.log(this.allUnits[arr[x].id].charge)
             if (Math.round(Math.random())){
                 pivotArr.push(arr[x]);
 
@@ -304,11 +303,6 @@ GameSession.prototype.turnSort = function(arr){
 }
 GameSession.prototype.getTurnOrder = function(){
     //new turn
-    if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
-        if (!this.allUnits[this.turnOrder[0].id].isCastTimer){
-            this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
-        }
-    }
     this.turnOrder = [];
     for (var i in this.allUnits){
         var unit = this.allUnits[i];
@@ -344,6 +338,24 @@ GameSession.prototype.getTurnOrder = function(){
         this.allUnits[abl.unitid].casting = null;
         delete this.allUnits[this.turnOrder[0].id];
         this.getTurnOrder();
+    }else if (this.allUnits[this.turnOrder[0].id].ai){
+        //ai stuff...
+        var actionData = [];
+        var unit = this.allUnits[this.turnOrder[0].id];
+        var aiFunc = UnitAI.getAction(unit.aiInfo.id);
+        actionData = aiFunc(unit,this,unit.aiInfo,actionData);
+        if (!actionData){
+            console.log('ai failed');
+            return;
+        }
+        this.queueData('action',{actionData:actionData});
+        this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
+        this.getTurnOrder();
+    }
+    if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
+        if (!this.allUnits[this.turnOrder[0].id].isCastTimer){
+            this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
+        }
     }
 }
 
@@ -399,6 +411,7 @@ GameSession.prototype.executeMove = function(data){
             x: data.path[i].x,
             y: data.path[i].y,
             z: data.path[i].z,
+            reduceLeft: data.isAMove
         });
         if (data.isAMove){
             data.moveUsed += 1;
@@ -619,7 +632,7 @@ GameSession.prototype.unitAbility = function(data){
                     abilityData: data.ability,
                     unitid: unit.id,
                     data: data,
-                    speed: data.ability.speed,
+                    speed: this.parseStringCode(unit,data.ability.speed),
                     charge: 0
                 }
                 this.allUnits[abData.id] = abData;
@@ -629,7 +642,7 @@ GameSession.prototype.unitAbility = function(data){
                     isCastTimer: true,
                     unitid: unit.id,
                     abilityName: data.ability.name,
-                    speed: data.ability.speede,
+                    speed: this.parseStringCode(unit,data.ability.speed),
                     data: data,
                     charge: 0
                 });
@@ -676,6 +689,7 @@ GameSession.prototype.unitEnd = function(data){
         }
     }
     if (!valid){return;}
+    unit.endTurn();
     var actionData = [{
         action: this.clientActionEnums.Face,
         unitid: unit.id,
@@ -790,22 +804,26 @@ GameSession.prototype.parseStringCode = function(unit,code){
         if (cArr[i] == '*'){
             var n = cArr[i-1] * cArr[i+1];
             cArr.splice(i-1,3,n);
+            i-=1;
         }
     }
     for (var i = 0; i < cArr.length;i++){
         if (cArr[i] == '/'){
             var n = Math.floor(cArr[i-1] / cArr[i+1]);
             cArr.splice(i-1,3,n);
+            i-=1;
         }
     }
     for (var i = 0; i < cArr.length;i++){
         if (cArr[i] == '+'){
             var n = cArr[i-1] + cArr[i+1];
             cArr.splice(i-1,3,n);
+            i-=1;
         }
         if (cArr[i] == '-'){
             var n = cArr[i-1] - cArr[i+1];
             cArr.splice(i-1,3,n);
+            i-=1;
         }
     }
     if (percent){

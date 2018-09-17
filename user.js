@@ -125,10 +125,11 @@ function User() {
                             char[randStat].base += 1;
                             char[randStat].set();
                         }
-                        var unitClass = classes[i];
+                        /*var unitClass = classes[i];
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
-                        }
+                        }*/
+                        var unitClass = 'medic';
                         var learned = {};
                         var equipped = {}; 
                         var ap = {};

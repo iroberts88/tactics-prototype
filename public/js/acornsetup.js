@@ -339,6 +339,15 @@
                 }
             });
 
+            Acorn.Net.on('addUnit', function(data) {
+                //get the data for the units on the map
+                console.log(data);
+                var unit = new Unit();
+                unit.init(data.unitInfo);
+                Game.units[unit.id] = unit;
+                Game.addUnit(unit);
+            });
+
             Acorn.Net.on('unitFainted', function (data) {
                 console.log(data);
                 if (typeof Game.units[data.unitid] != 'undefined'){
@@ -373,9 +382,13 @@
             });
 
             Acorn.Net.on('setMoveLeft', function (data) {
+                if (!Game.units){
+                    return;
+                }
                 if (typeof Game.units[data.unit] != 'undefined'){
                     Game.units[data.unit].moveLeft = data.val;
                 }
+                console.log(data);
             });
 
             Acorn.Net.on('debug', function (data) {

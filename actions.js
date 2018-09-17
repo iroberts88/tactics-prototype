@@ -1,5 +1,6 @@
 //actions.js
-var Buff = require('./buff.js').Buff;
+var Buff = require('./buff.js').Buff,
+    ClassInfo = require('./classinfo.js').ClassInfo;
 
 ActionEnums = {
 	AlterStat: 'alterStat',
@@ -8,7 +9,8 @@ ActionEnums = {
 	AlterHealthByPercent: 'alterHealthByPercent',
 	SetHidden: 'setHidden',
 	AddOnAttackEffect: 'addOnAttackEffect',
-	Poison: 'poison'
+	Poison: 'poison',
+	HealingFieldEffect: 'healingFieldEffect'
 };
 
 AbilityEnums = {
@@ -40,7 +42,16 @@ AbilityEnums = {
 	HeroicLeap: 'heroicLeap',
 	HeroicCharge: 'heroicCharge',
 	PowerShot: 'powerShot',
-	PowerAttack: 'powerAttack'
+	PowerAttack: 'powerAttack',
+	FirstAid: 'firstAid',
+	Resuscitate: 'resuscitate',
+	HealingField: 'healingField',
+	Sprint: 'sprint',
+	Influence: 'influence',
+	PrecisionStrike: 'precisionStrike',
+	Cripple: 'cripple',
+	ShieldBoost: 'shieldBoost',
+	Concentrate: 'concentrate'
 };
 
 var Actions = function(){}
@@ -130,7 +141,7 @@ Actions.prototype.alterCurrentEnergy = function(unit,data){
 	return false;
 }
 
-Actions.prototype.setHidden= function(unit,data){
+Actions.prototype.setHidden = function(unit,data){
 	if (data.reverse){
 		if (unit.hidden){
 			unit.hidden = false;
@@ -152,6 +163,27 @@ Actions.prototype.setHidden= function(unit,data){
 		        unitid: unit.id
 		    }]
     	});
+	}
+	return false;
+}
+
+Actions.prototype.healingFieldEffect = function(unit,data){
+	//get all units in radius;
+	var radius = data.radius;
+	var node = unit.currentNode
+	var nodes = unit.owner.gameSession.map.getUnitsInRadius(node,radius);
+	data.actionData.push({
+		unitid: unit.id,
+        action: unit.owner.gameSession.clientActionEnums.ActionBubble,
+        text: 'Healing Field'
+	});
+	for (var i = 0; i < nodes.length;i++){
+		var node = nodes[i];
+		if (node.unit){
+			if (node.unit.owner == unit.owner){
+				data.actionData = node.unit.damage('heal',data.value,data.actionData);
+			}
+		}
 	}
 	return false;
 }
@@ -178,6 +210,9 @@ Actions.prototype.getAction = function(a){
 			break;
 		case ActionEnums.AddOnAttackEffect:
 			return this.addOnAttackEffect;
+			break;
+		case ActionEnums.HealingFieldEffect:
+			return this.healingFieldEffect;
 			break;
 	}
 }
@@ -753,6 +788,242 @@ Actions.prototype.heroicLeap = function(unit,session,data){
 	return true;
 }
 
+Actions.prototype.firstAid = function(unit,session,data){
+	var node = session.map.axialMap[data.q][data.r];
+	var u = node.unit;
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'First Aid'
+	});
+	if (!u){return false;}
+	value = Math.round(u.maximumHealth.value * ((25+unit.charisma.value*2)/100));
+	u.damage('heal',value,data.actionData);
+	return true;
+}
+
+Actions.prototype.resuscitate = function(unit,session,data){
+	var node = session.map.axialMap[data.q][data.r];
+	var u = node.unit;
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Resuscitate'
+	});
+	if (!u){return false;}
+	if (u.fainted){
+		u.fainted = false;
+		u.currentHealth = 1;
+		u.damage('heal',0,data.actionData);
+	}else{
+		return false;
+	}
+	u.charge = 0;
+	data.actionData.pop();
+	var speedVal = u.speed.value*((200+unit.agility.value*10+unit.dexterity.value*10)/100);
+	var buffData = session.gameEngine.buffs["buff_resuscitate"];
+	var buff = new Buff(buffData);
+	buff.actionsOnImmediate.push({
+        "action": "alterStat",
+        "stat": 'speed',
+        "value": speedVal
+	});
+	buff.actionsOnEnd.push({
+        "action": "alterStat",
+        "stat": 'speed',
+        'value': -speedVal
+	});
+	buff.init({
+	    unit: u //the buff will perform actions on this object
+	});
+	buff.duration = 1;
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: u.id,
+        text: 'Revived',
+        newShields: u.currentShields,
+        newHealth: u.currentHealth,
+        fainted: u.fainted,
+        type: 'heal',
+        dead: u.dead
+    });
+	return true;
+}
+
+Actions.prototype.healingField = function(unit,session,data){
+    var node = session.map.axialMap[data.q][data.r];
+    if (node.unit){
+    	return false;
+    }
+    data.actionData.push({
+        action: session.clientActionEnums.ActionBubble,
+        unitid: unit.id,
+        text: 'Healing Field'
+    });
+    var hField = new Unit();
+    hField.init({
+	    name: 'Healing Field Bot',
+	    sex: 'none',
+	    owner: unit.owner,
+	    engine: unit.engine,
+	    id: session.getId(),
+	    mechanical: true,
+	    human: false,
+	    speed: 100+(unit.intelligence.value*20),
+	    maximumHealth: (50 + (unit.intelligence.value*5))*(1+unit.tactics.value/100),
+	    ai: true,
+	    aiInfo: {
+	    	id: 'simpleAction',
+	    	action: 'healingFieldEffect',
+	    	radius: Math.floor(1+unit.intelligence.value/4),
+	    	value: Math.round((10+unit.intelligence.value/2+unit.charisma.value/2)*(1+unit.tactics.value/100))
+	    }
+    });
+    hField.classInfo = new ClassInfo();
+    hField.classInfo.init({unit: unit});
+    hField.classInfo.setBaseClass('');
+    hField.classInfo.setClass('');
+    hField.setCurrentNode(node);
+    hField.direction = 'North'
+    session.allUnits[hField.id] = hField;
+    session.queueData('addUnit',{unitInfo: hField.getLessClientData()});
+	return true;
+}
+
+Actions.prototype.sprint = function(unit,session,data){
+	data.unit = unit;
+    var endingNode = session.map.getCube(data);
+    data.path = session.map.findPath(session.map.getCube(unit.currentNode),endingNode,{startingUnit: unit,maxJump:unit.jump.value});
+    if (data.path[data.path.length-1] > Math.floor(unit.agility.value/2)){
+    	console.log("invalid Path on sprint...");
+    	console.log('height 1: ' + unit.currentNode.h);
+    	console.log("height 2: " + data.path[data.path.length-1].h);
+    	console.log(data.path);
+    	return false;
+    }
+    data.isAMove = false;
+    data = session.executeMove(data);
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.ActionBubble,
+        unitid: unit.id,
+        text: 'Sprint',
+    });
+	return true;
+}
+
+Actions.prototype.influence = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(unit.charisma.value/5);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Influence'
+	});
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			nodes[i].unit.charisma.nMod += 2;
+			nodes[i].unit.charisma.set(true);
+			data.actionData.push({
+		        action: session.clientActionEnums.DmgText,
+		        unitid: nodes[i].unit.id,
+		        text: 'Charisma +2'
+		    });
+		}
+	}
+	return true;
+}
+
+Actions.prototype.precisionStrike = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
+    data = session.executeAttack(data);
+    if (!data){return false;}
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Precision Strike',
+        newDir: data.d.newDir
+    });
+    data.node.unit.healMod.nMod -= unit.strength.value*2;
+    if (data.node.unit.healMod.value < -100){
+    	data.node.unit.healMod.value = -100;
+    }
+    data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: data.node.unit.id,
+        text: 'Healing -' + unit.strength.value*2 + '%'
+    });
+    data.node.unit.healMod.set();
+	return true;
+}
+
+Actions.prototype.cripple = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'gun'){
+    	return false;
+    }
+    data = session.executeAttack(data);
+    if (!data){return false;}
+    data.node.unit.moveLeft -= Math.floor(1+unit.dexterity.value/5);
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Cripple',
+        newDir: data.d.newDir
+    });
+    data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: data.node.unit.id,
+        text: 'Move -' + Math.floor(1+unit.dexterity.value/5)
+    });
+	return true;
+}
+
+Actions.prototype.shieldBoost = function(unit,session,data){
+	data.node = session.map.axialMap[data.q][data.r];
+	if (data.node.unit){
+		return;
+	}
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Shield Boost'
+	});
+	var percent = 20+unit.willpower.value*2;
+	var buffData = session.gameEngine.buffs["buff_shieldBoost"];
+	var buff = new Buff(buffData);
+	buff.actionsOnImmediate.push({
+        "action": "alterStat",
+        "stat": 'sh',
+        "value": percent
+	});
+	buff.actionsOnEnd.push({
+        "action": "alterStat",
+        "stat": 'sh',
+        "value": percent,
+        "reverse":true
+	});
+	buff.init({
+	    unit: data.node.unit //the buff will perform actions on this object
+	});
+	buff.duration = unit.intelligence.value;
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: nodes[i].unit.id,
+        text: 'Shields +' + percent + '%'
+        newShields: data.node.unit.currentShields.value
+    });
+	return true;
+}
+
+Actions.prototype.concentrate = function(unit,session,data){
+	return false;
+}
+
 Actions.prototype.getAbility = function(a){
 	console.log('getting ability <' + a + '>');
 	switch(a){
@@ -842,6 +1113,33 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.PowerAttack:
 			return this.powerAttack;
+			break;
+		case AbilityEnums.FirstAid:
+			return this.firstAid;
+			break;
+		case AbilityEnums.Resuscitate:
+			return this.resuscitate;
+			break;
+		case AbilityEnums.HealingField:
+			return this.healingField;
+			break;
+		case AbilityEnums.Sprint:
+			return this.sprint;
+			break;
+		case AbilityEnums.Influence:
+			return this.influence;
+			break;
+		case AbilityEnums.PrecisionStrike:
+			return this.precisionStrike;
+			break;
+		case AbilityEnums.Cripple:
+			return this.cripple;
+			break;
+		case AbilityEnums.ShieldBoost:
+			return this.shieldBoost;
+			break;
+		case AbilityEnums.Concentrate:
+			return this.concentrate;
 			break;
 		default:
 			return this.testAbility;

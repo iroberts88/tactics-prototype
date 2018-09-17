@@ -50,7 +50,8 @@ var GameEngine = function() {
         Heat: 'heat',
         Radiation: 'radi',
         Pulse: 'puls',
-        Explosive: 'expl'
+        Explosive: 'expl',
+        Healing: 'heal'
     }
 }
 

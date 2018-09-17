@@ -132,7 +132,9 @@
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
             actions.endAction(data);
-            data.unit.moveLeft -= 1;
+            if(data.reduceLeft){
+                data.unit.moveLeft -= 1;
+            }
             data.unit.currentNode = data.newNode;
             if (!data.newNode.unit){
                 data.newNode.unit = data.unit;
@@ -208,20 +210,27 @@
     };
     Actions.prototype.dmgText = function(dt,actions,data){
         Game.units[data.unitid].addDmgText(data.text,data.type);
+        var resetIP = false;
         if (typeof data.newHealth != 'undefined'){
             Game.units[data.unitid].currentHealth = data.newHealth;
+            resetIP = true;
         }
         if (typeof data.newShields != 'undefined'){
             Game.units[data.unitid].currentShields = data.newShields;
+            resetIP = true;
         }
         if (data.dead && typeof data.dead != 'undefined'){
             Game.units[data.unitid].setDead();
             Game.units[data.unitid].currentNode.unit = null;
             Game.units[data.unitid].dead = true;
-        }else if (data.fainted&& typeof data.fainted != 'undefined'){
-            Game.units[data.unitid].setFainted();
+            resetIP = true;
+        }else if (typeof data.fainted != 'undefined'){
+            Game.units[data.unitid].setFainted(data.fainted);
+            resetIP = true;
         }
-        Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
+        if (resetIP){
+            Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
+        }
         actions.endAction(data);
     };
     Actions.prototype.actionUsed = function(dt,actions,data){

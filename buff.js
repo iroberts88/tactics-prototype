@@ -54,7 +54,7 @@ var Buff = function(data){
     }
     this.tickImmediately = typeof data.tickImmediately == 'undefined' ? false : data.tickImmediately;
     if (!this.duration){this.duration = Infinity}
-    this.timer = 0;
+    this.ticker = 0;
     this.buffEnded = false;
     this.refresh = false;
     this.stacks = 1;
@@ -154,6 +154,7 @@ Buff.prototype.end = function(){
         var action = Actions.getAction(this.actionsOnEnd[i].action);
         action(this.unit, this.actionsOnEnd[i]);
     }
+    console.log('buff ' + this.name + ' ended')
     this.buffEnded = true;
 }
 
