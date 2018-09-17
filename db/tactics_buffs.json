@@ -101,6 +101,18 @@
       ],
       "tickImmediately": true,
       "instant": false
+    },
+    {
+      "description": "Increased casting speed",
+      "duration": null,
+      "name": "Concentrate",
+      "stackType": "none",
+      "buffid": "buff_concentrate",
+      "tags": [
+        "positive","castingSpeed"
+      ],
+      "tickImmediately": true,
+      "instant": false
     }
   ]
 }

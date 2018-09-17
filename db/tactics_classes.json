@@ -490,7 +490,7 @@
           "ApCost": 100,
           "id": "heroicLeap",
           "type": "openhex",
-          "eCost": 20,
+          "eCost": 40,
           "speed": "instant"
         },
         {
@@ -501,7 +501,7 @@
           "ApCost": 100,
           "id": "heroicCharge",
           "type": "openhex",
-          "eCost": 20,
+          "eCost": 40,
           "speed": "instant"
         },
         {
@@ -512,7 +512,7 @@
           "ApCost": 50,
           "id": "powerAttack",
           "type": "singleunit",
-          "eCost": 20,
+          "eCost": 15,
           "speed": "instant"
         },
         {
@@ -523,7 +523,7 @@
           "ApCost": 50,
           "id": "powerShot",
           "type": "singleunit",
-          "eCost": 20,
+          "eCost": 15,
           "speed": "instant"
         },
         {
@@ -554,11 +554,11 @@
         },
         {
           "sCost": 12,
-          "name": "Charge",
-          "description": "Slam an enemy, dealing <STR%> of your maximum health as damage and knocking back <STR/3> units",
+          "name": "Slam",
+          "description": "Slam a unit, knocking it back <1+STR/5> units. Hitting a wall deals 30 damage, hitting another unit deals 10 damage to both units",
           "range": "1 | 1",
           "ApCost": 20,
-          "id": "charge",
+          "id": "slam",
           "type": "singleunit",
           "eCost": 20,
           "speed": "instant"
@@ -604,7 +604,8 @@
       },
       "baseAttr": {
         "maximumEnergy": 20,
-        "speed": 50
+        "power": -10,
+        "skill": -10
       },
       "abilities": [
         {
@@ -683,13 +684,13 @@
         {
           "sCost": 10,
           "name": "Shield Boost",
-          "description": "Upgrade an ally’s shield temporarily, boosting its maximum and current capacity by <WIL*3%> for <INT> turns",
+          "description": "Upgrade an ally’s shield temporarily, boosting its maximum and current capacity by <20+WIL*5%> for <INT> turns",
           "range": "3|3|self",
           "ApCost": 150,
           "id": "shieldBoost",
           "type": "singleunit",
           "eCost": 15,
-          "speed": "400"
+          "speed": 400
         },
         {
           "sCost": 12,

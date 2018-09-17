@@ -27,6 +27,7 @@ Attribute.prototype.init = function(data){
 
 	this.setBool = false; //the attribute is forced to change to this value if true
 	this.setValue = 0;
+    this.updateClient = (typeof data.clientUpdate == 'undefined') ? true : data.clientUpdate;
 	//formula for setting the attribute
 	if (typeof data.formula == 'undefined'){
 		this.formula = function(){return Math.round((this.base+this.nMod)*this.pMod);};
@@ -61,7 +62,7 @@ Attribute.prototype.set = function(updateClient){
 	}
     try{this.next()}catch(e){}
     try{
-        if (updateClient){
+        if (updateClient && this.updateClient){
             this.owner.owner.gameEngine.queuePlayer(this.owner.owner,'setUnitStat',{
                 'unit': this.owner.id,
                 'stat': this.id,

@@ -1000,7 +1000,6 @@
                 pathArr = this.map.findPath(start,end,{maxJump:unit.jump,startingUnit:unit});
                 if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
                     this.moveNodesActive.push(end);
-                    console.log(end);
                     end.setOverlaySprites(0x0FFFF0);
                     this.overlaySprites[end.id] = end;
                     this.addOverlaySprites();

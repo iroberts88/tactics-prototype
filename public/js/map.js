@@ -669,7 +669,9 @@
             for (var j = 0; j < radius;j++){
                 try{
                     var c = this.getAxial(this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]]);
-                    results.push(c);
+                    if (!c.deleted){
+                        results.push(c);
+                    }
                 }catch(e){
 
                 }

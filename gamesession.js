@@ -4,6 +4,7 @@
 
 var Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
+    Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap;
 
 var AWS = require("aws-sdk");
@@ -65,7 +66,8 @@ var GameSession = function (engine) {
         ActionBubble: 'actionBubble',
         DmgText: 'dmgText',
         ActionUsed: 'actionUsed',
-        SetEnergy: 'setEnergy'
+        SetEnergy: 'setEnergy',
+        Slam: 'slam'
     }
 };
 
@@ -76,7 +78,8 @@ GameSession.prototype.init = function (data) {
     for (var i in this.gameEngine.maps){
         names.push(i);
     }
-    var name = 'testMap';//names[Math.floor(Math.random()*names.length)];
+    //var name = names[Math.floor(Math.random()*names.length)];
+    var name = 'testMap';
     //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
@@ -368,7 +371,7 @@ GameSession.prototype.executeMove = function(data){
     for (var i = 0; i < data.path.length;i++){
         var a = this.map.getAxial(data.path[i]);
         if (a.unit){
-            if (a.unit.hidden && a.unit.owner != unit.owner){
+            if (a.unit.hidden && a.unit.owner != data.unit.owner){
                 //hidden unit!
                 data.path = data.path.slice(0,i);
                 var keepGoing = true;
@@ -591,6 +594,9 @@ GameSession.prototype.unitAbility = function(data){
         if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
             //node is valid!
             //execute the ability!!
+            if (node.unit){
+                data.target = node.unit;
+            }
             gotNode = true;
             var energy = this.parseStringCode(unit,data.ability.eCost);
             if (unit.currentEnergy >= energy){
@@ -626,13 +632,15 @@ GameSession.prototype.unitAbility = function(data){
             }else{
                 //The ability has a cast time
                 //add cast time to the turn order and start casting!
+                var speed = Math.round(this.parseStringCode(unit,data.ability.speed) * unit.castingSpeedMod.value);
+                console.log('Cast speed: ' + speed);
                 abData = {
                     id: this.gameEngine.getId(),
                     isCastTimer: true,
                     abilityData: data.ability,
                     unitid: unit.id,
                     data: data,
-                    speed: this.parseStringCode(unit,data.ability.speed),
+                    speed: speed,
                     charge: 0
                 }
                 this.allUnits[abData.id] = abData;
@@ -642,8 +650,7 @@ GameSession.prototype.unitAbility = function(data){
                     isCastTimer: true,
                     unitid: unit.id,
                     abilityName: data.ability.name,
-                    speed: this.parseStringCode(unit,data.ability.speed),
-                    data: data,
+                    speed: speed,
                     charge: 0
                 });
                 data.actionData.push({

@@ -43,6 +43,7 @@ AbilityEnums = {
 	HeroicCharge: 'heroicCharge',
 	PowerShot: 'powerShot',
 	PowerAttack: 'powerAttack',
+	Slam: 'slam',
 	FirstAid: 'firstAid',
 	Resuscitate: 'resuscitate',
 	HealingField: 'healingField',
@@ -82,6 +83,7 @@ Actions.prototype.alterHealthByPercent = function(unit,data){
 	return false;
 }
 Actions.prototype.poison = function(unit,data){
+	var Buff = require('./buff.js').Buff;
 	var buffData = unit.owner.gameEngine.buffs["buff_poison"];
 	var buff = new Buff(buffData);
 	console.log(data.target.name);
@@ -228,6 +230,7 @@ Actions.prototype.testAbility = function(unit,session,data){
 }
 
 Actions.prototype.stealth = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
 	//set the unit as stealthed and reduce speed
 	var buffData = session.gameEngine.buffs["buff_stealth"];
 	//TODO if agility changes while buff is active, does NOT change speed!
@@ -379,6 +382,7 @@ Actions.prototype.interrupt = function(unit,session,data){
 }
 
 Actions.prototype.poisonWeapon = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
     //get the units weapon
     var weapon = unit.getWeapon();
     if (weapon.type == 'weapon'){
@@ -558,6 +562,7 @@ Actions.prototype.flareGrenade = function(unit,session,data){
 }
 
 Actions.prototype.resUp = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
 	//get all units in radius;
 	var radius = Math.floor(2);
 	var node = session.map.axialMap[data.q][data.r];
@@ -597,6 +602,23 @@ Actions.prototype.resUp = function(unit,session,data){
 		    });
 		}
 	}
+	return true;
+}
+
+Actions.prototype.repair = function(unit,session,data){
+	var node = session.map.axialMap[data.q][data.r];
+	var u = node.unit;
+	if (u.human){
+		return false;
+	}
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Repair'
+	});
+	if (!u){return false;}
+	value = Math.round(u.maximumHealth.value * ((25+unit.dexterity.value*2)/100));
+	u.damage('heal',value,data.actionData);
 	return true;
 }
 
@@ -709,6 +731,62 @@ Actions.prototype.powerAttack = function(unit,session,data){
 	return true;
 }
 
+Actions.prototype.slam = function(unit,session,data){
+	if (typeof data.target == 'undefined'){
+		return false;
+	}
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Slam'
+	});
+    var dir = session.map.getNewDirectionAxial(data.target.currentNode,unit.currentNode);
+    var m = Math.floor(1+unit.strength.value/5);
+    for (var i = 0; i < m;i++){
+    	//get node
+    	var newNode = session.map.getAxialNeighbor(data.target.currentNode,dir);
+    	while(newNode.deleted){
+    		i+=1;
+    		if (i >= m){
+    			//can't hit onto a deleted node
+    			return true;
+    		}
+    		newNode = session.map.getAxialNeighbor(newNode,dir);
+    		if (!newNode){
+    			//hit the edge of the map
+    			return true;
+    		}
+    	}
+    	if (!newNode){
+    		continue;
+    	}
+    	if (newNode.unit){
+    		//damage both and end
+    		var dmg = Math.round(10*(1+unit.tactics.value/50));
+    		data.target.damage('physical',dmg,data.actionData);
+    		newNode.unit.damage('physical',dmg,data.actionData);
+    		return true;
+    	}
+    	if (newNode.h-data.target.currentNode.h >= data.target.height){
+    		//slam into the wall and take damage, then end
+    		var dmg = Math.round(30*(1+unit.tactics.value/50));
+    		data.target.damage('physical',dmg,data.actionData);
+    		return true;
+    	}else{
+    		//move the target to the new node
+    		data.target.newNode(newNode);
+    		data.actionData.push({
+	            action: session.clientActionEnums.Slam,
+	            unitid: data.target.id,
+	            x: newNode.x,
+	            y: newNode.y,
+	            z: newNode.z
+	        });
+    	}
+    }
+	return true;
+}
+
 Actions.prototype.heroicCharge = function(unit,session,data){
     var weapon = unit.getWeapon();
     if (weapon.type != 'weapon'){
@@ -791,6 +869,9 @@ Actions.prototype.heroicLeap = function(unit,session,data){
 Actions.prototype.firstAid = function(unit,session,data){
 	var node = session.map.axialMap[data.q][data.r];
 	var u = node.unit;
+	if (u.mechanical){
+		return false;
+	}
 	data.actionData.push({
 		unitid: unit.id,
         action: session.clientActionEnums.ActionBubble,
@@ -803,6 +884,7 @@ Actions.prototype.firstAid = function(unit,session,data){
 }
 
 Actions.prototype.resuscitate = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
 	var node = session.map.axialMap[data.q][data.r];
 	var u = node.unit;
 	data.actionData.push({
@@ -984,44 +1066,77 @@ Actions.prototype.cripple = function(unit,session,data){
 }
 
 Actions.prototype.shieldBoost = function(unit,session,data){
-	data.node = session.map.axialMap[data.q][data.r];
-	if (data.node.unit){
-		return;
+	var Buff = require('./buff.js').Buff;
+	if (typeof data.target == 'undefined'){
+		return false;
 	}
 	data.actionData.push({
 		unitid: unit.id,
         action: session.clientActionEnums.ActionBubble,
         text: 'Shield Boost'
 	});
-	var percent = 20+unit.willpower.value*2;
+	var current = data.target.maximumShields.value;
+	var percent = (20+unit.willpower.value*5);
 	var buffData = session.gameEngine.buffs["buff_shieldBoost"];
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
-        "action": "alterStat",
+        "action": "alterStatPercent",
         "stat": 'sh',
-        "value": percent
+        "value": percent/100
 	});
 	buff.actionsOnEnd.push({
-        "action": "alterStat",
+        "action": "alterStatPercent",
         "stat": 'sh',
-        "value": percent,
+        "value": percent/100,
         "reverse":true
 	});
 	buff.init({
-	    unit: data.node.unit //the buff will perform actions on this object
+	    unit: data.target //the buff will perform actions on this object
 	});
 	buff.duration = unit.intelligence.value;
+	var diff = data.target.maximumShields.value-current;
+	data.target.currentShields += diff;
 	data.actionData.push({
         action: session.clientActionEnums.DmgText,
-        unitid: nodes[i].unit.id,
-        text: 'Shields +' + percent + '%'
-        newShields: data.node.unit.currentShields.value
+        unitid: data.target.id,
+        text: 'Shields +' + percent + '%',
+        newShields: data.target.currentShields
     });
 	return true;
 }
 
 Actions.prototype.concentrate = function(unit,session,data){
-	return false;
+	var Buff = require('./buff.js').Buff;
+
+	data.actionData.push({
+		unitid: unit.id,
+        action: session.clientActionEnums.ActionBubble,
+        text: 'Concentrate'
+	});
+	var percent = (125+unit.willpower.value*10);
+	var buffData = session.gameEngine.buffs["buff_concentrate"];
+	var buff = new Buff(buffData);
+	buff.actionsOnImmediate.push({
+        "action": "alterStat",
+        "stat": 'cSpeedMod',
+        "value": percent/100
+	});
+	buff.actionsOnEnd.push({
+        "action": "alterStat",
+        "stat": 'cSpeedMod',
+        "value": percent/100,
+        "reverse":true
+	});
+	buff.init({
+	    unit: unit //the buff will perform actions on this object
+	});
+	buff.duration = unit.willpower.value;
+	data.actionData.push({
+        action: session.clientActionEnums.DmgText,
+        unitid: data.unit.id,
+        text: 'Casting speed +' + percent + '%',
+    });
+	return true;
 }
 
 Actions.prototype.getAbility = function(a){
@@ -1113,6 +1228,9 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.PowerAttack:
 			return this.powerAttack;
+			break;
+		case AbilityEnums.Slam:
+			return this.slam;
 			break;
 		case AbilityEnums.FirstAid:
 			return this.firstAid;

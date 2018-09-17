@@ -435,7 +435,17 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 1,
         'min': 0,
-        'max': 10
+        'max': 10,
+        'clientUpdate': false
+    });
+    this.castingSpeedMod = new Attribute();
+    this.castingSpeedMod.init({
+        'id': 'cSpeedMod',
+        'owner': this,
+        'value': 1,
+        'min': 0,
+        'max': 10,
+        'clientUpdate': false
     });
 
     var Inventory = require('./inventory.js').Inventory;
@@ -514,10 +524,7 @@ Unit.prototype.damage = function(type,value,aData){
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Cold:
-            console.log('start ' + value);
             value -= Math.round(value*(this.coldRes.value/100));
-            console.log('end ' + value);
-            console.log('cres: ' + this.coldRes.value);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Radiation:
@@ -974,6 +981,9 @@ Unit.prototype.getStat = function(id){
             case 'expMod':
                 return this.expMod;
                 break;
+            case 'cSpeedMod':
+                return this.castingSpeedMod;
+                break;
         }
     }catch(e){
         console.log("unable to get stat " + id);
@@ -992,18 +1002,30 @@ Unit.prototype.modStat = function(id,amt){
 };
 Unit.prototype.modStatPercent = function(id,amt){
     try{
-        console.log(this.getStat(id).value)
-        console.log(this.getStat(id).pMod)
         this.getStat(id).pMod += amt;
         this.getStat(id).set(true);
-        console.log(this.getStat(id).value)
-        console.log(this.getStat(id).pMod)
     }catch(e){
         console.log("unable to mod stat " + id);
         console.log(e);
     }
 };
 Unit.prototype.addAp = function(classID,amt){
+    try{
+        this.classInfo.ap[classID] += amt;
+        if (this.classInfo.ap[classID] > 9999){
+            this.classInfo.ap[classID] = 9999;
+        }
+        this.owner.gameEngine.queuePlayer(this.owner,'modAp',{
+            'unitID': this.id,
+            'classID': classID,
+            'value': this.classInfo.ap[classID]
+        })
+    }catch(e){
+        console.log("unable to mod ap");
+        console.log(e);
+    }
+}
+Unit.prototype.addBuff = function(buffData){
     try{
         this.classInfo.ap[classID] += amt;
         if (this.classInfo.ap[classID] > 9999){

@@ -13,7 +13,8 @@
         ActionBubble: 'actionBubble',
         DmgText: 'dmgText',
         ActionUsed: 'actionUsed',
-        SetEnergy: 'setEnergy'
+        SetEnergy: 'setEnergy',
+        Slam: 'slam'
     };
 
     Actions.prototype.init = function(actions){
@@ -82,6 +83,9 @@
             case this.actionEnums.SetEnergy:
                 return this.setEnergy;
                 break;
+            case this.actionEnums.Slam:
+                return this.slam;
+                break;
             default:
                 return this.test;
                 break;
@@ -101,7 +105,39 @@
             actions.endAction(data);
         }
     };
-
+    Actions.prototype.slam = function(dt,actions,data){
+        //move the given unit 1 node
+        if (typeof data.ticker == 'undefined'){
+            data.ticker = 0;
+            data.speed = 0.1; //seconds it takes to move 1 node
+            data.unit = Game.units[data.unitid];
+            var t = 1;
+            if (!(Game.map.currentRotation%2)){t = 2}
+            var sp = 'sprite' + t;
+            var cont = 'container' + t;
+            if (data.unit.currentNode.unit == data.unit){
+                data.unit.currentNode.unit = null;
+            }
+            data.newNode = Game.map.getAxial({x:data.x,y:data.y,z:data.z});
+            Game.map[cont].removeChild(data.unit.sprite);
+            Game.map[cont].addChildAt(data.unit.sprite,Game.map[cont].getChildIndex(data.newNode[sp])+1);
+            data.startPos = [data.unit.sprite.position.x,data.unit.sprite.position.y];
+            data.endPos = [data.newNode[sp].position.x,data.newNode[sp].position.y-Game.map.TILE_HEIGHT*(data.newNode.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]];
+            data.vector = [data.endPos[0]-data.startPos[0],data.endPos[1]-data.startPos[1]];
+        }
+        data.unit.sprite.position.x = data.startPos[0] + data.vector[0]*data.ticker/data.speed;
+        data.unit.sprite.position.y = data.startPos[1] + data.vector[1]*data.ticker/data.speed;
+        data.ticker += dt;
+        if (data.ticker >= data.speed){
+            data.unit.sprite.position.x = data.endPos[0];
+            data.unit.sprite.position.y = data.endPos[1];
+            actions.endAction(data);
+            data.unit.currentNode = data.newNode;
+            if (!data.newNode.unit){
+                data.newNode.unit = data.unit;
+            }
+        }
+    };
     Actions.prototype.move = function(dt,actions,data){
         //move the given unit 1 node
         if (typeof data.ticker == 'undefined'){

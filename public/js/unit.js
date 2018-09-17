@@ -294,7 +294,8 @@
         var xPos = 0;
         var yPos = -text.height/2;
         if (this.damageText.length){
-            yPos = this.damageText[this.damageText.length-1].y - text.height;
+            yPos = this.damageText[this.damageText.length-1].y + text.height/2;
+            this.damageText[this.damageText.length-1].y -= text.height/2;
         }
         text.anchor.x = 0.5;
         text.anchor.y = 0.5;

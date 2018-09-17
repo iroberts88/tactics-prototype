@@ -125,11 +125,11 @@ function User() {
                             char[randStat].base += 1;
                             char[randStat].set();
                         }
-                        /*var unitClass = classes[i];
+                        var unitClass = classes[i];
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
-                        }*/
-                        var unitClass = 'medic';
+                        }
+                        //var unitClass = 'soldier';
                         var learned = {};
                         var equipped = {}; 
                         var ap = {};
@@ -145,8 +145,8 @@ function User() {
                                 ap = {'Tech': 9999};
                                 break;
                             case 'soldier':
-                                learned = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
-                                equipped = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "charge" : true, "opportunity" : true, "quickDraw" : true };
+                                learned = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
+                                equipped = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
                                 ap = {'Soldier': 9999};
                                 break;
                             case 'scout':
