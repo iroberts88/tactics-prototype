@@ -74,12 +74,12 @@ var GameSession = function (engine) {
 GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
-    var names = [];
-    for (var i in this.gameEngine.maps){
-        names.push(i);
-    }
-    //var name = names[Math.floor(Math.random()*names.length)];
-    var name = 'testMap';
+    var names = ['tri1','bunker01','ice_river'];
+    //for (var i in this.gameEngine.maps){
+    //    names.push(i);
+    //}
+    var name = names[Math.floor(Math.random()*names.length)];
+    //var name = 'testMap';
     //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
