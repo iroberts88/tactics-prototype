@@ -53052,6 +53052,1809 @@
           "tile": "ice"
         }
       ]
+    },
+    {
+      "mapid": "throne",
+      "mapData": {
+        "0": {
+          "0": {
+            "q": 0,
+            "r": 0,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 0,
+            "r": 1,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 0,
+            "r": 2,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 0,
+            "r": 3,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 0,
+            "r": 4,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 0,
+            "r": 5,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 0,
+            "r": 6,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 0,
+            "r": 7,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 0,
+            "r": 8,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": 0,
+            "r": 9,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 0,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 0,
+            "r": 11,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 0,
+            "r": 12,
+            "h": 18,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": 0,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 0,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "1": {
+          "0": {
+            "q": 1,
+            "r": 0,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 1,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 1,
+            "r": 2,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 1,
+            "r": 3,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 1,
+            "r": 4,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 1,
+            "r": 5,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 1,
+            "r": 6,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 1,
+            "r": 7,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 1,
+            "r": 8,
+            "h": 8,
+            "deleted": false,
+            "tile": "base"
+          },
+          "9": {
+            "q": 1,
+            "r": 9,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 1,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 1,
+            "r": 11,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 1,
+            "r": 12,
+            "h": 19,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": 1,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 1,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "2": {
+          "0": {
+            "q": 2,
+            "r": 0,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 2,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 2,
+            "r": 2,
+            "h": 25,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "3": {
+            "q": 2,
+            "r": 3,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 2,
+            "r": 4,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 2,
+            "r": 5,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 2,
+            "r": 6,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 2,
+            "r": 7,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 2,
+            "r": 8,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "9": {
+            "q": 2,
+            "r": 9,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 2,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 2,
+            "r": 11,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 2,
+            "r": 12,
+            "h": 19,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": 2,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 2,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "3": {
+          "0": {
+            "q": 3,
+            "r": 0,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 3,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 3,
+            "r": 2,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 3,
+            "r": 3,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 3,
+            "r": 4,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 3,
+            "r": 5,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 3,
+            "r": 6,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "7": {
+            "q": 3,
+            "r": 7,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "8": {
+            "q": 3,
+            "r": 8,
+            "h": 11,
+            "deleted": false,
+            "tile": "base"
+          },
+          "9": {
+            "q": 3,
+            "r": 9,
+            "h": 22,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 3,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 3,
+            "r": 11,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 3,
+            "r": 12,
+            "h": 18,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": 3,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 3,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "4": {
+          "0": {
+            "q": 4,
+            "r": 0,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 4,
+            "r": 1,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 4,
+            "r": 2,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 4,
+            "r": 3,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 4,
+            "r": 4,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "5": {
+            "q": 4,
+            "r": 5,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "6": {
+            "q": 4,
+            "r": 6,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "7": {
+            "q": 4,
+            "r": 7,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "8": {
+            "q": 4,
+            "r": 8,
+            "h": 11,
+            "deleted": false,
+            "tile": "base"
+          },
+          "9": {
+            "q": 4,
+            "r": 9,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 4,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 4,
+            "r": 11,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 4,
+            "r": 12,
+            "h": 16,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": 4,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 4,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "5": {
+          "0": {
+            "q": 5,
+            "r": 0,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 5,
+            "r": 1,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 5,
+            "r": 2,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "3": {
+            "q": 5,
+            "r": 3,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "4": {
+            "q": 5,
+            "r": 4,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "5": {
+            "q": 5,
+            "r": 5,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "6": {
+            "q": 5,
+            "r": 6,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "7": {
+            "q": 5,
+            "r": 7,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "8": {
+            "q": 5,
+            "r": 8,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "9": {
+            "q": 5,
+            "r": 9,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 5,
+            "r": 10,
+            "h": 21,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 5,
+            "r": 11,
+            "h": 14,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": 5,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": 5,
+            "r": 13,
+            "h": 2,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 5,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "6": {
+          "0": {
+            "q": 6,
+            "r": 0,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "1": {
+            "q": 6,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "2": {
+            "q": 6,
+            "r": 2,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "3": {
+            "q": 6,
+            "r": 3,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "4": {
+            "q": 6,
+            "r": 4,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "5": {
+            "q": 6,
+            "r": 5,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "6": {
+            "q": 6,
+            "r": 6,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "7": {
+            "q": 6,
+            "r": 7,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 6,
+            "r": 8,
+            "h": 8,
+            "deleted": false,
+            "tile": "base"
+          },
+          "9": {
+            "q": 6,
+            "r": 9,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "10": {
+            "q": 6,
+            "r": 10,
+            "h": 12,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": 6,
+            "r": 11,
+            "h": 3,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": 6,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": 6,
+            "r": 13,
+            "h": 1,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 6,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "7": {
+          "0": {
+            "q": 7,
+            "r": 0,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "1": {
+            "q": 7,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "2": {
+            "q": 7,
+            "r": 2,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "3": {
+            "q": 7,
+            "r": 3,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "4": {
+            "q": 7,
+            "r": 4,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "5": {
+            "q": 7,
+            "r": 5,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 7,
+            "r": 6,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 7,
+            "r": 7,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 7,
+            "r": 8,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": 7,
+            "r": 9,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": 7,
+            "r": 10,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": 7,
+            "r": 11,
+            "h": 3,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": 7,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": 7,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": 7,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "8": {
+          "0": {
+            "q": 8,
+            "r": 0,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "1": {
+            "q": 8,
+            "r": 1,
+            "h": 8,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "2": {
+            "q": 8,
+            "r": 2,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "3": {
+            "q": 8,
+            "r": 3,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 8,
+            "r": 4,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 8,
+            "r": 5,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 8,
+            "r": 6,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 8,
+            "r": 7,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 8,
+            "r": 8,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": 8,
+            "r": 9,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": 8,
+            "r": 10,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": 8,
+            "r": 11,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": 8,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": 8,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "9": {
+          "0": {
+            "q": 9,
+            "r": 0,
+            "h": 10,
+            "deleted": false,
+            "tile": "base"
+          },
+          "1": {
+            "q": 9,
+            "r": 1,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 9,
+            "r": 2,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 9,
+            "r": 3,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 9,
+            "r": 4,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 9,
+            "r": 5,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 9,
+            "r": 6,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 9,
+            "r": 7,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 9,
+            "r": 8,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": 9,
+            "r": 9,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": 9,
+            "r": 10,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": 9,
+            "r": 11,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "10": {
+          "0": {
+            "q": 10,
+            "r": 0,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 10,
+            "r": 1,
+            "h": 4,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 10,
+            "r": 2,
+            "h": 5,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 10,
+            "r": 3,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 10,
+            "r": 4,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 10,
+            "r": 5,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 10,
+            "r": 6,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 10,
+            "r": 7,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": 10,
+            "r": 8,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": 10,
+            "r": 9,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "11": {
+          "0": {
+            "q": 11,
+            "r": 0,
+            "h": 4,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 11,
+            "r": 1,
+            "h": 5,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 11,
+            "r": 2,
+            "h": 25,
+            "deleted": false,
+            "tile": "dirt"
+          },
+          "3": {
+            "q": 11,
+            "r": 3,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 11,
+            "r": 4,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 11,
+            "r": 5,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": 11,
+            "r": 6,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": 11,
+            "r": 7,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "12": {
+          "0": {
+            "q": 12,
+            "r": 0,
+            "h": 5,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 12,
+            "r": 1,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 12,
+            "r": 2,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 12,
+            "r": 3,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": 12,
+            "r": 4,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": 12,
+            "r": 5,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "13": {
+          "0": {
+            "q": 13,
+            "r": 0,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 13,
+            "r": 1,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "2": {
+            "q": 13,
+            "r": 2,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": 13,
+            "r": 3,
+            "h": 12,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "14": {
+          "0": {
+            "q": 14,
+            "r": 0,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "1": {
+            "q": 14,
+            "r": 1,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          }
+        },
+        "-1": {
+          "2": {
+            "q": -1,
+            "r": 2,
+            "h": 12,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "3": {
+            "q": -1,
+            "r": 3,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "4": {
+            "q": -1,
+            "r": 4,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": -1,
+            "r": 5,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": -1,
+            "r": 6,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": -1,
+            "r": 7,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": -1,
+            "r": 8,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": -1,
+            "r": 9,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": -1,
+            "r": 10,
+            "h": 12,
+            "deleted": false,
+            "tile": "base"
+          },
+          "11": {
+            "q": -1,
+            "r": 11,
+            "h": 14,
+            "deleted": false,
+            "tile": "base"
+          },
+          "12": {
+            "q": -1,
+            "r": 12,
+            "h": 16,
+            "deleted": false,
+            "tile": "base"
+          },
+          "13": {
+            "q": -1,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -1,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-2": {
+          "4": {
+            "q": -2,
+            "r": 4,
+            "h": 12,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "5": {
+            "q": -2,
+            "r": 5,
+            "h": 11,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "6": {
+            "q": -2,
+            "r": 6,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": -2,
+            "r": 7,
+            "h": 8,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": -2,
+            "r": 8,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": -2,
+            "r": 9,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": -2,
+            "r": 10,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": -2,
+            "r": 11,
+            "h": 4,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": -2,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": -2,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -2,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-3": {
+          "6": {
+            "q": -3,
+            "r": 6,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "7": {
+            "q": -3,
+            "r": 7,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "8": {
+            "q": -3,
+            "r": 8,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": -3,
+            "r": 9,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": -3,
+            "r": 10,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": -3,
+            "r": 11,
+            "h": 3,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": -3,
+            "r": 12,
+            "h": 1,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": -3,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -3,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-4": {
+          "8": {
+            "q": -4,
+            "r": 8,
+            "h": 10,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "9": {
+            "q": -4,
+            "r": 9,
+            "h": 9,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "10": {
+            "q": -4,
+            "r": 10,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": -4,
+            "r": 11,
+            "h": 1,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": -4,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": -4,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -4,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-5": {
+          "10": {
+            "q": -5,
+            "r": 10,
+            "h": 7,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "11": {
+            "q": -5,
+            "r": 11,
+            "h": 6,
+            "deleted": false,
+            "tile": "grass"
+          },
+          "12": {
+            "q": -5,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": -5,
+            "r": 13,
+            "h": 1,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -5,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-6": {
+          "12": {
+            "q": -6,
+            "r": 12,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "13": {
+            "q": -6,
+            "r": 13,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          },
+          "14": {
+            "q": -6,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        },
+        "-7": {
+          "14": {
+            "q": -7,
+            "r": 14,
+            "h": 0,
+            "deleted": false,
+            "tile": "ice"
+          }
+        }
+      },
+      "sz1": [
+        {
+          "q": -4,
+          "r": 14,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -3,
+          "r": 13,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -4,
+          "r": 13,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -3,
+          "r": 12,
+          "h": 1,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -2,
+          "r": 12,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -4,
+          "r": 12,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": -3,
+          "r": 11,
+          "h": 3,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": -2,
+          "r": 11,
+          "h": 4,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": -4,
+          "r": 11,
+          "h": 1,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": -5,
+          "r": 11,
+          "h": 6,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": -3,
+          "r": 10,
+          "h": 7,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": -2,
+          "r": 10,
+          "h": 7,
+          "deleted": false,
+          "tile": "grass"
+        }
+      ],
+      "sz2": [
+        {
+          "q": 7,
+          "r": 10,
+          "h": 7,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 6,
+          "r": 11,
+          "h": 3,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 5,
+          "r": 12,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 7,
+          "r": 11,
+          "h": 3,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 8,
+          "r": 10,
+          "h": 8,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 8,
+          "r": 9,
+          "h": 8,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 6,
+          "r": 12,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 7,
+          "r": 9,
+          "h": 7,
+          "deleted": false,
+          "tile": "grass"
+        },
+        {
+          "q": 7,
+          "r": 12,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 6,
+          "r": 13,
+          "h": 1,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 5,
+          "r": 13,
+          "h": 2,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 5,
+          "r": 14,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        },
+        {
+          "q": 6,
+          "r": 14,
+          "h": 0,
+          "deleted": false,
+          "tile": "ice"
+        }
+      ]
     }
   ]
 }

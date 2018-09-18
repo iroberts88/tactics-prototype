@@ -74,7 +74,7 @@ var GameSession = function (engine) {
 GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
-    var names = ['tri1','bunker01','arena', 'ice_ravine'];
+    var names = ['tri1','throne','arena', 'ice_ravine'];
     //for (var i in this.gameEngine.maps){
     //    names.push(i);
     //}
@@ -354,11 +354,8 @@ GameSession.prototype.getTurnOrder = function(){
         this.queueData('action',{actionData:actionData});
         this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
         this.getTurnOrder();
-    }
-    if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
-        if (!this.allUnits[this.turnOrder[0].id].isCastTimer){
-            this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
-        }
+    }else if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
+        this.allUnits[this.turnOrder[0].id].setMoveLeft(this.allUnits[this.turnOrder[0].id].move.value);
     }
 }
 

@@ -113,7 +113,7 @@ HexMap.prototype.getCubeNeighbor = function(cubeNode,direction){
     try{
         return this.cubeMap[cubeNode.x+d[0]][cubeNode.y+d[1]][cubeNode.z+d[2]];
     }catch(e){
-        console.log(e);
+        //console.log(e);
     }
     return null;
 };

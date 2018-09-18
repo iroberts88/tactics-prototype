@@ -161,7 +161,7 @@ Unit.prototype.init = function(data) {
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
     
-    this.mechanical = (typeof data.mechanical == 'undefined') ? true : data.mechanical;
+    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
     this.human = (typeof data.human == 'undefined') ? true : data.human;
 
     this.ai = (typeof data.ai == 'undefined') ? false : data.ai;
