@@ -198,11 +198,11 @@
         },
         {
           "sCost": 4,
-          "name": "Direct",
+          "name": "Instruct",
           "description": "Increase intelligence for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
-          "id": "direct",
+          "id": "instruct",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
           "eCost": "1",

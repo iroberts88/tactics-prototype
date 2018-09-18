@@ -1079,7 +1079,7 @@
                                 continue;
                             }
                             var path = this.map.findPath(start,end,{maxJump:range.h,startingUnit:unit});
-                            if(path.length != 0 && path.length <= range.d){
+                            if(path.length != 0 && path.length <= range.d+1){
                                 possibleNodes.push(end);
                             }
                         }
@@ -1100,6 +1100,7 @@
                             }
                         }
                     }
+                    console.log(possibleNodes.length);
                     break;
             }
             Game.abilityActive = true;

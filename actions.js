@@ -23,7 +23,7 @@ AbilityEnums = {
 	Interrupt: 'interrupt',
 	PoisonWeapon: 'poisonWeapon',
 	Scan: 'scan',
-	Direct: 'direct',
+	Instruct: 'instruct',
 	FlareGrenade: 'flareGrenade',
 	CryoGrenade: 'cryoGrenade',
 	Grenade: 'grenade',
@@ -441,7 +441,7 @@ Actions.prototype.scan = function(unit,session,data){
 }
 
 
-Actions.prototype.direct = function(unit,session,data){
+Actions.prototype.instruct = function(unit,session,data){
 	//get all units in radius;
 	var radius = Math.floor(unit.charisma.value/5);
 	var node = session.map.axialMap[data.q][data.r];
@@ -449,7 +449,7 @@ Actions.prototype.direct = function(unit,session,data){
 	data.actionData.push({
 		unitid: unit.id,
         action: session.clientActionEnums.ActionBubble,
-        text: 'Direct'
+        text: 'Instruct'
 	});
 	for (var i = 0; i < nodes.length;i++){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
@@ -1169,8 +1169,8 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.Scan:
 			return this.scan;
 			break;
-		case AbilityEnums.Direct:
-			return this.direct;
+		case AbilityEnums.Instruct:
+			return this.instruct;
 			break;
 		case AbilityEnums.FlareGrenade:
 			return this.flareGrenade;

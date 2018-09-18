@@ -225,7 +225,7 @@ Unit.prototype.init = function(data) {
     this.move.init({
         'id': 'mov',
         'owner': this,
-        'value': 3,
+        'value': 4,
         'min': 0,
         'max': 99
     });

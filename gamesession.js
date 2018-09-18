@@ -74,7 +74,7 @@ var GameSession = function (engine) {
 GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
-    var names = ['tri1','bunker01','ice_river'];
+    var names = ['tri1','bunker01','arena', 'ice_ravine'];
     //for (var i in this.gameEngine.maps){
     //    names.push(i);
     //}
@@ -490,7 +490,7 @@ GameSession.prototype.executeAttack = function(data){
                     action: this.clientActionEnums.NoLos,
                     unitid: data.unit.id
                 });
-                this.queueData('action',{actionData:actionData});
+                this.queueData('action',{actionData:data.actionData});
             }
         }
     }

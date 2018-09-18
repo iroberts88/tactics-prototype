@@ -603,6 +603,8 @@
                             var name = prompt(s, 'noname');
                             if (name){
                                 Acorn.Net.socket_.emit('editMap',{name: name});
+                            }else{
+                                return;
                             }
                             MapGen.mapName = name;
                             Graphics.showLoadingMessage(true);
