@@ -10,7 +10,8 @@ ActionEnums = {
 	SetHidden: 'setHidden',
 	AddOnAttackEffect: 'addOnAttackEffect',
 	Poison: 'poison',
-	HealingFieldEffect: 'healingFieldEffect'
+	HealingFieldEffect: 'healingFieldEffect',
+	CheckStealthRemove: 'checkStealthRemove'
 };
 
 AbilityEnums = {
@@ -190,6 +191,23 @@ Actions.prototype.healingFieldEffect = function(unit,data){
 	return false;
 }
 
+Actions.prototype.checkStealthRemove = function(unit,data){
+	//get all units in radius;
+	var session = unit.owner.gameSession;
+	var pass = false;
+	for (var i in session.allUnits){
+		var u = session.allUnits[i];
+		if (u != unit && u.owner == unit.owner && (!u.dead && !u.fainted & !u.hidden)){
+			pass = true;
+		}
+	}
+	if (!pass){
+		console.log('Stealth failed - team dead!!!');
+		return true;
+	}
+	return false;
+}
+
 Actions.prototype.getAction = function(a){
 	switch(a){
 		case ActionEnums.AlterStat:
@@ -216,6 +234,9 @@ Actions.prototype.getAction = function(a){
 		case ActionEnums.HealingFieldEffect:
 			return this.healingFieldEffect;
 			break;
+		case ActionEnums.CheckStealthRemove:
+			return this.checkStealthRemove;
+			break
 	}
 }
 
@@ -231,6 +252,18 @@ Actions.prototype.testAbility = function(unit,session,data){
 
 Actions.prototype.stealth = function(unit,session,data){
 	var Buff = require('./buff.js').Buff;
+	//first, check team
+	var pass = false;
+	for (var i in session.allUnits){
+		var u = session.allUnits[i];
+		if (u != unit && u.owner == unit.owner && (!u.dead && !u.fainted & !u.hidden)){
+			pass = true;
+		}
+	}
+	if (!pass){
+		console.log('Stealth failed - team dead!');
+		return false;
+	}
 	//set the unit as stealthed and reduce speed
 	var buffData = session.gameEngine.buffs["buff_stealth"];
 	//TODO if agility changes while buff is active, does NOT change speed!
@@ -248,6 +281,9 @@ Actions.prototype.stealth = function(unit,session,data){
 	buff.actionsOnTick.push({
         "action": "alterCurrentEnergy",
         val: data.ability.tickECost
+	});
+	buff.actionsOnTick.push({
+        "action": "checkStealthRemove"
 	});
 	buff.init({
 	    unit: unit //the buff will perform actions on this object
@@ -652,7 +688,7 @@ Actions.prototype.aim = function(unit,session,data){
         action: session.clientActionEnums.ActionBubble,
         text: 'Aim'
 	});
-	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	var val = Math.ceil(unit.skill.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.skill.nMod += val;
 	unit.skill.set(true);
 	data.actionData.push({
@@ -669,7 +705,7 @@ Actions.prototype.shout = function(unit,session,data){
         action: session.clientActionEnums.ActionBubble,
         text: 'Shout'
 	});
-	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	var val = Math.ceil(unit.power.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.power.nMod += val;
 	unit.power.set(true);
 	data.actionData.push({
@@ -686,7 +722,7 @@ Actions.prototype.focus = function(unit,session,data){
         action: session.clientActionEnums.ActionBubble,
         text: 'Focus'
 	});
-	var val = Math.ceil(unit.skill.value*(unit.willpower.value/200)) + unit.willpower.value*2;
+	var val = Math.ceil(unit.tactics.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.tactics.nMod += val;
 	unit.tactics.set(true);
 	data.actionData.push({
@@ -951,7 +987,7 @@ Actions.prototype.healingField = function(unit,session,data){
 	    id: session.getId(),
 	    mechanical: true,
 	    human: false,
-	    speed: 100+(unit.intelligence.value*20),
+	    speed: unit.speed.value/5*unit.intelligence.value,
 	    maximumHealth: (50 + (unit.intelligence.value*5))*(1+unit.tactics.value/100),
 	    ai: true,
 	    aiInfo: {

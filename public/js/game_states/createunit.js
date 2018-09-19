@@ -130,13 +130,13 @@
             var statNames = ['Strength:','Endurance:','Agility:','Dexterity:','Intelligence:','Willpower:','Charisma:'];
             var stats = ['strength','endurance','agility','dexterity','intelligence','willpower','charisma'];
             var attrDesc = [
-                "<Strength> increases <power> on levelup. It also increases max carry weight and effectiveness of strength based abilities",
+                "<Strength> increases <power> and <max carry weight> on levelup. It also increases  and effectiveness of strength based abilities",
                 "<Endurance> increases max <health> on levelup. It also increases effectiveness of endurance based abilities",
                 "<Agility> increases <speed> on levelup. It also increases effectiveness of agility based abilities",
                 "<Dexterity> increases <skill> on levelup. It also increases effectiveness of dexterity based abilities",
                 "<Intelligence> increases <ability slots> and <tactics> on levelup. It also increases effectiveness of intelligence based abilities",
-                "<Willpower> increases max <energy> on levelup. It also increases effectiveness of willpower based abilities",
-                "<Charisma> increases all stats slightly on levelup. It also increases effectiveness of charisma based abilities"
+                "<Willpower> increases max <energy> and <damage resistance> on levelup. It also increases effectiveness of willpower based abilities",
+                "<Charisma> increases <all stats> slightly on levelup. It also increases effectiveness of charisma based abilities"
             ];
                 
             var h = 0;

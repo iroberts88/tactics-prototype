@@ -162,10 +162,15 @@ function User() {
                             ap: ap});
                         char.classInfo.setBaseClass(unitClass);
                         char.classInfo.setClass(unitClass);
-                        char.levelUp(false);
+                        for (var j = 0; j <19;j++){
+                            char.levelUp(false);
+                        }
                         this.owner.gameEngine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
                         this.characters.push(char);
+                    }
 
+                    for (var i in this.owner.gameEngine.items){
+                        this.inventory.addItem(this.owner.gameEngine.items[i].itemid,5, true);
                     }
                 }
             }catch(e){

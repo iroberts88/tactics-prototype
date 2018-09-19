@@ -79,7 +79,7 @@ GameSession.prototype.init = function (data) {
     //    names.push(i);
     //}
     var name = names[Math.floor(Math.random()*names.length)];
-    //var name = 'testMap';
+    var name = 'testMap';
     //name = this.mapName;
     this.mapData = this.gameEngine.maps[name];
     this.map.init(this.gameEngine.maps[name]);
@@ -179,14 +179,14 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                 this.currentInGameState = this.inGameStates.BetweenTurns;
                 //first unit has completed the turn??
                 if (this.allUnits[this.turnOrder[0].id].moveUsed){
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/4;
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.15;
                     this.allUnits[this.turnOrder[0].id].moveUsed = false;
                 }
                 if (this.allUnits[this.turnOrder[0].id].actionUsed){
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/4;
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.15;
                     this.allUnits[this.turnOrder[0].id].actionUsed = false;
                 }
-                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax/2;
+                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.7;
                 this.getTurnOrder();
                 var turnList = [];
                 var turnPercent = [];
@@ -494,6 +494,9 @@ GameSession.prototype.executeAttack = function(data){
     if (!valid){
         return false;
     }
+    if (data.unit.hidden){
+        data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round(30*(1+data.unit.tactics.value/100)),data.actionData);
+    }
     data.unit.removeBuffsWithTag('removeOnAction');
     //TODO check for pre-attack reactions
 
@@ -629,7 +632,7 @@ GameSession.prototype.unitAbility = function(data){
             }else{
                 //The ability has a cast time
                 //add cast time to the turn order and start casting!
-                var speed = Math.round(this.parseStringCode(unit,data.ability.speed) * unit.castingSpeedMod.value);
+                var speed = Math.round((unit.speed.value + this.parseStringCode(unit,data.ability.speed)) * unit.castingSpeedMod.value);
                 console.log('Cast speed: ' + speed);
                 abData = {
                     id: this.gameEngine.getId(),
@@ -880,6 +883,9 @@ GameSession.prototype.getType = function(char){
     console.log(char);
     return null;
 };
+GameSession.prototype.checkEnd = function(){
+
+}
 ////////////////////////////////////////////////////////////////
 //                  Socket Functions
 ////////////////////////////////////////////////////////////////

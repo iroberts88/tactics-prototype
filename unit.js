@@ -354,7 +354,7 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 75
     });
     this.heatRes = new Attribute();
     this.heatRes.init({
@@ -402,7 +402,7 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 75
     });
     this.radiationRes = new Attribute();
     this.radiationRes.init({
@@ -410,7 +410,7 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 75
     });
     this.gravityRes = new Attribute();
     this.gravityRes.init({
@@ -418,7 +418,7 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 75
     });
     this.healMod = new Attribute();
     this.healMod.init({
@@ -571,6 +571,7 @@ Unit.prototype.damage = function(type,value,aData){
             break;
     }
     if (this.currentHealth <= 0 && !this.fainted){
+        this.owner.gameSession.checkEnd();
         //death = < -50% hp
         if (this.currentHealth <= this.maximumHealth.value/-2){
             this.dead = true;
@@ -613,15 +614,17 @@ Unit.prototype.setMoveLeft = function(val){
 };
 Unit.prototype.levelUp = function(update){
     //TODO save the values per level just in case the numbers change?
-    this.power.base += 4;
-    this.power.base += this.strength.base*0.49;
-    this.power.base += this.charisma.base*0.09;
-    this.skill.base += 4;
-    this.skill.base += this.dexterity.base*0.49;
-    this.skill.base += this.charisma.base*0.09;
-    this.tactics.base += 4;
-    this.tactics.base += this.intelligence.base*0.49;
-    this.tactics.base += this.charisma.base*0.09;
+    if (this.level == 100){return;}
+    this.level += 1;
+    this.power.base += 8;
+    this.power.base += this.strength.base*2;
+    this.power.base += this.charisma.base*0.3;
+    this.skill.base += 8;
+    this.skill.base += this.dexterity.base*2;
+    this.skill.base += this.charisma.base*0.3;
+    this.tactics.base += 8;
+    this.tactics.base += this.intelligence.base*2;
+    this.tactics.base += this.charisma.base*0.3;
     this.power.set(update);
     this.tactics.set(update);
     this.skill.set(update);
@@ -637,10 +640,21 @@ Unit.prototype.levelUp = function(update){
     this.speed.base += this.agility.base*0.32;
     this.speed.base += this.charisma.base*0.06;
     this.speed.set(update);
-    this.maximumEnergy.base += 1;
-    this.maximumEnergy.base += this.willpower.base*0.4;
-    this.maximumEnergy.base += this.charisma.base*0.1;
+    //this.maximumEnergy.base += 1;
+    this.maximumEnergy.base += this.willpower.base*0.1;
+    this.maximumEnergy.base += this.charisma.base*0.025;
     this.maximumEnergy.set(update);
+
+    var resTypes = ['physical','heat','cold','acid','poison','radiation','gravity','pulse','electric'];
+
+    for (var i = 0; i < resTypes.length;i++){
+        this[resTypes[i] + 'Res'].base += 0.2;
+        this[resTypes[i] + 'Res'].base += this.willpower.base*0.04;
+        this[resTypes[i] + 'Res'].base += this.charisma.base*0.01;
+        this[resTypes[i] + 'Res'].set(update);
+    }
+
+    this.maximumShields.set(update);
 }
 
 Unit.prototype.getDBObj = function(){

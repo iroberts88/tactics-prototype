@@ -473,8 +473,10 @@
                 this.actions[0].update(deltaTime);
                 if (this.actions[0].end || this.actions[0].actions.length == 0){
                     this.actions.splice(0,1);
-                    Game.resetTurnMenu();
-                    Game.turnMenu.visible = true;
+                    if (this.actions.length == 0){
+                        Game.resetTurnMenu();
+                        Game.turnMenu.visible = true;
+                    }
                 }
             }
             for (var i in this.units){

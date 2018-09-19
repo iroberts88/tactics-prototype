@@ -49,7 +49,7 @@
         {
           "sCost": 15,
           "name": "Stealth",
-          "description": "Become hidden until you perform an action, or until damaged or revealed. You can also be revealed if an enemy tries to move to your current node. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn.",
+          "description": "Become hidden. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn. Attacking from stealth deals 30 bonus damage. You cannot enter stealth if the rest of your team is dead, unconscious, or hidden. You will also be revealed if an enemy tries to move to your current node, or you if perform another attack or action.",
           "range": "self",
           "ApCost": 100,
           "id": "stealth",
@@ -217,7 +217,7 @@
           "id": "repair",
           "type": "singleunit",
           "eCost": 15,
-          "speed": "350"
+          "speed": "instant"
         },
         {
           "sCost": 5,
@@ -452,7 +452,7 @@
         {
           "sCost": 4,
           "name": "Aim",
-          "description": "Increase skill by <WIL/2%> + <WIL*2>",
+          "description": "Increase skill by <WIL%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "aim",
@@ -463,7 +463,7 @@
         {
           "sCost": 4,
           "name": "Shout",
-          "description": "Increase power by <WIL/2%> + <WIL*2>",
+          "description": "Increase power by <WIL%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "shout",
@@ -474,7 +474,7 @@
         {
           "sCost": 4,
           "name": "Focus",
-          "description": "Increase tactics by <WIL/2%> + <WIL*2>",
+          "description": "Increase tactics by <WIL%> + <WIL*2>",
           "range": "self",
           "ApCost": 100,
           "id": "focus",
@@ -632,7 +632,7 @@
         {
           "sCost": 10,
           "name": "Healing Field",
-          "description": "Build a healing field bot with <50+INT*5> health and <100+20*INT> speed. Every turn the field heals units in a <2+INT/4> hex radius for <10+INT/2+CHA/2>",
+          "description": "Build a healing field bot with <50+INT*5> health. Every turn the field heals units in a <2+INT/4> hex radius for <10+INT/2+CHA/2>",
           "range": "1|3",
           "ApCost": 100,
           "id": "healingField",

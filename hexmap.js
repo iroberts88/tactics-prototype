@@ -28,8 +28,8 @@ var HexMap = function(session){
     }
     this.dModEnums = {
         //damage multiplicators for directional attacks
-        Behind: 2.0,
-        BehindSide: 1.5,
+        Behind: 1.5,
+        BehindSide: 1.25,
         FrontSide: 1.0,
         Front: 0.75
     };
