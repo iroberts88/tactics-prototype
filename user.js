@@ -36,7 +36,7 @@ function User() {
                 owner: this.owner
             });
             this.characters = [];
-            this.inventory.setGameEngine(this.owner.gameEngine);
+            this.inventory.setGameEngine(this.owner.engine);
 
             if (typeof d.username != 'undefined'){
                 this.userData.username = d.username;
@@ -70,7 +70,7 @@ function User() {
                                         var char = new Unit();
                                         //init unit
                                         c[i].owner = that.owner;
-                                        c[i].id = that.owner.gameEngine.getId();
+                                        c[i].id = that.owner.engine.getId();
                                         char.init(c[i]);
                                         char.classInfo = new ClassInfo();
                                         char.classInfo.init({unit: char, 
@@ -79,7 +79,7 @@ function User() {
                                             ap: c[i].classInfo.ap});
                                         char.classInfo.setBaseClass(c[i].classInfo.baseId);
                                         char.classInfo.setClass(c[i].classInfo.classId);
-                                        that.owner.gameEngine.queuePlayer(that.owner,'addNewUnit', {'unit': char.getClientData()});
+                                        that.owner.engine.queuePlayer(that.owner,'addNewUnit', {'unit': char.getClientData()});
                                         that.characters.push(char);
                                     }
                                 }
@@ -110,7 +110,7 @@ function User() {
                         var name = '' + Utils.generateName(thing);
                         char.init({
                             owner: this.owner,
-                            id: this.owner.gameEngine.getId(),
+                            id: this.owner.engine.getId(),
                             abilitySlots: 999,
                             name: name,
                             sex: sexes[Math.floor(Math.random()*sexes.length)],
@@ -162,15 +162,12 @@ function User() {
                             ap: ap});
                         char.classInfo.setBaseClass(unitClass);
                         char.classInfo.setClass(unitClass);
-                        for (var j = 0; j <19;j++){
-                            char.levelUp(false);
-                        }
-                        this.owner.gameEngine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
+                        this.owner.engine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
                         this.characters.push(char);
                     }
 
-                    for (var i in this.owner.gameEngine.items){
-                        this.inventory.addItem(this.owner.gameEngine.items[i].itemid,5, true);
+                    for (var i in this.owner.engine.items){
+                        this.inventory.addItem(this.owner.engine.items[i].itemid,5, true);
                     }
                 }
             }catch(e){
@@ -181,13 +178,13 @@ function User() {
         
         setLastLogin: function(date){
             //TODO this should change the actual mongodb lastLogin
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
             if (this.userData.username != 'guest'){
                 ge.users[ge._userIndex[this.userData.username]].lastLogin = date;
             }
         },
         lock: function(){
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
             this.userData.loggedin = true;
             if (this.userData.username != 'guest'){
                 ge.users[ge._userIndex[this.userData.username]].loggedin = true;
@@ -216,7 +213,7 @@ function User() {
             }
         },
         unlock: function(){
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
             this.userData.loggedin = false;
             if (this.userData.username != 'guest'){
                 ge.users[ge._userIndex[this.userData.username]].loggedin = false;
@@ -245,7 +242,7 @@ function User() {
             }
         },
         updateDB: function(){
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
             if (this.userData.username != 'guest'){
                 //Player is not a guest - update DB
                 try{
@@ -299,7 +296,7 @@ function User() {
         },
         setOwner: function(o) {
             this.owner = o;
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
 
         }
 

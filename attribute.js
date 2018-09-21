@@ -63,7 +63,7 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient && this.updateClient){
-            this.owner.owner.gameEngine.queuePlayer(this.owner.owner,'setUnitStat',{
+            this.owner.owner.engine.queuePlayer(this.owner.owner,'setUnitStat',{
                 'unit': this.owner.id,
                 'stat': this.id,
                 'amt': this.value

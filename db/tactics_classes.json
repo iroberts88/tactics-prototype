@@ -545,10 +545,11 @@
         {
           "sCost": 12,
           "name": "Reversal",
-          "description": "Use your reaction to swap places with an attacking unit in melee",
+          "description": "Make an attack with your equipped <melee> weapon, then switch places with your target",
           "ApCost": 200,
+          "range": "melee",
           "id": "reversal",
-          "type": "reaction",
+          "type": "singleunit",
           "eCost": "<20-INT>",
           "speed": "instant"
         },
@@ -570,7 +571,7 @@
           "id": "opportunity",
           "sCost": 10,
           "eCost": "<10-INT/2>",
-          "type": "passive"
+          "type": "reaction"
         },
         {
           "name": "Quick Draw",

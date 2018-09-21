@@ -12,6 +12,7 @@ var ClassInfo = function(){
 	this.learnedAbilities = null;
 	this.equippedAbilities = null;
 	this.ap = null;
+	this.totalAPValues = null;
 }
 
 ClassInfo.prototype.init = function(data){
@@ -36,6 +37,11 @@ ClassInfo.prototype.init = function(data){
 	}else{
 		this.ap = {};
 	}
+	if (typeof data.totalAPValues != 'undefined'){
+		this.totalAPValues = data.totalAPValues;
+	}else{
+		this.totalAPValues = {};
+	}
 }
 ClassInfo.prototype.getDBObj = function(){
 	dbObj = {};
@@ -46,13 +52,14 @@ ClassInfo.prototype.getDBObj = function(){
 	dbObj.learnedAbilities = this.learnedAbilities;
 	dbObj.equippedAbilities = this.equippedAbilities;
 	dbObj.ap = this.ap;
+	dbObj.totalAPValues = this.totalAPValues;
 	return dbObj;
 }
 ClassInfo.prototype.setClass = function(c){
 	try{
 		//TODO reduce attributes from old class?
 		
-		var charClass = this.unit.owner.gameEngine.classes[c]
+		var charClass = this.unit.owner.engine.classes[c]
 		this.classId = c;
 		this.currentClass = charClass.classid;
 		for (var stat in charClass.attributes){
@@ -61,6 +68,7 @@ ClassInfo.prototype.setClass = function(c){
 		}
 		if (typeof this.ap[charClass.classid] == 'undefined'){
 			this.ap[charClass.classid] = 100;
+			this.totalAPValues[charClass.classid] = 100;
 		}
 		if (typeof this.allClassAbilities[charClass.classid] == 'undefined'){
 			//changed to a new class, set abilities
@@ -79,7 +87,7 @@ ClassInfo.prototype.setClass = function(c){
 
 ClassInfo.prototype.setBaseClass = function(c){
 	try{
-		var charClass = this.unit.owner.gameEngine.classes[c];
+		var charClass = this.unit.owner.engine.classes[c];
 		this.baseClass = charClass.classid;
 		this.baseId = c;
 		this.allClassAbilities[charClass.classid] = charClass.abilities;
@@ -89,6 +97,7 @@ ClassInfo.prototype.setBaseClass = function(c){
 		}
 		if (typeof this.ap[charClass.classid] == 'undefined'){
 			this.ap[charClass.classid] = 100;
+			this.totalAPValues[charClass.classid] = 100;
 		}
 	}catch(e){
 		console.log("ERROR: unable to set base class");

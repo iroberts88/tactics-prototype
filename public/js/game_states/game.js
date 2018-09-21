@@ -3,7 +3,6 @@
 
 (function(window) {
     Game = {
-
         chargeMax: 1000000,
         timePerTurn: null,
         timePerReaction: null,
@@ -12,7 +11,6 @@
         turnTicker: Date.now(),
         reactionTicker: Date.now(),
         currentState: 'idle',
-
         states: {
             Idle: 'idle',
             BetweenStates: 'betweenStates',
@@ -85,21 +83,65 @@
         abilityInfo: null,
         abilityNodes: {},
         abilityRadiusNodes: [],
-
         uiWindows: [], //array containing active UI components?
-
         currentActionData: null,
         actions: [],
-
         compass: null,
         compassComponents: [],
-
         overlaySprites: {},
-
         currentConfirmWindow: null,
         currentToolTip: null,
+        endGame: null,
+        won: null,
 
         init: function() {
+            //init variables
+            this.timePerTurn = null;
+            this.timePerReaction = null;
+            this.delayBetweenStates = null;
+            this.betweenStateTicker = 0;
+            this.turnTicker = Date.now();
+            this.reactionTicker = Date.now();
+            this.currentState = 'idle';
+            this.currentNode = null;
+            this.setNewHoveredNode = null; //set a new hovered over node
+            this.setNewHoveredUnit = null; //set a new hovered over unit
+            this.currentlyMousedOver = null;
+            this.selectedUnit = null;
+            this.currentInfoPane = null;
+            this.updateUnitsBool = null;
+            this.turnListSprites = null;
+            this.compass = null;
+            this.timeDisplay = null;
+            this.mainMenu = null;
+            this.tilePane = null;
+            this.infoPane = null;
+            this.turnMenu = null;
+            this.currentTurnArrow = null;
+            this.turnArrowStartY = null;
+            this.nodeText = null;
+            this.nodeInfo = null;
+            this.losAngle = 1e-6;
+            this.moveNodesActive = []; //contains the currently SHOWN move sprites
+            this.moveActive = false;//movement active?
+            this.movePathDrawn = false;
+            this.attackActive = false;
+            this.attackNodesActive = [];
+            this.abilityActive = false;
+            this.abilityInfo = null;
+            this.abilityNodes = {};
+            this.abilityRadiusNodes = [];
+            this.uiWindows = []; //array containing active UI components?
+            this.currentActionData = null;
+            this.actions = [];
+            this.compass = null;
+            this.compassComponents = [];
+            this.overlaySprites = {};
+            this.currentConfirmWindow = null;
+            this.currentToolTip = null;
+            this.endGame = null;
+            this.won = null;
+
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
             var style = AcornSetup.baseStyle;
@@ -207,6 +249,24 @@
             this.battleStartText.position.y = Graphics.height/2;
             Graphics.uiContainer.addChild(this.battleStartText);
             this.battleStartText.visible = false;
+
+            this.endButton = Graphics.makeUiElement({
+                text: 'EXIT',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Acorn.changeState('mainMenu');
+                }
+            });
+            this.endButton.style.fontSize = 40;
+            this.endButton.anchor.x = 1.0;
+            this.endButton.anchor.y = 0;
+            this.endButton.position.x = Graphics.width-15;
+            this.endButton.position.y = 15;
+            Graphics.uiContainer.addChild(this.endButton);
+            this.endButton.visible = false;
+
             window.currentGameMap = this.map;
 
             Graphics.showLoadingMessage(false);
@@ -443,6 +503,60 @@
 
         update: function(deltaTime){
             this.map.update(deltaTime);
+            if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
+                this.setNewHoveredNode = null;
+                this.setNewHoveredUnit = null;
+                if (this.abilityMenu){
+                    if (this.abilityMenu.parent == Graphics.uiContainer){
+                        Graphics.uiContainer.removeChild(this.abilityMenu);
+                        this.abilityMenu = null;
+                    }
+                }
+                if (this.selectedUnit){
+                    this.selectedUnit.sprite.filters = [];
+                    var node = Game.map.axialMap[this.selectedUnit.currentNode.q][this.selectedUnit.currentNode.r];
+                    node.sprite1.filters = [];
+                    node.sprite2.filters = [];
+                    Graphics.uiContainer.removeChild(this.currentInfoPane);
+                    this.currentInfoPane = null;
+                    this.selectedUnit = null;
+                }
+                this.clearOverlaySprites();
+                for (var i = 0; i < this.uiWindows.length;i++){
+                    Graphics.uiContainer.removeChild(this.uiWindows[i]);
+                    this.uiWindows.splice(i,1);
+                }
+                if (this.currentConfirmWindow){
+                    Graphics.uiContainer.removeChild(this.currentConfirmWindow);
+                    this.currentConfirmWindow = null;
+                }
+                if (this.currentToolTip){
+                    Graphics.uiContainer2.removeChild(this.currentToolTip);
+                    this.currentToolTip = null;
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
+            }
+
+            if (Acorn.Input.isPressed(Acorn.Input.Key.INTERACT)){
+                if (this.currentConfirmWindow){
+                    var e = {currentTarget: this.currentConfirmWindow.confirmButton};
+                    this.currentConfirmWindow.confirmButton.clickFunc(e);
+                }
+                Acorn.Input.setValue(Acorn.Input.Key.INTERACT, false);
+            }
+
+            if (this.endGame){
+                this.battleStartText.visible = true;
+                if (this.won){
+                    this.battleStartText.text = 'YOU WON!';
+                }else{
+                    this.battleStartText.text = 'You LOSE...';
+                }
+                this.battleStartText.alpha = 1.0;
+                this.endButton.visible = true;
+                Graphics.drawBoxAround(this.endButton,Graphics.uiPrimitives);
+                return;
+            }
             if (this.battleStartText.visible){
                 this.battleStartText.alpha = this.battleStartText.alpha * 0.97;
                 if (this.battleStartText.alpha <= 0.01){
@@ -526,47 +640,7 @@
                     }
                     break;
             }
-            if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
-                this.setNewHoveredNode = null;
-                this.setNewHoveredUnit = null;
-                if (this.abilityMenu){
-                    if (this.abilityMenu.parent == Graphics.uiContainer){
-                        Graphics.uiContainer.removeChild(this.abilityMenu);
-                        this.abilityMenu = null;
-                    }
-                }
-                if (this.selectedUnit){
-                    this.selectedUnit.sprite.filters = [];
-                    var node = Game.map.axialMap[this.selectedUnit.currentNode.q][this.selectedUnit.currentNode.r];
-                    node.sprite1.filters = [];
-                    node.sprite2.filters = [];
-                    Graphics.uiContainer.removeChild(this.currentInfoPane);
-                    this.currentInfoPane = null;
-                    this.selectedUnit = null;
-                }
-                this.clearOverlaySprites();
-                for (var i = 0; i < this.uiWindows.length;i++){
-                    Graphics.uiContainer.removeChild(this.uiWindows[i]);
-                    this.uiWindows.splice(i,1);
-                }
-                if (this.currentConfirmWindow){
-                    Graphics.uiContainer.removeChild(this.currentConfirmWindow);
-                    this.currentConfirmWindow = null;
-                }
-                if (this.currentToolTip){
-                    Graphics.uiContainer2.removeChild(this.currentToolTip);
-                    this.currentToolTip = null;
-                }
-                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, false);
-            }
-
-            if (Acorn.Input.isPressed(Acorn.Input.Key.INTERACT)){
-                if (this.currentConfirmWindow){
-                    var e = {currentTarget: this.currentConfirmWindow.confirmButton};
-                    this.currentConfirmWindow.confirmButton.clickFunc(e);
-                }
-                Acorn.Input.setValue(Acorn.Input.Key.INTERACT, false);
-            }
+            
         },
 
         tryToMove: function(node){
@@ -616,7 +690,7 @@
                 return;
             }
             
-            var text = "Attack " + node.unit.name + ' with ' + this.units[this.turnList[0]].inventory.items[this.units[this.turnList[0]].weapon].name + '?';
+            var text = "Attack " + node.unit.name + ' with ' + this.units[this.turnList[0]].getWeapon().name + '?';
             var y = function(){
                 console.log('Send attack!!');
                 if (!Game.attackActive){
@@ -1010,7 +1084,7 @@
         },
         getAttackNodes: function(){
             var unit = this.units[this.turnList[0]];
-            var weapon = unit.inventory.items[unit.weapon];
+            var weapon = unit.getWeapon();
             var possibleNodes = this.getWeaponNodes(unit,weapon);
             for(var i = 0; i < possibleNodes.length;i++){
                 //TODO calculate possible nodes here??

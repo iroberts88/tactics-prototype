@@ -270,24 +270,17 @@
         drawBoxAround: function(sprite,g,options){
             //draws a box around sprite in
             //g = graphics container
-            if (typeof options.ybuffer == 'undefined'){
-                options.ybuffer = 0;
-            }
-            if (typeof options.xbuffer == 'undefined'){
-                options.xbuffer = 0;
-            }
-            if (typeof options.color == 'undefined'){
-                options.color = Graphics.pallette.color3;
-            }
-            if (typeof options.size == 'undefined'){
-                options.size = 2;
-            }
+            options = typeof options == 'undefined' ? {} : options;
+            options.ybuffer = typeof options.ybuffer == 'undefined' ? 0 : options.ybuffer;
+            options.xbuffer = typeof options.xbuffer == 'undefined' ? 0 : options.xbuffer;
+            options.color = typeof options.color == 'undefined' ? Graphics.pallette.color3 : options.color;
+            options.size = typeof options.size == 'undefined' ? 2 : options.size;
             var pos = {x: sprite.position.x,y: sprite.position.y};
             if (typeof options.pos != 'undefined'){
                 pos = {
                     x: options.pos[0],
                     y: options.pos[1]
-                }
+                };
             }
             g.lineStyle(options.size,options.color,1);
             g.moveTo(pos.x - sprite.width/2 + options.xbuffer,pos.y - sprite.height/2 + options.ybuffer);

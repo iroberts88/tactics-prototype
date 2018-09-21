@@ -14,7 +14,8 @@
         DmgText: 'dmgText',
         ActionUsed: 'actionUsed',
         SetEnergy: 'setEnergy',
-        Slam: 'slam'
+        Slam: 'slam',
+        Reversal: 'reversal'
     };
 
     Actions.prototype.init = function(actions){
@@ -86,6 +87,9 @@
             case this.actionEnums.Slam:
                 return this.slam;
                 break;
+            case this.actionEnums.Reversal:
+                return this.reversal;
+                break;
             default:
                 return this.test;
                 break;
@@ -106,7 +110,6 @@
         }
     };
     Actions.prototype.slam = function(dt,actions,data){
-        //move the given unit 1 node
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
             data.speed = 0.1; //seconds it takes to move 1 node
@@ -135,6 +138,52 @@
             data.unit.currentNode = data.newNode;
             if (!data.newNode.unit){
                 data.newNode.unit = data.unit;
+            }
+        }
+    };
+
+    Actions.prototype.reversal = function(dt,actions,data){
+        if (typeof data.ticker == 'undefined'){
+            data.ticker = 0;
+            data.speed = 0.1; //seconds it takes to move 1 node
+            var t = 1;
+            if (!(Game.map.currentRotation%2)){t = 2}
+            var sp = 'sprite' + t;
+            data.unit = Game.units[data.unitid];
+            data.target = Game.units[data.targetid]
+            if (data.unit.currentNode.unit == data.unit){
+                data.unit.currentNode.unit = null;
+            }
+            if (data.target.currentNode.unit == data.target){
+                data.target.currentNode.unit = null;
+            }
+            data.newNode1 = Game.map.axialMap[data.unitNewNode.q][data.unitNewNode.r];
+            data.newNode2 = Game.map.axialMap[data.targetNewNode.q][data.targetNewNode.r];
+            data.startPos1 = [data.unit.sprite.position.x,data.unit.sprite.position.y];
+            data.startPos2 = [data.target.sprite.position.x,data.target.sprite.position.y];
+            data.endPos1 = [data.newNode1[sp].position.x,data.newNode1[sp].position.y-Game.map.TILE_HEIGHT*(data.newNode1.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]];
+            data.endPos2 = [data.newNode2[sp].position.x,data.newNode2[sp].position.y-Game.map.TILE_HEIGHT*(data.newNode2.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]];
+            data.vector1 = [data.endPos1[0]-data.startPos1[0],data.endPos1[1]-data.startPos1[1]];
+            data.vector2 = [data.endPos2[0]-data.startPos2[0],data.endPos2[1]-data.startPos2[1]];
+        }
+        data.unit.sprite.position.x = data.startPos1[0] + data.vector1[0]*data.ticker/data.speed;
+        data.unit.sprite.position.y = data.startPos1[1] + data.vector1[1]*data.ticker/data.speed;
+        data.target.sprite.position.x = data.startPos2[0] + data.vector2[0]*data.ticker/data.speed;
+        data.target.sprite.position.y = data.startPos2[1] + data.vector2[1]*data.ticker/data.speed;
+        data.ticker += dt;
+        if (data.ticker >= data.speed){
+            data.unit.sprite.position.x = data.endPos1[0];
+            data.unit.sprite.position.y = data.endPos1[1];
+            data.target.sprite.position.x = data.endPos2[0];
+            data.target.sprite.position.y = data.endPos2[1];
+            actions.endAction(data);
+            data.unit.currentNode = data.newNode1;
+            data.target.currentNode = data.newNode2;
+            if (!data.newNode1.unit){
+                data.newNode1.unit = data.unit;
+            }
+            if (!data.newNode2.unit){
+                data.newNode2.unit = data.target;
             }
         }
     };
@@ -177,6 +226,7 @@
             }
         }
     };
+
     Actions.prototype.face = function(dt,actions,data){
         //change the unit's facing and end
         Game.units[data.unitid].setNewDirection(data.direction);
@@ -245,6 +295,12 @@
         }
     };
     Actions.prototype.dmgText = function(dt,actions,data){
+        if (data.ownerOnly && Game.units[data.unitid].owner != mainObj.playerID){
+            actions.endAction(data);
+        }
+        if (typeof Game.units[data.unitid] == 'undefined'){
+            actions.endAction(data);
+        }
         Game.units[data.unitid].addDmgText(data.text,data.type);
         var resetIP = false;
         if (typeof data.newHealth != 'undefined'){
@@ -256,8 +312,8 @@
             resetIP = true;
         }
         if (data.dead && typeof data.dead != 'undefined'){
-            Game.units[data.unitid].setDead();
             Game.units[data.unitid].currentNode.unit = null;
+            Game.units[data.unitid].setDead();
             Game.units[data.unitid].dead = true;
             resetIP = true;
         }else if (typeof data.fainted != 'undefined'){

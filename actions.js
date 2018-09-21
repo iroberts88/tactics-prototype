@@ -44,6 +44,7 @@ AbilityEnums = {
 	HeroicCharge: 'heroicCharge',
 	PowerShot: 'powerShot',
 	PowerAttack: 'powerAttack',
+	Reversal: 'reversal',
 	Slam: 'slam',
 	FirstAid: 'firstAid',
 	Resuscitate: 'resuscitate',
@@ -85,7 +86,7 @@ Actions.prototype.alterHealthByPercent = function(unit,data){
 }
 Actions.prototype.poison = function(unit,data){
 	var Buff = require('./buff.js').Buff;
-	var buffData = unit.owner.gameEngine.buffs["buff_poison"];
+	var buffData = unit.owner.engine.buffs["buff_poison"];
 	var buff = new Buff(buffData);
 	console.log(data.target.name);
 	buff.init({
@@ -96,9 +97,9 @@ Actions.prototype.poison = function(unit,data){
         "val": (5+Math.floor(unit.intelligence.value/3))/100,
         'type': 'pois'
 	});
-	unit.owner.gameSession.queueData('action',{
+	unit.owner.session.queueData('action',{
         actionData: [{
-        	action: unit.owner.gameSession.clientActionEnums.DmgText,
+        	action: unit.owner.session.clientActionEnums.DmgText,
 	        unitid: data.target.id,
 	        text: "Poisoned"
 	    }]
@@ -121,22 +122,22 @@ Actions.prototype.addOnAttackEffect = function(unit,data){
 	return false;
 }
 Actions.prototype.alterCurrentEnergy = function(unit,data){
-	var value = unit.owner.gameSession.parseStringCode(unit,data.val);
+	var value = unit.owner.session.parseStringCode(unit,data.val);
 	if (unit.currentEnergy >= value){
 		unit.currentEnergy -= value;
 	}else{
-		unit.owner.gameSession.queueData('action',{
+		unit.owner.session.queueData('action',{
 	        actionData: [{
-	        	action: unit.owner.gameSession.clientActionEnums.DmgText,
+	        	action: unit.owner.session.clientActionEnums.DmgText,
 		        unitid: unit.id,
 		        text: 'Not enough energy'
 		    }]
 		});
 		return true;
 	}
-	unit.owner.gameSession.queueData('action',{
+	unit.owner.session.queueData('action',{
         actionData: [{
-        	action: unit.owner.gameSession.clientActionEnums.SetEnergy,
+        	action: unit.owner.session.clientActionEnums.SetEnergy,
 	        unitid: unit.id,
 	        val: unit.currentEnergy
 	    }]
@@ -148,9 +149,9 @@ Actions.prototype.setHidden = function(unit,data){
 	if (data.reverse){
 		if (unit.hidden){
 			unit.hidden = false;
-			unit.owner.gameSession.queueData('action',{
+			unit.owner.session.queueData('action',{
 		        actionData: [{
-		        	action: unit.owner.gameSession.clientActionEnums.Reveal,
+		        	action: unit.owner.session.clientActionEnums.Reveal,
 			        unitid: unit.id,
 			        direction: unit.direction,
 			        q: unit.currentNode.q,
@@ -160,9 +161,9 @@ Actions.prototype.setHidden = function(unit,data){
 		}
 	}else{
 		unit.hidden = true;
-		unit.owner.gameSession.queueData('action',{
+		unit.owner.session.queueData('action',{
 			actionData: [{
-		        action: unit.owner.gameSession.clientActionEnums.Hide,
+		        action: unit.owner.session.clientActionEnums.Hide,
 		        unitid: unit.id
 		    }]
     	});
@@ -174,10 +175,10 @@ Actions.prototype.healingFieldEffect = function(unit,data){
 	//get all units in radius;
 	var radius = data.radius;
 	var node = unit.currentNode
-	var nodes = unit.owner.gameSession.map.getUnitsInRadius(node,radius);
+	var nodes = unit.owner.session.map.getUnitsInRadius(node,radius);
 	data.actionData.push({
 		unitid: unit.id,
-        action: unit.owner.gameSession.clientActionEnums.ActionBubble,
+        action: unit.owner.session.clientActionEnums.ActionBubble,
         text: 'Healing Field'
 	});
 	for (var i = 0; i < nodes.length;i++){
@@ -193,7 +194,7 @@ Actions.prototype.healingFieldEffect = function(unit,data){
 
 Actions.prototype.checkStealthRemove = function(unit,data){
 	//get all units in radius;
-	var session = unit.owner.gameSession;
+	var session = unit.owner.session;
 	var pass = false;
 	for (var i in session.allUnits){
 		var u = session.allUnits[i];
@@ -265,7 +266,7 @@ Actions.prototype.stealth = function(unit,session,data){
 		return false;
 	}
 	//set the unit as stealthed and reduce speed
-	var buffData = session.gameEngine.buffs["buff_stealth"];
+	var buffData = session.engine.buffs["buff_stealth"];
 	//TODO if agility changes while buff is active, does NOT change speed!
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
@@ -423,7 +424,7 @@ Actions.prototype.poisonWeapon = function(unit,session,data){
     var weapon = unit.getWeapon();
     if (weapon.type == 'weapon'){
     	//add poison on hit!
-		var buffData = session.gameEngine.buffs["buff_poisonedWeapon"];
+		var buffData = session.engine.buffs["buff_poisonedWeapon"];
 		var buff = new Buff(buffData);
 		buff.actionsOnImmediate.push({
 	        "action": "addOnAttackEffect",
@@ -467,7 +468,7 @@ Actions.prototype.scan = function(unit,session,data){
 		if (nextUnit.hidden){continue;}
 		if (nextUnit.owner != unit.owner){
 			//send down detailed unit info!
-			unit.owner.gameSession.queuePlayer(unit.owner,'updateUnitInfo',{
+			unit.owner.session.queuePlayer(unit.owner,'updateUnitInfo',{
 		        unitid: nextUnit.id,
 		        info: nextUnit.getClientData()
 			});
@@ -611,7 +612,7 @@ Actions.prototype.resUp = function(unit,session,data){
 	for (var i = 0; i < nodes.length;i++){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			var percent = unit.willpower.value*4;
-			var buffData = session.gameEngine.buffs["buff_resistUp"];
+			var buffData = session.engine.buffs["buff_resistUp"];
 			var buff = new Buff(buffData);
 			var resistances = ['hRes','cRes','puRes','poRes','rRes','gRes','aRes','eRes'];
 			for (var j = 0; j <resistances.length;j++){
@@ -763,6 +764,34 @@ Actions.prototype.powerAttack = function(unit,session,data){
         unitid: data.unit.id,
         weapon: 'Power Attack',
         newDir: data.d.newDir
+    });
+	return true;
+}
+
+Actions.prototype.reversal = function(unit,session,data){
+    var weapon = unit.getWeapon();
+    if (weapon.type != 'weapon'){
+    	return false;
+    }
+    data.ablMod = 1+(25+Math.floor(unit.dexterity.value*2))/100;
+    data = session.executeAttack(data);
+    if (!data){return false;}
+    var unitCurrentNode = {q:unit.currentNode.q,r:unit.currentNode.r};
+    var targetCurrentNode = {q:data.target.currentNode.q,r:data.target.currentNode.r};
+    unit.newNode(session.map.axialMap[targetCurrentNode.q][targetCurrentNode.r]);
+    data.target.newNode(session.map.axialMap[unitCurrentNode.q][unitCurrentNode.r]);
+    data.actionData.splice(0,0,{
+        action: session.clientActionEnums.Attack,
+        unitid: data.unit.id,
+        weapon: 'Reversal',
+        newDir: data.d.newDir
+    });
+    data.actionData.push({
+        action: session.clientActionEnums.Reversal,
+        unitid: data.unit.id,
+        unitNewNode: {q: unit.currentNode.q,r: unit.currentNode.r},
+        targetNewNode: {q: data.target.currentNode.q,r: data.target.currentNode.r},
+        targetid: data.target.id
     });
 	return true;
 }
@@ -939,7 +968,7 @@ Actions.prototype.resuscitate = function(unit,session,data){
 	u.charge = 0;
 	data.actionData.pop();
 	var speedVal = u.speed.value*((200+unit.agility.value*10+unit.dexterity.value*10)/100);
-	var buffData = session.gameEngine.buffs["buff_resuscitate"];
+	var buffData = session.engine.buffs["buff_resuscitate"];
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
         "action": "alterStat",
@@ -1113,7 +1142,7 @@ Actions.prototype.shieldBoost = function(unit,session,data){
 	});
 	var current = data.target.maximumShields.value;
 	var percent = (20+unit.willpower.value*5);
-	var buffData = session.gameEngine.buffs["buff_shieldBoost"];
+	var buffData = session.engine.buffs["buff_shieldBoost"];
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
         "action": "alterStatPercent",
@@ -1150,7 +1179,7 @@ Actions.prototype.concentrate = function(unit,session,data){
         text: 'Concentrate'
 	});
 	var percent = (125+unit.willpower.value*10);
-	var buffData = session.gameEngine.buffs["buff_concentrate"];
+	var buffData = session.engine.buffs["buff_concentrate"];
 	var buff = new Buff(buffData);
 	buff.actionsOnImmediate.push({
         "action": "alterStat",
@@ -1264,6 +1293,9 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.PowerAttack:
 			return this.powerAttack;
+			break;
+		case AbilityEnums.Reversal:
+			return this.reversal;
 			break;
 		case AbilityEnums.Slam:
 			return this.slam;

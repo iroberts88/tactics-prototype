@@ -186,7 +186,7 @@
     }
 
     Unit.prototype.getWeapon = function(){
-        if (this.weapon >= 0){
+        if (this.weapon != null){
             return this.inventory.items[this.weapon];
         }else{
             return {
@@ -195,8 +195,8 @@
                 description:"Hand to hand combat",
                 eqData:{range: 1, damage: 10},
                 itemID:"weapon_fists",
-                name:"Fists",
-                type:"weapon",
+                name: "Punch",
+                type: "weapon",
                 weight:0
             }
         }

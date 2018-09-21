@@ -7,7 +7,7 @@ var Item = require('./item.js').Item,
 
 
 var Inventory = function () {
-    this.gameEngine = null;
+    this.engine = null;
     this.owner = null;
     this.currentWeight = 0;
     this.maxItemPile = 99;
@@ -55,7 +55,7 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
     try{
         if (this.items.length < this.maxUnitItems){
             if (typeof updateClient == 'undefined'){updateClient = false}
-            var item = this.gameEngine.items[id];
+            var item = this.engine.items[id];
 
             var I = new Item();
             I.init(item);
@@ -64,7 +64,7 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
 
             //send item data to client
             if (updateClient){
-                this.gameEngine.queuePlayer(this.owner.owner,'addItemUnit',{unit: this.owner.id, item: I.getClientData(), w: this.currentWeight});
+                this.engine.queuePlayer(this.owner.owner,'addItemUnit',{unit: this.owner.id, item: I.getClientData(), w: this.currentWeight});
             }
             return true;
         }else{
@@ -73,7 +73,7 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
             return false;
         }
     }catch(e){
-        this.gameEngine.debug(this.owner.owner,{'id': 'addItemUnitError', 'error': e.stack, 'itemID': id});
+        this.engine.debug(this.owner.owner,{'id': 'addItemUnitError', 'error': e.stack, 'itemID': id});
     }
 }
 
@@ -85,7 +85,7 @@ Inventory.prototype.addItem = function(id, amt){
         amt = 1;
     }
     try{
-        var item = this.gameEngine.items[id];
+        var item = this.engine.items[id];
         var data = {};
         var amountToBeAdded = amt;
         var amountNotAdded = 0;
@@ -109,9 +109,9 @@ Inventory.prototype.addItem = function(id, amt){
             data.item = I.getClientData();
             data.item.amount = amountToBeAdded;
         }
-        this.gameEngine.queuePlayer(this.owner,'addItem',data);
+        this.engine.queuePlayer(this.owner,'addItem',data);
     }catch(e){
-        this.gameEngine.debug(this.owner,{'id': 'addItemPlayerError', 'error': e.stack, 'itemID': id});
+        this.engine.debug(this.owner,{'id': 'addItemPlayerError', 'error': e.stack, 'itemID': id});
     }
 }
 
@@ -143,7 +143,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -152,7 +152,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'weaponEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'weaponEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.weapon = index;
         }else if (item.type == 'shield'){
@@ -166,7 +166,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -175,7 +175,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'shieldEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'shieldEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.shield = index;
             this.owner.maximumShields.set();
@@ -190,7 +190,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -199,7 +199,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryEquipActionError', error: e.stack, iterator: i,item: item,a: Actions});
+                this.engine.debug(this.owner.owner,{'id': 'accessoryEquipActionError', error: e.stack, iterator: i,item: item,a: Actions});
             }
             this.owner.accessory = index;
         }else{
@@ -208,10 +208,10 @@ Inventory.prototype.equip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.gameEngine.queuePlayer(this.owner.owner,'equipItem',{'unit': this.owner.id, 'index': index});
+            this.engine.queuePlayer(this.owner.owner,'equipItem',{'unit': this.owner.id, 'index': index});
         }
     }catch(e){
-        this.gameEngine.debug(this.owner.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+        this.engine.debug(this.owner.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
     }
 }
 
@@ -229,7 +229,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.weapon = null;
         }else if (item.type == 'shield'){
@@ -242,7 +242,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.shield = null;
         }else if (item.type == 'accessory'){
@@ -255,7 +255,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.gameEngine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
             }
             this.owner.accessory = null;
         }else{
@@ -264,10 +264,10 @@ Inventory.prototype.unEquip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.gameEngine.queuePlayer(this.owner.owner,'unEquipItem',{'unit': this.owner.id, 'index': index});
+            this.engine.queuePlayer(this.owner.owner,'unEquipItem',{'unit': this.owner.id, 'index': index});
         }
     }catch(e){
-        this.gameEngine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+        this.engine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
     }
 }
 
@@ -278,7 +278,7 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
     this._removeItem(index);
     //send item data to client
     if (updateClient){
-        this.gameEngine.queuePlayer(this.owner.owner,'removeItemUnit',{'unit': this.owner.id, 'index': index, 'w': this.currentWeight});
+        this.engine.queuePlayer(this.owner.owner,'removeItemUnit',{'unit': this.owner.id, 'index': index, 'w': this.currentWeight});
     }
     if (this.owner.weapon > index){
         this.owner.weapon -= 1;
@@ -307,7 +307,7 @@ Inventory.prototype.removeItem = function(index,amt,updateClient){
     }
     //send item data to client
     if (updateClient){
-        this.gameEngine.queuePlayer(this.owner,'removeItem',{'index': index, 'amt': amt});
+        this.engine.queuePlayer(this.owner,'removeItem',{'index': index, 'amt': amt});
     }
 }
 
@@ -334,7 +334,7 @@ Inventory.prototype.sortByType = function(dir){
 }
 
 Inventory.prototype.setGameEngine = function(ge){
-    this.gameEngine = ge;
+    this.engine = ge;
 }
 
 exports.Inventory = Inventory;

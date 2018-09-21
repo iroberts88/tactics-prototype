@@ -155,7 +155,7 @@ Unit.prototype.init = function(data) {
     this.name = data.name;
     this.sex = data.sex;
     this.owner = data.owner;
-    this.engine = data.owner.gameEngine;
+    this.engine = data.owner.engine;
     this.id = data.id;
 
     this.level = (typeof data.level == 'undefined') ? 1 : data.level;
@@ -453,7 +453,7 @@ Unit.prototype.init = function(data) {
     this.inventory.init({
         owner: this
     });
-    this.inventory.setGameEngine(this.owner.gameEngine);
+    this.inventory.setGameEngine(this.owner.engine);
     if (typeof data.inventory != 'undefined'){
         for (var i = 0; i < data.inventory.length;i++){
             this.inventory.addItemUnit(data.inventory[i]);
@@ -571,20 +571,20 @@ Unit.prototype.damage = function(type,value,aData){
             break;
     }
     if (this.currentHealth <= 0 && !this.fainted){
-        this.owner.gameSession.checkEnd();
         //death = < -50% hp
         if (this.currentHealth <= this.maximumHealth.value/-2){
+            this.currentNode.unit = null;
             this.dead = true;
-            //TODO kill unit...
         }
         this.fainted = true;
+        this.owner.session.checkEnd();
     }
     var txt = '-' + value;
     if (type == this.engine.dmgTypeEnums.Healing){
         txt = '+' + value;
     }
     aData.push({
-        action: this.owner.gameSession.clientActionEnums.DmgText,
+        action: this.owner.session.clientActionEnums.DmgText,
         unitid: this.id,
         text: txt,
         newShields: this.currentShields,
@@ -610,19 +610,19 @@ Unit.prototype.setMoveLeft = function(val){
     if (this.moveLeft < 0){
         this.moveLeft = 0;
     }
-    this.owner.gameSession.queueData('setMoveLeft',{unit: this.id,val: this.moveLeft});
+    this.owner.session.queueData('setMoveLeft',{unit: this.id,val: this.moveLeft});
 };
 Unit.prototype.levelUp = function(update){
     //TODO save the values per level just in case the numbers change?
     if (this.level == 100){return;}
     this.level += 1;
-    this.power.base += 8;
-    this.power.base += this.strength.base*2;
+    this.power.base += 6;
+    this.power.base += this.strength.base*1.5;
     this.power.base += this.charisma.base*0.3;
-    this.skill.base += 8;
-    this.skill.base += this.dexterity.base*2;
+    this.skill.base += 6;
+    this.skill.base += this.dexterity.base*1.5;
     this.skill.base += this.charisma.base*0.3;
-    this.tactics.base += 8;
+    this.tactics.base += 6;
     this.tactics.base += this.intelligence.base*2;
     this.tactics.base += this.charisma.base*0.3;
     this.power.set(update);
@@ -819,7 +819,7 @@ Unit.prototype.setStat = function(id,amt){
 Unit.prototype.setAbilitySlots = function(){
     var s = 0;
     for (var ability in this.classInfo.equippedAbilities){
-        var abArr = this.owner.gameEngine.abilityIndex[ability];
+        var abArr = this.owner.engine.abilityIndex[ability];
         if (typeof this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost != 'undefined'){
             s += this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost;
         }
@@ -1023,21 +1023,31 @@ Unit.prototype.modStatPercent = function(id,amt){
         console.log(e);
     }
 };
-Unit.prototype.addAp = function(classID,amt){
+Unit.prototype.addAp = function(data){
+    var classID = (typeof data.classID == 'undefined') ? null : data.classID;
+    if (!classID){return;}
+    var mod = (typeof data.mod == 'undefined') ? 1 : data.mod;
+    var amt = (typeof data.amt == 'undefined') ? Math.floor(Math.min(99,Math.max(10,Math.pow(this.classInfo.totalAPValues[classID],0.48))*mod)) : data.amt;
+    var updateClient = (typeof data.updateClient == 'undefined') ? false : data.updateClient;
     try{
         this.classInfo.ap[classID] += amt;
+        this.classInfo.totalAPValues[classID] += amt;
         if (this.classInfo.ap[classID] > 9999){
             this.classInfo.ap[classID] = 9999;
         }
-        this.owner.gameEngine.queuePlayer(this.owner,'modAp',{
-            'unitID': this.id,
-            'classID': classID,
-            'value': this.classInfo.ap[classID]
-        })
+        if (updateClient){
+            this.owner.engine.queuePlayer(this.owner,'modAp',{
+                'unitID': this.id,
+                'classID': classID,
+                'value': this.classInfo.ap[classID]
+            });
+        }
     }catch(e){
         console.log("unable to mod ap");
         console.log(e);
+        return 0;
     }
+    return amt;
 }
 Unit.prototype.addBuff = function(buffData){
     try{
@@ -1045,7 +1055,7 @@ Unit.prototype.addBuff = function(buffData){
         if (this.classInfo.ap[classID] > 9999){
             this.classInfo.ap[classID] = 9999;
         }
-        this.owner.gameEngine.queuePlayer(this.owner,'modAp',{
+        this.owner.engine.queuePlayer(this.owner,'modAp',{
             'unitID': this.id,
             'classID': classID,
             'value': this.classInfo.ap[classID]
@@ -1061,7 +1071,7 @@ Unit.prototype.newNode = function(node){
     this.currentNode.unit = this;
 }
 Unit.prototype.getWeapon = function(){
-    if (this.weapon >= 0){
+    if (this.weapon != null){
         return this.inventory.items[this.weapon];
     }else{
         return this.fists;

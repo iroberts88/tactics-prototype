@@ -1,7 +1,7 @@
 //map
 var HexMap = function(session){
     this.MAX_HEIGHT = 25;
-    this.gameSession = session;
+    this.session = session;
     this.axialDirections = [
         [1,0],[1,-1],[0,-1],
         [-1,0],[-1,1],[0,1]
@@ -588,7 +588,7 @@ HexMap.prototype.getUnitsInRadius = function(center,radius){
 }
 HexMap.prototype.getAxialNode = function(q,r){
     return {
-        nodeid: this.gameSession.getId(),
+        nodeid: this.session.getId(),
         q:parseInt(q), //q coord
         r:parseInt(r), //r coord
         x:parseInt(q),

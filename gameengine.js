@@ -52,6 +52,14 @@ var GameEngine = function() {
         Pulse: 'puls',
         Explosive: 'expl',
         Healing: 'heal'
+    };
+
+    this.clientDataEnums = {
+        EndGame: 'endGame',
+        NewTurnOrder: 'newTurnOrder',
+        StartGame: 'startGame',
+        UnitInfo: 'unitInfo',
+        Won: 'won'
     }
 }
 
@@ -80,6 +88,7 @@ GameEngine.prototype.tick = function() {
     //check waiting players and join new sessions
     if (self.playersWaiting.length >= 2){
         var s = self.createSession();
+        //TODO this will crash the server if the player has <5 units
         self.joinSession(s.id,self.players[self.playersWaiting[0]]);
         self.joinSession(s.id,self.players[self.playersWaiting[0]]);
         self.sessions[s.id].gameStart();

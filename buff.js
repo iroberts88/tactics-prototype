@@ -64,7 +64,7 @@ var Buff = function(data){
 Buff.prototype.init =  function(data){
     var Actions = require('./actions.js').Actions
     this.unit = data.unit; //the buff will perform actions on this object
-    this.id = data.unit.owner.gameSession.getId();
+    this.id = data.unit.owner.session.getId();
     var add = true;
 
     /*
@@ -75,7 +75,7 @@ Buff.prototype.init =  function(data){
                 if (this.removes.tags[i] === this.unit.buffs[j].tags[k]){
                     this.unit.buffs[j].duration = 0;
                     if (this.unit.socket){
-                        this.unit.gameSession.queueData('alterBuff', {playerId: this.unit.socket.id,remove: this.unit.buffs[j].id});
+                        this.unit.session.queueData('alterBuff', {playerId: this.unit.socket.id,remove: this.unit.buffs[j].id});
                     }
                 }
             }
@@ -97,7 +97,7 @@ Buff.prototype.init =  function(data){
                 add = false;
                 if (this.unit.socket){
                     //send a refresh to the unit buff
-                    this.unit.gameSession.queueData('alterBuff', {playerId: this.unit.socket.id,refresh: this.unit.buffs[i].id, duration: this.unit.buffs[i].duration});
+                    this.unit.session.queueData('alterBuff', {playerId: this.unit.socket.id,refresh: this.unit.buffs[i].id, duration: this.unit.buffs[i].duration});
                 }
             }
         }
@@ -115,7 +115,7 @@ Buff.prototype.init =  function(data){
 
         //send buff to client
         if(this.unit.owner.socket){
-            this.unit.owner.gameSession.queueData('addBuff',{
+            this.unit.owner.session.queueData('addBuff',{
                 unitid: this.unit.id,
                 buffdata: {
                     id: this.id,

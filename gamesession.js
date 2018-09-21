@@ -14,7 +14,8 @@ AWS.config.update({
 });
 
 var GameSession = function (engine) {
-    this.gameEngine = engine;
+    this.engine = engine;
+    this.cEnums = this.engine.clientDataEnums;
     this.players = {};
     this.playerCount = 0;
     this.id = null;
@@ -67,7 +68,8 @@ var GameSession = function (engine) {
         DmgText: 'dmgText',
         ActionUsed: 'actionUsed',
         SetEnergy: 'setEnergy',
-        Slam: 'slam'
+        Slam: 'slam',
+        Reversal: 'reversal'
     }
 };
 
@@ -75,14 +77,14 @@ GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
     var names = ['tri1','throne','arena', 'ice_ravine'];
-    //for (var i in this.gameEngine.maps){
+    //for (var i in this.engine.maps){
     //    names.push(i);
     //}
     var name = names[Math.floor(Math.random()*names.length)];
     var name = 'testMap';
     //name = this.mapName;
-    this.mapData = this.gameEngine.maps[name];
-    this.map.init(this.gameEngine.maps[name]);
+    this.mapData = this.engine.maps[name];
+    this.map.init(this.engine.maps[name]);
     var n = '1234567890';
     var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     var o = '+-/*';
@@ -156,7 +158,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
                 turnList.push(this.turnOrder[i].id);
                 turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
             }
-            this.queuePlayer(player,'unitInfo',{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList,turnPercent:turnPercent});
+            this.queuePlayer(player,this.cEnums.UnitInfo,{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList,turnPercent:turnPercent});
         }
         this.ticker = 0;
         this.currentState = this.gameStates.InGame;
@@ -165,7 +167,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
 
 GameSession.prototype.tickInGame = function(deltaTime) {
     if (!this.gameHasStarted){
-        this.queueData('startGame',{delay: this.timeInBetweenTurns,timePerTurn: this.timePerTurn,timePerReaction: this.timePerReaction});
+        this.queueData(this.cEnums.StartGame,{delay: this.timeInBetweenTurns,timePerTurn: this.timePerTurn,timePerReaction: this.timePerReaction});
         this.gameHasStarted = true;
         return;
     }
@@ -194,7 +196,7 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                     turnList.push(this.turnOrder[i].id);
                     turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
                 }
-                this.queueData('newTurnOrder',{turnList:turnList,turnPercent:turnPercent});
+                this.queueData(this.cEnums.NewTurnOrder,{turnList:turnList,turnPercent:turnPercent});
             }
             break;
         case this.inGameStates.WaitingForReactionInfo:
@@ -534,6 +536,14 @@ GameSession.prototype.unitAttack = function(data){
         action: this.clientActionEnums.ActionUsed,
         unitid: data.unit.id
     });
+    var apamt = data.unit.addAp({classID: data.unit.classInfo.currentClass});
+    data.unit.owner.getUnit(data.unit.id).addAp({classID: data.unit.classInfo.currentClass,updateClient:true});
+    data.actionData.push({
+        action:this.clientActionEnums.DmgText,
+        unitid: data.unit.id,
+        text: '+' + apamt + ' AP',
+        ownerOnly: true
+    });
     //send down action data
     this.queueData('action',{actionData:data.actionData});
 }
@@ -541,6 +551,7 @@ GameSession.prototype.unitAttack = function(data){
 GameSession.prototype.unitAbility = function(data){
     //check if ability is valid and execute
     var unit = this.allUnits[this.turnOrder[0].id];
+    data.unit = unit;
     if (unit.actionUsed || unit.fainted || unit.dead){return;}
     data.ability = unit.getAbility(data.abilityid);
     var player = unit.owner.id;
@@ -635,7 +646,7 @@ GameSession.prototype.unitAbility = function(data){
                 var speed = Math.round((unit.speed.value + this.parseStringCode(unit,data.ability.speed)) * unit.castingSpeedMod.value);
                 console.log('Cast speed: ' + speed);
                 abData = {
-                    id: this.gameEngine.getId(),
+                    id: this.engine.getId(),
                     isCastTimer: true,
                     abilityData: data.ability,
                     unitid: unit.id,
@@ -670,6 +681,14 @@ GameSession.prototype.unitAbility = function(data){
         this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
         return;
     }
+    var apamt = data.unit.addAp({classID: unit.classInfo.currentClass,mod: 1.5});
+    data.unit.owner.getUnit(data.unit.id).addAp({classID: data.unit.classInfo.currentClass,updateClient:true,mod: 1.5});
+    data.actionData.push({
+        action:this.clientActionEnums.DmgText,
+        unitid: unit.id,
+        text: '+' + apamt + ' AP',
+        ownerOnly: true
+    });
     unit.actionUsed = true;
     data.actionData.push({
         action:this.clientActionEnums.ActionUsed,
@@ -884,7 +903,35 @@ GameSession.prototype.getType = function(char){
     return null;
 };
 GameSession.prototype.checkEnd = function(){
-
+    var playerStatus = {};
+    var playerIndex = [];
+    var gameEnded = false;
+    for (var i in this.players){
+        var playerHasActiveUnit = false;
+        playerIndex.push(i);
+        var p = this.players[i];
+        for (var j in this.allUnits){
+            var unit = this.allUnits[j];
+            if (unit.owner.id == p.id && (!unit.dead && !unit.fainted)){
+                playerHasActiveUnit = true;
+            }
+        }
+        if (playerHasActiveUnit){
+            playerStatus[i] = true;
+        }else{
+            gameEnded = true;
+            playerStatus[i] = false;
+        }
+    }
+    if (gameEnded){
+        for (var i in playerStatus){
+            var data = {};
+            data[this.engine.clientDataEnums.Won] = playerStatus[i];
+            this.queuePlayer(this.players[i],this.engine.clientDataEnums.EndGame,data);
+            this.engine.leaveSession(this.id,this.players[i]);
+        }
+        this.engine.removeSession(this.id);
+    }
 }
 ////////////////////////////////////////////////////////////////
 //                  Socket Functions
@@ -894,12 +941,15 @@ GameSession.prototype.handleDisconnect = function(p,toEngine){
     //remove players and delete session
     console.log("Game " + this.id + ' has ended');
     for (var i in this.players){
+        var data = {};
+        data[this.engine.clientDataEnums.Won] = true;
+        this.queuePlayer(this.players[i],this.engine.clientDataEnums.EndGame,data);
+        //remove players from session and back to engine (except disconnected player)
         if (!(p.id == i && !toEngine)){
-            this.gameEngine.leaveSession(this.id,this.players[i]);
+            this.engine.leaveSession(this.id,this.players[i]);
         }
-        //TODO send main menu command to every player
     }
-    this.gameEngine.removeSession(this.id);
+    this.engine.removeSession(this.id);
 }
 //Queue data to all players in the session
 GameSession.prototype.queueData = function(c, d) {

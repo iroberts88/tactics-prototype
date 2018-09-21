@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.311.0",
+    "aws-sdk": "^2.315.0",
     "body-parser": "latest",
     "ejs": "latest",
     "express": "latest",

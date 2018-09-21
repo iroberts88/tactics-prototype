@@ -34,6 +34,7 @@
                 window.playerID = data.id;
                 checkReady();
             });
+
             Acorn.Net.on('mapInfo', function(data) {
                 console.log(data);
                 //init in-game state
@@ -48,6 +49,11 @@
                     Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: false});
                 }
 
+            });
+
+            Acorn.Net.on('endGame', function (data) {
+                Game.endGame = true;
+                Game.won = data.won;
             });
 
             Acorn.Net.on('newTurnOrder', function(data) {
@@ -619,6 +625,9 @@
                         position: [(Graphics.width*0.8),(Graphics.height/1.35)],
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
+                            if (Player.units.length <5){
+                                return;
+                            }
                             Acorn.Net.socket_.emit('playerUpdate',{command: 'testGame'});
                             Acorn.changeState('loader');
                         }
