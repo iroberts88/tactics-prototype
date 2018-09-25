@@ -648,9 +648,9 @@ Unit.prototype.levelUp = function(update){
     var resTypes = ['physical','heat','cold','acid','poison','radiation','gravity','pulse','electric'];
 
     for (var i = 0; i < resTypes.length;i++){
-        this[resTypes[i] + 'Res'].base += 0.2;
+        this[resTypes[i] + 'Res'].base += 0.1;
         this[resTypes[i] + 'Res'].base += this.willpower.base*0.04;
-        this[resTypes[i] + 'Res'].base += this.charisma.base*0.01;
+        this[resTypes[i] + 'Res'].base += this.charisma.base*0.007;
         this[resTypes[i] + 'Res'].set(update);
     }
 
@@ -1024,22 +1024,25 @@ Unit.prototype.modStatPercent = function(id,amt){
     }
 };
 Unit.prototype.addAp = function(data){
-    var classID = (typeof data.classID == 'undefined') ? null : data.classID;
-    if (!classID){return;}
+    var classid = (typeof data.classid == 'undefined') ? null : data.classid;
+    if (!classid){return;}
     var mod = (typeof data.mod == 'undefined') ? 1 : data.mod;
-    var amt = (typeof data.amt == 'undefined') ? Math.floor(Math.min(99,Math.max(10,Math.pow(this.classInfo.totalAPValues[classID],0.48))*mod)) : data.amt;
+    var amt = (typeof data.amt == 'undefined') ? Math.floor(Math.min(99,Math.max(10,Math.pow(this.classInfo.totalAPValues[classid],0.48))*mod)) : data.amt;
     var updateClient = (typeof data.updateClient == 'undefined') ? false : data.updateClient;
+    console.log(classid);
+    console.log(mod);
+    console.log(amt);
     try{
-        this.classInfo.ap[classID] += amt;
-        this.classInfo.totalAPValues[classID] += amt;
-        if (this.classInfo.ap[classID] > 9999){
-            this.classInfo.ap[classID] = 9999;
+        this.classInfo.ap[classid] += amt;
+        this.classInfo.totalAPValues[classid] += amt;
+        if (this.classInfo.ap[classid] > 9999){
+            this.classInfo.ap[classid] = 9999;
         }
         if (updateClient){
             this.owner.engine.queuePlayer(this.owner,'modAp',{
-                'unitID': this.id,
-                'classID': classID,
-                'value': this.classInfo.ap[classID]
+                'unitid': this.id,
+                'classid': classid,
+                'value': this.classInfo.ap[classid]
             });
         }
     }catch(e){
@@ -1051,14 +1054,14 @@ Unit.prototype.addAp = function(data){
 }
 Unit.prototype.addBuff = function(buffData){
     try{
-        this.classInfo.ap[classID] += amt;
-        if (this.classInfo.ap[classID] > 9999){
-            this.classInfo.ap[classID] = 9999;
+        this.classInfo.ap[classid] += amt;
+        if (this.classInfo.ap[classid] > 9999){
+            this.classInfo.ap[classid] = 9999;
         }
         this.owner.engine.queuePlayer(this.owner,'modAp',{
             'unitID': this.id,
-            'classID': classID,
-            'value': this.classInfo.ap[classID]
+            'classid': classid,
+            'value': this.classInfo.ap[classid]
         })
     }catch(e){
         console.log("unable to mod ap");

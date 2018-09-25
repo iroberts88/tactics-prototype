@@ -536,8 +536,7 @@ GameSession.prototype.unitAttack = function(data){
         action: this.clientActionEnums.ActionUsed,
         unitid: data.unit.id
     });
-    var apamt = data.unit.addAp({classID: data.unit.classInfo.currentClass});
-    data.unit.owner.getUnit(data.unit.id).addAp({classID: data.unit.classInfo.currentClass,updateClient:true});
+    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
     data.actionData.push({
         action:this.clientActionEnums.DmgText,
         unitid: data.unit.id,
@@ -681,8 +680,7 @@ GameSession.prototype.unitAbility = function(data){
         this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
         return;
     }
-    var apamt = data.unit.addAp({classID: unit.classInfo.currentClass,mod: 1.5});
-    data.unit.owner.getUnit(data.unit.id).addAp({classID: data.unit.classInfo.currentClass,updateClient:true,mod: 1.5});
+    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});dd
     data.actionData.push({
         action:this.clientActionEnums.DmgText,
         unitid: unit.id,

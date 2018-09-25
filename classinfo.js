@@ -6,7 +6,7 @@ var ClassInfo = function(){
 	this.currentClass = null;
 	this.baseClass = null;
 	this.baseId = null;
-	this.classId = null;
+	this.classid = null;
 	this.allClassAbilities = null;
 
 	this.learnedAbilities = null;
@@ -48,7 +48,7 @@ ClassInfo.prototype.getDBObj = function(){
 	dbObj.currentClass = this.currentClass;
 	dbObj.baseClass = this.baseClass;
 	dbObj.baseId = this.baseId;
-	dbObj.classId = this.classId;
+	dbObj.classid = this.classid;
 	dbObj.learnedAbilities = this.learnedAbilities;
 	dbObj.equippedAbilities = this.equippedAbilities;
 	dbObj.ap = this.ap;
@@ -60,7 +60,7 @@ ClassInfo.prototype.setClass = function(c){
 		//TODO reduce attributes from old class?
 		
 		var charClass = this.unit.owner.engine.classes[c]
-		this.classId = c;
+		this.classid = c;
 		this.currentClass = charClass.classid;
 		for (var stat in charClass.attributes){
 			this.unit[stat].base += charClass.attributes[stat];

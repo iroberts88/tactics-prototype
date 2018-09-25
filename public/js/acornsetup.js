@@ -299,7 +299,7 @@
                 for (var i = 0; i < Player.units.length; i++){
                     if (data['unitid'] == Player.units[i].id){
                         for (var j in Player.units[i].classInfo.ap){
-                            if (j == data['classID']){
+                            if (j == data['classid']){
                                 Player.units[i].classInfo.ap[j] = data['value'];
                             }
                         }

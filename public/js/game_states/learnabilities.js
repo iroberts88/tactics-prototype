@@ -118,7 +118,7 @@
                 }
             }
             unit.classInfo.learnedAbilities[data['ablID']] = 1;
-            unit.classInfo.ap[data['classID']] -= data.apCost;
+            unit.classInfo.ap[data['classid']] -= data.apCost;
             this.clear();
             this.drawCurrentClass();
         },
@@ -191,7 +191,7 @@
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'learnAbility',
                                     'unitid': e.currentTarget.unitid,
-                                    'classID': e.currentTarget.classID,
+                                    'classid': e.currentTarget.classid,
                                     'ablID': e.currentTarget.ablID
                                 });
                             }
@@ -203,7 +203,7 @@
                     learnButton.style.fontSize = 32;
                     learnButton.ablID = ablArr[i].id;
                     learnButton.unitid = this.unitInfo.id;
-                    learnButton.classID = this.fromClass;
+                    learnButton.classid = this.fromClass;
                     learnButton.apCost = ablArr[i].ApCost;
                     Graphics.uiContainer.addChild(learnButton);
                     this.learnButtons.push(learnButton);

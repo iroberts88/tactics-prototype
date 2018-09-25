@@ -161,7 +161,7 @@ Player.prototype.setupSocket = function() {
                     case 'learnAbility':
                         try{
                             //get the unit
-                            var cID = data['classID'];
+                            var cID = data['classid'];
                             var aID = data['ablID'];
                             var uID = data['unitid'];
                             var unit;
@@ -199,7 +199,7 @@ Player.prototype.setupSocket = function() {
                     case 'equipAbility':
                         try{
                             //get the unit
-                            var cID = data['classID'];
+                            var cID = data['classid'];
                             var aID = data['ablID'];
                             var uID = data['unitid'];
                             var unit;
@@ -237,7 +237,7 @@ Player.prototype.setupSocket = function() {
                     case 'unEquipAbility':
                         try{
                             //get the unit
-                            var cID = data['classID'];
+                            var cID = data['classid'];
                             var aID = data['ablID'];
                             var uID = data['unitid'];
                             var unit;
@@ -381,6 +381,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.setClass(data.class);
                                 //create object to send to the client
                                 char.levelUp();
+                                char.level -= 1;
                                 that.engine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                                 that.user.characters.push(char);
                             }catch(e){
@@ -418,6 +419,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.setBaseClass(cl);
                                 char.classInfo.setClass(cl);
                                 char.levelUp();
+                                char.level -= 1;
                                 that.engine.queuePlayer(that,'addNewUnit', {'unit': char.getClientData()});
                                 that.user.characters.push(char);
                             }catch(e){
@@ -561,14 +563,14 @@ Player.prototype.setupSocket = function() {
                         if (commands[1] == 'all'){
                             for (var i = 0; i < that.user.characters.length;i++){
                                 for (var j in that.user.characters[i].classInfo.ap){
-                                    that.user.characters[i].addAp({classID: j, amt: 9999,updateClient: true});
+                                    that.user.characters[i].addAp({classid: j, amt: 9999,updateClient: true});
                                 }
                             }
                         }else{
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == commands[1]){
                                     for (var j in that.user.characters[i].classInfo.ap){
-                                    that.user.characters[i].addAp({classID: j, amt: 9999,updateClient: true});
+                                    that.user.characters[i].addAp({classid: j, amt: 9999,updateClient: true});
                                     }
                                 }
                             }

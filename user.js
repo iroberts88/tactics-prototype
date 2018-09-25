@@ -137,22 +137,18 @@ function User() {
                             case 'medic':
                                 learned = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
                                 equipped = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
-                                ap = {'Medic': 9999};
                                 break;
                             case 'tech':
                                 learned = {'instruct': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
                                 equipped = {'instruct': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
-                                ap = {'Tech': 9999};
                                 break;
                             case 'soldier':
                                 learned = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
                                 equipped = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
-                                ap = {'Soldier': 9999};
                                 break;
                             case 'scout':
                                 learned = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
                                 equipped = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
-                                ap = {'Scout': 9999}
                                 break;
                         }
                         char.classInfo = new ClassInfo();
@@ -162,6 +158,8 @@ function User() {
                             ap: ap});
                         char.classInfo.setBaseClass(unitClass);
                         char.classInfo.setClass(unitClass);
+                        char.levelUp();
+                        char.level -= 1;
                         this.owner.engine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
                         this.characters.push(char);
                     }

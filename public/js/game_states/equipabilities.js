@@ -152,13 +152,13 @@
                             Acorn.Net.socket_.emit('playerUpdate',{
                                 'command': 'unEquipAbility',
                                 'unitid': EquipAbilities.unitInfo.id,
-                                'classID': EquipAbilities.fromClass,
+                                'classid': EquipAbilities.fromClass,
                                 'ablID': e.currentTarget.abl.id
                             });
                         }
                     });
                     minus.abl = ability;
-                    minus.classID = this.fromClass;
+                    minus.classid = this.fromClass;
                     minus.tint = Graphics.pallette.color7;
                     Graphics.uiContainer.addChild(minus);
                 }else{
@@ -179,14 +179,14 @@
                                 Acorn.Net.socket_.emit('playerUpdate',{
                                     'command': 'equipAbility',
                                     'unitid': EquipAbilities.unitInfo.id,
-                                    'classID': EquipAbilities.fromClass,
+                                    'classid': EquipAbilities.fromClass,
                                     'ablID': e.currentTarget.abl.id
                                 });
                             }
                         }
                     });
                     plus.abl = ability;
-                    plus.classID = this.fromClass;
+                    plus.classid = this.fromClass;
                     Graphics.uiContainer.addChild(plus);
                 }
                 ypos += aName.height + 25;
