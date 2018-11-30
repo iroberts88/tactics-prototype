@@ -545,7 +545,7 @@
         {
           "sCost": 12,
           "name": "Reversal",
-          "description": "Make an attack with your equipped <melee> weapon, then switch places with your target",
+          "description": "Make an attack with your equipped {melee} weapon, then switch places with your target",
           "ApCost": 200,
           "range": "melee",
           "id": "reversal",
