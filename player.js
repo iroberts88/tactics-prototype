@@ -91,7 +91,7 @@ Player.prototype.setupSocket = function() {
                         try{
                             that.session.handleDisconnect(that,true);
                         }catch(e){
-                            that.engine.debug(that,{id: 'exitGameError', error: e.stack, data: data});
+                            that.engine.debug(exitGameError, e.stack,data);
                         }
                         break;
                     case 'ready':
@@ -193,7 +193,7 @@ Player.prototype.setupSocket = function() {
                             data.apCost = abl.ApCost;
                             that.engine.queuePlayer(that,'learnAbility',data);
                         }catch(e){
-                            that.engine.debug(that,{id: 'learnAbilityError', error: e.stack, lData: data});
+                            that.engine.debug('learnAbilityError',e.stack,data);
                         }
                         break;
                     case 'equipAbility':
@@ -231,7 +231,7 @@ Player.prototype.setupSocket = function() {
                             data.sCost = abl.sCost;
                             that.engine.queuePlayer(that,'equipAbility',data);
                         }catch(e){
-                            that.engine.debug(that,{id: 'equipAbilityError', error: e.stack, lData: data});
+                            that.engine.debug('equipAbilityError',e.stack,data);
                         }
                         break;
                     case 'unEquipAbility':
@@ -265,7 +265,7 @@ Player.prototype.setupSocket = function() {
                             data.sCost = abl.sCost;
                             that.engine.queuePlayer(that,'unEquipAbility',data);
                         }catch(e){
-                            that.engine.debug(that,{id: 'unEquipAbilityError', error: e.stack, lData: data});
+                            that.engine.debug('unEquipAbilityError', e.stack,data);
                         }
                         break;
                     case 'clearAbilities':
@@ -284,7 +284,7 @@ Player.prototype.setupSocket = function() {
                             //update client
                             that.engine.queuePlayer(that,'clearAbilities',data);
                         }catch(e){
-                            that.engine.debug(that,{id: 'clearAbilitiesError', error: e.stack, lData: data});
+                            that.engine.debug('clearAbilitiesError',e.stack,data);
                         }
                         break;
                     case 'logout':
@@ -295,7 +295,7 @@ Player.prototype.setupSocket = function() {
                             that.user.updateDB();
                             that.user = null;
                         }catch(e){
-                            that.engine.debug(that,{id: 'logoutError', error: e.stack});
+                            that.engine.debug('logoutError',e.stack);
                         }
                         break;
                     case 'deleteChar':
@@ -310,7 +310,7 @@ Player.prototype.setupSocket = function() {
                                 }
                             }
                         }catch(e){
-                            that.engine.debug(that,{id: 'deleteCharError', error: e.stack, dData: data});
+                            that.engine.debug('deleteCharError',e.stack,data);
                         }
                         break;
                     case 'itemToUnit':
@@ -323,7 +323,7 @@ Player.prototype.setupSocket = function() {
                                 that.user.inventory.removeItem(data.itemIndex,1,true);
                             }
                         }catch(e){
-                            that.engine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
+                            that.engine.debug('itemToPlayerError',e.stack,data);
                         }
                         break;
                     case 'itemToPlayer':
@@ -335,7 +335,7 @@ Player.prototype.setupSocket = function() {
                             //remove item from unit
                             unit.inventory.removeItemUnit(data.itemIndex,true);
                         }catch(e){
-                            that.engine.debug(that,{id: 'itemToPlayerError', error: e.stack, dData: data});
+                            that.engine.debug('itemToPlayerError',e.stack,data);
                         }
                         break;
                     case 'equipItem':
@@ -345,7 +345,7 @@ Player.prototype.setupSocket = function() {
                             //add item to player
                             unit.inventory.equip(data.itemIndex, true);
                         }catch(e){
-                            that.engine.debug(that,{id: 'equipItemError', error: e.stack, dData: data});
+                            that.engine.debug('equipItemError',e.stack,data);
                         }
                         break;
                     case 'unEquipItem':
@@ -355,7 +355,7 @@ Player.prototype.setupSocket = function() {
                             //add item to player
                             unit.inventory.unEquip(data.itemIndex, true);
                         }catch(e){
-                            that.engine.debug(that,{id: 'unEquipItemError', error: e.stack, dData: data});
+                            that.engine.debug('unEquipItemError',e.stack,data);
                         }
                         break;
                     case 'addUnit':

@@ -37,7 +37,9 @@ var GameEngine = function() {
     //TODO this should be randomly generated for each new user?
     this.hashSalt = 'Salt makes things taste better';
 
-    this.debugList = {}; //used avoid multiple debug chains in tick()
+    this.debugList = {}; //used avoid overloading debug.txt
+    fs.truncate('debug.txt', 0, function(){console.log('debug.txt cleared')})
+    this.debugWriteStream = fs.createWriteStream('debug.txt', {AutoClose: true});
     
     this.dmgTypeEnums = {
         Physical: 'phys',
@@ -275,24 +277,25 @@ GameEngine.prototype.queuePlayer = function(player, c, d) {
 }
 
 //Queue DEBUG data to a specific player
-GameEngine.prototype.debug = function(player, d) {
-    var data = { call: 'debug', data: d};
-    if (typeof this.debugList[d.id] == 'undefined'){
+GameEngine.prototype.debug = function(id,e,d) {
+    if (Utils._udCheck(this.debugList[id])){
         //new debug error
         //add to debug list and send to client
-        this.debugList[d.id] = {
-            id: d.id,
+        this.debugList[id] = {
+            id: id,
             n: 1,
-            t: 1.0
+            t: 5.0
         }
-        data.data.n = 1;
-        player.netQueue.push(data);
+        d.n = 1;
+        console.log('debug.txt updated - ' + id);
+        this.debugWriteStream.write(new Date().toJSON() + ' - ' + id + ' \n ' + e.stack + ' \n ' + JSON.stringify(d) + '\n\n');
     }else{
-        this.debugList[d.id].n += 1;
-        data.data.n = this.debugList[d.id].n
-        if (this.debugList[d.id].t <= 0){
-            player.netQueue.push(data);
-            this.debugList[d.id].t = 1.0;
+        this.debugList[id].n += 1;
+        d.n = this.debugList[id].n
+        if (this.debugList[id].t <= 0){
+            console.log('debug.txt updated (duplicate error) - ' + id);
+            this.debugWriteStream.write(new Date().toJSON() + ' - ' + id + ' \n ' + e.stack + ' \n ' + JSON.stringify(d) + '\n\n');
+            this.debugList[id].t = 5.0;
         }
     }
 }

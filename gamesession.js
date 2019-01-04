@@ -680,7 +680,7 @@ GameSession.prototype.unitAbility = function(data){
         this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
         return;
     }
-    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});dd
+    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});
     data.actionData.push({
         action:this.clientActionEnums.DmgText,
         unitid: unit.id,
