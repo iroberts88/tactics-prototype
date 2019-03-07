@@ -1,6 +1,7 @@
 var Attribute = require('./attribute.js').Attribute;
     Item = require('./item.js').Item,
-    UnitAI = require('./unitai.js').UnitAI;
+    UnitAI = require('./unitai.js').UnitAI,
+    Enums = require('./enums.js').Enums;
 
 var Unit = function(){
     this.id = null;
@@ -58,6 +59,7 @@ var Unit = function(){
     this.pulseRes = null;
     this.radiationRes = null;
     this.gravityRes = null;
+    this.viralRes = null,
 
     this.healMod = null
 
@@ -404,6 +406,14 @@ Unit.prototype.init = function(data) {
         'min': 0,
         'max': 75
     });
+    this.viralRes = new Attribute();
+    this.viralRes.init({
+        'id': 'viRes',
+        'owner': this,
+        'value': 0,
+        'min': 0,
+        'max': 75
+    });
     this.radiationRes = new Attribute();
     this.radiationRes.init({
         'id': 'rRes',
@@ -614,43 +624,43 @@ Unit.prototype.setMoveLeft = function(val){
 };
 Unit.prototype.levelUp = function(update){
     //TODO save the values per level just in case the numbers change?
-    if (this.level == 100){return;}
+    if (this.level == 30){return;}
     this.level += 1;
-    this.power.base += 6;
-    this.power.base += this.strength.base*1.5;
-    this.power.base += this.charisma.base*0.3;
-    this.skill.base += 6;
-    this.skill.base += this.dexterity.base*1.5;
-    this.skill.base += this.charisma.base*0.3;
-    this.tactics.base += 6;
-    this.tactics.base += this.intelligence.base*2;
-    this.tactics.base += this.charisma.base*0.3;
+    this.power.base += 18;
+    this.power.base += this.strength.base*4.5;
+    this.power.base += this.charisma.base*0.9;
+    this.skill.base += 18;
+    this.skill.base += this.dexterity.base*4.5;
+    this.skill.base += this.charisma.base*0.9;
+    this.tactics.base += 18;
+    this.tactics.base += this.intelligence.base*6;
+    this.tactics.base += this.charisma.base*1.2;
     this.power.set(update);
     this.tactics.set(update);
     this.skill.set(update);
-    this.maximumHealth.base += 5;
-    this.maximumHealth.base += this.endurance.base*0.84;
-    this.maximumHealth.base += this.charisma.base*0.13;
+    this.maximumHealth.base += 15;
+    this.maximumHealth.base += this.endurance.base*3.52;
+    this.maximumHealth.base += this.charisma.base*0.75;
     this.maximumHealth.set(update);
-    this.abilitySlots.base += 1;
-    this.abilitySlots.base += this.intelligence.base*0.1;
-    this.abilitySlots.base += this.charisma.base*0.02;
+    this.abilitySlots.base += 2;
+    this.abilitySlots.base += this.intelligence.base*0.3;
+    this.abilitySlots.base += this.charisma.base*0.06;
     this.abilitySlots.set(update);
-    this.speed.base += 2;
-    this.speed.base += this.agility.base*0.32;
-    this.speed.base += this.charisma.base*0.06;
+    this.speed.base += 5;
+    this.speed.base += this.agility.base;
+    this.speed.base += this.charisma.base*0.18;
     this.speed.set(update);
     //this.maximumEnergy.base += 1;
-    this.maximumEnergy.base += this.willpower.base*0.1;
-    this.maximumEnergy.base += this.charisma.base*0.025;
+    this.maximumEnergy.base += this.willpower.base*0.5;
+    this.maximumEnergy.base += this.charisma.base*0.08;
     this.maximumEnergy.set(update);
 
     var resTypes = ['physical','heat','cold','acid','poison','radiation','gravity','pulse','electric'];
 
     for (var i = 0; i < resTypes.length;i++){
         this[resTypes[i] + 'Res'].base += 0.1;
-        this[resTypes[i] + 'Res'].base += this.willpower.base*0.04;
-        this[resTypes[i] + 'Res'].base += this.charisma.base*0.007;
+        this[resTypes[i] + 'Res'].base += this.willpower.base*0.12;
+        this[resTypes[i] + 'Res'].base += this.charisma.base*0.021;
         this[resTypes[i] + 'Res'].set(update);
     }
 

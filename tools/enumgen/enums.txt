@@ -1,6 +1,3 @@
-(function(window) {
-
-    Enums = {    
     ABILITY: 0,
     ABILITYSLOTS: 1,
     ABILITYSLOTSUSED: 2,
@@ -74,7 +71,7 @@
     RANGEMAX: 70,
     READY: 71,
     RECHARGE: 72,
-    SETLOGINERRORTEXT: 73,
+    SETLOGINERRORTEST: 73,
     SEX: 74,
     SHIELD: 75,
     SHIELDS: 76,
@@ -89,6 +86,3 @@
     WEAPON: 85,
     WEIGHT: 86,
     WILLPOWER: 87
-
-    };
-})(window);

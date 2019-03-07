@@ -53,7 +53,8 @@ var GameEngine = function() {
         Radiation: 'radi',
         Pulse: 'puls',
         Explosive: 'expl',
-        Healing: 'heal'
+        Healing: 'heal',
+        Viral: 'vir'
     };
 
     this.clientDataEnums = {
