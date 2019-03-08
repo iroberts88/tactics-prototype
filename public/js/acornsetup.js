@@ -35,12 +35,12 @@
                 checkReady();
             });
 
-            Acorn.Net.on('mapInfo', function(data) {
+            Acorn.Net.on(ENUMS.MAPINFO, function(data) {
                 console.log(data);
                 //init in-game state
                 window.currentMapState = 'game';
                 Game.map = new Map();
-                Game.map.init(data.mapData);
+                Game.map.init(data);
                 if(Acorn.changeState('inGame')){
                     //game state change successful
                     //emit ready for full game info

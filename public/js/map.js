@@ -113,17 +113,14 @@
         this.cubeMap = {};
 
         try{
-            for (var i in data.mapData){
-                for (var j in data.mapData[i]){
-                    if (typeof this.axialMap[i] == 'undefined'){
-                        this.axialMap[i] = {};
-                    }
+            for (var i in data[ENUMS.MAPDATA]){
+                if (typeof this.axialMap[i] == 'undefined'){
+                    this.axialMap[i] = {};
+                }
+                for (var j in data[ENUMS.MAPDATA][i]){
                     var node = new Node();
-                    node.init(i,j);
+                    node.init(data[ENUMS.MAPDATA][i][j]);
                     this.axialMap[i][j] = node;
-                    this.axialMap[i][j].h = data.mapData[i][j].h;
-                    this.axialMap[i][j].deleted = data.mapData[i][j].deleted;
-                    this.axialMap[i][j].tile = data.mapData[i][j].tile;
                 }
             }
             this.initCubeMap();
@@ -151,12 +148,12 @@
             this.updateSprites(this.container2.children);
             Game.addOverlaySprites();
             Graphics.worldContainer.addChild(this.container2);
-            if (data.sz1){
-                for (var i = 0; i < data.sz1.length;i++){
-                    this.startZone1.push(this.axialMap[data.sz1[i].q][data.sz1[i].r]);
+            if (data[ENUMS.STARTZONE1]){
+                for (var i = 0; i < data[ENUMS.STARTZONE1].length;i++){
+                    this.startZone1.push(this.axialMap[data[ENUMS.STARTZONE1][i][data[ENUMS.Q]]][data[ENUMS.STARTZONE1][i][data[ENUMS.R]]]);
                 }
-                for (var i = 0; i < data.sz2.length;i++){
-                    this.startZone2.push(this.axialMap[data.sz2[i].q][data.sz2[i].r]);
+                for (var i = 0; i < data[ENUMS.STARTZONE2].length;i++){
+                    this.startZone2.push(this.axialMap[data[ENUMS.STARTZONE2][i][data[ENUMS.Q]]][data[ENUMS.STARTZONE2][i][data[ENUMS.R]]]);
                 }
             }
         }catch(e){
@@ -979,22 +976,22 @@
 
     var Node = function(){}
 
-    Node.prototype.init = function(q,r){
-        this.q = parseInt(q);
-        this.r = parseInt(r);
-        this.x = parseInt(q);
-        this.y = parseInt((q*-1)-r);
-        this.z = parseInt(r);
-        this.h = 0;
-        this.tile = 'base';
-        this.deleted = false;
+    Node.prototype.init = function(data){
+        this.q = parseInt(data[ENUMS.Q]);
+        this.r = parseInt(data[ENUMS.R]);
+        this.x = parseInt(this.q);
+        this.y = parseInt((this.q*-1)-this.r);
+        this.z = parseInt(this.r);
+        this.h = data[ENUMS.H];
+        this.tile = data[ENUMS.RESOURCE];
+        this.deleted = data[ENUMS.DELETED];
         this.unit = null;
         this.sprite1 = null;
         this.sprite2 = null;
         this.overlaySprite1 = null;
         this.overlaySprite2 = null;
         this.mouseOverNodes = null;
-        this.id = q+','+r;
+        this.id = this.q+','+this.r;
     }
     Node.prototype.setOverlaySprites = function(tint){
         this.overlaySprite1 = Graphics.getSprite('overlay1');

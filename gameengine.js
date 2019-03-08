@@ -4,6 +4,7 @@
 
 var GameSession = require('./gamesession.js').GameSession,
     Player = require('./player.js').Player,
+    Utils = require('./utils.js').Utils,
     AWS = require("aws-sdk");
 
 
@@ -33,9 +34,6 @@ var GameEngine = function() {
     //variables for ID's
     this.idIterator = 0;
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
-
-    //TODO this should be randomly generated for each new user?
-    this.hashSalt = 'Salt makes things taste better';
 
     this.debugList = {}; //used avoid overloading debug.txt
     fs.truncate('debug.txt', 0, function(){console.log('debug.txt cleared')})

@@ -5,7 +5,8 @@
 var Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
     Buff = require('./buff.js').Buff,
-    HexMap = require('./hexmap.js').HexMap;
+    HexMap = require('./hexmap.js').HexMap,
+    ENUMS = require('./enums.js').Enums;
 
 var AWS = require("aws-sdk");
 AWS.config.update({
@@ -85,6 +86,7 @@ GameSession.prototype.init = function (data) {
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
     this.map.init(this.engine.maps[name]);
+    this.mapData = this.map.getClientData();
     var n = '1234567890';
     var l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     var o = '+-/*';
@@ -249,7 +251,7 @@ GameSession.prototype.gameStart = function(){
         var player = this.players[p];
         player.identifiedUnits = {};
         player.myUnits = {};
-        this.queuePlayer(player,"mapInfo", {mapData: this.mapData});
+        this.queuePlayer(player,ENUMS.MAPINFO, this.mapData);
         for (var i = 0; i < 5;i++){
             var uid = player.user.characters[i].id;
             this.allUnits[uid] = player.user.characters[i];

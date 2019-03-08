@@ -9,7 +9,8 @@ var enums = [
 	'ADDUNIT',
 	'ADDRANDOMCHAR',
 	'AGILITY',
-	'AMOUTN',
+	'AMOUNT',
+	'APCOST',
 	'ATTACK',
 
 	'CANCELSEARCH',
@@ -30,11 +31,13 @@ var enums = [
 	'DAMAGE',
 	'DAMAGETYPE',
 	'DELAY',
+	'DELETED',
 	'DELETECHAR',
 	'DESCRIPTION',
 	'DEXTERITY',
 	'DIRECTION',
 
+	'ECOST',
 	'ENDTURN',
 	'ENDURANCE',
 	'ENERGY',
@@ -46,6 +49,7 @@ var enums = [
 
 	'GAMESTATS',
 
+	'H',
 	'HEATRES',
 
 	'ID',
@@ -64,12 +68,15 @@ var enums = [
 	'LOGOUT',
 	'LOGINATTEMPT',
 
+	'MAPDATA',
+	'MAPINFO',
 	'MAXENERGY',
 	'MAXHEALTH',
 	'MAXWEIGHT',
 	'MOVE',
 
 	'NAME',
+	'NODEID',
 
 	'ONUSE',
 	'ONFIRE',
@@ -83,17 +90,26 @@ var enums = [
 	'POWER',
 	'PLAYERUPDATE',
 
+	'Q',
+
+	'R',
+	'RADIUS',
 	'RANGE',
 	'RANGEMIN',
 	'RANGEMAX',
 	'READY',
 	'RECHARGE',
+	'RESOURCE',
 
+	'SCOST',
 	'SETLOGINERRORTEXT',
 	'SEX',
 	'SHIELD',
 	'SHIELDS',
 	'SKILL',
+	'SPEED',
+	'STARTZONE1',
+	'STARTZONE2',
 	'STRENGTH',
 
 	'TACTICS',

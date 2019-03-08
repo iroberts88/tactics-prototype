@@ -4,7 +4,8 @@
 var User = require('./user.js').User,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
-    ClassInfo = require('./classinfo.js').ClassInfo;
+    ClassInfo = require('./classinfo.js').ClassInfo,
+    ENUMS = require('./enums.js').Enums;
 
 const crypto = require('crypto');
 

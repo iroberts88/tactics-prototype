@@ -1,4 +1,6 @@
-//map
+//map    
+var ENUMS = require('./enums.js').Enums;
+
 var HexMap = function(session){
     this.MAX_HEIGHT = 25;
     this.session = session;
@@ -51,21 +53,18 @@ HexMap.prototype.init = function(data){
                 if (typeof this.axialMap[i] == 'undefined'){
                     this.axialMap[i] = {};
                 }
-                var node = this.getAxialNode(i,j);
+                var node = this.getAxialNode(data.mapData[i][j]);
                 this.axialMap[i][j] = node;
-                this.axialMap[i][j].h = data.mapData[i][j].h;
-                this.axialMap[i][j].deleted = data.mapData[i][j].deleted;
-                this.axialMap[i][j].tile = data.mapData[i][j].tile;
             }
         }
         
         this.initCubeMap();
 
-        for (var i = 0; i < data.sz1.length;i++){
-            this.startZone1.push(this.axialMap[data.sz1[i].q][data.sz1[i].r]);
+        for (var i = 0; i < data['sz1'].length;i++){
+            this.startZone1.push(this.axialMap[data['sz1'][i].q][data['sz1'][i].r]);
         }
-        for (var i = 0; i < data.sz2.length;i++){
-            this.startZone2.push(this.axialMap[data.sz2[i].q][data.sz2[i].r]);
+        for (var i = 0; i < data['sz2'].length;i++){
+            this.startZone2.push(this.axialMap[data['sz2'][i].q][data['sz2'][i].r]);
         }
     }catch(e){
     	console.log(e);
@@ -586,19 +585,71 @@ HexMap.prototype.getUnitsInRadius = function(center,radius){
     }
     return results;
 }
-HexMap.prototype.getAxialNode = function(q,r){
-    return {
-        nodeid: this.session.getId(),
-        q:parseInt(q), //q coord
-        r:parseInt(r), //r coord
-        x:parseInt(q),
-        y:parseInt((q*-1)-r),
-        z:parseInt(r),
-        h:0, //height value
-        tile: 'base', //tile type
-        deleted: false, //the node is deleted from the map and not visible
-        unit: null, //use when a player is on the node
+HexMap.prototype.getAxialNode = function(data){
+    var node = new AxialNode(this.session);
+    node.init(data);
+    return node;
+}
+
+HexMap.prototype.getClientData = function(){
+    var cData = {};
+
+    cData[ENUMS.STARTZONE1] = [];
+    for (var i = 0; i < this.startZone1.length; i++){
+        var node = {}
+        node[ENUMS.Q] = this.startZone1[i].q;
+        node[ENUMS.r] = this.startZone1[i].r;
+        cData[ENUMS.STARTZONE1].push(node)
     }
+    cData[ENUMS.STARTZONE2] = [];
+    for (var i = 0; i < this.startZone2.length; i++){
+        var node = {}
+        node[ENUMS.Q] = this.startZone2[i].q;
+        node[ENUMS.r] = this.startZone2[i].r;
+        cData[ENUMS.STARTZONE2].push(node)
+    }
+    cData[ENUMS.MAPDATA] = {};
+    for (var i in this.axialMap){
+        if (typeof cData[ENUMS.MAPDATA][i] == 'undefined'){
+            cData[ENUMS.MAPDATA][i] = {};
+        }
+        for (var j in this.axialMap[i]){
+            cData[ENUMS.MAPDATA][i][j] = this.axialMap[i][j].getClientData();
+        }
+    }
+    return cData;
 }
 
 exports.HexMap = HexMap;
+
+var AxialNode = function(session){
+    this.session = session;
+}
+
+AxialNode.prototype.init = function(data){
+    this.nodeid = this.session.getId();
+    this.q = parseInt(data['q']); //q coord
+    this.r = parseInt(data['r']); //r coord
+    this.x = parseInt(this.q);
+    this.y = parseInt((this.q*-1)-this.r);
+    this.z = parseInt(this.r);
+    this.h = data['h']; //height value
+    this.tile =  data['tile']; //tile type
+    this.deleted =  data['deleted']; //the node is deleted from the map and not visible
+    this.unit =  null; //use when a player is on the node
+}
+
+AxialNode.prototype.getClientData = function(){
+    var cData = {};
+
+    cData[ENUMS.NODEID] = this.nodeid;
+    cData[ENUMS.Q] = this.q;
+    cData[ENUMS.R] = this.r;
+    cData[ENUMS.H] = this.h;
+    cData[ENUMS.RESOURCE] = this.tile;
+    cData[ENUMS.DELETED] = this.deleted;
+    return cData;
+}
+
+
+exports.AxialNode = AxialNode;

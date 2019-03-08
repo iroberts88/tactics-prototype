@@ -1,7 +1,7 @@
 var Attribute = require('./attribute.js').Attribute;
     Item = require('./item.js').Item,
     UnitAI = require('./unitai.js').UnitAI,
-    Enums = require('./enums.js').Enums;
+    ENUMS = require('./enums.js').Enums;
 
 var Unit = function(){
     this.id = null;
