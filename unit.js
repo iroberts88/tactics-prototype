@@ -764,9 +764,7 @@ Unit.prototype.getClientData = function(){
     data.shield = this.shield;
     data.accessory = this.accessory;
     data.ai = this.ai;
-    for (var cI in this.classInfo){
-        if (cI != 'unit'){data.classInfo[cI] = this.classInfo[cI]}
-    }
+    data.classInfo = this.classInfo.getClientData();
     data.inventory = {};
     data.inventory.items = [];
     data.inventory.currentWeight = this.inventory.currentWeight;
@@ -798,7 +796,8 @@ Unit.prototype.getLessClientData = function(){
     data.charge = this.charge;
     data.currentNode = this.minCurrentNode();
     data.direction = this.direction;
-    data.classInfo = {currentClass: this.classInfo.currentClass};
+    data.classInfo = {};
+    data.classInfo[ENUMS.CURRENTCLASS] = this.classInfo.currentClass
     data.weapon = this.weapon;
     data.shield = this.shield;
     data.accessory = this.accessory;
@@ -829,9 +828,9 @@ Unit.prototype.setStat = function(id,amt){
 Unit.prototype.setAbilitySlots = function(){
     var s = 0;
     for (var ability in this.classInfo.equippedAbilities){
-        var abArr = this.owner.engine.abilityIndex[ability];
-        if (typeof this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost != 'undefined'){
-            s += this.classInfo.allClassAbilities[abArr[0]][abArr[1]].sCost;
+        var ab = this.owner.engine.abilities[ability];
+        if (typeof ab.sCost != 'undefined'){
+            s += ab.sCost;
         }
     }
     this.usedAbilitySlots = s;

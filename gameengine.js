@@ -4,6 +4,7 @@
 
 var GameSession = require('./gamesession.js').GameSession,
     Player = require('./player.js').Player,
+    Ability = require('./ability.js').Ability,
     Utils = require('./utils.js').Utils,
     AWS = require("aws-sdk");
 
@@ -125,22 +126,22 @@ GameEngine.prototype.getId = function() {
 
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.maps[arr[i].mapid] = arr[i];
-        this.mapids.push(arr[i].mapid);
+        this.maps[arr[i]['mapid']] = arr[i];
+        this.mapids.push(arr[i]['mapid']);
     }
     console.log('loaded ' + arr.length + ' Maps from db');
 }
 
 GameEngine.prototype.loadItems = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.items[arr[i].itemid] = arr[i];
+        this.items[arr[i]['itemid']] = arr[i];
     }
     console.log('loaded ' + arr.length + ' Items from db');
 }
 
 GameEngine.prototype.loadBuffs = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.buffs[arr[i].buffid] = arr[i];
+        this.buffs[arr[i]['buffid']] = arr[i];
     }
     console.log('loaded ' + arr.length + ' Buffs from db');
 }
@@ -151,11 +152,12 @@ GameEngine.prototype.loadClasses = function(arr) {
         this.classes[arr[i].classid] = arr[i];
         //fill in the abiliy index for quick access
         for (var j = 0; j < this.classes[arr[i].classid].abilities.length;j++){
-            if (this.abilities[this.classes[arr[i].classid].abilities[j].id]){
-                console.log("DUPLICATE: " + this.classes[arr[i].classid].abilities[j].id);
+            var ability = new Ability();
+            ability.init(this.classes[arr[i].classid].abilities[j]);
+            if (this.abilities[ability.sid]){
+                console.log("DUPLICATE: " + ability.sid);
             }else{
-                this.abilities[this.classes[arr[i].classid].abilities[j].id] = this.classes[arr[i].classid].abilities[j];
-                this.abilityIndex[this.classes[arr[i].classid].abilities[j].id] = [this.classes[arr[i].classid].classid,j];
+                this.abilities[ability.id] = ability;
             }
         }
     }

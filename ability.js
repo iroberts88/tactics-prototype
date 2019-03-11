@@ -3,18 +3,18 @@ var ENUMS = require('./enums.js').Enums;
 
 var Ability = function(){}
 
-Ability.prototype.init = function(data,sid) {
+Ability.prototype.init = function(data) {
     this.sCost = data['sCost'];
     this.name = data['name'];
     this.description = data['description'];
     this.range = data['range'];
     this.ApCost = data['apCost'];
     this.id = data['id'];
-    this.sid = sid; //the database id!
     this.type = data['type'];
     this.radius = data['radius'];
     this.eCost = data['eCost'];
     this.speed = data['speed'];
+    this.cData = this.getClientData();
 };
 
 Ability.prototype.getClientData = function(){

@@ -176,7 +176,8 @@
         }
         this.level = data.level;
         this.exp = data.exp;
-        this.classInfo = data.classInfo;
+        this.classInfo = new ClassInfo();
+        this.classInfo.init(data.classInfo);
         
         this.weapon = data.weapon;
         this.shield = data.shield;
