@@ -87,27 +87,28 @@ Player.prototype.setupSocket = function() {
         try{
             if (that.session){
                 //if the player is in a session - deal with received data
-               switch(data.command){
-                    case 'exitGame':
+               switch(data[ENUMS.COMMAND]){
+                    case ENUMS.EXITGAME:
                         try{
                             that.session.handleDisconnect(that,true);
                         }catch(e){
                             that.engine.debug(exitGameError, e.stack,data);
                         }
                         break;
-                    case 'ready':
-                        console.log(data)
-                        if (data.val){
+                    case ENUMS.READY:
+                        if (data[ENUMS.VALUE] == true){
                             that.ready = true;
                         }else{
                             console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
                         }
                         break;
-                    case 'move':
+                    case ENUMS.MOVE:
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.session.turnOrder[0].id)){
+                        if (!that.hasUnit(that.session.turnOrder[0].id) || !that.engine.checkData(data,[CENUMS.Q,CENUMS.R])){
                             return;
                         }
+                        data.q = data[ENUMS.Q];
+                        data.r = data[ENUMS.R];
                         //send the data to session and execute the move
                         that.session.unitMove(data);
                         break;
@@ -438,7 +439,7 @@ Player.prototype.setupSocket = function() {
             }
         }catch(e){
             console.log("Player Update Error");
-            that.engine.debug(that,{'id': 'error', 'error': e.stack});
+            that.engine.debug(that,'playerUpdateError',{'id': 'error', 'error': e.stack});
         }
     });
 

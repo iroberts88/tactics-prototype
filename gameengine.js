@@ -301,4 +301,14 @@ GameEngine.prototype.debug = function(id,e,d) {
     }
 }
 
+
+GameEngine.prototype.checkData = function(obj,elements){
+    for (var i = 0; i < elements.length;i++){
+        if (typeof obj[elements[i]] == 'undefined'){
+            return false;
+        }
+    }
+    return true;
+}
+
 exports.GameEngine = GameEngine;

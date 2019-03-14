@@ -13,6 +13,7 @@ Ability.prototype.init = function(data) {
     this.type = data['type'];
     this.radius = data['radius'];
     this.eCost = data['eCost'];
+    this.tickECost = data['tickECost'];
     this.speed = data['speed'];
     this.cData = this.getClientData();
 };

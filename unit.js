@@ -172,7 +172,7 @@ Unit.prototype.init = function(data) {
     //the maximum shield value
     this.maximumShields = new Attribute();
     this.maximumShields.init({
-        'id': 'sh',
+        'id': ENUMS.MAXSHIELDS,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -190,7 +190,7 @@ Unit.prototype.init = function(data) {
     //the amount a shield is recharged per turn
     this.shieldRecharge = new Attribute();
     this.shieldRecharge.init({
-        'id': 'shrec',
+        'id': ENUMS.SHIELDRECHARGE,
         'owner': this,
         'value': 0,
         'min': -100,
@@ -199,7 +199,7 @@ Unit.prototype.init = function(data) {
     //the number of turns before shield recharge takes effect
     this.shieldDelay = new Attribute();
     this.shieldDelay.init({
-        'id': 'shdel',
+        'id': ENUMS.SHIELDDELAY,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -207,7 +207,7 @@ Unit.prototype.init = function(data) {
     });
     this.maximumHealth = new Attribute();
     this.maximumHealth.init({
-        'id': 'hp',
+        'id': ENUMS.MAXHEALTH,
         'owner': this,
         'value': 100,
         'min': 1,
@@ -215,7 +215,7 @@ Unit.prototype.init = function(data) {
     });
     this.maximumEnergy = new Attribute();
     this.maximumEnergy.init({
-        'id': 'energy',
+        'id': ENUMS.MAXENERGY,
         'owner': this,
         'value': 100,
         'min': 1,
@@ -225,15 +225,15 @@ Unit.prototype.init = function(data) {
 
     this.move = new Attribute();
     this.move.init({
-        'id': 'mov',
+        'id': ENUMS.MOVE,
         'owner': this,
-        'value': 4,
+        'value': 7,
         'min': 0,
         'max': 99
     });
     this.jump = new Attribute();
     this.jump.init({
-        'id': 'jum',
+        'id': ENUMS.JUMP,
         'owner': this,
         'value': 2,
         'min': 0,
@@ -241,7 +241,7 @@ Unit.prototype.init = function(data) {
     });
     this.power = new Attribute();
     this.power.init({
-        'id': 'pow',
+        'id': ENUMS.POWER,
         'owner': this,
         'value': 10,
         'min': 0,
@@ -249,7 +249,7 @@ Unit.prototype.init = function(data) {
     });
     this.skill = new Attribute();
     this.skill.init({
-        'id': 'ski',
+        'id': ENUMS.SKILL,
         'owner': this,
         'value': 10,
         'min': 0,
@@ -258,7 +258,7 @@ Unit.prototype.init = function(data) {
 
     this.tactics = new Attribute();
     this.tactics.init({
-        'id': 'tac',
+        'id': ENUMS.TACTICS,
         'owner': this,
         'value': 10,
         'min': 0,
@@ -266,7 +266,7 @@ Unit.prototype.init = function(data) {
     });
     this.speed = new Attribute();
     this.speed.init({
-        'id': 'spd',
+        'id': ENUMS.SPEED,
         'owner': this,
         'value': 100,
         'min': 10,
@@ -284,7 +284,7 @@ Unit.prototype.init = function(data) {
     });
     this.abilitySlots = new Attribute();
     this.abilitySlots.init({
-        'id': 'absl',
+        'id': ENUMS.ABILITYSLOTS,
         'owner': this,
         'value': 25,
         'min': 0,
@@ -292,7 +292,7 @@ Unit.prototype.init = function(data) {
     });
     this.strength = new Attribute();
     this.strength.init({
-        'id': 'str',
+        'id': ENUMS.STRENGTH,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -303,7 +303,7 @@ Unit.prototype.init = function(data) {
     });
     this.endurance = new Attribute();
     this.endurance.init({
-        'id': 'end',
+        'id': ENUMS.ENDURANCE,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -311,7 +311,7 @@ Unit.prototype.init = function(data) {
     });
     this.agility = new Attribute();
     this.agility.init({
-        'id': 'agi',
+        'id': ENUMS.AGILITY,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -319,7 +319,7 @@ Unit.prototype.init = function(data) {
     });
     this.dexterity = new Attribute();
     this.dexterity.init({
-        'id': 'dex',
+        'id': ENUMS.DEXTERITY,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -327,7 +327,7 @@ Unit.prototype.init = function(data) {
     });
     this.willpower = new Attribute();
     this.willpower.init({
-        'id': 'wil',
+        'id': ENUMS.WILLPOWER,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -335,7 +335,7 @@ Unit.prototype.init = function(data) {
     });
     this.intelligence = new Attribute();
     this.intelligence.init({
-        'id': 'int',
+        'id': ENUMS.INTELLIGENCE,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -343,7 +343,7 @@ Unit.prototype.init = function(data) {
     });
     this.charisma = new Attribute();
     this.charisma.init({
-        'id': 'cha',
+        'id': ENUMS.CHARISMA,
         'owner': this,
         'value': 1,
         'min': 1,
@@ -352,7 +352,7 @@ Unit.prototype.init = function(data) {
 
     this.physicalRes = new Attribute();
     this.physicalRes.init({
-        'id': 'pRes',
+        'id': ENUMS.RESISTANCEPHYSICAL,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -360,7 +360,7 @@ Unit.prototype.init = function(data) {
     });
     this.heatRes = new Attribute();
     this.heatRes.init({
-        'id': 'hRes',
+        'id': ENUMS.RESISTANCEHEAT,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -368,7 +368,7 @@ Unit.prototype.init = function(data) {
     });
     this.coldRes = new Attribute();
     this.coldRes.init({
-        'id': 'cRes',
+        'id': ENUMS.RESISTANCECOLD,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -376,7 +376,7 @@ Unit.prototype.init = function(data) {
     });
     this.acidRes = new Attribute();
     this.acidRes.init({
-        'id': 'aRes',
+        'id': ENUMS.RESISTANCEACID,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -384,7 +384,7 @@ Unit.prototype.init = function(data) {
     });
     this.poisonRes = new Attribute();
     this.poisonRes.init({
-        'id': 'poRes',
+        'id': ENUMS.RESISTANCEPOISON,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -392,7 +392,7 @@ Unit.prototype.init = function(data) {
     });
     this.electricRes = new Attribute();
     this.electricRes.init({
-        'id': 'eRes',
+        'id': ENUMS.RESISTANCEELECTRIC,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -400,7 +400,7 @@ Unit.prototype.init = function(data) {
     });
     this.pulseRes = new Attribute();
     this.pulseRes.init({
-        'id': 'puRes',
+        'id': ENUMS.RESISTANCEPULSE,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -408,7 +408,7 @@ Unit.prototype.init = function(data) {
     });
     this.viralRes = new Attribute();
     this.viralRes.init({
-        'id': 'viRes',
+        'id': ENUMS.RESISTANCEVIRAL,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -416,7 +416,7 @@ Unit.prototype.init = function(data) {
     });
     this.radiationRes = new Attribute();
     this.radiationRes.init({
-        'id': 'rRes',
+        'id': ENUMS.RESISTANCERADIATION,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -424,7 +424,7 @@ Unit.prototype.init = function(data) {
     });
     this.gravityRes = new Attribute();
     this.gravityRes.init({
-        'id': 'gRes',
+        'id': ENUMS.RESISTANCEGRAVITY,
         'owner': this,
         'value': 0,
         'min': 0,
@@ -432,7 +432,7 @@ Unit.prototype.init = function(data) {
     });
     this.healMod = new Attribute();
     this.healMod.init({
-        'id': 'hMod',
+        'id': ENUMS.HEALMOD,
         'owner': this,
         'value': 0,
         'min': -100,
@@ -593,16 +593,17 @@ Unit.prototype.damage = function(type,value,aData){
     if (type == this.engine.dmgTypeEnums.Healing){
         txt = '+' + value;
     }
-    aData.push({
-        action: this.owner.session.clientActionEnums.DmgText,
-        unitid: this.id,
-        text: txt,
-        newShields: this.currentShields,
-        newHealth: this.currentHealth,
-        fainted: this.fainted,
-        type: type,
-        dead:this.dead
-    });
+    var cData = {};
+    cData[ENUMS.ACTION] = ENUMS.DAMAGETEXT;
+    cData[ENUMS.ID] = this.id;
+    cData[ENUMS.TEXT] = txt;
+    cData[ENUMS.CURRENTSHIELDS] = this.currentShields;
+    cData[ENUMS.CURRENTHEALTH] = this.currentHealth;
+    cData[ENUMS.FAINTED] = this.fainted;
+    cData[ENUMS.DEAD] = this.dead;
+    cData[ENUMS.TYPE] = type;
+
+    aData.push(cData);
     return aData;
 };
 Unit.prototype._damage = function(value){
@@ -620,7 +621,10 @@ Unit.prototype.setMoveLeft = function(val){
     if (this.moveLeft < 0){
         this.moveLeft = 0;
     }
-    this.owner.session.queueData('setMoveLeft',{unit: this.id,val: this.moveLeft});
+    var cData = {};
+    cData[ENUMS.UNIT] = this.id;
+    cData[ENUMS.VALUE] = this.moveLeft;
+    this.owner.session.queueData(ENUMS.SETMOVELEFT,cData);
 };
 Unit.prototype.levelUp = function(update){
     //TODO save the values per level just in case the numbers change?
@@ -655,7 +659,7 @@ Unit.prototype.levelUp = function(update){
     this.maximumEnergy.base += this.charisma.base*0.08;
     this.maximumEnergy.set(update);
 
-    var resTypes = ['physical','heat','cold','acid','poison','radiation','gravity','pulse','electric'];
+    var resTypes = ['physical','heat','cold','acid','poison','gravity','electric','radiation'];
 
     for (var i = 0; i < resTypes.length;i++){
         this[resTypes[i] + 'Res'].base += 0.1;
@@ -734,75 +738,72 @@ Unit.prototype.minCurrentNode = function(){
     if (this.currentNode == null){
         return null;
     }
-    return {
-        q:this.currentNode.q, //q coord
-        r:this.currentNode.r, //r coord
-    }
+    var d = {};
+    d[ENUMS.Q] = this.currentNode.q;
+    d[ENUMS.R] = this.currentNode.q;
+    return d;
 }
-Unit.prototype.getClientData = function(){
+Unit.prototype.getClientData = function(less = false){
     //create object to send to the client
-    var data = {}
-    for (var a in this){
-        if (this[a] instanceof Attribute){
-            data[a] = this[a].value;
-        }
+    var data = {};
+
+    data[ENUMS.MAXHEALTH] = this.maximumHealth.value;
+    data[ENUMS.MAXSHIELDS] = this.maximumShields.value;
+    data[ENUMS.MAXENERGY] = this.maximumEnergy.value;
+
+    data[ENUMS.FULL] = true; //get full data;
+    data[ENUMS.OWNER] = this.owner.id;
+    data[ENUMS.NAME] = this.name;
+    data[ENUMS.SEX] = this.sex
+    data[ENUMS.ID] = this.id;
+    data[ENUMS.USEDABILITYSLOTS] = this.usedAbilitySlots;
+    data[ENUMS.LEVEL] = this.level;
+    data[ENUMS.CURRENTHEALTH] = this.currentHealth;
+    data[ENUMS.CURRENTENERGY] = this.currentEnergy;
+    data[ENUMS.CURRETNSHIELDS] = this.currentShields;
+    data[ENUMS.CURRENTNODE] = this.minCurrentNode();
+    data[ENUMS.DIRECTION] = this.direction
+    data[ENUMS.WEAPON] = this.weapon;
+    data[ENUMS.SHIELD] = this.shield;
+    data[ENUMS.ACCESSORY] = this.accessory;
+    data[ENUMS.MOVE] = this.move;
+    data[ENUMS.JUMP] = this.jump;
+    data[ENUMS.SPEED] = this.speed;
+    //data.ai = this.ai;
+
+    if (less){
+        data[ENUMS.CHARGE] = this.charge;
+        data[ENUMS.FULL] = false;
+        data[ENUMS.CLASS] = this.classInfo.currentClass;
+        data[ENUMS.CLASSINFO] = {};
+        data[ENUMS.CLASSINFO][ENUMS.CURRENTCLASS] = this.classInfo.currentClass;
+        return data;
     }
-    data.full = true; //get full data;
-    data.owner = this.owner.id;
-    data.name = this.name;
-    data.sex = this.sex
-    data.id = this.id;
-    data.usedAbilitySlots = this.usedAbilitySlots;
-    data.level = this.level;
-    data.health = this.currentHealth;
-    data.energy = this.currentEnergy;
-    data.shields = this.currentShields;
-    data.currentNode = this.minCurrentNode();
-    data.direction = this.direction
-    data.classInfo = {};
-    data.weapon = this.weapon;
-    data.shield = this.shield;
-    data.accessory = this.accessory;
-    data.ai = this.ai;
-    data.classInfo = this.classInfo.getClientData();
-    data.inventory = {};
-    data.inventory.items = [];
-    data.inventory.currentWeight = this.inventory.currentWeight;
-    data.inventory.maxItemPile = this.inventory.maxItemPile;
+
+    data[ENUMS.STRENGTH] = this.strength.value;
+    data[ENUMS.ENDURANCE] = this.endurance.value;
+    data[ENUMS.AGILITY] = this.agility.value;
+    data[ENUMS.DEXTERITY] = this.dexterity.value;
+    data[ENUMS.INTELLIGENCE] = this.intelligence.value;
+    data[ENUMS.WILLPOWER] = this.willpower.value;
+    data[ENUMS.CHARISMA] = this.charisma.value;
+    data[ENUMS.POWER] = this.power.value;
+    data[ENUMS.SKILL] = this.skill.value;
+    data[ENUMS.TACTICS] = this.tactics.value;
+    data[ENUMS.INVENTORY] = {};
+    data[ENUMS.INVENTORY][ENUMS.ITEMS] = [];
+    data[ENUMS.INVENTORY][ENUMS.CURRENTWEIGHT] = this.inventory.currentWeight;
+    data[ENUMS.INVENTORY][ENUMS.MAXITEMPILE] = this.inventory.maxItemPile;
+    data[ENUMS.CLASSINFO] = this.classInfo.getClientData();
     for (var i = 0; i < this.inventory.items.length;i++){
-        data.inventory.items.push(this.inventory.items[i].getClientData());
+        data[ENUMS.INVENTORY][ENUMS.ITEMS].push(this.inventory.items[i].getClientData());
     }
-    data.inventory.maxWeight = this.inventory.maxWeight.value;
+    data[ENUMS.INVENTORY][ENUMS.MAXWEIGHT] = this.inventory.maxWeight.value;
     return data;
 }
 
 Unit.prototype.getLessClientData = function(){
-    var data = {}
-    data.full = false; //reduced data (unidentified unit)
-    data.owner = this.owner.id;
-    data.name = this.name;
-    data.sex = this.sex;
-    data.level = this.level;
-    data.id = this.id;
-    data.health = this.currentHealth;
-    data.energy = this.currentEnergy;
-    data.shields = this.currentShields;
-    data.move = this.move.value;
-    data.jump = this.jump.value;
-    data.speed = this.speed.value;
-    data.maximumHealth = this.maximumHealth.value;
-    data.maximumShields = this.maximumShields.value;
-    data.maximumEnergy = this.maximumEnergy.value;
-    data.charge = this.charge;
-    data.currentNode = this.minCurrentNode();
-    data.direction = this.direction;
-    data.classInfo = {};
-    data.classInfo[ENUMS.CURRENTCLASS] = this.classInfo.currentClass
-    data.weapon = this.weapon;
-    data.shield = this.shield;
-    data.accessory = this.accessory;
-    data.class = this.classInfo.currentClass;
-    data.ai = this.ai;
+    var data = this.getClientData(true);
     return data;
 
 }

@@ -169,7 +169,7 @@
         "onEquip": [
           {
             "name": "alterStat",
-            "value": 1,
+            "value": 2,
             "stat": "mov"
           }
         ]
@@ -242,7 +242,7 @@
             "value": 5
           }
         ],
-        "rangeMax": 4,
+        "rangeMax": 8,
         "rangeMin": 2
       },
       "type": "gun"
@@ -279,7 +279,7 @@
         "onEquip": [],
         "onHit": [],
         "onFire": [],
-        "rangeMax": 4,
+        "rangeMax": 8,
         "rangeMin": 2
       },
       "type": "gun"

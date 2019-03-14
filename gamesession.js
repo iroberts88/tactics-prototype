@@ -82,7 +82,7 @@ GameSession.prototype.init = function (data) {
     //    names.push(i);
     //}
     var name = names[Math.floor(Math.random()*names.length)];
-    var name = 'testMap';
+    //var name = 'testMap';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
     this.map.init(this.engine.maps[name]);
@@ -142,25 +142,25 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
         //send down unit info
         for (var p in this.players){
             var player = this.players[p];
-            var myUnits = [];
-            var otherUnits = [];
-            var turnList = [];
-            var turnPercent = [];
+            var cData = {};
+            cData[ENUMS.MYUNITS] = [];
+            cData[ENUMS.OTHERUNITS] = [];
+            cData[ENUMS.TURNLIST] = [];
+            cData[ENUMS.TURNPERCENT] = [];
             
             for (var i in this.allUnits){
                 var unit = this.allUnits[i];
                 if (player.myUnits[unit.id]){
-                    myUnits.push(unit.getClientData());
+                    cData[ENUMS.MYUNITS].push(unit.getClientData());
                 }else{
-                    var data = unit.getLessClientData();
-                    otherUnits.push(data);
+                    cData[ENUMS.OTHERUNITS].push(unit.getLessClientData());
                 }
             }
             for (var i = 0; i < this.turnOrder.length;i++){
-                turnList.push(this.turnOrder[i].id);
-                turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
+                cData[ENUMS.TURNLIST].push(this.turnOrder[i].id);
+                cData[ENUMS.TURNPERCENT].push(this.allUnits[this.turnOrder[i].id].charge);
             }
-            this.queuePlayer(player,this.cEnums.UnitInfo,{myUnits: myUnits,otherUnits: otherUnits,turnList: turnList,turnPercent:turnPercent});
+            this.queuePlayer(player,ENUMS.UNITINFO,cData);
         }
         this.ticker = 0;
         this.currentState = this.gameStates.InGame;
@@ -335,11 +335,11 @@ GameSession.prototype.getTurnOrder = function(){
     if (this.allUnits[this.turnOrder[0].id].isCastTimer){
         var abl = this.allUnits[this.turnOrder[0].id];
         //Do the ability!!
-        abl.data.actionData = [];
+        abl.data[ENUMS.ACTIONDATA] = [];
         this.allUnits[abl.unitid].removeBuffsWithTag('removeOnAction');
         var aFunc = Actions.getAbility(abl.abilityData.id);
         aFunc(this.allUnits[abl.unitid],this,abl.data);
-        this.queueData('action',{actionData:abl.data.actionData});
+        this.queueData('action',{actionData:abl.data[ENUMS.ACTIONDATA]});
 
         this.queueData('removeUnit',{unitid: this.turnOrder[0].id});
         this.allUnits[abl.unitid].casting = null;
@@ -409,14 +409,14 @@ GameSession.prototype.executeMove = function(data){
         if (dir){
             data.unit.direction = this.map.cardinalDirections[dir];
         }
-        data.actionData.push({
-            action: this.clientActionEnums.Move,
-            unitid: data.unit.id,
-            x: data.path[i].x,
-            y: data.path[i].y,
-            z: data.path[i].z,
-            reduceLeft: data.isAMove
-        });
+        var cData = {};
+        cData[ENUMS.ACTION] = ENUMS.MOVE;
+        cData[ENUMS.ID] = data.unit.id;
+        cData[ENUMS.X] = data.path[i].x;
+        cData[ENUMS.Y] = data.path[i].y;
+        cData[ENUMS.Z] = data.path[i].z;
+        cData[ENUMS.REDUCELEFT] = data.isAMove;
+        data[ENUMS.ACTIONDATA].push(cData);
         if (data.isAMove){
             data.moveUsed += 1;
         }
@@ -438,7 +438,7 @@ GameSession.prototype.unitMove = function(data){
             enemyPlayer = playerid;
         }
     }
-    data.actionData = [];
+    data[ENUMS.ACTIONDATA] = [];
     var enemyPlayerData = [];
     var endingNode = this.map.getCube(data);
     data.path = this.map.findPath(this.map.getCube(data.unit.currentNode),endingNode,{startingUnit: data.unit,maxJump:data.unit.jump.value});
@@ -446,15 +446,17 @@ GameSession.prototype.unitMove = function(data){
     data = this.executeMove(data);
     data.unit.moveLeft -= data.moveUsed;
     //send down the action info to all players in the battle
+    var cData = {};
+    cData[ENUMS.ACTIONDATA] = data[ENUMS.ACTIONDATA];
     if (data.unit.hidden){
         //unless the unit is hidden
         for (var i in this.players){
             if (i == player){
-                this.queuePlayer(this.players[i],'action',{actionData:data.actionData});
+                this.queuePlayer(this.players[i],ENUMS.ACTION,cData);
             }
         }
     }else{
-        this.queueData('action',{actionData:data.actionData});
+        this.queueData(ENUMS.ACTION,cData);
     }
 }
 GameSession.prototype.executeAttack = function(data){
@@ -478,20 +480,20 @@ GameSession.prototype.executeAttack = function(data){
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
-                data.actionData.push({
-                    action: this.clientActionEnums.DmgText,
-                    text: 'Partial LOS',
-                    unitid: data.node.unit.id
-                });
+                var cData = {};
+                cData[ENUMS.ACTION] = ENUMS.DAMAGTEXT;
+                cData[ENUMS.ID] = data.node.unit.id
+                cData[ENUMS.TEXT] = 'Partial LOS'
+                data[ENUMS.ACTIONDATA].push(cData);
                 valid = true;
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
-                data.actionData.push({
-                    action: this.clientActionEnums.NoLos,
-                    unitid: data.unit.id
-                });
-                this.queueData('action',{actionData:data.actionData});
+                var cData = {};
+                cData[ENUMS.ACTIONDATA] = [{}];
+                cData[ENUMS.ACTIONDATA][0][ENUMS.ACTION] = ENUMS.NOLOS;
+                cData[ENUMS.ACTIONDATA][0][ENUMS.ID] = data.unit.id;
+                this.queueData(ENUMS.ACTION,cData);
             }
         }
     }
@@ -499,7 +501,7 @@ GameSession.prototype.executeAttack = function(data){
         return false;
     }
     if (data.unit.hidden){
-        data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round(30*(1+data.unit.tactics.value/100)),data.actionData);
+        data[ENUMS.ACTIONDATA] = data.node.unit.damage(data.weapon.eqData.damageType,Math.round(30*(1+data.unit.tactics.value/100)),data[ENUMS.ACTIONDATA]);
     }
     data.unit.removeBuffsWithTag('removeOnAction');
     //TODO check for pre-attack reactions
@@ -518,35 +520,40 @@ GameSession.prototype.executeAttack = function(data){
         data.unit.onAttack[i].target = data.node.unit;
         aFunc(data.unit,data.unit.onAttack[i]);
     }
-    data.actionData = data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod*data.ablMod),data.actionData);
+    data[ENUMS.ACTIONDATA] = data.node.unit.damage(data.weapon.eqData.damageType,Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod*data.ablMod),data[ENUMS.ACTIONDATA]);
     return data;
 }
 GameSession.prototype.unitAttack = function(data){
-    data.actionData = [];
+    data[ENUMS.ACTIONDATA] = [];
     data.ablMod = 1.0;
     data = this.executeAttack(data);
     if (!data){return;}
-    data.actionData.splice(0,0,{
-        action: this.clientActionEnums.Attack,
-        unitid: data.unit.id,
-        weapon: data.weapon.name,
-        newDir: data.d.newDir
-    });
+    var cData = {};
+    cData[ENUMS.ACTION] = ENUMS.ATTACK;
+    cData[ENUMS.ID] = data.unit.id;
+    cData[ENUMS.WEAPON] = data.weapon.name;
+    cData[ENUMS.ACTION] = ENUMS.ATTACK;
+    cData[ENUMS.DIRECTION] = data.d.newDir;
+    data[ENUMS.ACTIONDATA].splice(0,0,cData);
     //TODO check for post-attack reactions
     data.unit.actionUsed = true;
-    data.actionData.push({
-        action: this.clientActionEnums.ActionUsed,
-        unitid: data.unit.id
-    });
+    var cData2 = {};
+    cData2[ENUMS.ACTION] = ENUMS.ACTIONUSED;
+    cData2[ENUMS.ID] = data.unit.id;
+    data[ENUMS.ACTIONDATA].push(cData2);
+
     var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
-    data.actionData.push({
-        action:this.clientActionEnums.DmgText,
-        unitid: data.unit.id,
-        text: '+' + apamt + ' AP',
-        ownerOnly: true
-    });
+    var cData3 = {};
+    cData3[ENUMS.ACTION] = ENUMS.DAMAGTEXT;
+    cData3[ENUMS.ID] = data.unit.id;
+    cData3[ENUMS.TEXT] = '+' + apamt + ' AP';
+    cData3[ENUMS.OWNERONLY] = true;
+
+    data[ENUMS.ACTIONDATA].push(cData3);
     //send down action data
-    this.queueData('action',{actionData:data.actionData});
+    cData4 = {};
+    cData4[ENUMS.ACTIONDATA] = data[CENUMS.ACTIONDATA];
+    this.queueData('action',cData4);
 }
                       
 GameSession.prototype.unitAbility = function(data){
@@ -557,7 +564,7 @@ GameSession.prototype.unitAbility = function(data){
     data.ability = unit.getAbility(data.abilityid);
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
-    data.actionData = [];
+    data[ENUMS.ACTIONDATA] = [];
     data.ablMod = 1.0;
     switch(data.ability.range){
         case 'self':
@@ -613,18 +620,18 @@ GameSession.prototype.unitAbility = function(data){
             var energy = this.parseStringCode(unit,data.ability.eCost);
             if (unit.currentEnergy >= energy){
                 unit.currentEnergy -= energy;
-                data.actionData.push({
-                    action: this.clientActionEnums.SetEnergy,
-                    unitid: unit.id,
-                    val: unit.currentEnergy
-                });
+                var cData = {};
+                cData[ENUMS.ACTION] = ENUMS.SETENERGY;
+                cData[ENUMS.ID] = unit.id;
+                cData[ENUMS.VALUE] = unit.currentEnergy;
+                data[ENUMS.ACTIONDATA].push(cData);
             }else{
-                data.actionData.push({
-                    action: this.clientActionEnums.DmgText,
-                    unitid: unit.id,
-                    text: 'Not enough energy'
-                });
-                this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+                var cData = {};
+                cData[ENUMS.ACTIONDATA] = [{}];
+                cData[ENUMS.ACTIONDATA][0][ENUMS.ACTION] = ENUMS.SETENERGY;
+                cData[ENUMS.ACTIONDATA][0][ENUMS.ID] = unit.id;
+                cData[ENUMS.ACTIONDATA][0][ENUMS.TEXT] = 'Not enough energy';
+                this.queuePlayer(unit.owner,ENUMS.ACTION,cData);
                 return;
             }
             if (typeof data.ability.speed == 'undefined' || data.ability.speed == 'instant'){
@@ -633,12 +640,12 @@ GameSession.prototype.unitAbility = function(data){
                 var success = aFunc(unit,this,data);
                 if (!success){
                     unit.currentEnergy += energy;
-                    data.actionData = [{
-                        action: this.clientActionEnums.DmgText,
-                        unitid: unit.id,
-                        text: 'Action failed'
-                    }]
-                    this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+                    var cData = {};
+                    cData[ENUMS.ACTIONDATA] = [{}];
+                    cData[ENUMS.ACTIONDATA][0][ENUMS.ACTION] = ENUMS.DAMAGETEXT;
+                    cData[ENUMS.ACTIONDATA][0][ENUMS.ID] = unit.id;
+                    cData[ENUMS.ACTIONDATA][0][ENUMS.TEXT] = 'Action failed';
+                    this.queuePlayer(unit.owner,ENUMS.ACTION,cData);
                     return;
                 }
             }else{
@@ -657,44 +664,50 @@ GameSession.prototype.unitAbility = function(data){
                 }
                 this.allUnits[abData.id] = abData;
                 unit.casting = abData.id;
-                this.queueData('addCastTimer',{
-                    id: abData.id,
-                    isCastTimer: true,
-                    unitid: unit.id,
-                    abilityName: data.ability.name,
-                    speed: speed,
-                    charge: 0
-                });
-                data.actionData.push({
-                    action: this.clientActionEnums.DmgText,
-                    unitid: unit.id,
-                    text: 'casting...'
-                })
+                var cData = {};
+                cData[ENUMS.ABILITY] = abData.id;
+                cData[ENUMS.ISCASTTIMER] = true;
+                cData[ENUMS.UNIT] = unit.id;
+                cData[ENUMS.NAME] = data.ability.name;
+                cData[ENUMS.SPEED] = speed;
+                cData[ENUMS.CHARGE] = 0;
+                this.queueData(ENUMS.ADDCASTTIMER,cData);
+
+                var cData2 = {};
+                cData2[ENUMS.ACTION] = ENUMS.DAMAGETEXT;
+                cData2[ENUMS.ID] = unit.id;
+                cData2[ENUMS.TEXT] = 'casting...';
+                data[ENUMS.ACTIONDATA].push(cData2);
             }
         }
     }
     if (!gotNode){
-        data.actionData.push({
-            action: this.clientActionEnums.DmgText,
-            unitid: unit.id,
-            text: 'got node failed...'
-        });
-        this.queuePlayer(unit.owner,'action',{actionData:data.actionData});
+        var cData3 = {};
+        cData3[ENUMS.ACTION] = ENUMS.DAMAGETEXT;
+        cData3[ENUMS.ID] = unit.id;
+        cData3[ENUMS.TEXT] = 'get node failed...';
+        data[ENUMS.ACTIONDATA].push(cData3);
+        var cData4 = {};
+        cData4[ENUMS.ACTIONDATA] = data[ENUMS.ACTIONDATA];
+        this.queuePlayer(unit.owner,ENUMS.ACTION,cData4);
         return;
     }
     var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});
-    data.actionData.push({
-        action:this.clientActionEnums.DmgText,
-        unitid: unit.id,
-        text: '+' + apamt + ' AP',
-        ownerOnly: true
-    });
-    unit.actionUsed = true;
-    data.actionData.push({
-        action:this.clientActionEnums.ActionUsed,
-        unitid: unit.id
-    });
-    this.queueData('action',{actionData:data.actionData});
+    var cData5 = {};
+    cData5[ENUMS.ACTION] = ENUMS.DAMAGETEXT;
+    cData5[ENUMS.ID] = unit.id;
+    cData5[ENUMS.TEXT] = '+' + apamt + ' AP';
+    cData5[ENUMS.OWNERONLY] = true;
+    data[ENUMS.ACTIONDATA].push(cData5);
+
+    var cData6 = {};
+    cData6[ENUMS.ACTION] = ENUMS.ACTIONUSED;
+    cData6[ENUMS.ID] = unit.id;
+    data[ENUMS.ACTIONDATA].push(cData6);
+
+    var cData7 = {};
+    cData7[ENUMS.ACTIONDATA] = data[ENUMS.ACTIONDATA];
+    this.queuePlayer(unit.owner,ENUMS.ACTION,cData7);
 }
                        
 GameSession.prototype.unitItem = function(data){
@@ -716,24 +729,24 @@ GameSession.prototype.unitEnd = function(data){
     }
     if (!valid){return;}
     unit.endTurn();
-    var actionData = [{
-        action: this.clientActionEnums.Face,
-        unitid: unit.id,
-        direction: data.direction
-    }];
+    var actionData = [{}];
+    actionData[0][ENUMS.ACTION] = ENUMS.FACE;
+    actionData[0][ENUMS.ID] = unit.id;
     if (this.currentInGameState == this.inGameStates.WaitingForTurnInfo){
         this.ticker = this.timePerTurn;
     }
     //send down the action info to all players in the battle//send down the action info to all players in the battle
+    var cData = {};
+    cData[ENUMS.ACTIONDATA] = actionData;
     if (unit.hidden){
         //unless the unit is hidden
         for (var i in this.players){
             if (i == player){
-                this.queuePlayer(this.players[i],'action',{actionData:actionData});
+                this.queuePlayer(this.players[i],ENUMS.ACTION,cData);
             }
         }
     }else{
-        this.queueData('action',{actionData:actionData});
+        this.queueData(ENUMS.ACTION,cData);
     }
 }
 
@@ -926,8 +939,8 @@ GameSession.prototype.checkEnd = function(){
     if (gameEnded){
         for (var i in playerStatus){
             var data = {};
-            data[this.engine.clientDataEnums.Won] = playerStatus[i];
-            this.queuePlayer(this.players[i],this.engine.clientDataEnums.EndGame,data);
+            data[ENUMS.WON] = playerStatus[i];
+            this.queuePlayer(this.players[i],ENUMS.ENDGAME,data);
             this.engine.leaveSession(this.id,this.players[i]);
         }
         this.engine.removeSession(this.id);
@@ -942,8 +955,8 @@ GameSession.prototype.handleDisconnect = function(p,toEngine){
     console.log("Game " + this.id + ' has ended');
     for (var i in this.players){
         var data = {};
-        data[this.engine.clientDataEnums.Won] = true;
-        this.queuePlayer(this.players[i],this.engine.clientDataEnums.EndGame,data);
+        data[ENUMS.WON] = true;
+        this.queuePlayer(this.players[i],ENUMS.ENDGAME,data);
         //remove players from session and back to engine (except disconnected player)
         if (!(p.id == i && !toEngine)){
             this.engine.leaveSession(this.id,this.players[i]);
@@ -975,7 +988,7 @@ GameSession.prototype.emit = function() {
     try{
         for(var i in this.players) {
             if (this.players[i].netQueue.length > 0){
-                this.players[i].socket.emit('serverUpdate', this.players[i].netQueue);
+                this.players[i].socket.emit(ENUMS.SERVERUPDATE, this.players[i].netQueue);
             }
         }
     }catch(e){
