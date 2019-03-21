@@ -26,38 +26,38 @@ var Item = function(){
 
 Item.prototype.getClientData = function(){
     var data = {};
-    data.itemID = this.itemID;
-    data.name = this.name;
-    data.description = this.description;
-    data.type = this.type;
-    data.amount = this.amount;
-    data.weight = this.weight;
-    data.classes = this.classes;
-    data.onUseText = this.onUseText;
-    data.onFireText = this.onFireText;
-    data.onEquipText = this.onEquipText;
-    data.onHitText = this.onHitText;
-    data.onTakeDamageText = this.onTakeDamageText;
-    data.constantEffectText = this.constantEffectText;
-    data.onFullRechargeText = this.onFullRechargeText;
-    data.onDepletedText = this.onDepletedText;
-    data.amount = this.amount;
-    data.eqData = {}
+    data[ENUMS.ID] = this.itemID;
+    data[ENUMS.NAME] = this.name;
+    data[ENUMS.DESCRIPTION] = this.description;
+    data[ENUMS.TYPE] = this.type;
+    data[ENUMS.AMOUNT] = this.amount;
+    data[ENUMS.WEIGHT] = this.weight;
+    data[ENUMS.CLASSES] = this.classes;
+    data[ENUMS.ONUSE] = this.onUseText;
+    data[ENUMS.ONFIRE] = this.onFireText;
+    data[ENUMS.ONEQUIP] = this.onEquipText;
+    data[ENUMS.ONHIT] = this.onHitText;
+    data[ENUMS.TAKEDAMAGE] = this.onTakeDamageText;
+    data[ENUMS.CONSTANTEFFECT] = this.constantEffectText;
+    data[ENUMS.ONFULLRECHARGE] = this.onFullRechargeText;
+    data[ENUMS.ONDEPLETED] = this.onDepletedText;
+    data[ENUMS.AMOUNT] = this.amount;
+    data[ENUMS.EQDATA] = {};
     switch(this.type){
         case 'weapon':
-            data.eqData.range = this.eqData.range;
-            data.eqData.damage = this.eqData.damage;
-            data.eqData.damageType = this.eqData.damageType;
+            data[ENUMS.EQDATA][ENUMS.RANGE] = this.eqData.range;
+            data[ENUMS.EQDATA][ENUMS.DAMAGE] = this.eqData.damage;
+            data[ENUMS.EQDATA][ENUMS.DAMAGETYPE] = this.eqData.damageType;
             break;
         case 'gun':
-            data.eqData.rangeMin = this.eqData.rangeMin;
-            data.eqData.rangeMax = this.eqData.rangeMax;
-            data.eqData.damage = this.eqData.damage;
-            data.eqData.damageType = this.eqData.damageType;
+            data[ENUMS.EQDATA][ENUMS.RANGEMIN] = this.eqData.rangeMin;
+            data[ENUMS.EQDATA][ENUMS.RANGEMAX] = this.eqData.rangeMax;
+            data[ENUMS.EQDATA][ENUMS.DAMAGE] = this.eqData.damage;
+            data[ENUMS.EQDATA][ENUMS.DAMAGETYPE] = this.eqData.damageType;
             break;
         case 'shield':
-            data.eqData.recharge = this.eqData.recharge;
-            data.eqData.delay = this.eqData.delay;
+            data[ENUMS.EQDATA][ENUMS.RECHARGE] = this.eqData.recharge;
+            data[ENUMS.EQDATA][ENUMS.DELAY] = this.eqData.delay;
             break;
     }
     return data;

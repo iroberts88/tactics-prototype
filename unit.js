@@ -762,13 +762,8 @@ Unit.prototype.getClientData = function(less = false){
     data[ENUMS.CURRENTENERGY] = this.currentEnergy;
     data[ENUMS.CURRETNSHIELDS] = this.currentShields;
     data[ENUMS.CURRENTNODE] = this.minCurrentNode();
-    data[ENUMS.DIRECTION] = this.direction
-    data[ENUMS.WEAPON] = this.weapon;
-    data[ENUMS.SHIELD] = this.shield;
-    data[ENUMS.ACCESSORY] = this.accessory;
-    data[ENUMS.MOVE] = this.move;
-    data[ENUMS.JUMP] = this.jump;
-    data[ENUMS.SPEED] = this.speed;
+    data[ENUMS.DIRECTION] = this.direction;
+    data[ENUMS.SPEED] = this.speed.value;
     //data.ai = this.ai;
 
     if (less){
@@ -780,6 +775,12 @@ Unit.prototype.getClientData = function(less = false){
         return data;
     }
 
+    data[ENUMS.WEAPON] = this.weapon;
+    data[ENUMS.SHIELD] = this.shield;
+    data[ENUMS.ACCESSORY] = this.accessory;
+    data[ENUMS.MOVE] = this.move.value;
+    data[ENUMS.JUMP] = this.jump.value;
+    data[ENUMS.ABILITYSLOTS] = this.abilitySlots.value;
     data[ENUMS.STRENGTH] = this.strength.value;
     data[ENUMS.ENDURANCE] = this.endurance.value;
     data[ENUMS.AGILITY] = this.agility.value;

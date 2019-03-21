@@ -79,7 +79,7 @@ function User() {
                                             ap: c[i].classInfo.ap});
                                         char.classInfo.setBaseClass(c[i].classInfo.baseId);
                                         char.classInfo.setClass(c[i].classInfo.classId);
-                                        that.owner.engine.queuePlayer(that.owner,'addNewUnit', {'unit': char.getClientData()});
+                                        that.owner.engine.queuePlayer(that.owner,ENUMS.ADDNEWUNIT, that.owner.engine.createClientData(ENUMS.UNITID, char.getClientData()));
                                         that.characters.push(char);
                                     }
                                 }
@@ -160,7 +160,7 @@ function User() {
                         char.classInfo.setClass(unitClass);
                         char.levelUp();
                         char.level -= 1;
-                        this.owner.engine.queuePlayer(this.owner,'addNewUnit', {'unit': char.getClientData()});
+                        this.owner.engine.queuePlayer(this.owner,ENUMS.ADDNEWUNIT, this.owner.engine.createClientData(ENUMS.UNITID, char.getClientData()));
                         this.characters.push(char);
                     }
 
@@ -295,8 +295,17 @@ function User() {
         setOwner: function(o) {
             this.owner = o;
             var ge = this.owner.engine;
+        },
 
+        getUnit: function(id){
+            for (var i = 0; i < this.characters.length;i++){
+                if (this.characters[i].id == id){
+                    return this.characters[i];
+                }
+            }
+            return null;
         }
+
 
     }
 }

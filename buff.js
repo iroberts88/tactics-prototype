@@ -115,18 +115,18 @@ Buff.prototype.init =  function(data){
 
         //send buff to client
         if(this.unit.owner.socket){
-            this.unit.owner.session.queueData('addBuff',{
-                unitid: this.unit.id,
-                buffdata: {
-                    id: this.id,
-                    texture: this.textureId,
-                    duration: this.duration,
-                    debuff: this.debuff,
-                    name: this.name,
-                    description: this.description,
-                    effect: this.effect
-                }
-            });
+            var cData = {};
+            cData[ENUMS.ID] = this.unit.id;
+            cData[ENUMS.BUFFDATA] = {};
+            cData[ENUMS.BUFFDATA][ENUMS.ID] = this.id;
+            cData[ENUMS.BUFFDATA][ENUMS.TEXTURE] = this.textureId;
+            cData[ENUMS.BUFFDATA][ENUMS.DURATION] = this.duration;
+            cData[ENUMS.BUFFDATA][ENUMS.DEBUFF] = this.debuff;
+            cData[ENUMS.BUFFDATA][ENUMS.NAME] = this.name;
+            cData[ENUMS.BUFFDATA][ENUMS.DESCRIPTION] = this.description;
+            cData[ENUMS.BUFFDATA][ENUMS.EFFECT] = this.effect;
+
+            this.unit.owner.session.queueData(ENUMS.ADDBUFF,cData);
         }
     }
 }

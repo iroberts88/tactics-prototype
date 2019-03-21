@@ -3,7 +3,8 @@ var Item = require('./item.js').Item,
     Attribute = require('./attribute.js').Attribute;
     Unit = require('./unit.js').Unit,
     Player = require('./player.js').Player,
-    Actions = require('./actions.js').Actions
+    Actions = require('./actions.js').Actions,
+    ENUMS = require('./enums.js').Enums;
 
 
 var Inventory = function () {
@@ -64,7 +65,11 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
 
             //send item data to client
             if (updateClient){
-                this.engine.queuePlayer(this.owner.owner,'addItemUnit',{unit: this.owner.id, item: I.getClientData(), w: this.currentWeight});
+                this.engine.queuePlayer(this.owner.owner,ENUMS.ADDITEMTOUNIT,this.engine.createClientData(
+                    ENUMS.UNITID, this.owner.id, 
+                    ENUMS.ITEM, I.getClientData(), 
+                    ENUMS.WEIGHT, this.currentWeight
+                ));
             }
             return true;
         }else{
@@ -99,17 +104,17 @@ Inventory.prototype.addItem = function(id, amt){
                 amountToBeAdded = (this.maxItemPile - this.items[containsItem[1]].amount);
                 this.items[containsItem[1]].amount = this.maxItemPile;
             }
-            data.itemID = id;
-            data.amt = amountToBeAdded;
+            data[ENUMS.ITEM] = id;
+            data[ENUMS.AMOUNT] = amountToBeAdded;
         }else{
             var I = new Item();
             I.init(item);
             I.amount = amt;
             this.items.push(I);
-            data.item = I.getClientData();
-            data.item.amount = amountToBeAdded;
+            data[ENUMS.ITEM] = I.getClientData();
+            data[ENUMS.ITEM][ENUMS.AMOUNT] = amountToBeAdded;
         }
-        this.engine.queuePlayer(this.owner,'addItem',data);
+        this.engine.queuePlayer(this.owner,ENUMS.ADDITEMTOPLAYER,data);
     }catch(e){
         this.engine.debug(this.owner,{'id': 'addItemPlayerError', 'error': e.stack, 'itemID': id});
     }
@@ -208,7 +213,10 @@ Inventory.prototype.equip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.engine.queuePlayer(this.owner.owner,'equipItem',{'unit': this.owner.id, 'index': index});
+            this.engine.queuePlayer(this.owner.owner,ENUMS.EQUIPITEM,this.engine.createClientData(
+                ENUMS.UNITID, this.owner.id, 
+                ENUMS.INDEX, index
+            ));
         }
     }catch(e){
         this.engine.debug(this.owner.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
@@ -264,7 +272,10 @@ Inventory.prototype.unEquip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.engine.queuePlayer(this.owner.owner,'unEquipItem',{'unit': this.owner.id, 'index': index});
+            this.engine.queuePlayer(this.owner.owner,ENUMS.UNEQUIPITEM,this.engine.createClientData(
+                ENUMS.UNITID, this.owner.id,
+                ENUMS.INDEX, index
+            ));
         }
     }catch(e){
         this.engine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
@@ -278,7 +289,11 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
     this._removeItem(index);
     //send item data to client
     if (updateClient){
-        this.engine.queuePlayer(this.owner.owner,'removeItemUnit',{'unit': this.owner.id, 'index': index, 'w': this.currentWeight});
+        this.engine.queuePlayer(this.owner.owner,ENUMS.REMOVEITEMUNIT,this.engine.createClientData(
+            ENUMS.UNITID, this.owner.id, 
+            ENUMS.INDEX, index, 
+            ENUMS.WEIGHT, this.currentWeight
+        ));
     }
     if (this.owner.weapon > index){
         this.owner.weapon -= 1;
@@ -307,7 +322,10 @@ Inventory.prototype.removeItem = function(index,amt,updateClient){
     }
     //send item data to client
     if (updateClient){
-        this.engine.queuePlayer(this.owner,'removeItem',{'index': index, 'amt': amt});
+        this.engine.queuePlayer(this.owner,ENUMS.REMOVEITEM,this.engine.createClientData(
+            ENUMS.INDEX, index,
+            ENUMS.AMOUNT, amt
+        ));
     }
 }
 
@@ -327,6 +345,14 @@ Inventory.prototype.contains = function(id){
         }
     }
     return b;
+}
+Inventory.prototype.getItemID = function(index){
+    //check if Inventory has item
+    //returns an array [contains item,at index]
+    if (this.items[index]){
+        return this.items[index].id;
+    }
+    return null
 }
 
 Inventory.prototype.sortByType = function(dir){

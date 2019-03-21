@@ -27,11 +27,11 @@
         },
 
         net: function() {
-            Acorn.Net.on('connInfo', function (data) {
+            Acorn.Net.on(ENUMS.CONNINFO, function (data) {
                 console.log('Connected to server: Info Received');
-                MapGen.mapNames = data.mapNames;
+                MapGen.mapNames = data[ENUMS.MAPNAMES];
                 Acorn.Net.ready = true;
-                window.playerID = data.id;
+                window.playerID = data[ENUMS.ID];
                 checkReady();
             });
 
@@ -44,64 +44,70 @@
                 if(Acorn.changeState('inGame')){
                     //game state change successful
                     //emit ready for full game info
-                    Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: true});
+                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.READY, ENUMS.VALUE, true));
                 }else{
-                    Acorn.Net.socket_.emit('playerUpdate',{command:'ready',val: false});
+                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.READY, ENUMS.VALUE, false));
                 }
 
             });
 
-            Acorn.Net.on('endGame', function (data) {
+            Acorn.Net.on(ENUMS.ENDGAME, function (data) {
                 Game.endGame = true;
-                Game.won = data.won;
+                Game.won = data[ENUMS.WON];
             });
 
-            Acorn.Net.on('newTurnOrder', function(data) {
+            Acorn.Net.on(ENUMS.NEWTURNORDER, function(data) {
                 //get the new turn order at the beginning of each turn
                 console.log(data);
-                Game.turnList = data.turnList;
-                for (var i = 0;i<data.turnPercent.length;i++){
+                Game.turnList = data[ENUMS.TURNLIST];
+                for (var i = 0;i<data[ENUMS.TURNPERCENT].length;i++){
                     if (Game.units[Game.turnList[i]].isCastTimer){
-                        Game.units[Game.turnList[i]].charge = data.turnPercent[i];
+                        Game.units[Game.turnList[i]].charge = data[ENUMS.TURNPERCENT][i];
                     }else{
-                        Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
+                        Game.units[Game.turnList[i]].setChargePercent(data[ENUMS.TURNPERCENT][i]);
                     }
                 }
-                Game.newTurnOrder(data.turnList);
+                Game.newTurnOrder(data[ENUMS.TURNLIST]);
             });
 
-            Acorn.Net.on('addCastTimer', function(data) {
+            Acorn.Net.on(ENUMS.ADDCASTTIMER, function(data) {
                 //get the new turn order at the beginning of each turn
-                Game.units[data.id] = data;
+                var castTimer = {};
+                castTimer.id = data[ENUMS.ID];
+                castTimer.isCastTimer = data[ENUMS.ISCASTTIMER]
+                castTimer.unit = data[ENUMS.UNIT];
+                castTimer.name = data[ENUMS.NAME];
+                castTimer.speed = data[ENUMS.SPEED];
+                castTimer.charge = data[ENUMS.CHARGE];
+                Game.units[castTimer.id] = castTimer;
             });
 
-            Acorn.Net.on('unitInfo', function(data) {
+            Acorn.Net.on(ENUMS.UNITINFO, function(data) {
                 //get the data for the units on the map
                 console.log(data);
-                Game.turnList = data.turnList;
+                Game.turnList = data[ENUMS.TUNRLIST];
                 Game.units = {};
-                for(var i = 0; i < data.myUnits.length;i++){
+                for(var i = 0; i < data[ENUMS.MYUNITS].length;i++){
                     var unit = new Unit();
-                    unit.init(data.myUnits[i]);
+                    unit.init(data[ENUMS.MYUNITS][i]);
                     Game.units[unit.id] = unit;
                 }
-                for(var i = 0; i < data.otherUnits.length;i++){
+                for(var i = 0; i < data[ENUMS.OTHERUNITS].length;i++){
                     var unit = new Unit();
-                    unit.init(data.otherUnits[i]);
+                    unit.init(data[ENUMS.OTHERUNITS][i]);
                     Game.units[unit.id] = unit;
                     unit.sprite.tint = 0xfcfcfc;
                 }
-                for (var i = 0;i<data.turnPercent.length;i++){
-                    Game.units[Game.turnList[i]].setChargePercent(data.turnPercent[i]);
+                for (var i = 0;i<data[ENUMS.TURNPERCENT].length;i++){
+                    Game.units[Game.turnList[i]].setChargePercent(data[ENUMS.TURNPERCENT][i]);
                 }
                 Game.initUI();
             });
 
-            Acorn.Net.on('startGame', function(data) {
+            Acorn.Net.on(ENUMS.STARTGAME, function(data) {
                 //Game has started!
-                Game.timePerTurn = data.timePerTurn;
-                Game.timePerReaction = data.timePerReaction;
-                Game.delayBetweenStates = data.delay;
+                Game.timePerTurn = data[ENUMS.TIMEPERTURN];
+                Game.delayBetweenStates = data[ENUMS.DELAY];
                 Player.inGame = true;
                 Game.startGame();
             });
@@ -129,37 +135,41 @@
                 MapGen.mapName = data.name;
             });
 
-            Acorn.Net.on('loggedIn', function (data) {
-              Player.userData = data;
+
+            Acorn.Net.on(ENUMS.LOGIN, function (data) {
+              console.log(data);
+              Player.userData = {};
+              Player.userData.username = data[ENUMS.USERNAME];
+              Player.userData.stats = data[ENUMS.STATS];
               Settings.toggleCredentials(false);
               Acorn.changeState('mainMenu');
             });
 
-            Acorn.Net.on('logout', function (data) {
+            Acorn.Net.on(ENUMS.LOGOUT, function (data) {
               Player.userData = null;
               Acorn.changeState('loginScreen');
             });
 
-            Acorn.Net.on('learnAbility', function (data) {
+            Acorn.Net.on(ENUMS.LEARNABILITY, function (data) {
                 LearnAbilities.learnAbility(data);
             });
 
-            Acorn.Net.on('equipAbility', function (data) {
+            Acorn.Net.on(ENUMS.EQUIPABILITY, function (data) {
                 EquipAbilities.equipAbility(data);
             });
 
-            Acorn.Net.on('unEquipAbility', function (data) {
+            Acorn.Net.on(ENUMS.UNEQUIPABILITY, function (data) {
                 EquipAbilities.unEquipAbility(data);
             });
 
-            Acorn.Net.on('clearAbilities', function (data) {
+            Acorn.Net.on(ENUMS.CLEARABILITIES, function (data) {
                 EquipAbilities.clearAbilities(data);
             });
 
-            Acorn.Net.on('setLoginErrorText', function (data) {
+            Acorn.Net.on(ENUMS.SETLOGINERRORTEXT, function (data) {
               try{
                 var state = Acorn.states['loginScreen'];
-                switch(data.text){
+                switch(data[ENUMS.TEXT]){
                     case 'wp':
                         state.loginErrorText.text = 'Username or password incorrect.';
                         break;
@@ -175,22 +185,28 @@
                     case 'l':
                         state.loginErrorText.text = 'User is already logged in.';
                         break;
+                    case 'nvd':
+                        state.loginErrorText.text = 'Invalid Login Info.';
+                        break;
                 }
               }catch(e){}
             });
-            Acorn.Net.on('addNewUnit', function (data) {
+
+            Acorn.Net.on(ENUMS.ADDNEWUNIT, function (data) {
                 console.log('adding new unit')
                 console.log(data);
-                Player.addNewUnit(data.unit);
+                Player.addNewUnit(data[ENUMS.UNITID]);
             });
-            Acorn.Net.on('addItemUnit', function (data) {
+            Acorn.Net.on(ENUMS.ADDITEMTOUNIT, function (data) {
                 //adds an item to unit inventory
                 console.log('adding new item to unit inventory')
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
-                    if (data['unit'] == Player.units[i].id){
-                        Player.units[i].inventory.items.push(data.item);
-                        Player.units[i].inventory.currentWeight = data.w;
+                    if (data[ENUMS.UNITID] == Player.units[i].id){
+                        var item = new Item();
+                        item.init(data[ENUMS.ITEM]);
+                        Player.units[i].inventory.items.push(item);
+                        Player.units[i].inventory.currentWeight = data[ENUMS.WEIGHT];
                     }
                 }
                 if (Acorn.currentState == 'unitInventoryMenu'){
@@ -198,18 +214,20 @@
                     UnitInventory.draw();
                 }
             });
-            Acorn.Net.on('addItem', function (data) {
+            Acorn.Net.on(ENUMS.ADDITEMTOPLAYER, function (data) {
                 //adds an item to player inventory
                 console.log('adding item to player inventory')
                 console.log(data);
-                if (data.item){
+                if (typeof data[ENUMS.ITEM] != 'string'){
                     //new item - add
-                    Player.inventory.push(data.item);
-                }else if (data.itemID){
+                    var item = new Item();
+                    item.init(data[ENUMS.ITEM]);
+                    Player.inventory.push(item);
+                }else{
                     //existing item, find and add
                     for (var i = 0; i < Player.inventory.length;i++){
-                        if (Player.inventory[i].itemID == data.itemID){
-                            Player.inventory[i].amount += data.amt;
+                        if (Player.inventory[i].itemID == data[ENUMS.ITEM]){
+                            Player.inventory[i].amount += data[ENUMS.AMOUNT];
                         }
                     }
                 }
@@ -218,28 +236,28 @@
                     UnitInventory.draw();
                 }
             });
-            Acorn.Net.on('removeItemUnit', function (data) {
-                //adds an item to unit inventory
+            Acorn.Net.on(ENUMS.REMOVEITEMUNIT, function (data) {
+                //Removes an item from unit inventory
                 console.log('removing item from unit inventory')
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
-                    if (data['unit'] == Player.units[i].id){
+                    if (data[ENUMS.UNITID] == Player.units[i].id){
                         var unit = Player.units[i];
-                        unit.inventory.items.splice(data.index,1);
-                        unit.inventory.currentWeight = data.w;
-                        if (unit.weapon > data.index){
+                        unit.inventory.items.splice(data[ENUMS.INDEX],1);
+                        unit.inventory.currentWeight = data[ENUMS.WEIGHT];
+                        if (unit.weapon > data[ENUMS.INDEX]){
                             unit.weapon -= 1;
-                        }else if (unit.weapon == data.index){
+                        }else if (unit.weapon == data[ENUMS.INDEX]){
                             unit.weapon = null;
                         }
-                        if (unit.shield > data.index){
+                        if (unit.shield > data[ENUMS.INDEX]){
                             unit.shield -= 1;
-                        }else if (unit.shield == data.index){
+                        }else if (unit.shield == data[ENUMS.INDEX]){
                             unit.shield = null;
                         }
-                        if (unit.accessory > data.index){
+                        if (unit.accessory > data[ENUMS.INDEX]){
                             unit.accessory -= 1;
-                        }else if (unit.accessory == data.index){
+                        }else if (unit.accessory == data[ENUMS.INDEX]){
                             unit.accessory = null;
                         }
                     }
@@ -249,14 +267,14 @@
                     UnitInventory.draw();
                 }
             });
-            Acorn.Net.on('removeItem', function (data) {
-                //adds an item to player inventory
+            Acorn.Net.on(ENUMS.REMOVEITEM, function (data) {
+                //remove an item from player inventory
                 console.log('removing item from player inventory')
                 console.log(data);
-                if (Player.inventory[data.index].amount > data.amt){
-                    Player.inventory[data.index].amount -= data.amt;
+                if (Player.inventory[data[ENUMS.INDEX]].amount > data[ENUMS.AMOUNT]){
+                    Player.inventory[data[ENUMS.INDEX]].amount -= data[ENUMS.AMOUNT];
                 }else{
-                    Player.inventory.splice(data.index,1);
+                    Player.inventory.splice(data[ENUMS.INDEX],1);
                 }
                 if (Acorn.currentState = 'unitInventoryMenu'){
                     UnitInventory.clear();
@@ -267,25 +285,25 @@
                     UnitInventory.draw();
                 }
             });
-            Acorn.Net.on('equipItem', function(data) {
+            Acorn.Net.on(ENUMS.EQUIPITEM, function(data) {
                 console.log('equipping item');
                 console.log(data);
                 Player.equipItem(data);
             });
-            Acorn.Net.on('unEquipItem', function(data) {
+            Acorn.Net.on(ENUMS.UNEQUIPITEM, function(data) {
                 console.log('Un-Equipping item');
                 console.log(data);
                 Player.unEquipItem(data);
             });
-            Acorn.Net.on('deleteUnit', function (data) {
+            Acorn.Net.on(ENUMS.DELETEUNIT, function (data) {
                 console.log('deleting unit');
                 console.log(data);
                 Player.deleteUnit(data);
             });
-            Acorn.Net.on('setUnitStat', function (data) {
+            Acorn.Net.on(ENUMS.SETUNITSTAT, function (data) {
                 try{
                     if (Player.inGame){
-                        Game.units[data.unit].setStat(data.stat,data.amt)
+                        Game.units[data[ENUMS.UNITID]].setStat(data[ENUMS.STAT],data[ENUMS.AMOUNT])
                     }else{
                         Player.setUnitStat(data);
                     }
@@ -295,104 +313,104 @@
                     console.log(data);
                 }
             });
-            Acorn.Net.on('modAp', function (data) {
+            Acorn.Net.on(ENUMS.MODAP, function (data) {
                 for (var i = 0; i < Player.units.length; i++){
-                    if (data['unitid'] == Player.units[i].id){
+                    if (data[ENUMS.UNITID] == Player.units[i].id){
                         for (var j in Player.units[i].classInfo.ap){
-                            if (j == data['classid']){
-                                Player.units[i].classInfo.ap[j] = data['value'];
+                            if (j == data[ENUMS.CLASSID]){
+                                Player.units[i].classInfo.ap[j] = data[ENUMS.VALUE];
                             }
                         }
                     }
                 }
             });
 
-            Acorn.Net.on('action', function (data) {
+            Acorn.Net.on(ENUMS.ACTION, function (data) {
                 console.log('Perform battle action!');
                 console.log(data);
                 var action = new Actions();
-                action.init(data.actionData);
+                action.init(data[ENUMS.ACTIONDATA]);
                 Game.actions.push(action);
             });
 
-            Acorn.Net.on('addBuff', function (data) {
+            Acorn.Net.on(ENUMS.ADDBUFF, function (data) {
                 console.log('adding buff!');
                 console.log(data);
             });
 
-            Acorn.Net.on('hideUnit', function (data) {
+            Acorn.Net.on(ENUMS.HIDEUNIT, function (data) {
                 console.log(data);
-                if (typeof Game.units[data.unitid] != 'undefined'){
-                    if (Game.units[data.unitid].owner == mainObj.playerID){
-                        Game.units[data.unitid].sprite.alpha = 0.5;
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    if (Game.units[data[ENUMS.UNITID]].owner == mainObj.playerID){
+                        Game.units[data[ENUMS.UNITID]].sprite.alpha = 0.5;
                     }else{
                         var t = 1;
                         if (!(Game.map.currentRotation%2)){t = 2}
-                        Game.map['container'+t].removeChild(Game.units[data.unitid].sprite);
-                        Game.units[data.unitid].visible = false;
-                        Game.units[data.unitid].currentNode.unit = null;
-                        Game.units[data.unitid].currentNode = null;
+                        Game.map['container'+t].removeChild(Game.units[data[ENUMS.UNITID]].sprite);
+                        Game.units[data[ENUMS.UNITID]].visible = false;
+                        Game.units[data[ENUMS.UNITID]].currentNode.unit = null;
+                        Game.units[data[ENUMS.UNITID]].currentNode = null;
                     }
                 }
             });
 
-            Acorn.Net.on('removeUnit', function (data) {
+            Acorn.Net.on(ENUMS.REMOVEUNIT, function (data) {
                 console.log(data);
-                if (typeof Game.units[data.unitid] != 'undefined'){
-                    if (Game.units[data.unitid].isCastTimer){
-                        delete Game.units[data.unitid];
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    if (Game.units[data[ENUMS.UNITID]].isCastTimer){
+                        delete Game.units[data[ENUMS.UNITID]];
                     }
                 }
             });
 
-            Acorn.Net.on('addUnit', function(data) {
+            Acorn.Net.on(ENUMS.ADDUNIT, function(data) {
                 //get the data for the units on the map
                 console.log(data);
                 var unit = new Unit();
-                unit.init(data.unitInfo);
+                unit.init(data[ENUMS.UNITINFO]);
                 Game.units[unit.id] = unit;
                 Game.addUnit(unit);
             });
 
-            Acorn.Net.on('unitFainted', function (data) {
+            Acorn.Net.on(ENUMS.UNITFAINTED, function (data) {
                 console.log(data);
-                if (typeof Game.units[data.unitid] != 'undefined'){
-                    if (!Game.units[data.unitid].isCastTimer){
-                        Game.units[data.unitid].setFainted();
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    if (!Game.units[data[ENUMS.UNITID]].isCastTimer){
+                        Game.units[data[ENUMS.UNITID]].setFainted();
                     }
                 }
             });
 
-            Acorn.Net.on('revealUnit', function (data) {
+            Acorn.Net.on(ENUMS.REVEALUNIT, function (data) {
                 console.log(data);
-                if (typeof Game.units[data.unitid] != 'undefined'){
-                    if (!Game.units[data.unitid].visible){
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    if (!Game.units[data[ENUMS.UNITID]].visible){
                         var t = 1;
                         if (!(Game.map.currentRotation%2)){t = 2}
-                        Game.map['container'+t].addChild(Game.units[data.unitid].sprite);
-                        Game.units[data.unitid].visible = true;
+                        Game.map['container'+t].addChild(Game.units[data[ENUMS.UNITID]].sprite);
+                        Game.units[data[ENUMS.UNITID]].visible = true;
                     }
-                    Game.units[data.unitid].sprite.alpha = 1;
-                    Game.units[data.unitid].setCurrentNode(data.q,data.r,Game.map);
-                    Game.units[data.unitid].setNewDirection(data.direction);
+                    Game.units[data[ENUMS.UNITID]].sprite.alpha = 1;
+                    Game.units[data[ENUMS.UNITID]].setCurrentNode(data[ENUMS.Q],data[ENUMS.R],Game.map);
+                    Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTION]);
                     Game.updateUnitsBool = true;
                 }
             });
 
-            Acorn.Net.on('updateUnitInfo', function (data) {
+            Acorn.Net.on(ENUMS.UPDATEUNITINFO, function (data) {
                 console.log(data);
-                if (typeof Game.units[data.unitid] != 'undefined'){
-                    Game.units[data.unitid].updateInfo(data.info);
-                    Game.units[data.unitid].infoPane = Game.getUnitInfoPane(data.unitid);
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    Game.units[data[ENUMS.UNITID]].updateInfo(data[ENUMS.UNITINFO]);
+                    Game.units[data[ENUMS.UNITID]].infoPane = Game.getUnitInfoPane(data[ENUMS.UNITID]);
                 }
             });
 
-            Acorn.Net.on('setMoveLeft', function (data) {
+            Acorn.Net.on(ENUMS.SETMOVELEFT, function (data) {
                 if (!Game.units){
                     return;
                 }
-                if (typeof Game.units[data.unit] != 'undefined'){
-                    Game.units[data.unit].moveLeft = data.val;
+                if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
+                    Game.units[data[ENUMS.UNITID]].moveLeft = data[ENUMS.VALUE];
                 }
                 console.log(data);
             });
@@ -402,7 +420,7 @@
                 console.log(data);
             });
 
-            Acorn.Net.on('ping', function (data) {
+            Acorn.Net.on(ENUMS.PING, function (data) {
               Settings.stats.pingReturn();
             });
         },
@@ -436,7 +454,7 @@
                         interactive: true,buttonMode: true,buttonGlow: true,
                         position: [0,(Graphics.height * .75)],
                         clickFunc: function onClick(){
-                            Acorn.Net.socket_.emit('loginAttempt',{guest: true});
+                            Acorn.Net.socket_.emit(ENUMS.LOGINATTEMPT,Utils.createServerData(ENUMS.GUEST, true));
                         }
                     });
                     this.guestText.style.fontSize = 48;
@@ -506,9 +524,9 @@
                         position: [(Graphics.width / 4),(Graphics.height * .75)],
                         clickFunc: function onClick(){
                             if (Settings.credentials.getType() == 'login'){
-                                Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                                Acorn.Net.socket_.emit(ENUMS.LOGINATTEMPT,Utils.createServerData(ENUMS.USERNAME, document.getElementById('usrInput').value,ENUMS.PASSWORD,document.getElementById('pwInput').value));
                             }else if (Settings.credentials.getType() == 'new'){
-                                Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
+                                Acorn.Net.socket_.emit(ENUMS.CREATEUSER,Utils.createServerData(ENUMS.USERNAME, document.getElementById('usrInput').value,ENUMS.PASSWORD,document.getElementById('pwInput').value));
                             }
                         }
                     });
@@ -628,7 +646,7 @@
                             if (Player.units.length <5){
                                 return;
                             }
-                            Acorn.Net.socket_.emit('playerUpdate',{command: 'testGame'});
+                            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.TESTGAME));
                             Acorn.changeState('loader');
                         }
                     });
@@ -636,7 +654,7 @@
                     Graphics.uiContainer.addChild(this.joinButton);
 
                     this.userName = Graphics.makeUiElement({
-                        text: "Welcome " + Player.userData.name + '!',
+                        text: "Welcome " + Player.userData.username + '!',
                         style: AcornSetup.baseStyle,
                         position: [10,10],
                         anchor: [0,0]
@@ -675,7 +693,7 @@
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
                             if (confirm('<' + Player.userData.name + '>, Are you sure you want to log out?') == true) {
-                                Acorn.Net.socket_.emit('playerUpdate',{'command': 'logout'});
+                            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.LOGOUT));
                             }
                         }
                     });

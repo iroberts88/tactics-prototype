@@ -113,12 +113,12 @@
         learnAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data['unitid']){
+                if (Player.units[i].id == data[ENUMS.UNITID]){
                     unit = Player.units[i];
                 }
             }
-            unit.classInfo.learnedAbilities[data['ablID']] = 1;
-            unit.classInfo.ap[data['classid']] -= data.apCost;
+            unit.classInfo.learnedAbilities[data[ENUMS.ABILITYID]] = 1;
+            unit.classInfo.ap[data[ENUMS.CLASSID]] -= data[ENUMS.APCOST];
             this.clear();
             this.drawCurrentClass();
         },

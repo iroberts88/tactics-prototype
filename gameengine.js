@@ -239,7 +239,7 @@ GameEngine.prototype.newConnection = function(socket) {
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
-    self.queuePlayer(p,'connInfo', {mapNames: self.mapids,id:p.id});
+    self.queuePlayer(p,ENUMS.CONNINFO, self.createClientData(ENUMS.MAPNAMES, self.mapids, ENUMS.ID, p.id));
     self.addPlayer(p);
 }
 
@@ -247,7 +247,7 @@ GameEngine.prototype.emit = function() {
     try{
         for(var i in this.players) {
             if (this.players[i].netQueue.length > 0){
-                this.players[i].socket.emit('serverUpdate', this.players[i].netQueue);
+                this.players[i].socket.emit(ENUMS.SERVERUPDATE, this.players[i].netQueue);
             }
         }
     }catch(e){
@@ -302,13 +302,25 @@ GameEngine.prototype.debug = function(id,e,d) {
 }
 
 
-GameEngine.prototype.checkData = function(obj,elements){
+GameEngine.prototype.validateData = function(obj,elements){
     for (var i = 0; i < elements.length;i++){
         if (typeof obj[elements[i]] == 'undefined'){
+            console.log('Client data validate error -- ' + elements[i]);
             return false;
         }
     }
     return true;
+}
+GameEngine.prototype.createClientData = function(){
+    //Iterates through arguments given and returns a client data object
+    //arg1 = object key
+    //arg2 = data from arg1
+    //e.g. createClientData(arg1,arg2,arg1,arg2...)
+    var data = {};
+    for (var i = 0; i < arguments.length;i+=2){
+        data[arguments[i]] = arguments[i+1];
+    }
+    return data;
 }
 
 exports.GameEngine = GameEngine;

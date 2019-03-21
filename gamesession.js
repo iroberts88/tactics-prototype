@@ -169,7 +169,10 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
 
 GameSession.prototype.tickInGame = function(deltaTime) {
     if (!this.gameHasStarted){
-        this.queueData(this.cEnums.StartGame,{delay: this.timeInBetweenTurns,timePerTurn: this.timePerTurn,timePerReaction: this.timePerReaction});
+        var cData = {};
+        cData[ENUMS.DELAY] = this.timeInBetweenTurns;
+        cData[ENUMS.TIMEPERTURN] = this.timePerTurn;
+        this.queueData(ENUMS.STARTGAME,cData);
         this.gameHasStarted = true;
         return;
     }
@@ -198,7 +201,10 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                     turnList.push(this.turnOrder[i].id);
                     turnPercent.push(this.allUnits[this.turnOrder[i].id].charge);
                 }
-                this.queueData(this.cEnums.NewTurnOrder,{turnList:turnList,turnPercent:turnPercent});
+                var cData2 = {};
+                cData2[ENUMS.TURNLIST] = turnList;
+                cData2[ENUMS.TURNPERCENT] = turnPERCENT;
+                this.queueData(ENUMS.NEWTURNORDER,cData2);
             }
             break;
         case this.inGameStates.WaitingForReactionInfo:
@@ -339,9 +345,12 @@ GameSession.prototype.getTurnOrder = function(){
         this.allUnits[abl.unitid].removeBuffsWithTag('removeOnAction');
         var aFunc = Actions.getAbility(abl.abilityData.id);
         aFunc(this.allUnits[abl.unitid],this,abl.data);
-        this.queueData('action',{actionData:abl.data[ENUMS.ACTIONDATA]});
-
-        this.queueData('removeUnit',{unitid: this.turnOrder[0].id});
+        var cData = {};
+        cData[ENUMS.ACTIONDATA] = abl.data[ENUMS.ACTIONDATA];
+        this.queueData(ENUMS.ACTION,cData);
+        var cData2 = {};
+        cData2[ENUMS.ID] = this.turnOrder[0].id;
+        this.queueData(ENUMS.REMOVEUNIT,cData2);
         this.allUnits[abl.unitid].casting = null;
         delete this.allUnits[this.turnOrder[0].id];
         this.getTurnOrder();
@@ -355,7 +364,9 @@ GameSession.prototype.getTurnOrder = function(){
             console.log('ai failed');
             return;
         }
-        this.queueData('action',{actionData:actionData});
+        var cData = {};
+        cData[ENUMS.ACTIONDATA] = actionData;
+        this.queueData(ENUMS.ACTION,cData);
         this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
         this.getTurnOrder();
     }else if (this.turnOrder.length && typeof this.allUnits[this.turnOrder[0].id] != 'undefined'){
@@ -552,8 +563,8 @@ GameSession.prototype.unitAttack = function(data){
     data[ENUMS.ACTIONDATA].push(cData3);
     //send down action data
     cData4 = {};
-    cData4[ENUMS.ACTIONDATA] = data[CENUMS.ACTIONDATA];
-    this.queueData('action',cData4);
+    cData4[ENUMS.ACTIONDATA] = data[ENUMS.ACTIONDATA];
+    this.queueData(ENUMS.ACTION,cData4);
 }
                       
 GameSession.prototype.unitAbility = function(data){
@@ -665,7 +676,7 @@ GameSession.prototype.unitAbility = function(data){
                 this.allUnits[abData.id] = abData;
                 unit.casting = abData.id;
                 var cData = {};
-                cData[ENUMS.ABILITY] = abData.id;
+                cData[ENUMS.ID] = abData.id;
                 cData[ENUMS.ISCASTTIMER] = true;
                 cData[ENUMS.UNIT] = unit.id;
                 cData[ENUMS.NAME] = data.ability.name;

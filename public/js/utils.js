@@ -20,6 +20,42 @@
             }
         },
 
+        createServerData: function(){
+
+            //Iterates through arguments given and returns a server data object
+            //arg1 = object key
+            //arg2 = data from arg1
+            //e.g. createClientData(arg1,arg2,arg1,arg2...)
+            var data = {};
+            for (var i = 0; i < arguments.length;i+=2){
+                data[arguments[i]] = arguments[i+1];
+            }
+            return data;
+        },
+
+        udCheck: function(val) {
+            var result = typeof val == 'undefined' ? null : val;
+            return result;
+        },
+
+        udCheckVal: function(val,tVal,fVal) {
+            var result = typeof val == 'undefined' ? tVal : fVal;
+            return result;
+        },
+
+
+        _udCheck: function(val) {
+            return (typeof val == 'undefined');
+        },
+
+        uniqueCopy: function(obj){
+            var newObj = {}
+            for (var key in obj){
+                newObj[key] = obj[key];
+            }
+            return newObj;
+        },
+
 
         colorShifter: function(data){
             //data.r = 255;

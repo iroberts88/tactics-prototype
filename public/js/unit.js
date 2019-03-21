@@ -87,16 +87,16 @@
     Unit.prototype.init = function(data) {
         //Set up all stats and attributes
         this.updateInfo(data);
-        this.visible = (typeof data.visible == 'undefined') ? true : data.visible;
-        this.direction = data.direction;
-        if (data.currentNode){
-            this.currentNode = Game.map.axialMap[data.currentNode.q][data.currentNode.r];
+        this.visible = (typeof data[ENUMS.VISIBLE] == 'undefined') ? true : data[ENUMS.VISIBLE];
+        this.direction = data[ENUMS.DIRECTION];
+        if (data[ENUMS.CURRENTNODE]){
+            this.currentNode = Game.map.axialMap[data[ENUMS.CURRENTNODE][ENUMS.Q]][data[ENUMS.CURRENTNODE][ENUMS.R]];
         }else{
-            this.currentNode = data.currentNode;
+            this.currentNode = data[ENUMS.CURRENTNODE];
         }
         this.chargePercent = 0;
 
-        if (data.direction){
+        if (this.direction){
             //initialize the sprite
             var dir = '';
             dir = window.currentGameMap.dirArray[(window.currentGameMap.spriteStartingDirections[this.direction] + window.currentGameMap.currentRotation) % window.currentGameMap.totalRotations];
@@ -129,61 +129,65 @@
     };
 
     Unit.prototype.updateInfo = function(data){
-        this.maximumHealth = data.maximumHealth;
-        this.maximumEnergy = data.maximumEnergy;
-        this.maximumShields = data.maximumShields;
+        this.maximumHealth = Utils.udCheck(data[ENUMS.MAXHEALTH]);
+        this.maximumEnergy = Utils.udCheck(data[ENUMS.MAXENERGY]);
+        this.maximumShields = Utils.udCheck(data[ENUMS.MAXSHIELDS]);
         //shields stay at null until a shield is equipped?
 
-        this.full = data.full;
-        this.currentHealth = data.health;
-        this.currentEnergy = data.energy;
-        this.currentShields = data.shields;
-        this.move = data.move;
-        this.moveLeft = data.move;
-        this.jump = data.jump;
-        this.power = data.power;
-        this.skill = data.skill;
-        this.tactics = data.tactics;
-        this.speed = data.speed;
-        this.abilitySlots = data.abilitySlots;
-        this.strength = data.strength;
-        this.endurance = data.endurance;
-        this.agility = data.agility;
-        this.dexterity = data.dexterity;
-        this.willpower = data.willpower;
-        this.intelligence = data.intelligence;
-        this.charisma = data.charisma;
+        this.full = Utils.udCheck(data[ENUMS.FULL]);
+        this.currentHealth = Utils.udCheck(data[ENUMS.CURRENTHEALTH]);
+        this.currentEnergy = Utils.udCheck(data[ENUMS.CURRENTENERGY]);
+        this.currentShields = Utils.udCheck(data[ENUMS.CURRENTSHIELDS]);
+        this.move = Utils.udCheck(data[ENUMS.MOVE]);
+        this.moveLeft = Utils.udCheck(data[ENUMS.MOVE]);
+        this.jump = Utils.udCheck(data[ENUMS.JUMP]);
+        this.power = Utils.udCheck(data[ENUMS.POWER]);
+        this.skill = Utils.udCheck(data[ENUMS.SKILL]);
+        this.tactics = Utils.udCheck(data[ENUMS.TACTICS]);
+        this.speed = Utils.udCheck(data[ENUMS.SPEED]);
+        this.abilitySlots = Utils.udCheck(data[ENUMS.ABILITYSLOTS]);
+        this.strength = Utils.udCheck(data[ENUMS.STRENGTH]);
+        this.endurance = Utils.udCheck(data[ENUMS.ENDURANCE]);
+        this.agility = Utils.udCheck(data[ENUMS.AGILITY]);
+        this.dexterity = Utils.udCheck(data[ENUMS.DEXTERITY]);
+        this.willpower = Utils.udCheck(data[ENUMS.WILLPOWER]);
+        this.intelligence = Utils.udCheck(data[ENUMS.INTELLIGENCE]);
+        this.charisma = Utils.udCheck(data[ENUMS.CHARISMA]);
 
-        this.physicalRes = data.physicalRes;
-        this.heatRes = data.heatRes;
-        this.coldRes = data.coldRes;
-        this.acidRes = data.acidRes;
-        this.poisonRes = data.poisonRes;
-        this.electricRes = data.electricRes;
-        this.pulseRes = data.pulseRes;
-        this.radiationRes = data.radiationRes;
-        this.gravityRes = data.gravityRes;
+        this.physicalRes = Utils.udCheck(data[ENUMS.RESISTANCEPHYSICAL]);
+        this.heatRes = Utils.udCheck(data[ENUMS.RESISTANCEHEAT]);
+        this.coldRes = Utils.udCheck(data[ENUMS.RESISTANCECOLD]);
+        this.acidRes = Utils.udCheck(data[ENUMS.RESISTANCEACID]);
+        this.poisonRes = Utils.udCheck(data[ENUMS.RESISTANCEPOISON]);
+        this.electricRes = Utils.udCheck(data[ENUMS.RESISTANCEELECTRIC]);
+        this.pulseRes = Utils.udCheck(data[ENUMS.RESISTANCEPULSE]);
+        this.radiationRes = Utils.udCheck(data[ENUMS.RESISTANCERADIATION]);
+        this.gravityRes = Utils.udCheck(data[ENUMS.RESISTANCEGRAVITY]);
+        this.viralRes = Utils.udCheck(data[ENUMS.RESISTANCEVIRAL]);
 
-        this.owner = data.owner;
-        this.name = data.name;
-        this.sex = data.sex;
-        this.id = data.id;
-        if (data.inventory){
+        this.owner = Utils.udCheck(data[ENUMS.OWNER]);
+        this.name = Utils.udCheck(data[ENUMS.NAME]);
+        this.sex = Utils.udCheck(data[ENUMS.SEX]);
+        this.id = Utils.udCheck(data[ENUMS.ID]);
+        if (!Utils._udCheck(data[ENUMS.INVENTORY])){
             this.inventory = new Inventory();
-            this.inventory.init(data.inventory);
+            this.inventory.init(data[ENUMS.INVENTORY]);
         }else{
             this.inventory = null;
         }
-        this.level = data.level;
-        this.exp = data.exp;
+        this.level = Utils.udCheck(data[ENUMS.LEVEL]);
+        this.exp = Utils.udCheck(data[ENUMS.EXP]);
         this.classInfo = new ClassInfo();
-        this.classInfo.init(data.classInfo);
+        this.classInfo.init(data[ENUMS.CLASSINFO]);
         
-        this.weapon = data.weapon;
-        this.shield = data.shield;
-        this.accessory = data.accessory;
+        this.weapon = Utils.udCheck(data[ENUMS.WEAPON]);
+        this.shield = Utils.udCheck(data[ENUMS.SHIELD]);
+        this.accessory = Utils.udCheck(data[ENUMS.ACCESSORY]);
 
-        this.usedAbilitySlots = data.usedAbilitySlots;
+        this.class = Utils.udCheck(data[ENUMS.CLASS]);
+        this.charge = Utils.udCheck(data[ENUMS.CHARGE]);
+
+        this.usedAbilitySlots = Utils.udCheck(data[ENUMS.USEDABILITYSLOTS]);
     }
 
     Unit.prototype.getWeapon = function(){

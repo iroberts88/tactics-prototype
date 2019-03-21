@@ -1,5 +1,5 @@
 
-    
+var ENUMS = require('./enums.js').Enums;
 
 var Attribute = function(){
     this.owner = null;
@@ -63,11 +63,11 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient && this.updateClient){
-            this.owner.owner.engine.queuePlayer(this.owner.owner,'setUnitStat',{
-                'unit': this.owner.id,
-                'stat': this.id,
-                'amt': this.value
-            });
+            this.owner.owner.engine.queuePlayer(this.owner.owner,ENUMS.SETUNITSTAT,this.owner.owner.engine.engine.createClientData(
+                ENUMS.UNITID, this.owner.id,
+                ENUMS.STAT, this.id,
+                ENUMS.VALUE, this.value
+            ));
         }
     }catch(e){}
     return;
