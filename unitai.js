@@ -1,6 +1,7 @@
 //unitai.js
 var Buff = require('./buff.js').Buff,
-	Actions = require('./actions.js').Actions;
+	Actions = require('./actions.js').Actions,
+    ENUMS = require('./enums.js').Enums;
 
 aiEnums = {
 	SimpleAction: 'simpleAction'
@@ -14,9 +15,9 @@ var UnitAI = function(){}
 
 UnitAI.prototype.simpleAction = function(unit,session,data,actionData){
     var aFunc = Actions.getAction(data.action);
-    data.actionData = actionData;
+    data[ENUMS.ACTIONDATA] = actionData;
     aFunc(unit,data);
-	return data.actionData;
+	return data[ENUMS.ACTIONDATA];
 }
 
 UnitAI.prototype.getAction = function(a){

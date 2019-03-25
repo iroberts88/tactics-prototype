@@ -17,6 +17,13 @@ var Attribute = function(){
         
 Attribute.prototype.init = function(data){
 	this.owner = data.owner; //the unit that owns this stat
+    if (this.owner){
+        this.player = data.owner.owner;
+        this.engine = this.player.engine;
+        this.updateClient = (typeof data.clientUpdate == 'undefined') ? true : data.clientUpdate;
+    }else{
+        this.updateClient = false;
+    }
 	this.id = data.id;
 	this.value = data.value; //this stat's actual value
 	this.base = data.value; //this stat's base value before buff/item mods etc.
@@ -63,13 +70,15 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient && this.updateClient){
-            this.owner.owner.engine.queuePlayer(this.owner.owner,ENUMS.SETUNITSTAT,this.owner.owner.engine.engine.createClientData(
+            this.player.session.queueDataIfIdentified(ENUMS.SETUNITSTAT,this.engine.createClientData(
                 ENUMS.UNITID, this.owner.id,
                 ENUMS.STAT, this.id,
                 ENUMS.VALUE, this.value
             ));
         }
-    }catch(e){}
+    }catch(e){
+        console.log(e);
+    }
     return;
 }
 

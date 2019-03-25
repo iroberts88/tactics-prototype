@@ -251,11 +251,11 @@
                     position: [Graphics.width*(2/3),itemText.position.y],
                     clickFunc: function onClick(e){
                         //attempt to move the item from unit inventory to player inventory
-                        Acorn.Net.socket_.emit('playerUpdate',{
-                            'command': 'itemToPlayer',
-                            'unitid': e.currentTarget.unitid,
-                            'itemIndex': e.currentTarget.itemIndex
-                        });
+                        Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                            ENUMS.COMMAND, ENUMS.ITEMTOPLAYER,
+                            ENUMS.UNITID, e.currentTarget.unitid,
+                            ENUMS.INDEX, e.currentTarget.itemIndex
+                        ));
                     }
                 })
                 moveButton.unitid = this.unitInfo.id;
@@ -282,11 +282,11 @@
                             position: [0,itemText.position.y],
                             clickFunc: function onClick(e){
                                 //attempt to move the item from unit inventory to player inventory
-                                Acorn.Net.socket_.emit('playerUpdate',{
-                                    'command': 'unEquipItem',
-                                    'unitid': e.currentTarget.unitid,
-                                    'itemIndex': e.currentTarget.itemIndex
-                                });
+                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                                    ENUMS.COMMAND, ENUMS.UNEQUIPITEM,
+                                    ENUMS.UNITID, e.currentTarget.unitid,
+                                    ENUMS.INDEX, e.currentTarget.itemIndex
+                                ));
                             }
                         })
                         unEquipButton.unitid = this.unitInfo.id;
@@ -310,11 +310,11 @@
                             position: [0,itemText.position.y],
                             clickFunc: function onClick(e){
                                 //attempt to move the item from unit inventory to player inventory
-                                Acorn.Net.socket_.emit('playerUpdate',{
-                                    'command': 'equipItem',
-                                    'unitid': e.currentTarget.unitid,
-                                    'itemIndex': e.currentTarget.itemIndex
-                                });
+                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                                    ENUMS.COMMAND, ENUMS.EQUIPITEM,
+                                    ENUMS.UNITID, e.currentTarget.unitid,
+                                    ENUMS.INDEX, e.currentTarget.itemIndex
+                                ));
                             }
                         })
                         equipButton.unitid = this.unitInfo.id;
@@ -374,11 +374,11 @@
                     position: [0,itemText.position.y],
                     clickFunc: function onClick(e){
                         //attempt to move the item from unit inventory to player inventory
-                        Acorn.Net.socket_.emit('playerUpdate',{
-                            'command': 'itemToUnit',
-                            'unitid': e.currentTarget.unitid,
-                            'itemIndex': e.currentTarget.itemIndex
-                        });
+                        Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                            ENUMS.COMMAND, ENUMS.ITEMTOUNIT,
+                            ENUMS.UNITID, e.currentTarget.unitid,
+                            ENUMS.INDEX, e.currentTarget.itemIndex
+                        ));
                     }
                 })
                 moveButton.unitid = this.unitInfo.id;

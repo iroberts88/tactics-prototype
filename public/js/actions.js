@@ -29,7 +29,7 @@
             this.currentAction = this.actions[this.actionIndex];
         }else{
             try{
-                var actionFunc = this.getAction(this.currentAction.action);
+                var actionFunc = this.getAction(this.currentAction[ENUMS.ACTION]);
                 actionFunc(dt,this,this.currentAction);
             }catch(e){
                 console.log(e);
@@ -51,43 +51,40 @@
 
     Actions.prototype.getAction = function(a){
         switch(a){
-            case this.actionEnums.Test:
-                return this.test;
-                break;
-            case this.actionEnums.Move:
+            case ENUMS.MOVE:
                 return this.move;
                 break;
-            case this.actionEnums.Face:
+            case ENUMS.FACE:
                 return this.face;
                 break;
-            case this.actionEnums.Reveal:
+            case ENUMS.REVEAL:
                 return this.reveal;
                 break;
-            case this.actionEnums.Hide:
+            case ENUMS.HIDE:
                 return this.hide;
                 break;
-            case this.actionEnums.ActionUsed:
+            case ENUMS.ACTIONUSED:
                 return this.actionUsed;
                 break;
-            case this.actionEnums.Attack:
+            case ENUMS.ATTACK:
                 return this.attack;
                 break;
-            case this.actionEnums.NoLos:
+            case ENUMS.NOLOS:
                 return this.noLos;
                 break;
-            case this.actionEnums.ActionBubble:
+            case ENUMS.ACTIONBUBBLE:
                 return this.actionBubble;
                 break;
-            case this.actionEnums.DmgText:
+            case ENUMS.DAMAGETEXT:
                 return this.dmgText;
                 break;
-            case this.actionEnums.SetEnergy:
+            case ENUMS.SETENERGY:
                 return this.setEnergy;
                 break;
-            case this.actionEnums.Slam:
+            case ENUMS.SLAM:
                 return this.slam;
                 break;
-            case this.actionEnums.Reversal:
+            case ENUMS.REVERSAL:
                 return this.reversal;
                 break;
             default:
@@ -217,6 +214,9 @@
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
             actions.endAction(data);
+            if (actions.end){
+                Game.getLineOfSight();
+            }
             if(data[ENUMS.REDUCELEFT]){
                 data.unit.moveLeft -= 1;
             }
@@ -270,7 +270,7 @@
     Actions.prototype.attack = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
             Game.units[data[ENUMS.UNITID]].addActionBubble(data[ENUMS.WEAPON]);
-            Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTIOn]);
+            Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTION]);
             data.ticker = 0;
         }
         data.ticker += dt;
@@ -287,7 +287,7 @@
     Actions.prototype.actionBubble = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
-            Game.units[data[ENUMS.UNITID]].addActionBubble(data.text);
+            Game.units[data[ENUMS.UNITID]].addActionBubble(data[ENUMS.TEXT]);
         }
         data.ticker += dt;
         if (data.ticker >= 1.5){
@@ -295,33 +295,36 @@
         }
     };
     Actions.prototype.dmgText = function(dt,actions,data){
+        console.log(data);
         if (data[ENUMS.OWNERONLY] && Game.units[data[ENUMS.UNITID]].owner != mainObj.playerID){
+            console.log('END')
             actions.endAction(data);
         }
         if (typeof Game.units[data[ENUMS.UNITID]] == 'undefined'){
             actions.endAction(data);
         }
-        Game.units[data[ENUMS.UNITID]].addDmgText(data[ENUMS.TEXT],data[ENUMS.TYPE]);
+        var unit = Game.units[data[ENUMS.UNITID]];
+        unit.addDmgText(data[ENUMS.TEXT],data[ENUMS.TYPE]);
         var resetIP = false;
-        if (typeof data[ENUMS.HEALTH] != 'undefined'){
-            Game.units[data[ENUMS.UNITID]].currentHealth = data[ENUMS.HEALTH];
+        if (typeof data[ENUMS.CURRENTHEALTH] != 'undefined'){
+            unit.currentHealth = data[ENUMS.CURRENTHEALTH];
             resetIP = true;
         }
-        if (typeof data[ENUMS.SHIELDS] != 'undefined'){
-            Game.units[data[ENUMS.UNITID]].currentShields = data[ENUMS.SHIELDS];
+        if (typeof data[ENUMS.CURRENTSHIELDS] != 'undefined'){
+            unit.currentShields = data[ENUMS.CURRENTSHIELDS];
             resetIP = true;
         }
         if (data[ENUMS.DEAD] && typeof data[ENUMS.DEAD] != 'undefined'){
-            Game.units[data[ENUMS.UNITID]].currentNode.unit = null;
-            Game.units[data[ENUMS.UNITID]].setDead();
-            Game.units[data[ENUMS.UNITID]].dead = true;
+            unit.currentNode.unit = null;
+            unit.setDead();
+            unit.dead = true;
             resetIP = true;
         }else if (typeof data[ENUMS.FAINTED] != 'undefined'){
-            Game.units[data[ENUMS.UNITID]].setFainted(data[ENUMS.FAINTED]);
+            unit.setFainted(data[ENUMS.FAINTED]);
             resetIP = true;
         }
         if (resetIP){
-            Game.units[data[ENUMS.UNITID]].infoPane = Game.getUnitInfoPane(data[ENUMS.UNITID]);
+            unit.infoPane = Game.getUnitInfoPane(data[ENUMS.UNITID]);
         }
         actions.endAction(data);
     };

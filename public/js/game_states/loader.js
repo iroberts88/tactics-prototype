@@ -17,7 +17,9 @@
                 style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    Acorn.Net.socket_.emit('playerUpdate',{command: 'cancelSearch'});
+                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                        ENUMS.COMMAND, ENUMS.CENCELSEARCH
+                    ));
                     Acorn.changeState('mainMenu');
                 }
             });

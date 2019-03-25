@@ -294,6 +294,10 @@
                 case 'heal':
                     text.style.fill = 0x00c7ff;
                     break;
+                default:
+                    text.style.fill = 'white';
+                    break;
+
             }
         }
         var xPos = 0;
@@ -384,61 +388,61 @@
         console.log(id + '   ' + amt)
         try{
             switch(id){
-                case 'sh':
+                case ENUMS.MAXSHIELDS:
                     this.maximumShields = amt;
                     break;
-                case 'shdel':
+                case ENUMS.DELAY:
                     this.shieldDelay = amt;
                     break;
-                case 'shrec':
+                case ENUMS.RECHARGE:
                     this.shieldRecharge = amt;
                     break;
-                case 'absl':
+                case ENUMS.ABILITYSLOTS:
                     this.abilitySlots = amt;
                     break;
-                case 'str':
+                case ENUMS.STRENGTH:
                     this.strength = amt;
                     break;
-                case 'end':
+                case ENUMS.ENDURANCE:
                     this.endurance = amt;
                     break;
-                case 'agi':
+                case ENUMS.AGILITY:
                     this.agility = amt;
                     break;
-                case 'dex':
+                case ENUMS.DEXTERITY:
                     this.dexterity = amt;
                     break;
-                case 'int':
+                case ENUMS.INTELLIGENCE:
                     this.intelligence = amt;
                     break;
-                case 'wil':
+                case ENUMS.WILLPOWER:
                     this.willpower = amt;
                     break;
-                case 'cha':
+                case ENUMS.CHARISMA:
                     this.charisma = amt;
                     break;
-                case 'hp':
+                case ENUMS.MAXHEALTH:
                     this.maximumHealth = amt;
                     break;
-                case 'energy':
+                case ENUMS.MAXENERGY:
                     this.maximumEnergy = amt;
                     break;
-                case 'pow':
+                case ENUMS.POWER:
                     this.power = amt;
                     break;
-                case 'ski':
+                case ENUMS.SKILL:
                     this.skill = amt;
                     break;
-                case 'tac':
+                case ENUMS.TACTICS:
                     this.tactics = amt;
                     break;
-                case 'mov':
+                case ENUMS.MOVE:
                     this.move = amt;
                     break;
-                case 'jmp':
+                case ENUMS.JUMP:
                     this.jump = amt;
                     break;
-                case 'spd':
+                case ENUMS.SPEED:
                     this.speed = amt;
                     break;
                 case 'pRes':
@@ -468,13 +472,16 @@
                 case 'gRes':
                     this.gravityRes = amt;
                     break;
-                case 'wgt':
+                case ENUMS.WEIGHT:
                     this.inventory.maxWeight = amt;
                     break;
             }
         }catch(e){
             console.log("unable to get stat " + id);
             console.log(e);
+        }
+        if (!Player.inGame){
+            return;
         }
         if (Game.units[this.id]){
             console.log(this.id);

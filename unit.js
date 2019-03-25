@@ -154,17 +154,17 @@ Unit.prototype.reset = function(){
 
 Unit.prototype.init = function(data) {
     //Set up all stats and attributes
-    this.name = data.name;
-    this.sex = data.sex;
+    this.name = data['name'];
+    this.sex = data['sex'];
     this.owner = data.owner;
     this.engine = data.owner.engine;
     this.id = data.id;
 
-    this.level = (typeof data.level == 'undefined') ? 1 : data.level;
-    this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
+    this.level = (typeof data.level == 'undefined') ? 1 : data['level'];
+    this.exp = (typeof data.exp == 'undefined') ? 0 : data['exp'];
     
-    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data.mechanical;
-    this.human = (typeof data.human == 'undefined') ? true : data.human;
+    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data['mechanical'];
+    this.human = (typeof data.human == 'undefined') ? true : data['human'];
 
     this.ai = (typeof data.ai == 'undefined') ? false : data.ai;
     this.aiInfo = data.aiInfo;
@@ -288,7 +288,11 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 25,
         'min': 0,
-        'max': 999 //TODO should check if current absl are too high, possibly resetting abilities
+        'max': 999, //TODO should check if current absl are too high, possibly resetting abilities
+
+        formula: function(){
+            return Math.round((this.base+this.nMod)*this.pMod);
+        }
     });
     this.strength = new Attribute();
     this.strength.init({
@@ -464,19 +468,48 @@ Unit.prototype.init = function(data) {
         owner: this
     });
     this.inventory.setGameEngine(this.owner.engine);
-    if (typeof data.inventory != 'undefined'){
-        for (var i = 0; i < data.inventory.length;i++){
-            this.inventory.addItemUnit(data.inventory[i]);
+    if (typeof data['inventory'] != 'undefined'){
+        for (var i = 0; i < data['inventory'].length;i++){
+            this.inventory.addItemUnit(data['inventory'][i]);
         }
     }
-
-    this.inventory.equip(data.weapon);
-    this.inventory.equip(data.shield);
-    this.inventory.equip(data.accessory);
-
-    for (var i in data){
+    if (data['weapon'] != null){
+        this.inventory.equip(data['weapon']);
+    }if (data['shield'] != null){
+        this.inventory.equip(data['shield']);
+    }if (data['accessory'] != null){
+        this.inventory.equip(data['accessory']);
+    }
+    if (typeof data['strength'] != 'undefined'){
+        this.strength.base = data['strength'];
+        this.endurance.base = data['endurance'];
+        this.agility.base = data['agility'];
+        this.dexterity.base = data['dexterity'];
+        this.intelligence.base = data['intelligence'];
+        this.willpower.base = data['willpower'];
+        this.charisma.base = data['charisma'];
+        this.move.base = data['move'];
+        this.power.base = data['power'];
+        this.skill.base = data['skill'];
+        this.tactics.base = data['tactics'];
+        this.maximumHealth.base = data['maximumHealth'];
+        this.maximumEnergy.base = data['maximumEnergy'];
+        this.speed.base = data['speed'];
+        this.abilitySlots.base = data['abilitySlots'];
+        this.heatRes.base = data['heatRes'];
+        this.coldRes.base = data['coldRes'];
+        this.electricRes.base = data['electricRes'];
+        this.acidRes.base = data['acidRes'];
+        this.poisonRes.base = data['poisonRes'];
+        this.gravityRes.base = data['gravityRes'];
+        this.radiationRes.base = data['radiationRes'];
+        this.pulseRes.base = data['pulseRes'];
+        this.viralRes.base = data['viralRes'];
+        this.exp = data['exp'];
+        this.level = data['level'];
+    }
+    for (var i in this){
         if (this[i] instanceof Attribute){
-            this[i].base = data[i];
             this[i].set();
         }
     }
@@ -595,7 +628,7 @@ Unit.prototype.damage = function(type,value,aData){
     }
     var cData = {};
     cData[ENUMS.ACTION] = ENUMS.DAMAGETEXT;
-    cData[ENUMS.ID] = this.id;
+    cData[ENUMS.UNITID] = this.id;
     cData[ENUMS.TEXT] = txt;
     cData[ENUMS.CURRENTSHIELDS] = this.currentShields;
     cData[ENUMS.CURRENTHEALTH] = this.currentHealth;
@@ -673,58 +706,58 @@ Unit.prototype.levelUp = function(update){
 
 Unit.prototype.getDBObj = function(){
     var dbObj = {};
-    dbObj.name = this.name;
-    dbObj.sex = this.sex;
-    dbObj.maximumHealth = this.maximumHealth.base;
-    dbObj.maximumEnergy = this.maximumEnergy.base;
-    dbObj.move = this.move.base;
-    dbObj.jump = this.jump.base;
-    dbObj.power = this.power.base;
-    dbObj.skill = this.skill.base;
-    dbObj.tactics = this.tactics.base;
-    dbObj.speed = this.speed.base;
-    dbObj.abilitySlots = this.abilitySlots.base;
+    dbObj['name'] = this.name;
+    dbObj['sex'] = this.sex;
+    dbObj['maximumHealth'] = this.maximumHealth.base;
+    dbObj['maximumEnergy'] = this.maximumEnergy.base;
+    dbObj['move'] = this.move.base;
+    dbObj['jump'] = this.jump.base;
+    dbObj['power'] = this.power.base;
+    dbObj['skill'] = this.skill.base;
+    dbObj['tactics'] = this.tactics.base;
+    dbObj['speed'] = this.speed.base;
+    dbObj['abilitySlots'] = this.abilitySlots.base;
     //attributes
-    dbObj.strength = this.strength.base;
-    dbObj.intelligence = this.strength.base;
-    dbObj.endurance = this.endurance.base;
-    dbObj.willpower = this.willpower.base;
-    dbObj.agility = this.agility.base;
-    dbObj.dexterity = this.dexterity.base;
-    dbObj.charisma = this.charisma.base;
+    dbObj['strength'] = this.strength.base;
+    dbObj['intelligence'] = this.strength.base;
+    dbObj['endurance'] = this.endurance.base;
+    dbObj['willpower'] = this.willpower.base;
+    dbObj['agility'] = this.agility.base;
+    dbObj['dexterity'] = this.dexterity.base;
+    dbObj['charisma'] = this.charisma.base;
 
     //level and class stuff?
-    dbObj.level = this.level;
-    dbObj.exp = this.exp;
+    dbObj['level'] = this.level;
+    dbObj['exp'] = this.exp;
 
     //all the information about the unit's class
-    dbObj.classInfo = this.classInfo.getDBObj();
+    dbObj['classInfo'] = this.classInfo.getDBObj();
     //game stats (games won; damage/healing done etc)
-    dbObj.gameStats = this.gameStats;
+    dbObj['gameStats'] = this.gameStats;
 
-    dbObj.inventory = [];
+    dbObj['inventory'] = [];
     for (var i = 0; i < this.inventory.items.length;i++){
-        dbObj.inventory.push(this.inventory.items[i].itemID);
+        dbObj['inventory'].push(this.inventory.items[i].itemID);
     }
 
-    dbObj.weapon = this.weapon;
-    dbObj.shield = this.shield;
-    dbObj.accessory = this.accessory;
+    dbObj['weapon'] = this.weapon;
+    dbObj['shield'] = this.shield;
+    dbObj['accessory'] = this.accessory;
 
-    dbObj.physicalRes = this.physicalRes.base;
-    dbObj.heatRes = this.heatRes.base;
-    dbObj.coldRes = this.coldRes.base;
-    dbObj.acidRes = this.acidRes.base;
-    dbObj.poisonRes = this.poisonRes.base;
-    dbObj.electricRes = this.electricRes.base;
-    dbObj.pulseRes = this.pulseRes.base;
-    dbObj.radiationRes = this.radiationRes.base;
-    dbObj.gravityRes = this.gravityRes.base;
+    dbObj['physicalRes'] = this.physicalRes.base;
+    dbObj['heatRes'] = this.heatRes.base;
+    dbObj['coldRes'] = this.coldRes.base;
+    dbObj['acidRes'] = this.acidRes.base;
+    dbObj['poisonRes'] = this.poisonRes.base;
+    dbObj['electricRes'] = this.electricRes.base;
+    dbObj['pulseRes'] = this.pulseRes.base;
+    dbObj['radiationRes'] = this.radiationRes.base;
+    dbObj['gravityRes'] = this.gravityRes.base;
 
-    dbObj.mechanical = this.mechanical; //a mechanical unit
-    dbObj.human = this.human; //a human unit
+    dbObj['mechanical'] = this.mechanical; //a mechanical unit
+    dbObj['human'] = this.human; //a human unit
 
-    dbObj.usedAbilitySlots = this.usedAbilitySlots;
+    dbObj['usedAbilitySlots'] = this.usedAbilitySlots;
     return dbObj;
 }
 Unit.prototype.setCurrentNode = function(node){
@@ -740,7 +773,7 @@ Unit.prototype.minCurrentNode = function(){
     }
     var d = {};
     d[ENUMS.Q] = this.currentNode.q;
-    d[ENUMS.R] = this.currentNode.q;
+    d[ENUMS.R] = this.currentNode.r;
     return d;
 }
 Unit.prototype.getClientData = function(less = false){
@@ -760,7 +793,7 @@ Unit.prototype.getClientData = function(less = false){
     data[ENUMS.LEVEL] = this.level;
     data[ENUMS.CURRENTHEALTH] = this.currentHealth;
     data[ENUMS.CURRENTENERGY] = this.currentEnergy;
-    data[ENUMS.CURRETNSHIELDS] = this.currentShields;
+    data[ENUMS.CURRENTSHIELDS] = this.currentShields;
     data[ENUMS.CURRENTNODE] = this.minCurrentNode();
     data[ENUMS.DIRECTION] = this.direction;
     data[ENUMS.SPEED] = this.speed.value;

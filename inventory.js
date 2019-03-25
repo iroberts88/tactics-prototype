@@ -28,7 +28,7 @@ Inventory.prototype.init = function(data){
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
-            'id': 'wgt',
+            'id': ENUMS.WEIGHT,
             'owner': this.owner,
             'value': 1,
             'min': 1,
@@ -40,8 +40,8 @@ Inventory.prototype.init = function(data){
         //the player's main inventory
         this.maxItemPile = 99;
         this.maxWeight.init({
-            'id': 'wgt',
-            'owner': this.owner,
+            'id': ENUMS.WEIGHT,
+            'owner': null,
             'value': 1,
             'min': 1,
             'max': 999999,
@@ -350,9 +350,9 @@ Inventory.prototype.getItemID = function(index){
     //check if Inventory has item
     //returns an array [contains item,at index]
     if (this.items[index]){
-        return this.items[index].id;
+        return this.items[index].itemID;
     }
-    return null
+    return null;
 }
 
 Inventory.prototype.sortByType = function(dir){

@@ -598,14 +598,14 @@ HexMap.prototype.getClientData = function(){
     for (var i = 0; i < this.startZone1.length; i++){
         var node = {}
         node[ENUMS.Q] = this.startZone1[i].q;
-        node[ENUMS.r] = this.startZone1[i].r;
+        node[ENUMS.R] = this.startZone1[i].r;
         cData[ENUMS.STARTZONE1].push(node)
     }
     cData[ENUMS.STARTZONE2] = [];
     for (var i = 0; i < this.startZone2.length; i++){
         var node = {}
         node[ENUMS.Q] = this.startZone2[i].q;
-        node[ENUMS.r] = this.startZone2[i].r;
+        node[ENUMS.R] = this.startZone2[i].r;
         cData[ENUMS.STARTZONE2].push(node)
     }
     cData[ENUMS.MAPDATA] = {};

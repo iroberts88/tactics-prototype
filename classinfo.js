@@ -6,7 +6,7 @@ var ClassInfo = function(){
 	this.engine = null;
 	this.currentClass = null;
 	this.baseClass = null;
-	this.baseId = null;
+	this.baseid = null;
 	this.classid = null;
 	this.allClassAbilities = null;
 
@@ -49,7 +49,7 @@ ClassInfo.prototype.getClientData = function(){
 	cData = {};
 	cData[ENUMS.CURRENTCLASS] = this.currentClass;
 	cData[ENUMS.BASECLASS] = this.baseClass;
-	cData[ENUMS.BASEID] = this.baseId;
+	cData[ENUMS.BASEID] = this.baseid;
 	cData[ENUMS.CLASSID] = this.classid;
 	cData[ENUMS.AP] = this.ap;
 	cData[ENUMS.TOTALAPVALUES] = this.totalAPValues;
@@ -74,14 +74,14 @@ ClassInfo.prototype.getClientData = function(){
 }
 ClassInfo.prototype.getDBObj = function(){
 	dbObj = {};
-	dbObj.currentClass = this.currentClass;
-	dbObj.baseClass = this.baseClass;
-	dbObj.baseId = this.baseId;
-	dbObj.classid = this.classid;
-	dbObj.learnedAbilities = this.learnedAbilities;
-	dbObj.equippedAbilities = this.equippedAbilities;
-	dbObj.ap = this.ap;
-	dbObj.totalAPValues = this.totalAPValues;
+	dbObj['currentClass'] = this.currentClass;
+	dbObj['baseClass'] = this.baseClass;
+	dbObj['baseid'] = this.baseid;
+	dbObj['classid'] = this.classid;
+	dbObj['learnedAbilities'] = this.learnedAbilities;
+	dbObj['equippedAbilities'] = this.equippedAbilities;
+	dbObj['ap'] = this.ap;
+	dbObj['totalAPValues'] = this.totalAPValues;
 	return dbObj;
 }
 ClassInfo.prototype.setClass = function(c){
@@ -118,7 +118,7 @@ ClassInfo.prototype.setBaseClass = function(c){
 	try{
 		var charClass = this.unit.owner.engine.classes[c];
 		this.baseClass = charClass.classid;
-		this.baseId = c;
+		this.baseid = c;
 		this.allClassAbilities[charClass.classid] = charClass.abilities;
 		for (var stat in charClass.baseAttr){
 			this.unit[stat].nMod += charClass.baseAttr[stat];

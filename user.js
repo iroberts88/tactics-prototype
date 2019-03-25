@@ -74,11 +74,12 @@ function User() {
                                         char.init(c[i]);
                                         char.classInfo = new ClassInfo();
                                         char.classInfo.init({unit: char, 
-                                            learned: c[i].classInfo.learnedAbilities,
-                                            equipped: c[i].classInfo.equippedAbilities,
-                                            ap: c[i].classInfo.ap});
-                                        char.classInfo.setBaseClass(c[i].classInfo.baseId);
-                                        char.classInfo.setClass(c[i].classInfo.classId);
+                                            learned: c[i].classInfo['learnedAbilities'],
+                                            equipped: c[i].classInfo['equippedAbilities'],
+                                            ap: c[i].classInfo['ap'],
+                                            totalApValues: c[i].classInfo['totalApValues']});
+                                        char.classInfo.setBaseClass(c[i].classInfo['baseid']);
+                                        char.classInfo.setClass(c[i].classInfo['classid']);
                                         that.owner.engine.queuePlayer(that.owner,ENUMS.ADDNEWUNIT, that.owner.engine.createClientData(ENUMS.UNITID, char.getClientData()));
                                         that.characters.push(char);
                                     }

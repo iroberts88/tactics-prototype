@@ -75,7 +75,7 @@
                 var castTimer = {};
                 castTimer.id = data[ENUMS.ID];
                 castTimer.isCastTimer = data[ENUMS.ISCASTTIMER]
-                castTimer.unit = data[ENUMS.UNIT];
+                castTimer.unitid = data[ENUMS.UNIT];
                 castTimer.name = data[ENUMS.NAME];
                 castTimer.speed = data[ENUMS.SPEED];
                 castTimer.charge = data[ENUMS.CHARGE];
@@ -85,7 +85,7 @@
             Acorn.Net.on(ENUMS.UNITINFO, function(data) {
                 //get the data for the units on the map
                 console.log(data);
-                Game.turnList = data[ENUMS.TUNRLIST];
+                Game.turnList = data[ENUMS.TURNLIST];
                 Game.units = {};
                 for(var i = 0; i < data[ENUMS.MYUNITS].length;i++){
                     var unit = new Unit();
@@ -99,7 +99,7 @@
                     unit.sprite.tint = 0xfcfcfc;
                 }
                 for (var i = 0;i<data[ENUMS.TURNPERCENT].length;i++){
-                    Game.units[Game.turnList[i]].setChargePercent(data[ENUMS.TURNPERCENT][i]);
+                    Game.units[data[ENUMS.TURNLIST][i]].setChargePercent(data[ENUMS.TURNPERCENT][i]);
                 }
                 Game.initUI();
             });
@@ -301,9 +301,10 @@
                 Player.deleteUnit(data);
             });
             Acorn.Net.on(ENUMS.SETUNITSTAT, function (data) {
+                console.log(data);
                 try{
                     if (Player.inGame){
-                        Game.units[data[ENUMS.UNITID]].setStat(data[ENUMS.STAT],data[ENUMS.AMOUNT])
+                        Game.units[data[ENUMS.UNITID]].setStat(data[ENUMS.STAT],data[ENUMS.VALUE])
                     }else{
                         Player.setUnitStat(data);
                     }
@@ -692,8 +693,8 @@
                         anchor: [0,0],
                         interactive: true,buttonMode: true,buttonGlow: true,
                         clickFunc: function onClick(){
-                            if (confirm('<' + Player.userData.name + '>, Are you sure you want to log out?') == true) {
-                            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.LOGOUT));
+                            if (confirm('<' + Player.userData.username + '>, Are you sure you want to log out?') == true) {
+                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.LOGOUT));
                             }
                         }
                     });

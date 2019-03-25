@@ -29,7 +29,7 @@
         setUnitStat: function(data){
             for(var i = 0; i < this.units.length;i++){
                 if (this.units[i].id == data[ENUMS.UNITID]){
-                    this.units[i].setStat(data[ENUMS.STAT],data[ENUMS.AMOUNT]);
+                    this.units[i].setStat(data[ENUMS.STAT],data[ENUMS.VALUE]);
                 }
             }
             Characters.refresh = true;

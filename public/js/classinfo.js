@@ -3,7 +3,7 @@
     var ClassInfo = function () {
         this.allClassAbilities = null;
         this.baseClass = null;
-        this.baseId = null;
+        this.baseid = null;
         this.classid = null;
         this.currentClass = null;
         this.equippedAbilities = null;
@@ -23,7 +23,7 @@
             }
         }
         this.baseClass = data[ENUMS.BASECLASS];
-        this.baseId = data[ENUMS.BASEID];
+        this.baseid = data[ENUMS.BASEID];
         this.classid = data[ENUMS.CLASSID];
         this.currentClass = data[ENUMS.CURRENTCLASS];
         this.equippedAbilities = data[ENUMS.EQUIPPEDABILITIES];

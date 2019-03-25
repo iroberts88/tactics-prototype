@@ -187,13 +187,13 @@
                         clickFunc: function onClick(e){
                             console.log('learning ability with id: ' + e.currentTarget.ablID);
                             //check AP then send to client
-                            if (LearnAbilities.unitInfo.classInfo.ap[LearnAbilities.fromClass] >= e.currentTarget.apCost){
-                                Acorn.Net.socket_.emit('playerUpdate',{
-                                    'command': 'learnAbility',
-                                    'unitid': e.currentTarget.unitid,
-                                    'classid': e.currentTarget.classid,
-                                    'ablID': e.currentTarget.ablID
-                                });
+                            if (LearnAbilities.unitInfo.classInfo.ap[LearnAbilities.fromClass] >= e.currentTarget.ApCost){
+                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                                    ENUMS.COMMAND, ENUMS.LEARNABILITY,
+                                    ENUMS.UNITID, e.currentTarget.unitid,
+                                    ENUMS.CLASSID, e.currentTarget.classid,
+                                    ENUMS.ABILITYID, e.currentTarget.ablID
+                                ));
                             }
                         }
                     })
@@ -204,7 +204,7 @@
                     learnButton.ablID = ablArr[i].id;
                     learnButton.unitid = this.unitInfo.id;
                     learnButton.classid = this.fromClass;
-                    learnButton.apCost = ablArr[i].ApCost;
+                    learnButton.ApCost = ablArr[i].ApCost;
                     Graphics.uiContainer.addChild(learnButton);
                     this.learnButtons.push(learnButton);
                 }

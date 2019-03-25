@@ -3,8 +3,8 @@
 
     var Map = function(){
 
-        this.partialTint = 0x5b5b5b;
-        this.noLosTint = 0x2b2b2b;
+        this.partialTint = 0xCCCCCC;
+        this.noLosTint = 0x8d97a8;
         this.TILE_SIZE = 17; //edge length?
         this.TILE_HEIGHT = 11;
         this.MAX_NODE_HEIGHT = 25;
@@ -150,10 +150,10 @@
             Graphics.worldContainer.addChild(this.container2);
             if (data[ENUMS.STARTZONE1]){
                 for (var i = 0; i < data[ENUMS.STARTZONE1].length;i++){
-                    this.startZone1.push(this.axialMap[data[ENUMS.STARTZONE1][i][data[ENUMS.Q]]][data[ENUMS.STARTZONE1][i][data[ENUMS.R]]]);
+                    this.startZone1.push(this.axialMap[data[ENUMS.STARTZONE1][i][ENUMS.Q]][data[ENUMS.STARTZONE1][i][ENUMS.R]]);
                 }
                 for (var i = 0; i < data[ENUMS.STARTZONE2].length;i++){
-                    this.startZone2.push(this.axialMap[data[ENUMS.STARTZONE2][i][data[ENUMS.Q]]][data[ENUMS.STARTZONE2][i][data[ENUMS.R]]]);
+                    this.startZone2.push(this.axialMap[data[ENUMS.STARTZONE2][i][ENUMS.Q]][data[ENUMS.STARTZONE2][i][ENUMS.R]]);
                 }
             }
         }catch(e){
@@ -991,6 +991,7 @@
         this.overlaySprite1 = null;
         this.overlaySprite2 = null;
         this.mouseOverNodes = null;
+        this.los = 'full';
         this.id = this.q+','+this.r;
     }
     Node.prototype.setOverlaySprites = function(tint){

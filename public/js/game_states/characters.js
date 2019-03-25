@@ -59,7 +59,7 @@
                 style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.ADDRANDOMCHARACTER));
+                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.ADDRANDOMCHAR));
                 }
             });
             this.newRandChar.position.x = 25 + this.newRandChar.width/2 + this.newChar.position.x + this.newChar.width/2;

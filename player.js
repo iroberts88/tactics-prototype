@@ -83,7 +83,7 @@ Player.prototype.setupSocket = function() {
     // On playerUpdate event
     var that = this;
 
-    this.socket.on('playerUpdate', function (data) {
+    this.socket.on([ENUMS.PLAYERUPDATE], function (data) {
         try{
             if (that.session){
                 //if the player is in a session - deal with received data
@@ -103,6 +103,7 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case ENUMS.MOVE:
+                        console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         if (!that.hasUnit(that.session.turnOrder[0].id) || !that.engine.validateData(data,[ENUMS.Q,ENUMS.R])){
                             return;
@@ -165,7 +166,7 @@ Player.prototype.setupSocket = function() {
                }
             }else{
                 //player is not in a game currently - main menu commands
-                switch(data.command){
+                switch(data[ENUMS.COMMAND]){
                     case ENUMS.LEARNABILITY:
                         try{
                             //validate data
@@ -343,6 +344,7 @@ Player.prototype.setupSocket = function() {
                             }
                             var unit = that.getUnit(data[ENUMS.UNITID]);
                             var itemID = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            console.log(itemID);
                             if (!unit || !itemID){
                                 console.log('itemtoUnit Error');
                                 return;
@@ -456,7 +458,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo = new ClassInfo();
                                 char.classInfo.init({unit: char});
                                 char.classInfo.setBaseClass(data[ENUMS.CLASS]);
-                                char.classInfo.setClass(ENUMS.CLASS);
+                                char.classInfo.setClass(data[ENUMS.CLASS]);
                                 //create object to send to the client
                                 char.levelUp();
                                 char.level -= 1;
@@ -468,8 +470,10 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case ENUMS.ADDRANDOMCHAR:
+                                console.log(data);
                         if (that.user.characters.length < 30){
                             try{
+                                console.log('adding char..')
                                 var char = new Unit();
                                 var sexes = ['male','female'];
                                 var sex = sexes[Math.floor(Math.random()*sexes.length)];

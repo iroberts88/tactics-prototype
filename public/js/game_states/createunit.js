@@ -366,6 +366,14 @@
                     return;
                 }
             }
+            var sObj = {};
+            sObj[ENUMS.STRENGTH] = this.statsAssigned.strength;
+            sObj[ENUMS.ENDURANCE] = this.statsAssigned.endurance;
+            sObj[ENUMS.AGILITY] = this.statsAssigned.agility;
+            sObj[ENUMS.DEXTERITY] = this.statsAssigned.dexterity;
+            sObj[ENUMS.INTELLIGENCE] = this.statsAssigned.intelligence;
+            sObj[ENUMS.WILLPOWER] = this.statsAssigned.willpower;
+            sObj[ENUMS.CHARISMA] = this.statsAssigned.charisma;
             if (p < 27){
                 this.errorText.text = "You need to spend all of your stat points!";
                 return;
@@ -394,12 +402,13 @@
             }
             //send to server to create
             console.log("Success!!! send to server to create!");
-            Acorn.Net.socket_.emit('playerUpdate',{command: 'addUnit',
-                name: name,
-                class: this.classSelected,
-                stats: this.statsAssigned,
-                sex: this.sex
-            });
+            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                ENUMS.COMMAND, ENUMS.ADDUNIT,
+                ENUMS.NAME, name,
+                ENUMS.CLASS, this.classSelected,
+                ENUMS.STATS, sObj,
+                ENUMS.SEX, this.sex
+            ));
             document.body.removeChild( document.getElementById('nameInput'));
             Acorn.changeState('charScreen');
         }

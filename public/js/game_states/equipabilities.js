@@ -59,10 +59,11 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
                     if (confirm('Clear all equipped abilities?')){
-                        Acorn.Net.socket_.emit('playerUpdate',{
-                            'command': 'clearAbilities',
-                            'unitid': e.currentTarget.unitid
-                        });
+
+                        Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                            ENUMS.COMMAND, ENUMS.CLEARABILITIES,
+                            ENUMS.UNITID, e.currentTarget.unitid
+                        ));
                     }
                 }
             });
@@ -149,12 +150,12 @@
                         interactive: true,buttonMode: true,
                         clickFunc: function onClick(e){
                             //check AP then send to client
-                            Acorn.Net.socket_.emit('playerUpdate',{
-                                'command': 'unEquipAbility',
-                                'unitid': EquipAbilities.unitInfo.id,
-                                'classid': EquipAbilities.fromClass,
-                                'ablID': e.currentTarget.abl.id
-                            });
+                            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                                ENUMS.COMMAND, ENUMS.UNEQUIPABILITY,
+                                ENUMS.UNITID, EquipAbilities.unitInfo.id,
+                                ENUMS.CLASSID, EquipAbilities.fromClass,
+                                ENUMS.ABILITYID, e.currentTarget.abl.id
+                            ));
                         }
                     });
                     minus.abl = ability;
@@ -176,12 +177,13 @@
                         clickFunc: function onClick(e){
                             //check AP then send to client
                             if (EquipAbilities.unitInfo.abilitySlots-EquipAbilities.unitInfo.usedAbilitySlots >= e.currentTarget.abl.sCost){
-                                Acorn.Net.socket_.emit('playerUpdate',{
-                                    'command': 'equipAbility',
-                                    'unitid': EquipAbilities.unitInfo.id,
-                                    'classid': EquipAbilities.fromClass,
-                                    'ablID': e.currentTarget.abl.id
-                                });
+
+                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                                    ENUMS.COMMAND, ENUMS.EQUIPABILITY,
+                                    ENUMS.UNITID, EquipAbilities.unitInfo.id,
+                                    ENUMS.CLASSID, EquipAbilities.fromClass,
+                                    ENUMS.ABILITYID, e.currentTarget.abl.id
+                                ));
                             }
                         }
                     });

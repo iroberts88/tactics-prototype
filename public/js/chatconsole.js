@@ -54,7 +54,9 @@
                     if (ChatConsole.string == 'ping'){
                         Player.pingTime = Date.now();
                     }
-                    Acorn.Net.socket_.emit('clientCommand',{command: ChatConsole.string});
+                    Acorn.Net.socket_.emit(ENUMS.CLIENTCOMMAND,Utils.createServerData(
+                        ENUMS.COMMAND, ChatConsole.string
+                    ));
                     ChatConsole.string = '';
                     ChatConsole.textSprite.text = '>';
                 }else{

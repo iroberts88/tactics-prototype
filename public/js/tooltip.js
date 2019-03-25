@@ -207,13 +207,13 @@
         //item = the item to work on
 
         var ttArray = [{text: '<' + item.name + '>'}];
-        if (typeof item.weight != 'undefined'){ttArray.push({text: '{Weight: }' + item.weight});}
-        if (typeof item.description != 'undefined'){ttArray.push({text: item.description,color: '#ffd9b3'});}
-        if (typeof item.eqData.damage != 'undefined'){ttArray.push({text: '{Damage: }' + item.eqData.damage});}
-        if (typeof item.eqData.rangeMin != 'undefined'){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
+        if (item.weight){ttArray.push({text: '{Weight: }' + item.weight});}
+        if (item.description){ttArray.push({text: item.description,color: '#ffd9b3'});}
+        if (item.eqData.damage){ttArray.push({text: '{Damage: }' + item.eqData.damage});}
+        if (item.eqData.rangeMin){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
         var t = "Recharges <";
-        if (typeof item.eqData.recharge != 'undefined'){t += item.eqData.recharge + '%> shield capacity per turn'}
-        if (typeof item.eqData.delay != 'undefined'){
+        if (item.eqData.recharge){t += item.eqData.recharge + '%> shield capacity per turn'}
+        if (item.eqData.delay){
             if (item.eqData.delay == 1){
                 t += '.'
             }else{
@@ -222,7 +222,7 @@
             ttArray.push({text: t});
         }
 
-        if (typeof item.classes != 'undefined'){
+        if (item.classes){
             var cText = '';
             if (item.classes == 'ALL'){
                 cText = 'ALL';
@@ -237,10 +237,10 @@
             }
             ttArray.push({text: '{Classes: }' + cText});
         }
-        if (typeof item.onUseText != 'undefined'){
+        if (item.onUseText){
             ttArray.push({text: '{On use: }' + item.onUseText});
         }
-        if (typeof item.onEquipText != 'undefined'){
+        if (item.onEquipText){
             for (var i = 0; i < item.onEquipText.length;i++){
                 ttArray.push({text: item.onEquipText[i]});
             }

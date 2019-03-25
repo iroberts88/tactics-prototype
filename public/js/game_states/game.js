@@ -270,6 +270,7 @@
             window.currentGameMap = this.map;
 
             Graphics.showLoadingMessage(false);
+
         },
         addUnit: function(unit){
             var x = 0;
@@ -433,6 +434,7 @@
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
             this.resetTurnMenu();
+            this.getLineOfSight();
         },
         resetTurnMenu: function(){
             if (this.turnMenu){
@@ -663,10 +665,11 @@
                 if (!Game.moveActive){
                     return;
                 }
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'move',
-                    q: node.q,
-                    r: node.r
-                });
+                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                    ENUMS.COMMAND, ENUMS.MOVE,
+                    ENUMS.Q, node.q,
+                    ENUMS.R, node.r
+                ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
             var n = function(){
@@ -696,10 +699,11 @@
                 if (!Game.attackActive){
                     return;
                 }
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'attack',
-                    q: node.q,
-                    r: node.r
-                });
+                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                    ENUMS.COMMAND, ENUMS.ATTACK,
+                    ENUMS.Q, node.q,
+                    ENUMS.R, node.r
+                ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
                 Game.attackActive = false;
             }
@@ -746,11 +750,12 @@
                 if (!Game.abilityActive){
                     return;
                 }
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'ability',
-                    abilityid: Game.abilityInfo.id,
-                    q: node.q,
-                    r: node.r
-                });
+                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                    ENUMS.COMMAND, ENUMS.ABILITY,
+                    ENUMS.ABILITYID, Game.abilityInfo.id,
+                    ENUMS.Q, node.q,
+                    ENUMS.R, node.r
+                ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
             var n = function(){
@@ -770,7 +775,10 @@
             var text = "End " + this.units[this.turnList[0]].name + 's turn facing ' + dir + '?';
             var y = function(){
                 console.log('Send end command!!');
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'endTurn',direction:dir});
+                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
+                    ENUMS.COMMAND, ENUMS.ENDTURN,
+                    ENUMS.DIRECTION, dir,
+                ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
             var n = function(){
@@ -841,7 +849,7 @@
             gfx.lineTo(2,2);
             this.drawBoxAround(scene.confirmButton,gfx);
             this.drawBoxAround(cancelButton,gfx);
-
+``
             //add it to uiWindows
             scene.position.x = Graphics.width/2-w/2;
             scene.position.y = Graphics.height/4-h/2;
@@ -888,7 +896,7 @@
                 //action buttons!
 
                 //Move button
-                if (unit.moveLeft == 0){
+                if (!unit.moveLeft){
                     var moveButton = Graphics.makeUiElement({
                         text: 'Move',
                         style: style,
@@ -914,7 +922,7 @@
                 scene.turnMenuElements.moveButton = moveButton;
                 cont.addChild(moveButton);  
                 //Move text
-                var t = (typeof unit.moveLeft == 'undefined') ? 'Moves left: ???' : 'Moves left: ' + unit.moveLeft;
+                var t = (unit.moveLeft == null) ? 'Moves left: ???' : 'Moves left: ' + unit.moveLeft;
                 var moveText = new PIXI.Text(t, style);
                 moveText.anchor.x = 0.5;
                 moveText.position.x = w*0.75;
@@ -1244,7 +1252,7 @@
             var style  = AcornSetup.baseStyle2;
             scene.addChild(gfx);
             scene.addChild(cont);
-            if (typeof unit.classInfo.equippedAbilities == 'undefined'){
+            if (!unit.classInfo.equippedAbilities){
                 //you dont have the full info for this unit. No ability menu available
                 return null;
             }
@@ -1481,7 +1489,7 @@
             var cPer = 0;
             var color = Graphics.pallette.color1
             if (this.units[id].isCastTimer){
-                txt1 = Game.units[id].abilityName;
+                txt1 = Game.units[id].name;
                 txt2 = '(' +Game.units[Game.units[id].unitid].name + ')';
                 cPer = (Game.units[id].charge/Game.chargeMax);
                 if (cPer > 1){
@@ -1599,7 +1607,7 @@
             //LEVEL AND CLASS
             var str = unit.classInfo.currentClass.charAt(0).toUpperCase() + unit.classInfo.currentClass.substr(1);
             var n = 'Level ' + unit.level + ' ' + str;
-            if (typeof unit.classInfo.baseClass != 'undefined'){
+            if (unit.classInfo.baseClass){
                 var str = unit.classInfo.baseClass.charAt(0).toUpperCase() + unit.classInfo.baseClass.substr(1);
                 n += ' (' + str + ')';
             }
@@ -1669,7 +1677,7 @@
                 strokeThickness: 2,
             };
             //MOVE
-            var n = (typeof unit.move == 'undefined') ? 'Move: ???' : 'Move: ' + unit.move;
+            var n = (!unit.move) ? 'Move: ???' : 'Move: ' + unit.move;
             var movText = new PIXI.Text(n, style2);
             movText = Graphics.fitText(movText,w/3-5);
             movText.position.x = 10;
@@ -1677,7 +1685,7 @@
             cont.addChild(movText);
 
             //JUMP
-            var n = (typeof unit.jump == 'undefined') ? 'Jump: ???' : 'Jump: ' + unit.jump;
+            var n = (!unit.jump) ? 'Jump: ???' : 'Jump: ' + unit.jump;
             var jmpText = new PIXI.Text(n, style2);
             jmpText = Graphics.fitText(jmpText,w/3-5);
             jmpText.position.x = 10;
@@ -1685,7 +1693,7 @@
             cont.addChild(jmpText);
 
             //SPEED
-            var n = (typeof unit.speed == 'undefined') ? 'Speed: ???' : 'Speed: ' + unit.speed;
+            var n = (!unit.speed) ? 'Speed: ???' : 'Speed: ' + unit.speed;
             var spdText = new PIXI.Text(n, style2);
             spdText = Graphics.fitText(spdText,w/3-5);
             spdText.position.x = 10;
@@ -1693,7 +1701,7 @@
             cont.addChild(spdText);
 
             //POWER
-            var n = (typeof unit.power == 'undefined') ? 'Power: ???' : 'Power: ' + unit.power;
+            var n = (!unit.power) ? 'Power: ???' : 'Power: ' + unit.power;
             var powText = new PIXI.Text(n, style2);
             powText = Graphics.fitText(powText,w/3-5);
             powText.position.x = 10;
@@ -1701,7 +1709,7 @@
             cont.addChild(powText);
 
             //SKILL
-            var n = (typeof unit.skill == 'undefined') ? 'Skill: ???' : 'Skill: ' + unit.skill;
+            var n = (!unit.skill) ? 'Skill: ???' : 'Skill: ' + unit.skill;
             var sklText = new PIXI.Text(n, style2);
             sklText = Graphics.fitText(sklText,w/3-5);
             sklText.position.x = 10;
@@ -1709,7 +1717,7 @@
             cont.addChild(sklText);
 
             //TACTICS
-            var n = (typeof unit.tactics == 'undefined') ? 'Tactics: ???' : 'Tactics: ' + unit.tactics;
+            var n = (!unit.tactics) ? 'Tactics: ???' : 'Tactics: ' + unit.tactics;
             var tacText = new PIXI.Text(n, style2);
             tacText = Graphics.fitText(tacText,w/3-5);
             tacText.position.x = 10;
@@ -1717,7 +1725,7 @@
             cont.addChild(tacText);
 
             //STRENGTH
-            var n = (typeof unit.strength == 'undefined') ? 'STR: ???' : 'STR: ' + unit.strength;
+            var n = (!unit.strength) ? 'STR: ???' : 'STR: ' + unit.strength;
             var strText = new PIXI.Text(n, style2);
             strText = Graphics.fitText(strText,w/3-5);
             strText.position.x = 10;
@@ -1725,7 +1733,7 @@
             cont.addChild(strText);
 
             //ENDURANCE
-            var n = (typeof unit.endurance == 'undefined') ? 'END: ???' : 'END: ' + unit.endurance;
+            var n = (!unit.endurance) ? 'END: ???' : 'END: ' + unit.endurance;
             var endText = new PIXI.Text(n, style2);
             endText = Graphics.fitText(endText,w/3-5);
             endText.position.x = 10;
@@ -1733,7 +1741,7 @@
             cont.addChild(endText);
 
             //DEXTERITY
-            var n = (typeof unit.dexterity == 'undefined') ? 'DEX: ???' : 'DEX: ' + unit.dexterity;
+            var n = (!unit.dexterity) ? 'DEX: ???' : 'DEX: ' + unit.dexterity;
             var dexText = new PIXI.Text(n, style2);
             dexText = Graphics.fitText(dexText,w/3-5);
             dexText.position.x = 10;
@@ -1741,7 +1749,7 @@
             cont.addChild(dexText);
 
             //AGILITY
-            var n = (typeof unit.agility == 'undefined') ? 'AGI: ???' : 'AGI: ' + unit.agility;
+            var n = (!unit.agility) ? 'AGI: ???' : 'AGI: ' + unit.agility;
             var agiText = new PIXI.Text(n, style2);
             agiText = Graphics.fitText(agiText,w/3-5);
             agiText.position.x = 10;
@@ -1749,7 +1757,7 @@
             cont.addChild(agiText);
 
             //INTELLIGENCE
-            var n = (typeof unit.intelligence == 'undefined') ? 'INT: ???' : 'INT: ' + unit.intelligence;
+            var n = (!unit.intelligence) ? 'INT: ???' : 'INT: ' + unit.intelligence;
             var intText = new PIXI.Text(n, style2);
             intText = Graphics.fitText(intText,w/3-5);
             intText.position.x = 10;
@@ -1757,7 +1765,7 @@
             cont.addChild(intText);
 
             //WILLPOWER
-            var n = (typeof unit.willpower == 'undefined') ? 'WIL: ???' : 'WIL: ' + unit.willpower;
+            var n = (!unit.willpower) ? 'WIL: ???' : 'WIL: ' + unit.willpower;
             var wilText = new PIXI.Text(n, style2);
             wilText = Graphics.fitText(wilText,w/3-5);
             wilText.position.x = 10;
@@ -1765,7 +1773,7 @@
             cont.addChild(wilText);
 
             //CHARISMA
-            var n = (typeof unit.charisma == 'undefined') ? 'CHA: ???' : 'CHA: ' + unit.charisma;
+            var n = (!unit.charisma) ? 'CHA: ???' : 'CHA: ' + unit.charisma;
             var chaText = new PIXI.Text(n, style2);
             chaText = Graphics.fitText(chaText,w/3-5);
             chaText.position.x = 10;
@@ -1883,10 +1891,10 @@
             a.sprite1.filters = [Game.map.outlineFilter];
             a.sprite2.filters = [Game.map.outlineFilter];
             //set node info text
-            var t = 'Node ' + a.q + ',' + a.r + '   ' ;
+            var t = '<Node ' + a.q + ',' + a.r + '>  <LOS: ' +a.los + '> ' ;
             this.nodeText.visible = true;
             this.nodeInfo.visible = true;
-            this.nodeInfo.text = t + '     Height: ' + a.h + '    Type: ' + a.tile;
+            this.nodeInfo.text = t + ' <Height: ' + a.h + '>  <Type: ' + a.tile + '>';
             this.nodeText.position.x = this.nodeInfo.position.x - this.nodeInfo.width/2;
             this.nodeText.position.y = this.nodeInfo.position.y - this.nodeInfo.height - 25;
             //find units, set unit text
@@ -2007,7 +2015,6 @@
                 var highestAngle = 0;
                 for (var j = 1; j < r1.length;j++){
                     var a = this.map.getAxial(r1[j]);
-                    var endingHeight = 0;
                     if (a.unit != null){
                         endingHeight = a.unit.height;
                     }
@@ -2034,7 +2041,6 @@
                 highestAngle = 0;
                 for (var j = 1; j < r2.length;j++){
                     var a = this.map.getAxial(r2[j]);
-                    var endingHeight = 0;
                     if (a.unit != null){
                         endingHeight = a.unit.height;
                     }
@@ -2063,15 +2069,18 @@
 
                 if (blocked1 && blocked2){
                     //NO LOS
+                    aNode.los = 'none';
                 }else if ((!blocked1 && !blocked2) == false){
                     //PARTIAL LOS
                     aNode.sprite1.tint = this.map.partialTint;
                     aNode.sprite2.tint = this.map.partialTint;
+                    aNode.los = 'partial';
                 }else{
                     //FULL LOS AND BREAK
                     aNode.sprite1.tint = 0xFFFFFF;
                     aNode.sprite2.tint = 0xFFFFFF;
-                    break;
+                    aNode.los = 'full';
+                    return;
                 }
             }
         },
