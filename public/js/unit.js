@@ -92,7 +92,8 @@
         if (data[ENUMS.CURRENTNODE]){
             this.currentNode = Game.map.axialMap[data[ENUMS.CURRENTNODE][ENUMS.Q]][data[ENUMS.CURRENTNODE][ENUMS.R]];
         }else{
-            this.currentNode = data[ENUMS.CURRENTNODE];
+            this.currentNode = null;
+            this.visible = false;
         }
         this.chargePercent = 0;
 
@@ -199,7 +200,7 @@
                 classes:"ALL",
                 description:"Hand to hand combat",
                 eqData:{range: 1, damage: 10},
-                itemID:"weapon_fists",
+                id:"weapon_fists",
                 name: "Punch",
                 type: "weapon",
                 weight:0

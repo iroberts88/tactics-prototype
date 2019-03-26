@@ -253,7 +253,7 @@ function User() {
                     }
                     var inv = [];
                     for (var i = 0; i < this.inventory.items.length;i++){
-                       inv.push([this.inventory.items[i].itemID,this.inventory.items[i].amount]);
+                       inv.push([this.inventory.items[i].id,this.inventory.items[i].amount]);
                     }
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {

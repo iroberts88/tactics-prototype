@@ -34,7 +34,7 @@ Inventory.prototype.init = function(data){
             'min': 1,
             'max': 1000,
             formula: function(){return Math.round(Math.round(3+Math.pow(this.owner.strength.value,1.4))*this.pMod+this.nMod);},
-            next: function(){this.owner.speed.set()}
+            next: function(uc){this.owner.speed.set(uc)}
         });
     }else{
         //the player's main inventory
@@ -78,7 +78,7 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
             return false;
         }
     }catch(e){
-        this.engine.debug(this.owner.owner,{'id': 'addItemUnitError', 'error': e.stack, 'itemID': id});
+        this.engine.debug('weaponUnEquipActionError',e,id);
     }
 }
 
@@ -116,7 +116,7 @@ Inventory.prototype.addItem = function(id, amt){
         }
         this.engine.queuePlayer(this.owner,ENUMS.ADDITEMTOPLAYER,data);
     }catch(e){
-        this.engine.debug(this.owner,{'id': 'addItemPlayerError', 'error': e.stack, 'itemID': id});
+        this.engine.debug('additemplayerError',e,index);
     }
 }
 
@@ -148,7 +148,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('weaponUnEquipActionError',e,index);
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -157,7 +157,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'weaponEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('weaponEquipActionError',e,index);
             }
             this.owner.weapon = index;
         }else if (item.type == 'shield'){
@@ -171,7 +171,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('shieldUnEquipActionError',e,index);
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -180,7 +180,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'shieldEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('shieldEquipActionError',e,index);
             }
             this.owner.shield = index;
             this.owner.maximumShields.set();
@@ -195,7 +195,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('accessoryUnEquipActionError',e,index);
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -204,7 +204,7 @@ Inventory.prototype.equip = function(index,updateClient){
                     onEquipFunc(this.owner,item.eqData.onEquip[i]);
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'accessoryEquipActionError', error: e.stack, iterator: i,item: item,a: Actions});
+                this.engine.debug('accessoryEquipActionError',e,index);
             }
             this.owner.accessory = index;
         }else{
@@ -219,7 +219,7 @@ Inventory.prototype.equip = function(index,updateClient){
             ));
         }
     }catch(e){
-        this.engine.debug(this.owner.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+        this.engine.debug('equipItemError',e,index);
     }
 }
 
@@ -237,7 +237,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'weaponUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('weaponUnEquipError',e,item);
             }
             this.owner.weapon = null;
         }else if (item.type == 'shield'){
@@ -250,7 +250,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'shieldUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('shieldUnEquipError',e,item);
             }
             this.owner.shield = null;
         }else if (item.type == 'accessory'){
@@ -263,7 +263,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                     }
                 }
             }catch(e){
-                this.engine.debug(this.owner.owner,{'id': 'accessoryUnEquipActionError', error: e.stack, iterator: i,item: item});
+                this.engine.debug('accessoryUnEquipError',e,item);
             }
             this.owner.accessory = null;
         }else{
@@ -278,7 +278,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
             ));
         }
     }catch(e){
-        this.engine.debug(this.owner,{'id': 'equipItemError', 'error': e.stack, 'index': index});
+        this.engine.debug('unequipItemError',e,index);
     }
 }
 
@@ -339,7 +339,7 @@ Inventory.prototype.contains = function(id){
     //returns an array [contains item,at index]
     var b = [false,0];
     for (var i = 0;i < this.items.length;i++){
-        if (this.items[i].itemID === id){
+        if (this.items[i].id === id){
             b[0] = true;
             b[1] = i;
         }
@@ -350,7 +350,7 @@ Inventory.prototype.getItemID = function(index){
     //check if Inventory has item
     //returns an array [contains item,at index]
     if (this.items[index]){
-        return this.items[index].itemID;
+        return this.items[index].id;
     }
     return null;
 }

@@ -881,7 +881,6 @@ Actions.prototype.heroicCharge = function(unit,session,data){
     		}
     	}
     }
-    console.log(nodes);
     if (!data){return false;}
     data[ENUMS.ACTIONDATA].splice(0,0,unit.engine.createClientData(
         ENUMS.ACTION, ENUMS.ATTACK,

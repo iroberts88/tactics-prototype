@@ -226,7 +226,7 @@
                 }else{
                     //existing item, find and add
                     for (var i = 0; i < Player.inventory.length;i++){
-                        if (Player.inventory[i].itemID == data[ENUMS.ITEM]){
+                        if (Player.inventory[i].id == data[ENUMS.ITEM]){
                             Player.inventory[i].amount += data[ENUMS.AMOUNT];
                         }
                     }

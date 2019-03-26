@@ -123,7 +123,7 @@ var Unit = function(){
         classes:"ALL",
         description:"Hand to hand combat",
         eqData:{range: 1, damage: 10},
-        itemID:"weapon_fists",
+        id:"weapon_fists",
         name:"Fists",
         type:"weapon",
         weight:0
@@ -301,8 +301,8 @@ Unit.prototype.init = function(data) {
         'value': 1,
         'min': 1,
         'max': 20,
-        next: function(){
-            try{this.owner.inventory.maxWeight.set();}catch(e){}
+        next: function(uc){
+            try{this.owner.inventory.maxWeight.set(uc);}catch(e){}
         }
     });
     this.endurance = new Attribute();
@@ -737,7 +737,7 @@ Unit.prototype.getDBObj = function(){
 
     dbObj['inventory'] = [];
     for (var i = 0; i < this.inventory.items.length;i++){
-        dbObj['inventory'].push(this.inventory.items[i].itemID);
+        dbObj['inventory'].push(this.inventory.items[i].id);
     }
 
     dbObj['weapon'] = this.weapon;
@@ -836,8 +836,12 @@ Unit.prototype.getClientData = function(less = false){
     return data;
 }
 
-Unit.prototype.getLessClientData = function(){
+Unit.prototype.getLessClientData = function(noNode = false){
     var data = this.getClientData(true);
+    if (noNode){
+        //This unit is not in LOS
+        data[ENUMS.CURRENTNODE] = null;
+    }
     return data;
 
 }

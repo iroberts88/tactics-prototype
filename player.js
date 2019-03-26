@@ -26,7 +26,8 @@ var Player = function(){
 
     //game variables
     this.identifiedUnits = {};
-    this.myUnits = {}
+    this.unitsNotInLos = {};
+    this.myUnits = {};
 
 };
 
@@ -66,6 +67,29 @@ Player.prototype.hasUnit = function(id){
     }
     return false;
 }
+
+Player.prototype.getUnitsNotInLos = function(){
+    for (var i in this.session.players){
+        if (this.session.players[i] == this){
+            continue;
+        }
+        var enemyPlayer = this.session.players[i];
+        for (var u in enemyPlayer.myUnits){
+            //default to NO LOS
+            var los = 1;
+            for (var mu in this.myUnits){
+                los = this.session.map.getLOS(enemyPlayer.myUnits[u].currentNode,this.myUnits[mu].currentNode);
+                if (los != 1){break;}
+            }
+            if (los == 1){
+                this.unitsNotInLos[u] = true;
+            }else{
+                this.unitsNotInLos[u] = false;
+            }
+        }
+    }
+};
+
 Player.prototype.onDisconnect = function(callback) {
     this.onDisconnectHandler = callback;
 };
@@ -343,14 +367,14 @@ Player.prototype.setupSocket = function() {
                                 return;
                             }
                             var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var itemID = that.user.inventory.getItemID(data[ENUMS.INDEX]);
-                            console.log(itemID);
-                            if (!unit || !itemID){
+                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            console.log(id);
+                            if (!unit || !id){
                                 console.log('itemtoUnit Error');
                                 return;
                             }
                             //add item to unit
-                            if (unit.inventory.addItemUnit(itemID,1, true)){
+                            if (unit.inventory.addItemUnit(id,1, true)){
                                 //remove item from player
                                 that.user.inventory.removeItem(data[ENUMS.INDEX],1,true);
                             }
@@ -365,13 +389,13 @@ Player.prototype.setupSocket = function() {
                                 return;
                             }
                             var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var itemID = that.user.inventory.getItemID(data[ENUMS.INDEX]);
-                            if (!unit || !itemID){
+                            var id = unit.inventory.getItemID(data[ENUMS.INDEX]);
+                            if (!unit || !id){
                                 console.log('itemtoPlayer Error');
                                 return;
                             }
                             //add item to player
-                            that.user.inventory.addItem(itemID,1, true);
+                            that.user.inventory.addItem(id,1, true);
                             //remove item from unit
                             unit.inventory.removeItemUnit(data[ENUMS.INDEX],true);
                         }catch(e){
@@ -386,15 +410,15 @@ Player.prototype.setupSocket = function() {
                                 return;
                             }
                             var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var itemID = that.user.inventory.getItemID(data[ENUMS.INDEX]);
-                            if (!unit || !itemID){
+                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            if (!unit || !id){
                                 console.log('equip item Error');
                                 return;
                             }
                             //add item to player
                             unit.inventory.equip(data[ENUMS.INDEX], true);
                         }catch(e){
-                            that.engine.debug('equipItemError',e.stack,data);
+                            that.engine.debug('equipItemError',e,data);
                         }
                         break;
                     case ENUMS.UNEQUIPITEM:
@@ -405,8 +429,8 @@ Player.prototype.setupSocket = function() {
                                 return;
                             }
                             var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var itemID = that.user.inventory.getItemID(data[ENUMS.INDEX]);
-                            if (!unit || !itemID){
+                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            if (!unit || !id){
                                 console.log('equip item Error');
                                 return;
                             }
@@ -670,7 +694,7 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-addItem':
                     // attempt to add an item to player inventory
-                    // -addItem <itemID> <optional:amount>
+                    // -addItem <id> <optional:amount>
                     try{
                         var amt = 1;
                         if (typeof commands[2] != 'undefined'){
@@ -684,7 +708,7 @@ Player.prototype.setupSocket = function() {
                     break;
                 case '-addItemUnit':
                     // attempt to add an item to unit inventory
-                    // -addItemUnit <unitid> <itemID> <optional:amount>
+                    // -addItemUnit <unitid> <id> <optional:amount>
                     try{
                         var amt = 1;
                         if (typeof commands[3] != 'undefined'){

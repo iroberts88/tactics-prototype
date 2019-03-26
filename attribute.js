@@ -48,13 +48,13 @@ Attribute.prototype.init = function(data){
     	this.next = data.next;
     }
 }
-Attribute.prototype.set = function(updateClient){
+Attribute.prototype.set = function(updateClient = false){
 	if (this.setBool){
 		//force value change
 		this.value = this.setValue;
 	}else{
 		//normal set value
-		this.value = this.formula();
+		this.value = this.formula(updateClient);
 		//check bounds
 		if (typeof this.min != 'undefined'){
     		if (this.value < this.min){
@@ -67,14 +67,23 @@ Attribute.prototype.set = function(updateClient){
     		}
     	}
 	}
-    try{this.next()}catch(e){}
+    try{this.next(updateClient)}catch(e){}
     try{
         if (updateClient && this.updateClient){
-            this.player.session.queueDataIfIdentified(ENUMS.SETUNITSTAT,this.engine.createClientData(
-                ENUMS.UNITID, this.owner.id,
-                ENUMS.STAT, this.id,
-                ENUMS.VALUE, this.value
-            ));
+            if (this.player.session){
+                this.player.session.queueDataIfIdentified(ENUMS.SETUNITSTAT,this.engine.createClientData(
+                    ENUMS.UNITID, this.owner.id,
+                    ENUMS.STAT, this.id,
+                    ENUMS.VALUE, this.value
+                ));
+            }else{
+                this.engine.queuePlayer(this.player, ENUMS.SETUNITSTAT,this.engine.createClientData(
+                    ENUMS.UNITID, this.owner.id,
+                    ENUMS.STAT, this.id,
+                    ENUMS.VALUE, this.value
+                ));
+
+            }
         }
     }catch(e){
         console.log(e);

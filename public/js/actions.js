@@ -154,7 +154,7 @@
             if (data.target.currentNode.unit == data.target){
                 data.target.currentNode.unit = null;
             }
-            data.newNode1 = Game.map.axialMap[datadata[ENUMS.UNITNEWNODE][ENUMS.Q]][datadata[ENUMS.UNITNEWNODE][ENUMS.R]];
+            data.newNode1 = Game.map.axialMap[data[ENUMS.UNITNEWNODE][ENUMS.Q]][data[ENUMS.UNITNEWNODE][ENUMS.R]];
             data.newNode2 = Game.map.axialMap[data[ENUMS.TARGETNEWNODE][ENUMS.Q]][data[ENUMS.TARGETNEWNODE][ENUMS.R]];
             data.startPos1 = [data.unit.sprite.position.x,data.unit.sprite.position.y];
             data.startPos2 = [data.target.sprite.position.x,data.target.sprite.position.y];

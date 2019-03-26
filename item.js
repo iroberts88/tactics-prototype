@@ -1,7 +1,7 @@
 
 
 var Item = function(){
-    this.itemID = null;
+    this.id = null;
     this.name = null;
     this.description = null;
     this.onUse = null;
@@ -26,7 +26,7 @@ var Item = function(){
 
 Item.prototype.getClientData = function(){
     var data = {};
-    data[ENUMS.ID] = this.itemID;
+    data[ENUMS.ID] = this.id;
     data[ENUMS.NAME] = this.name;
     data[ENUMS.DESCRIPTION] = this.description;
     data[ENUMS.TYPE] = this.type;
@@ -64,7 +64,7 @@ Item.prototype.getClientData = function(){
 }
 
 Item.prototype.init = function(data) {
-    this.itemID = data.itemid;
+    this.id = data.itemid;
     this.name = data.name;
     this.description = data.description;
     this.classes = data.classes;

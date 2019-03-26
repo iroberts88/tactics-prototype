@@ -308,13 +308,10 @@ HexMap.prototype.getDAngle = function(sNode,eNode){
     }
     return Math.abs(Math.tan(dY/dX));
 }
-HexMap.prototype.getLOS = function(startNode,endNode,newUnit){
+HexMap.prototype.getLOS = function(startNode,endNode){
     var unit1 = startNode.unit;
     var aH = unit1.height + startNode.h;
     var unit2 = endNode.unit;
-    if (typeof newUnit == 'undefined'){
-        newUnit = null;
-    }
 
     var cPos = {
         x: endNode.x + this.losAngle,
@@ -382,13 +379,13 @@ HexMap.prototype.getLOS = function(startNode,endNode,newUnit){
     }
     if (blocked1 && blocked2){
         //Full cover / no LoS
-        return ['none',newUnit];
+        return 1;
     }else if ((!blocked1 && !blocked2) == false){
         //partial cover / partial los
-        return ['partial',newUnit];
+        return 2;
     }else{
         //NO COVER / Full los
-        return ['full',newUnit];
+        return 3;
     }
 }
 HexMap.prototype.findPath = function(startNode,endNode,options){
@@ -648,6 +645,19 @@ AxialNode.prototype.getClientData = function(){
     cData[ENUMS.H] = this.h;
     cData[ENUMS.RESOURCE] = this.tile;
     cData[ENUMS.DELETED] = this.deleted;
+    return cData;
+}
+AxialNode.prototype.print = function(){
+    console.log('---------------');
+    console.log('NODE ID: ' + this.nodeid);
+    console.log('Q: ' + this.q);
+    console.log('R: ' + this.r);
+    console.log('X: ' + this.x);
+    console.log('Y: ' + this.y);
+    console.log('Z: ' + this.z);
+    console.log('H: ' + this.h);
+    var u = (this.unit == null) ? 'none' : this.unit.id;
+    console.log('Unit?: ' + u);
     return cData;
 }
 

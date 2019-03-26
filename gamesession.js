@@ -57,6 +57,10 @@ var GameSession = function (engine) {
     this.numbers = {};
     this.operators = {};
 
+    this.moveChargePercent = 0.35;
+    this.actionChargePercent = 0.35;
+    this.waitChargePercent = 0.3;
+
     this.clientActionEnums = {
         Test: 'test',
         Move: 'move',
@@ -99,6 +103,7 @@ GameSession.prototype.init = function (data) {
     for (var i = 0; i < o.length;i++){
         this.operators[o.charAt(i)] = true;
     }
+
 };
 
 
@@ -137,6 +142,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
         for (var i in this.allUnits){
             this.allUnits[i].reset();
         }
+        this.getUnitsNotInLos();
         this.getTurnOrder();
 
         //send down unit info
@@ -154,7 +160,11 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
                 if (player.myUnits[unit.id]){
                     cData[ENUMS.MYUNITS].push(unit.getClientData());
                 }else{
-                    cData[ENUMS.OTHERUNITS].push(unit.getLessClientData());
+                    if (player.unitsNotInLos[i] != true){
+                        cData[ENUMS.OTHERUNITS].push(unit.getLessClientData());
+                    }else{
+                        cData[ENUMS.OTHERUNITS].push(unit.getLessClientData(true));
+                    }
                 }
             }
             for (var i = 0; i < this.turnOrder.length;i++){
@@ -186,15 +196,15 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                 //process turn and get new Turn order
                 this.currentInGameState = this.inGameStates.BetweenTurns;
                 //first unit has completed the turn??
-                if (this.allUnits[this.turnOrder[0].id].moveUsed){
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.15;
+                if (this.allUnits[this.turnOrder[0].id].moveUsed){ 
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.moveChargePercent;
                     this.allUnits[this.turnOrder[0].id].moveUsed = false;
                 }
                 if (this.allUnits[this.turnOrder[0].id].actionUsed){
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.15;
+                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.actionChargePercent;
                     this.allUnits[this.turnOrder[0].id].actionUsed = false;
                 }
-                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*0.7;
+                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.waitChargePercent;
                 this.getTurnOrder();
                 var turnList = [];
                 var turnPercent = [];
@@ -262,7 +272,7 @@ GameSession.prototype.gameStart = function(){
         for (var i = 0; i < 5;i++){
             var uid = player.user.characters[i].id;
             this.allUnits[uid] = player.user.characters[i];
-            player.myUnits[uid] = uid;
+            player.myUnits[uid] = this.allUnits[uid];
             //init unit health/etc
             this.allUnits[uid].reset();
             //set position on the map
@@ -375,6 +385,12 @@ GameSession.prototype.getTurnOrder = function(){
     }
 }
 
+GameSession.prototype.getUnitsNotInLos = function(){
+    for (var i in this.players){
+        this.players[i].getUnitsNotInLos();
+    }
+}
+
 ////////////////////////////////////////////////////////////////
 //                  Unit Turn Functions                        /
 ////////////////////////////////////////////////////////////////
@@ -414,7 +430,7 @@ GameSession.prototype.executeMove = function(data){
             }
         }
         var nextNode = data.path[i];
-        //TODO check reactions for each moved node
+        //TODO check reactions for each moved node?
 
         //set the new node for the unit
         var dir = this.map.getNewDirectionCube(data.path[i-1],data.path[i]);
