@@ -308,7 +308,7 @@ HexMap.prototype.getDAngle = function(sNode,eNode){
     }
     return Math.abs(Math.tan(dY/dX));
 }
-HexMap.prototype.getLOS = function(startNode,endNode){
+HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
     var unit1 = startNode.unit;
     var aH = unit1.height + startNode.h;
     var unit2 = endNode.unit;
@@ -379,13 +379,13 @@ HexMap.prototype.getLOS = function(startNode,endNode){
     }
     if (blocked1 && blocked2){
         //Full cover / no LoS
-        return 1;
+        return ['none',hitFirstUnit];
     }else if ((!blocked1 && !blocked2) == false){
         //partial cover / partial los
-        return 2;
+        return ['partial',hitFirstUnit];
     }else{
         //NO COVER / Full los
-        return 3;
+        return ['full',hitFirstUnit];
     }
 }
 HexMap.prototype.findPath = function(startNode,endNode,options){

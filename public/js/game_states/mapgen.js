@@ -807,11 +807,11 @@
                     if (typeof m[i] == 'undefined'){
                         m[i] = {};
                     }
-                    var node = this.getAxialNode(i,j);
+                    var node = Utils.createServerData(ENUMS.Q, i, ENUMS.R, j, ENUMS.RESOURCE, 'base', ENUMS.DELETED, false, ENUMS.H, 0);
                     m[i][j] = node;
                 }
             }
-            return {mapData: m};
+            return Utils.createServerData(ENUMS.MAPDATA, m);
         },
         initRhombus: function(){
             console.log('Generating a ' + this.size[0] + 'x' + this.size[1] + ' Rhombus Map');
@@ -820,12 +820,12 @@
             for (var i = 0; i < this.size[0];i++){
                 var row = {};
                 for (var j = 0; j < this.size[1];j++){
-                    var node = this.getAxialNode(i,j);
+                    var node = Utils.createServerData(ENUMS.Q, i, ENUMS.R, j, ENUMS.RESOURCE, 'base', ENUMS.DELETED, false, ENUMS.H, 0);
                     row[j] = node;
                 }
                 m[i] = row;
             }
-            return {mapData: m};
+            return Utils.createServerData(ENUMS.MAPDATA, m);
         },
         initTriangle: function(){
             console.log('Generating a ' + this.size + ' unit Triangle Map');
@@ -837,12 +837,12 @@
                 }
                 for (var j = 0; j < this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) < this.size){
-                        var node = this.getAxialNode(i,j);
+                        var node = Utils.createServerData(ENUMS.Q, i, ENUMS.R, j, ENUMS.RESOURCE, 'base', ENUMS.DELETED, false, ENUMS.H, 0);
                         m[i][j] = node;
                     }
                 }
             }
-            return {mapData: m};
+            return Utils.createServerData(ENUMS.MAPDATA, m);
         },
         initHexagon: function(){
             console.log('Generating a ' + this.size + ' unit Hexagon Map');
@@ -852,14 +852,14 @@
                 var row = {};
                 for (var j = this.size*-1; j <=this.size;j++){
                     if (Math.sqrt((i+j)*(i+j)) <= this.size){
-                        var node = this.getAxialNode(i,j);
+                        var node = Utils.createServerData(ENUMS.Q, i, ENUMS.R, j, ENUMS.RESOURCE, 'base', ENUMS.DELETED, false, ENUMS.H, 0);
                         row[j] = node;
                         this.tileCount += 1;
                     }
                 }
                 m[i] = row;
             }
-            return {mapData: m};
+            return Utils.createServerData(ENUMS.MAPDATA, m);
             
         },
         drawBG: function(){

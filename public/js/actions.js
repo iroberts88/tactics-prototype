@@ -23,6 +23,7 @@
         this.actions = actions;
         this.currentAction = null;
         this.actionIndex = 0;
+        this.hasAMove = false;
     };
     Actions.prototype.update = function(dt){
         if (this.currentAction == null && this.actionIndex < this.actions.length){
@@ -31,6 +32,10 @@
             try{
                 var actionFunc = this.getAction(this.currentAction[ENUMS.ACTION]);
                 actionFunc(dt,this,this.currentAction);
+
+                if (this.end && this.hasAMove){
+                    Game.getLineOfSight();
+                }
             }catch(e){
                 console.log(e);
             }
@@ -187,6 +192,7 @@
     Actions.prototype.move = function(dt,actions,data){
         //move the given unit 1 node
         if (typeof data.ticker == 'undefined'){
+            actions.hasAMove = true;
             data.ticker = 0;
             data.speed = 0.33; //seconds it takes to move 1 node
             data.unit = Game.units[data[ENUMS.UNITID]];
@@ -214,9 +220,6 @@
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
             actions.endAction(data);
-            if (actions.end){
-                Game.getLineOfSight();
-            }
             if(data[ENUMS.REDUCELEFT]){
                 data.unit.moveLeft -= 1;
             }

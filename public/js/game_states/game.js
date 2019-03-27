@@ -1987,10 +1987,12 @@
         },
         getLosOfNode: function(node){
             var aNode = this.map.getAxial(node);
+            aNode.los = 'none';
             aNode.sprite1.tint = this.map.noLosTint;
             aNode.sprite2.tint = this.map.noLosTint;
             var aH = aNode.h;
-            var startingHeight = 0;
+            var startingHeight = 2;
+            var endingHeight = 2;
             if (aNode.unit != null){
                 startingHeight = aNode.unit.height;
             }
@@ -1998,6 +2000,10 @@
             for (var u in this.units){
                 if (this.units[u].owner != window.playerID){continue;}
                 var c = this.map.getCube(this.units[u].currentNode)
+
+                if (this.map.cubeDistance(aNode,c) > 10){
+                    continue;
+                }
                 var cPos = {
                     x: c.x + this.losAngle,
                     y: c.y + this.losAngle,
