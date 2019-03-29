@@ -195,7 +195,8 @@ var Enums = {
     X: 192,
     Y: 193,
     Z: 194,
-    ADDNEWUNIT: 195
+    ADDNEWUNIT: 195,
+    VISION: 196
 
 }
 

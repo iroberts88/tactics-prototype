@@ -78,7 +78,12 @@ Player.prototype.getUnitsNotInLos = function(){
             //default to NO LOS
             var los = 1;
             for (var mu in this.myUnits){
-                los = this.session.map.getLOS(enemyPlayer.myUnits[u].currentNode,this.myUnits[mu].currentNode);
+                //check if the unit is out of vision distance
+                if (this.session.map.cubeDistance(enemyPlayer.myUnits[u].currentNode,this.myUnits[mu].currentNode) > this.myUnits[mu].vision.value){
+                    continue;
+                }
+                //check if the unit is within LOS
+                los = this.session.map._getLOS(enemyPlayer.myUnits[u].currentNode,this.myUnits[mu].currentNode);
                 if (los != 1){break;}
             }
             if (los == 1){
@@ -88,6 +93,7 @@ Player.prototype.getUnitsNotInLos = function(){
             }
         }
     }
+    console.log(this.unitsNotInLos);
 };
 
 Player.prototype.onDisconnect = function(callback) {

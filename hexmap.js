@@ -290,7 +290,7 @@ HexMap.prototype._getDMod = function(dir1,dir2){
     }
 }
 HexMap.prototype.getAngle = function(startHeight,endHeight,length){
-    //get the angle between two nodes - for use in getLOS()
+    //get HEIGHT angle between two nodes - for use in getLOS()
     if (endHeight > startHeight){
         return 90 + (180/Math.PI)*Math.atan((endHeight-startHeight)/length);
     }else if (endHeight < startHeight){
@@ -338,7 +338,8 @@ HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
         var angle = this.getAngle(aH,h,j);
         if (a.unit && j!=r1.length-1){
             //not the target node, check if the unit is blocking
-            console.log('Not unit?!')
+            //compare both the vertical and horizontal angles between both nodes
+            //if they are both the same - the projectile will hit the blocking unit
             var angle1 = this.getAngle(aH,(a.h+a.unit.height),j);
             var angle2 = this.getAngle(aH,(a.h+unit2.height),(r1.length-1));
             if (angle1 == angle2){
@@ -350,6 +351,72 @@ HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
                 }
             }
         }
+        if (highestAngle < angle){
+            highestAngle = angle;
+            blocked1 = false;
+        }else{
+            if (angle < highestAngle){
+                blocked1 = true;
+            }else{
+                blocked1 = false;
+            }
+        }
+    }
+    highestAngle = 0;
+    for (var j = 1; j < r2.length;j++){
+        var a = this.getAxial(r2[j]);
+        var h = (j==(r2.length-1)) ? (a.h+unit2.height): a.h;
+        var angle = this.getAngle(aH,h,j);
+
+        if (highestAngle < angle){
+            highestAngle = angle;
+            blocked2 = false;
+        }else{
+            if (angle < highestAngle){
+                blocked2 = true;
+            }else{
+                blocked2 = false;
+            }
+        }
+    }
+    if (blocked1 && blocked2){
+        //Full cover / no LoS
+        return ['none',hitFirstUnit];
+    }else if ((!blocked1 && !blocked2) == false){
+        //partial cover / partial los
+        return ['partial',hitFirstUnit];
+    }else{
+        //NO COVER / Full los
+        return ['full',hitFirstUnit];
+    }
+}
+HexMap.prototype._getLOS = function(startNode,endNode){
+
+    var unit1 = startNode.unit;
+    var aH = unit1.height + startNode.h;
+    var unit2 = endNode.unit;
+
+    var cPos = {
+        x: endNode.x + this.losAngle,
+        y: endNode.y + this.losAngle,
+        z: endNode.z + -this.losAngle*2,
+    }
+    var cNeg = {
+        x: endNode.x + -this.losAngle,
+        y: endNode.y + -this.losAngle,
+        z: endNode.z + this.losAngle,
+    }
+    var r1 = this.cubeLineDraw(startNode,cPos);
+    var r2 = this.cubeLineDraw(startNode,cNeg);
+
+    var blocked1 = false;
+    var blocked2 = false;
+    var highestAngle = 0;
+
+    for (var j = 1; j < r1.length;j++){
+        var a = this.getAxial(r1[j]);
+        var h = (j==(r1.length-1)) ? (a.h+unit2.height) : a.h;
+        var angle = this.getAngle(aH,h,j);
         if (highestAngle < angle){
             highestAngle = angle;
             blocked1 = false;
@@ -379,13 +446,13 @@ HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
     }
     if (blocked1 && blocked2){
         //Full cover / no LoS
-        return ['none',hitFirstUnit];
+        return 1;
     }else if ((!blocked1 && !blocked2) == false){
         //partial cover / partial los
-        return ['partial',hitFirstUnit];
+        return 2;
     }else{
         //NO COVER / Full los
-        return ['full',hitFirstUnit];
+        return 3;
     }
 }
 HexMap.prototype.findPath = function(startNode,endNode,options){

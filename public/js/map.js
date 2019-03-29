@@ -174,13 +174,7 @@
                 if (typeof this.cubeMap[i][y] == 'undefined'){
                     this.cubeMap[i][y] = {}
                 }
-                var node = {
-                    x: parseInt(i),
-                    y: parseInt(-i-j),
-                    z: parseInt(j),
-                    deleted:false
-                }
-                this.cubeMap[node.x][node.y][node.z] = node;
+                this.cubeMap[i][y][j] = this.axialMap[i][j];
             }
         }
     }

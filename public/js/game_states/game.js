@@ -434,7 +434,7 @@
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
             this.resetTurnMenu();
-            this.getLineOfSight();
+            //this.getLineOfSight();
         },
         resetTurnMenu: function(){
             if (this.turnMenu){
@@ -450,7 +450,7 @@
 
         newTurnOrder: function(arr){
             //set timer
-            this.timeText.visible = false
+            this.timeText.visible = false;
             this.betweenStateTicker = 0;
             this.turnTicker = Date.now();
             this.reactionTicker = Date.now();
@@ -1985,21 +1985,15 @@
                 }
             }
         },
-        getLosOfNode: function(node){
-            var aNode = this.map.getAxial(node);
+        getLosOfNode: function(aNode){
             aNode.los = 'none';
             aNode.sprite1.tint = this.map.noLosTint;
             aNode.sprite2.tint = this.map.noLosTint;
-            var aH = aNode.h;
-            var startingHeight = 2;
+            var aH = aNode.h+2;
             var endingHeight = 2;
-            if (aNode.unit != null){
-                startingHeight = aNode.unit.height;
-            }
-            aH += startingHeight;
             for (var u in this.units){
                 if (this.units[u].owner != window.playerID){continue;}
-                var c = this.map.getCube(this.units[u].currentNode)
+                var c = this.units[u].currentNode;
 
                 if (this.map.cubeDistance(aNode,c) > 10){
                     continue;
@@ -2014,16 +2008,13 @@
                     y: c.y + -this.losAngle,
                     z: c.z + this.losAngle*2,
                 }
-                var r1 = this.map.cubeLineDraw(node,cPos); //route 1
-                var r2 = this.map.cubeLineDraw(node,cNeg); //route 2
+                var r1 = this.map.cubeLineDraw(aNode,cPos); //route 1
+                var r2 = this.map.cubeLineDraw(aNode,cNeg); //route 2
                 var blocked1 = false;
                 var blocked2 = false;
                 var highestAngle = 0;
                 for (var j = 1; j < r1.length;j++){
                     var a = this.map.getAxial(r1[j]);
-                    if (a.unit != null){
-                        endingHeight = a.unit.height;
-                    }
                     var h = (j==(r1.length-1)) ? (a.h+endingHeight) : a.h; //TODO actual unit height?
                     var angle = 0;
                     if (h > aH){
@@ -2047,9 +2038,6 @@
                 highestAngle = 0;
                 for (var j = 1; j < r2.length;j++){
                     var a = this.map.getAxial(r2[j]);
-                    if (a.unit != null){
-                        endingHeight = a.unit.height;
-                    }
                     var h = (j==(r2.length-1)) ? (a.h+endingHeight) : a.h; //TODO actual unit height?
                     var angle = 0;
                     if (h > aH){

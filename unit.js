@@ -35,6 +35,8 @@ var Unit = function(){
     this.dexterity = null;
     this.charisma = null;
 
+    this.vision = null;
+
     //level and class stuff?
     this.level = null;
     this.exp = null;
@@ -236,6 +238,14 @@ Unit.prototype.init = function(data) {
         'id': ENUMS.JUMP,
         'owner': this,
         'value': 2,
+        'min': 0,
+        'max': 99
+    });
+    this.vision = new Attribute();
+    this.vision.init({
+        'id': ENUMS.VISION,
+        'owner': this,
+        'value': 10,
         'min': 0,
         'max': 99
     });

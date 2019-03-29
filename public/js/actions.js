@@ -34,7 +34,7 @@
                 actionFunc(dt,this,this.currentAction);
 
                 if (this.end && this.hasAMove){
-                    Game.getLineOfSight();
+                    //Game.getLineOfSight();
                 }
             }catch(e){
                 console.log(e);

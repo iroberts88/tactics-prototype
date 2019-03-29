@@ -36,14 +36,14 @@ var GameSession = function (engine) {
         PreGame: 'preGame',
         InGame: 'inGame',
         PostGame: 'postGame'
-    }
+    };
 
     this.currentInGameState = 'betweenTurns';
     this.inGameStates = {
         WaitingForTurnInfo: 'waitingForTurnInfo',
         WaitingForReactionInfo: 'waitingForReactionInfo',
         BetweenTurns: 'betweenTurns'
-    }
+    };
 
     this.gameHasStarted = false;
 
@@ -86,7 +86,7 @@ GameSession.prototype.init = function (data) {
     //    names.push(i);
     //}
     var name = names[Math.floor(Math.random()*names.length)];
-    //var name = 'testMap';
+    //var name = 'hugeHex';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
     this.map.init(this.engine.maps[name]);
@@ -142,7 +142,7 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
         for (var i in this.allUnits){
             this.allUnits[i].reset();
         }
-        this.getUnitsNotInLos();
+        //this.getUnitsNotInLos();
         this.getTurnOrder();
 
         //send down unit info
@@ -154,7 +154,6 @@ GameSession.prototype.tickPreGame = function(deltaTime) {
             cData[ENUMS.OTHERUNITS] = [];
             cData[ENUMS.TURNLIST] = [];
             cData[ENUMS.TURNPERCENT] = [];
-            
             for (var i in this.allUnits){
                 var unit = this.allUnits[i];
                 if (player.myUnits[unit.id]){
@@ -413,7 +412,6 @@ GameSession.prototype.executeMove = function(data){
                     }else{
                         keepGoing = false;
                     }
-
                 }
             }
         }
@@ -452,6 +450,7 @@ GameSession.prototype.executeMove = function(data){
     if (!stopped){
         data.unit.newNode(this.map.getAxial(data.path[data.path.length-1]));
     }
+    //this.getUnitsNotInLos();
     return data;
 }
 GameSession.prototype.unitMove = function(data){
@@ -727,6 +726,7 @@ GameSession.prototype.unitAbility = function(data){
     cData5[ENUMS.TEXT] = '+' + apamt + ' AP';
     cData5[ENUMS.OWNERONLY] = true;
     data[ENUMS.ACTIONDATA].push(cData5);
+    data.unit.actionUsed = true;
 
     var cData6 = {};
     cData6[ENUMS.ACTION] = ENUMS.ACTIONUSED;
@@ -781,7 +781,7 @@ GameSession.prototype.unitEnd = function(data){
 
 GameSession.prototype.parseRange = function(unit,range){
     var results = {
-        d: 0, //distnace
+        d: 0, //distance
         h: 0, //height
         s: false //self
     };
@@ -997,6 +997,15 @@ GameSession.prototype.handleDisconnect = function(p,toEngine){
 GameSession.prototype.queueData = function(c, d) {
     var data = { call: c, data: d};
     for(var i in this.players) {
+        this.players[i].netQueue.push(data);
+    }
+}
+
+GameSession.prototype.queueActionData = function(c, d) {
+    //check each action data to see if the player has LOS of the action when it occurs
+    var data = { call: c, data: d};
+    for(var i in this.players) {
+
         this.players[i].netQueue.push(data);
     }
 }
