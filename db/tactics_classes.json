@@ -16,15 +16,118 @@
       "name": ""
     },
     {
+      "classid": "splicer",
+      "attributes": {
+        "willpower": 3
+      },
+      "baseAttr": {
+        "maximumEnergy": 30,
+        "maximumHealth": -10
+      },
+      "abilities": [
+        {
+          "sCost": 4,
+          "name": "Center",
+          "description": "Increase willpower for all allies in the radius by 2",
+          "range": "self",
+          "ApCost": 75,
+          "id": "center",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "10",
+          "speed": "instant"
+        }
+      ],
+      "name": "Splicer"
+    },
+    {
+      "classid": "marksman",
+      "attributes": {
+        "dexterity": 3
+      },
+      "baseAttr": {
+        "maximumEnergy": 10,
+        "maximumHealth": 20
+      },
+      "abilities": [
+        {
+          "sCost": 4,
+          "name": "Aim",
+          "description": "Increase dexterity for all allies in the radius by 2",
+          "range": "self",
+          "ApCost": 75,
+          "id": "aim",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "10",
+          "speed": "instant"
+        }
+      ],
+      "name": "Marksman"
+    },
+    {
+      "classid": "commando",
+      "attributes": {
+        "endurance": 3
+      },
+      "baseAttr": {
+        "maximumEnergy": -20,
+        "maximumHealth": 50,
+        "speed": -10
+      },
+      "abilities": [
+        {
+          "sCost": 4,
+          "name": "Instruct",
+          "description": "Increase skill by <WIL%> + <WIL*2>",
+          "range": "3|3|self",
+          "ApCost": 100,
+          "id": "instruct",
+          "type": "singleunit",
+          "eCost": "10",
+          "speed": "instant"
+        },
+        {
+          "sCost": 4,
+          "name": "Shout",
+          "description": "Increase power by <WIL%> + <WIL*2>",
+          "range": "3|3|self",
+          "ApCost": 100,
+          "id": "shout",
+          "type": "singleunit",
+          "eCost": "10",
+          "speed": "instant"
+        },
+        {
+          "sCost": 4,
+          "name": "Focus",
+          "description": "Increase tactics by <WIL%> + <WIL*2>",
+          "range": "3|3|self",
+          "ApCost": 100,
+          "id": "focus",
+          "type": "singleunit",
+          "eCost": "10",
+          "speed": "instant"
+        },
+        {
+          "sCost": 4,
+          "name": "Bolster",
+          "description": "Increase endurance for all allies in the radius by 2",
+          "range": "self",
+          "ApCost": 75,
+          "id": "bolster",
+          "type": "singleunit",
+          "radius": "<1+CHA/5> circle",
+          "eCost": "10",
+          "speed": "instant"
+        }
+      ],
+      "name": "Commando"
+    },
+    {
       "classid": "scout",
       "attributes": {
-        "dexterity": 2,
-        "strength": 2,
-        "willpower": 2,
-        "endurance": 1,
-        "agility": 3,
-        "charisma": -1,
-        "intelligence": 1
+        "agility": 3
       },
       "baseAttr": {
         "move": 1,
@@ -61,12 +164,11 @@
         {
           "sCost": 8,
           "name": "Dodge",
-          "description": "Use your reaction to reduce incoming melee or projectile based damage by <DEX*4%>",
+          "description": "Use your reaction to reduce incoming melee or projectile based damage by <AGI*5%>",
           "range": "self",
           "ApCost": 80,
           "id": "dodge",
           "type": "reaction",
-          "eCost": "<40-END>",
           "speed": "instant"
         },
         {
@@ -77,7 +179,6 @@
           "ApCost": 80,
           "id": "evasion",
           "type": "reaction",
-          "eCost": "<40-END>",
           "speed": "instant"
         },
         {
@@ -99,7 +200,7 @@
           "ApCost": 75,
           "id": "agitate",
           "type": "singleunit",
-          "eCost": 1,
+          "eCost": 10,
           "speed": "instant"
         },
         {
@@ -111,7 +212,7 @@
           "id": "cheer",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
-          "eCost": "1",
+          "eCost": "10",
           "speed": "instant"
         },
         {
@@ -168,13 +269,7 @@
     {
       "classid": "tech",
       "attributes": {
-        "dexterity": 1,
-        "strength": 2,
-        "willpower": 3,
-        "endurance": -1,
-        "agility": 2,
-        "charisma": -1,
-        "intelligence": 4
+        "intelligence": 3
       },
       "baseAttr": {
         "move": 0,
@@ -198,14 +293,14 @@
         },
         {
           "sCost": 4,
-          "name": "Instruct",
+          "name": "Dictate",
           "description": "Increase intelligence for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
-          "id": "instruct",
+          "id": "dictate",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
-          "eCost": "1",
+          "eCost": "10",
           "speed": "instant"
         },
         {
@@ -439,47 +534,14 @@
       "abilities": [
         {
           "sCost": 4,
-          "name": "Bolster",
+          "name": "Battlecry",
           "description": "Increase strength for all allies in the radius by 2",
           "range": "self",
           "ApCost": 75,
-          "id": "bolster",
+          "id": "battlecry",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
-          "eCost": "1",
-          "speed": "instant"
-        },
-        {
-          "sCost": 4,
-          "name": "Aim",
-          "description": "Increase skill by <WIL%> + <WIL*2>",
-          "range": "self",
-          "ApCost": 100,
-          "id": "aim",
-          "type": "singleunit",
-          "eCost": "1",
-          "speed": "instant"
-        },
-        {
-          "sCost": 4,
-          "name": "Shout",
-          "description": "Increase power by <WIL%> + <WIL*2>",
-          "range": "self",
-          "ApCost": 100,
-          "id": "shout",
-          "type": "singleunit",
-          "eCost": "1",
-          "speed": "instant"
-        },
-        {
-          "sCost": 4,
-          "name": "Focus",
-          "description": "Increase tactics by <WIL%> + <WIL*2>",
-          "range": "self",
-          "ApCost": 100,
-          "id": "focus",
-          "type": "singleunit",
-          "eCost": "1",
+          "eCost": "10",
           "speed": "instant"
         },
         {
@@ -595,13 +657,7 @@
     {
       "classid": "medic",
       "attributes": {
-        "dexterity": -1,
-        "strength": -1,
-        "willpower": 3,
-        "endurance": 2,
-        "agility": 1,
-        "charisma": 4,
-        "intelligence": 2
+        "charisma": 3
       },
       "baseAttr": {
         "maximumEnergy": 20,
@@ -713,7 +769,7 @@
           "id": "influence",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
-          "eCost": "1",
+          "eCost": "10",
           "speed": "instant"
         }
       ],

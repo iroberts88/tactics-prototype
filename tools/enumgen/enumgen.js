@@ -212,7 +212,7 @@ var enums = [
 
 	'VALUE',
 	'VISIBLE',
-	'VISION',
+	'VISION'
 
 	'WEAPON',
 	'WEIGHT',

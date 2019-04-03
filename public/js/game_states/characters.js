@@ -114,7 +114,10 @@
                         'tech': 0xFFFF00,
                         'soldier': 0xFF0000,
                         'medic': 0x00FF00,
-                        'scout': 0x42f1f4
+                        'scout': 0x42f1f4,
+                        'splicer': 0x9d00ff,
+                        'commando': 0x3200d8,
+                        'marksman': 0x704607
                     };
                     unitSprite.tint = colors[Player.units[i].classInfo.currentClass.toLowerCase()];
                     Graphics.worldContainer.addChild(unitSprite);

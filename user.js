@@ -96,7 +96,7 @@ function User() {
             try{
                 if (d.guest){
                     //add random units
-                    var classes = ['medic','tech','soldier','scout'];
+                    var classes = ['medic','tech','soldier','scout', 'commando', 'splicer', 'marksman'];
                     for (var i = 0; i < 5; i++){
                         var char = new Unit();
                         //init unit
@@ -126,7 +126,7 @@ function User() {
                             char[randStat].base += 1;
                             char[randStat].set();
                         }
-                        var unitClass = classes[i];
+                        var unitClass = classes[Math.floor(Math.random()*classes.length)];
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
                         }
@@ -140,16 +140,28 @@ function User() {
                                 equipped = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
                                 break;
                             case 'tech':
-                                learned = {'instruct': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
-                                equipped = {'instruct': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                learned = {'dictate': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                equipped = {'dictate': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "corrosiveGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
                                 break;
                             case 'soldier':
-                                learned = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
-                                equipped = { "momentum" : true,"aim": true,"shout": true, "bolster" : true, "focus" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
+                                learned = { "momentum" : true, "battlecry" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
+                                equipped = { "momentum" : true, "battlecry" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
                                 break;
                             case 'scout':
                                 learned = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
                                 equipped = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
+                                break;
+                            case 'splicer':
+                                learned = {"center": true};
+                                equipped = {"center": true};
+                                break;
+                            case 'commando':
+                                learned = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
+                                equipped = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
+                                break;
+                            case 'marksman':
+                                learned = {"aim": true};
+                                equipped = {"aim": true};
                                 break;
                         }
                         char.classInfo = new ClassInfo();

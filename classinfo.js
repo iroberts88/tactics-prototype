@@ -91,6 +91,7 @@ ClassInfo.prototype.setClass = function(c){
 		var charClass = this.unit.owner.engine.classes[c]
 		this.classid = c;
 		this.currentClass = charClass.classid;
+		//TODO this should be enums
 		for (var stat in charClass.attributes){
 			this.unit[stat].base += charClass.attributes[stat];
 			this.unit[stat].set();

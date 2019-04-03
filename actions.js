@@ -38,6 +38,7 @@ AbilityEnums = {
 	ResUp: 'resUp',
 	Repair: 'repair',
 	Bolster: 'bolster',
+	Battlecry: 'battlecry',
 	Aim: 'aim',
 	Shout: 'shout',
 	Focus: 'focus',
@@ -55,7 +56,9 @@ AbilityEnums = {
 	PrecisionStrike: 'precisionStrike',
 	Cripple: 'cripple',
 	ShieldBoost: 'shieldBoost',
-	Concentrate: 'concentrate'
+	Concentrate: 'concentrate',
+	Dictate: 'dictate',
+	Center: 'center'
 };
 
 var Actions = function(){}
@@ -479,7 +482,7 @@ Actions.prototype.scan = function(unit,session,data){
 }
 
 
-Actions.prototype.instruct = function(unit,session,data){
+Actions.prototype.aim = function(unit,session,data){
 	//get all units in radius;
 	var radius = Math.floor(unit.charisma.value/5);
 	var node = session.map.axialMap[data.q][data.r];
@@ -487,7 +490,54 @@ Actions.prototype.instruct = function(unit,session,data){
 	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
 		ENUMS.UNITID, unit.id,
         ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
-        ENUMS.TEXT, 'Instruct'
+        ENUMS.TEXT, 'Aim'
+	));
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			nodes[i].unit.dexterity.nMod += 2;
+			nodes[i].unit.dexterity.set(true);
+			data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		        ENUMS.ACTION, ENUMS.DAMAGETEXT,
+		        ENUMS.UNITID, nodes[i].unit.id,
+		        ENUMS.TEXT, 'Dexterity +2'
+		    ));
+		}
+	}
+	return true;
+}
+Actions.prototype.center = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(unit.charisma.value/5);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		ENUMS.UNITID, unit.id,
+        ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
+        ENUMS.TEXT, 'Center'
+	));
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			nodes[i].unit.willpower.nMod += 2;
+			nodes[i].unit.willpower.set(true);
+			data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		        ENUMS.ACTION, ENUMS.DAMAGETEXT,
+		        ENUMS.UNITID, nodes[i].unit.id,
+		        ENUMS.TEXT, 'Willpower +2'
+		    ));
+		}
+	}
+	return true;
+}
+
+Actions.prototype.dictate = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(unit.charisma.value/5);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		ENUMS.UNITID, unit.id,
+        ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
+        ENUMS.TEXT, 'Dictate'
 	));
 	for (var i = 0; i < nodes.length;i++){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
@@ -672,6 +722,29 @@ Actions.prototype.bolster = function(unit,session,data){
 	));
 	for (var i = 0; i < nodes.length;i++){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
+			nodes[i].unit.endurance.nMod += 2;
+			nodes[i].unit.endurance.set(true);
+			data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		        ENUMS.ACTION, ENUMS.DAMAGETEXT,
+		        ENUMS.UNITID, nodes[i].unit.id,
+		        ENUMS.TEXT, 'Endurance +2'
+		    ));
+		}
+	}
+	return true;
+}
+Actions.prototype.battlecry = function(unit,session,data){
+	//get all units in radius;
+	var radius = Math.floor(unit.charisma.value/5);
+	var node = session.map.axialMap[data.q][data.r];
+	var nodes = session.map.getUnitsInRadius(node,radius);
+	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		ENUMS.UNITID, unit.id,
+        ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
+        ENUMS.TEXT, 'Battlecry'
+	));
+	for (var i = 0; i < nodes.length;i++){
+		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.strength.nMod += 2;
 			nodes[i].unit.strength.set(true);
 			data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
@@ -684,11 +757,11 @@ Actions.prototype.bolster = function(unit,session,data){
 	return true;
 }
 
-Actions.prototype.aim = function(unit,session,data){
+Actions.prototype.instruct = function(unit,session,data){
 	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
 		ENUMS.UNITID, unit.id,
         ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
-        ENUMS.TEXT, 'Aim'
+        ENUMS.TEXT, 'Instruct'
 	));
 	var val = Math.ceil(unit.skill.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.skill.nMod += val;
@@ -696,7 +769,7 @@ Actions.prototype.aim = function(unit,session,data){
 	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
         ENUMS.ACTION, ENUMS.DAMAGETEXT,
         ENUMS.UNITID, unit.id,
-        ENUMS.TEXT, 'Skill +' + val
+        ENUMS.TEXT, 'Instruct +' + val
     ));
 	return true;
 }
@@ -1280,6 +1353,9 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.Bolster:
 			return this.bolster;
 			break;
+		case AbilityEnums.Battlecry:
+			return this.battlecry;
+			break;
 		case AbilityEnums.Aim:
 			return this.aim;
 			break;
@@ -1333,6 +1409,12 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.Concentrate:
 			return this.concentrate;
+			break;
+		case AbilityEnums.Center:
+			return this.center;
+			break;
+		case AbilityEnums.Dictate:
+			return this.dictate;
 			break;
 		default:
 			return this.testAbility;
