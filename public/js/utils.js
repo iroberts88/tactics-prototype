@@ -164,7 +164,6 @@
             };
             //get path
             if (range.substring(range.length-3,range.length) == '(m)'){
-                console.log('got it');
                 range = range.substring(0,range.length-3);
                 results.m = true;
             }

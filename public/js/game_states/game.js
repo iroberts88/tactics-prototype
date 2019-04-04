@@ -1184,7 +1184,9 @@
                             }
                         }
                     }
-                    console.log(possibleNodes.length);
+                    if (possibleNodes.length == 1){
+                        var selfNode = possibleNodes[0];
+                    }
                     break;
             }
             Game.abilityActive = true;
@@ -1213,6 +1215,16 @@
                         }
                         break;
                     case 'line':
+                        var mONodes = this.map.line1Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'line2':
+                        break;
+                    case 'line3':
+                        break;
+                    case 'line4':
                         break;
                     case 'cone':
                         break;
@@ -1224,9 +1236,19 @@
                         break;
                     case 'cone5':
                         break;
-                    case 'cir+diag':
+                    case 'cone6':
                         break;
-                    case 'diagonals':
+                    case 'cone7':
+                        break;
+                    case 'circle2':
+                        break;
+                    case 'diag':
+                        break;
+                    case 'diag2':
+                        break;
+                    case 'diag3':
+                        break;
+                    case 'diag4':
                         break;
                     default:
                         break;

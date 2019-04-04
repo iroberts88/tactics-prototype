@@ -601,10 +601,10 @@ Actions.prototype.shockGrenade = function(unit,session,data){
 	return Actions.grenade(unit,session,data);
 }
 
-Actions.prototype.corrosiveGrenade = function(unit,session,data){
+Actions.prototype.bioGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
-	data.dmgType = 'corr';
-	data.txt = 'Corrosive Grenade';
+	data.dmgType = 'viral';
+	data.txt = 'Bio Grenade';
 	data.dmg = 20;
 	return Actions.grenade(unit,session,data);
 }

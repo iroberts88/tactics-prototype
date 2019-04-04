@@ -720,6 +720,39 @@
         return results;
     }
 
+    Map.prototype.line1Nodes = function(uNode,tNode,radius){
+        var dir = this.axialDirections[this.getNewDirectionAxial(uNode,tNode)];
+        var results = [];
+        for (var i = 1;i<=radius;i++){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        return results;
+    }
+    Map.prototype.line2Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line3Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line4Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line5Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line6Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line7Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line8Nodes = function(uNode,tNode,radius){
+        
+    }
+    Map.prototype.line9Nodes = function(uNode,tNode,radius){
+        
+    }
+
     Map.prototype.lerp = function(a,b,t){
         return a + (b-a) * t;
     }

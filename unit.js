@@ -562,18 +562,12 @@ Unit.prototype.damage = function(type,value,aData){
             value -= Math.round(value*(this.poisonRes.value/100));
             this.currentHealth -= value;
             break;
-        case this.engine.dmgTypeEnums.Corrosive:
-            value -= Math.round(value*(this.acidRes.value/100));
-            if (this.mechanical){
-                value = value*2;
-            }
+        case this.engine.dmgTypeEnums.Viral:
+            value -= Math.round(value*(this.viralRes.value/100));
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Heat:
             value -= Math.round(value*(this.heatRes.value/100));
-            if (this.human){
-                value = value*2;
-            }
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Cold:
