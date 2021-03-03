@@ -119,6 +119,8 @@ var Unit = function(){
     this.onKill = [];
     this.onTurnStart = [];
 
+    this.reaction = 1;
+
     this.fists = new Item();
     this.fists.init({
         amount:1,
@@ -148,6 +150,7 @@ Unit.prototype.reset = function(){
 
     this.hidden = false;
 
+    this.reaction = 1;
     //charge
     this.charge = Math.random();
     //buffs initialize

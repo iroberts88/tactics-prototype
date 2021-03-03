@@ -114,7 +114,7 @@
 
             Acorn.Net.on('editMap', function (data) {
                 console.log(data);
-                if (data.found){
+                if (data[ENUMS.FOUND]){
                   MapGen.data = data;
                   Acorn.changeState('MapGen');
                 }else{

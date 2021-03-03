@@ -76,6 +76,7 @@ var enums = [
 
 	'FACE',
 	'FAINTED',
+	'FOUND',
 	'FULL',
 
 	'GAMESTATS',

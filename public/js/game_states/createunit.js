@@ -120,6 +120,48 @@
             });
             Graphics.uiContainer.addChild(this.scoutButton);
 
+            this.commandoButton = Graphics.makeUiElement({
+                text: 'Commando',
+                style: this.style2,
+                position: [Graphics.width/9,this.scoutButton.position.y + 20 + this.scoutButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.resetColors();
+                    CreateUnit.classSelected = 'commando';
+                    CreateUnit.scoutButton.defaultFill = 'gray';
+                }
+            });
+            Graphics.uiContainer.addChild(this.commandoButton);
+
+            this.splicerButton = Graphics.makeUiElement({
+                text: 'Splicer',
+                style: this.style2,
+                position: [Graphics.width/9,this.commandoButton.position.y + 20 + this.commandoButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.resetColors();
+                    CreateUnit.classSelected = 'splicer';
+                    CreateUnit.scoutButton.defaultFill = 'gray';
+                }
+            });
+            Graphics.uiContainer.addChild(this.splicerButton);
+
+            this.marksmanButton = Graphics.makeUiElement({
+                text: 'Marksman',
+                style: this.style2,
+                position: [Graphics.width/9,this.splicerButton.position.y + 20 + this.splicerButton.height],
+                interactive: true,
+                buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    CreateUnit.resetColors();
+                    CreateUnit.classSelected = 'marksman';
+                    CreateUnit.scoutButton.defaultFill = 'gray';
+                }
+            });
+            Graphics.uiContainer.addChild(this.marksmanButton);
+
             var statText = Graphics.makeUiElement({
                 text: 'Assign Stat Points',
                 style: this.style1,
@@ -138,7 +180,7 @@
                 "<Willpower> increases max <energy> and <damage resistance> on levelup. It also increases effectiveness of willpower based abilities",
                 "<Charisma> increases <all stats> slightly on levelup. It also increases effectiveness of charisma based abilities"
             ];
-                
+
             var h = 0;
             for (var i = 0; i < stats.length;i++){
                 var t = Graphics.makeUiElement({
@@ -287,6 +329,9 @@
             Graphics.drawBoxAround(this.scoutButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.medicButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.techButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.commandoButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.marksmanButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.splicerButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.femaleButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.maleButton,Graphics.uiPrimitives2,{});
@@ -297,7 +342,10 @@
                 'tech': 0xFFFF00,
                 'soldier': 0xFF0000,
                 'medic': 0x00FF00,
-                'scout': 0x42f1f4
+                'scout': 0x42f1f4,
+                'splicer': 0x9d00ff,
+                'commando': 0x3200d8,
+                'marksman': 0x704607
             };
             this.unitSprite.tint = colors[this.classSelected];
 
@@ -322,6 +370,9 @@
             CreateUnit.techButton.style.fill = Graphics.pallette.color1;
             CreateUnit.scoutButton.style.fill = Graphics.pallette.color1;
             CreateUnit.medicButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.commandoButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.splicerButton.style.fill = Graphics.pallette.color1;
+            CreateUnit.marksmanButton.style.fill = Graphics.pallette.color1;
 
             CreateUnit.maleButton.defaultFill = Graphics.pallette.color1;
             CreateUnit.femaleButton.defaultFill = Graphics.pallette.color1;
@@ -383,7 +434,7 @@
             }
             //check if valid class
             var validClasses = {
-                'scout': 1,'soldier': 1,'medic': 1,'tech': 1
+                'scout': 1,'soldier': 1,'medic': 1,'tech': 1, 'commando': 1, 'splicer': 1
             }
             valid = false;
             for (var i = 0; i < name.length;i++){

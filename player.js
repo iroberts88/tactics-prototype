@@ -609,15 +609,32 @@ Player.prototype.setupSocket = function() {
         console.log(d);
         try{
             if (typeof that.engine.maps[d.name] != 'undefined'){
-                that.engine.queuePlayer(that,"editMap",{found:true,
-                    name:d.name,
-                    mapData:that.engine.maps[d.name].mapData,
-                    sz1: that.engine.maps[d.name].sz1,
-                    sz2: that.engine.maps[d.name].sz2
-                });
+                var mapData = {};
+                for (let i in that.engine.maps[d.name].mapData){
+                    mapData[i] = {};
+                    for (let j in that.engine.maps[d.name].mapData[i]){
+                        mapData[i][j] = Utils.getClientNode(that.engine.maps[d.name].mapData[i][j]);
+                    }
+                }
+                var sz1 = [];
+                var sz2 = [];
+                for (let k in that.engine.maps[d.name].sz1){
+                    sz1.push(Utils.getClientNode(that.engine.maps[d.name].sz1[k]));
+                }
+                for (let l in that.engine.maps[d.name].sz2){
+                    sz2.push(Utils.getClientNode(that.engine.maps[d.name].sz2[l]));
+                }
+                that.engine.queuePlayer(that,"editMap",that.engine.createClientData(
+                    ENUMS.FOUND, true,
+                    ENUMS.NAME, d.name,
+                    ENUMS.MAPDATA, mapData,
+                    ENUMS.STARTZONE1, sz1,
+                    ENUMS.STARTZONE2, sz2
+                ));
+
             }else{
                 console.log('No map named ' + d.name);
-                that.engine.queuePlayer(that,"editMap", {found: false});
+                that.engine.queuePlayer(that,"editMap", that.engine.createClientData(ENUMS.FOUND,false));
             }
         }catch(e){
             that.engine.debug(that, {'id': 'createMapError', 'error': e.stack, dMapData: d});
