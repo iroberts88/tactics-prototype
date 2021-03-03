@@ -104,8 +104,8 @@ function User() {
                         var sex = sexes[Math.floor(Math.random()*sexes.length)];
                         var nT = sex;
                         var options = {
-                            'male': ['male3'],//['male','male2','romanMale','male3'],
-                            'female': ['female3']//['female','female2','romanFemale','female3']
+                            'male': ['male','male2','romanMale','male3'],
+                            'female': ['female','female2','romanFemale','female3']
                         }
                         var thing = options[sex][Math.floor(Math.random()*options[sex].length)];
                         var name = '' + Utils.generateName(thing) + ' ' + Utils.generateName('last');
