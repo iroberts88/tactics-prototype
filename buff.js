@@ -44,7 +44,7 @@ var Buff = function(data){
     }
     if (data.instant === true){
         //the buff will tick once immediately then be removed
-        this.duration = 0;
+        this.duration = -Infinity;
     }else if (data.noTicks === true){
         //the buff will tick once immediately but will not tick again until buff ends
         this.noTicks = true;

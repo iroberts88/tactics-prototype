@@ -47,6 +47,7 @@ Attribute.prototype.init = function(data){
     }else{
     	this.next = data.next;
     }
+    this.onChange = [];
 }
 Attribute.prototype.set = function(updateClient = false){
 	if (this.setBool){
@@ -68,6 +69,11 @@ Attribute.prototype.set = function(updateClient = false){
     	}
 	}
     try{this.next(updateClient)}catch(e){}
+    let fun = null;
+    for (let i = 0;i < this.onChange.length;i++){
+        func = this.onChange[i].func;
+        func(updateClient);
+    }
     try{
         if (updateClient && this.updateClient){
             if (this.player.session){
@@ -89,6 +95,20 @@ Attribute.prototype.set = function(updateClient = false){
         console.log(e);
     }
     return;
+}
+
+Attribute.prototype.addOnChange = function(func){
+    //add an on-change function
+    this.onChange.push(func);
+}
+Attribute.prototype.removeOnChange = function(n){
+    //add an on-change function
+    for (let i = 0;i < this.onChange.length;i++){
+        if (this.onChange.name == n){
+            this.onChange.splice(i,1);
+            return;
+        }
+    }
 }
 
 exports.Attribute = Attribute;

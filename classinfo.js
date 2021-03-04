@@ -26,6 +26,7 @@ ClassInfo.prototype.init = function(data){
 	}
 	if (typeof data.equipped != 'undefined'){
 		this.equippedAbilities = data.equipped;
+		//cehck for passives and reactions
 	}else{
 		this.equippedAbilities = {};
 	}

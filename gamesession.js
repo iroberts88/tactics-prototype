@@ -204,6 +204,7 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                     this.allUnits[this.turnOrder[0].id].actionUsed = false;
                 }
                 this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.waitChargePercent;
+                this.allUnits[this.turnOrder[0].id].endedTurn = false;
                 this.getTurnOrder();
                 var turnList = [];
                 var turnPercent = [];
@@ -429,7 +430,19 @@ GameSession.prototype.executeMove = function(data){
         }
         var nextNode = data.path[i];
         //TODO check reactions for each moved node?
-
+        //check each enemy for "onEnemyMove" reactions
+        for (var j in this.allUnits){
+            if (this.allUnits[j].owner == data.unit.owner){
+                continue;
+            }
+            var u = this.allUnits[j];
+            for (var j = 0; j < u.onEnemyMove.length;j++){
+                var aFunc = Actions.getAction(u.onEnemyMove[j]['action']);
+                var eMoveArr = aiFunc(data.unit,u,u.onEnemyMove[j],data[ENUMS.ACTIONDATA]);
+                data[ENUMS.ACTIONDATA] = eMoveArr[0];
+                stopped = eMoveArr[1];
+            }
+        }
         //set the new node for the unit
         var dir = this.map.getNewDirectionCube(data.path[i-1],data.path[i]);
         if (dir){

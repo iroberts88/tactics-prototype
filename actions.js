@@ -1,6 +1,7 @@
 //actions.js
 var Buff = require('./buff.js').Buff,
     ClassInfo = require('./classinfo.js').ClassInfo,
+    Utils = require('./utils.js').Utils,
     ENUMS = require('./enums.js').Enums;
 
 ActionEnums = {
@@ -8,22 +9,31 @@ ActionEnums = {
 	AlterStatPercent: 'alterStatPercent',
 	AlterCurrentEnergy: 'alterCurrentEnergy',
 	AlterHealthByPercent: 'alterHealthByPercent',
+	AddReaction: 'addReaction',
 	SetHidden: 'setHidden',
 	AddOnAttackEffect: 'addOnAttackEffect',
 	Poison: 'poison',
 	HealingFieldEffect: 'healingFieldEffect',
-	CheckStealthRemove: 'checkStealthRemove'
+	CheckStealthRemove: 'checkStealthRemove',
+	PreparedShotAttack: 'preparedShotAttack'
 };
 
 AbilityEnums = {
 	TestAbility: 'testAbility',
-	Stealth: 'stealth',
-	Flare: 'flare',
-	QuickAttack: 'quickAttack',
+	//scout abilities
 	Agitate: 'agitate',
 	Cheer: 'cheer',
+	Climber: 'climber',
+	Counterattack: 'counterattack',
+	Dodge: 'dodge',
+	Evasion: 'evasion',
+	Flare: 'flare',
+	Guile: 'guile',
 	Interrupt: 'interrupt',
 	PoisonWeapon: 'poisonWeapon',
+	QuickAttack: 'quickAttack',
+	Stealth: 'stealth',
+	//tech
 	Scan: 'scan',
 	Instruct: 'instruct',
 	FlareGrenade: 'flareGrenade',
@@ -37,6 +47,15 @@ AbilityEnums = {
 	VoidGrenade: 'voidGrenade',
 	ResUp: 'resUp',
 	Repair: 'repair',
+	Dictate: 'dictate',
+	MechCloak: 'mechCloak',
+	CybLegs: 'cybLegs',
+	CybArms: 'cybArms',
+	CybBrain: 'cybBrain',
+	CybEyes: 'cybEyes',
+	CybLungs: 'cybLungs',
+	CybHeart: 'cybHeart',
+	//soldier abilities
 	Bolster: 'bolster',
 	Battlecry: 'battlecry',
 	Aim: 'aim',
@@ -48,6 +67,7 @@ AbilityEnums = {
 	PowerAttack: 'powerAttack',
 	Reversal: 'reversal',
 	Slam: 'slam',
+	//medic abilities
 	FirstAid: 'firstAid',
 	Resuscitate: 'resuscitate',
 	HealingField: 'healingField',
@@ -57,8 +77,13 @@ AbilityEnums = {
 	Cripple: 'cripple',
 	ShieldBoost: 'shieldBoost',
 	Concentrate: 'concentrate',
-	Dictate: 'dictate',
-	Center: 'center'
+	//marksman abilities
+	Center: 'center',
+	Gunner: 'gunner',
+	PreparedShot: 'preparedShot'
+
+	//commando abilities
+	//splicer abilities
 };
 
 var Actions = function(){}
@@ -88,6 +113,26 @@ Actions.prototype.alterHealthByPercent = function(unit,data){
 	data[ENUMS.ACTIONDATA] = unit.damage(data.type,Math.ceil(unit.maximumHealth.value*data.val),data[ENUMS.ACTIONDATA]);
 	return false;
 }
+
+Actions.prototype.addReaction = function(unit,d){
+	var data = Utils.uniqueCopy(d);
+	if (data.reverse){
+		var arr = unit.getReactionType(data['type']);
+		for (var i = 0; i < arr.length;i++){
+			if (arr[i]['action'] == data['type']){
+				arr.splice(i,1);
+				continue;
+			}
+		}
+		unit.setReactions(data['type'],arr);
+	}else{
+		var arr = unit.getReactionType(data['type']);
+		arr.unshift(data['value']);
+		unit.setReactions(data['type'],arr);
+	}
+	return false;
+}
+
 Actions.prototype.poison = function(unit,data){
 	var Buff = require('./buff.js').Buff;
 	var buffData = unit.owner.engine.buffs["buff_poison"];
@@ -210,6 +255,14 @@ Actions.prototype.checkStealthRemove = function(unit,data){
 	}
 	return false;
 }
+Actions.prototype.preparedShotAttack = function(target,unit,data,actionData){
+	//get all units in radius;
+	console.log('EXECUTE PREPARED SHOT');
+	console.log(data);
+	console.log(target.name);
+	console.log(unit.name);
+	return [actionData,false];
+}
 
 Actions.prototype.getAction = function(a){
 	switch(a){
@@ -225,6 +278,9 @@ Actions.prototype.getAction = function(a){
 		case ActionEnums.AlterHealthByPercent:
 			return this.alterHealthByPercent;
 			break;
+		case ActionEnums.AddReaction:
+			return this.addReaction;
+			break;
 		case ActionEnums.SetHidden:
 			return this.setHidden;
 			break;
@@ -239,6 +295,9 @@ Actions.prototype.getAction = function(a){
 			break;
 		case ActionEnums.CheckStealthRemove:
 			return this.checkStealthRemove;
+			break
+		case ActionEnums.PreparedShotAttack:
+			return this.preparedShotAttack;
 			break
 	}
 }
@@ -561,7 +620,7 @@ Actions.prototype.grenade = function(unit,session,data){
 	if (typeof data.txt == 'undefined'){
 		data.txt = 'Grenade';
 	}if (typeof data.dmg == 'undefined'){
-		data.dmg = 20;
+		data.dmg = 10;
 	}
 	var radius = Math.floor(1+unit.intelligence.value/10);
 	var node = session.map.axialMap[data.q][data.r];
@@ -581,7 +640,7 @@ Actions.prototype.flareGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'heat';
 	data.txt = 'Flare Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -589,7 +648,7 @@ Actions.prototype.cryoGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'cold';
 	data.txt = 'Cryo Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -597,7 +656,7 @@ Actions.prototype.shockGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'elec';
 	data.txt = 'Shock Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -605,7 +664,7 @@ Actions.prototype.bioGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'viral';
 	data.txt = 'Bio Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -613,7 +672,7 @@ Actions.prototype.toxicGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'pois';
 	data.txt = 'Toxic Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -621,7 +680,7 @@ Actions.prototype.empGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'puls';
 	data.txt = 'EMP Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -629,7 +688,7 @@ Actions.prototype.unstableGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'radi';
 	data.txt = 'Unstable Grenade';
-	data.dmg = 20;
+	data.dmg = 10;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -637,15 +696,7 @@ Actions.prototype.voidGrenade = function(unit,session,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'grav';
 	data.txt = 'Void Grenade';
-	data.dmg = 25;
-	return Actions.grenade(unit,session,data);
-}
-
-Actions.prototype.flareGrenade = function(unit,session,data){
-	Actions = require('./actions.js').Actions
-	data.dmgType = 'heat';
-	data.txt = 'Flare Grenade';
-	data.dmg = 20;
+	data.dmg = 15;
 	return Actions.grenade(unit,session,data);
 }
 
@@ -1283,6 +1334,45 @@ Actions.prototype.concentrate = function(unit,session,data){
     ));
 	return true;
 }
+Actions.prototype.gunner = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
+
+	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+		ENUMS.UNITID, unit.id,
+        ENUMS.ACTION, ENUMS.ACTIONBUBBLE,
+        ENUMS.TEXT, 'Concentrate'
+	));
+	var percent = (125+unit.willpower.value*10);
+	var buffData = session.engine.buffs["buff_concentrate"];
+	var buff = new Buff(buffData);
+	buff.actionsOnImmediate.push({
+        "action": "alterStat",
+        "stat": 'cSpeedMod',
+        "value": percent/100
+	});
+	buff.actionsOnEnd.push({
+        "action": "alterStat",
+        "stat": 'cSpeedMod',
+        "value": percent/100,
+        "reverse":true
+	});
+	buff.init({
+	    unit: unit //the buff will perform actions on this object
+	});
+	buff.duration = unit.willpower.value;
+	data[ENUMS.ACTIONDATA].push(unit.engine.createClientData(
+        ENUMS.ACTION, ENUMS.DAMAGETEXT,
+        ENUMS.UNITID, data.unit.id,
+        ENUMS.TEXT, 'Casting speed +' + percent + '%'
+    ));
+	return true;
+}
+Actions.prototype.preparedShot = function(unit,session,data){
+	var Buff = require('./buff.js').Buff;
+	//add prepared shot buff
+	unit.addBuff("buff_preparedShot");
+	return true;
+}
 
 Actions.prototype.getAbility = function(a){
 	console.log('getting ability <' + a + '>');
@@ -1290,14 +1380,15 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.TestAbility:
 			return this.testAbility;
 			break;
-		case AbilityEnums.Flare:
-			return this.flare;
-			break;
+		//scout abilities
 		case AbilityEnums.Agitate:
 			return this.agitate;
 			break;
 		case AbilityEnums.Cheer:
 			return this.cheer;
+			break;
+		case AbilityEnums.Flare:
+			return this.flare;
 			break;
 		case AbilityEnums.QuickAttack:
 			return this.quickAttack;
@@ -1311,6 +1402,22 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.PoisonWeapon:
 			return this.poisonWeapon;
 			break;
+		case AbilityEnums.Climber:
+			return this.climber;
+			break;
+		case AbilityEnums.Dodge:
+			return this.dodge;
+			break;
+		case AbilityEnums.Guile:
+			return this.guile;
+			break;
+		case AbilityEnums.Counterattack:
+			return this.counterattack;
+			break;
+		case AbilityEnums.Evasion:
+			return this.evasion;
+			break;
+		//tech abilities
 		case AbilityEnums.Scan:
 			return this.scan;
 			break;
@@ -1350,6 +1457,7 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.Repair:
 			return this.repair;
 			break;
+		//soldier abilities
 		case AbilityEnums.Bolster:
 			return this.bolster;
 			break;
@@ -1415,6 +1523,10 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.Dictate:
 			return this.dictate;
+			break;
+
+		case AbilityEnums.PreparedShot:
+			return this.preparedShot;
 			break;
 		default:
 			return this.testAbility;

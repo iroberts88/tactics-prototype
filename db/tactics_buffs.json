@@ -113,6 +113,37 @@
       ],
       "tickImmediately": true,
       "instant": false
+    },
+    {
+      "description": "Unit is preparing to fire",
+      "duration": 3,
+      "name": "PreparedShot",
+      "stackType": "none",
+      "buffid": "buff_preparedShot",
+      "actionsOnImmediate": [
+        {
+          "action": "addReaction",
+          "value": {
+            "action": "preparedShotAttack"
+          },
+          "type": "onEnemyMove"
+        }
+      ],
+      "actionsOnEnd": [
+        {
+          "action": "addReaction",
+          "value": "preparedShotAttack",
+          "type": "onEnemyMove",
+          "reverse": true
+        }
+      ],
+      "tags": [
+        "positive",
+        "reaction"
+      ],
+      "tickImmediately": true,
+      "noTicks": true,
+      "instant": false
     }
   ]
 }

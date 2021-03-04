@@ -117,7 +117,7 @@
         {
           "sCost": 12,
           "name": "Energy Blast",
-          "description": "Poison a unit dealing <20+WIL*2> pulse damage",
+          "description": "Create a blast of energy dealing <20+WIL*2> pulse damage in a small area",
           "range": "1|5",
           "ApCost": 150,
           "id": "energyBlast",
@@ -130,7 +130,7 @@
         {
           "sCost": 12,
           "name": "Gamma Tendrils",
-          "description": "Deal <20+WIL*2> radiation damage",
+          "description": "Deal <20+WIL*2> radiation damage in a straight line",
           "range": "1|5",
           "ApCost": 150,
           "id": "gammaTendrils",
@@ -193,7 +193,7 @@
         {
           "name": "Prepared Shot",
           "sCost": 10,
-          "description": "Reduce turn move to 0. Until next turn, will use your reaction to fire any unit that comes in range if your equipped gun, dealing <DEX%> increased damage and stopping the unit's movement for that turn",
+          "description": "Reduce turn move to 0. Until next turn, will use your reaction to fire at any unit that comes in range if your equipped gun, dealing <DEX%> increased damage and stopping the unit's movement for that turn",
           "id": "preparedShot",
           "speed": "instant",
           "type": "singleunit",
@@ -204,7 +204,7 @@
         {
           "name": "Gunner",
           "sCost": 3,
-          "description": "While there is no melee weapon in your inventory, increase max health by <END%> for each gun in in your inventory",
+          "description": "While there is no melee weapon in your inventory, increase max health and speed by <10+END%>",
           "id": "gunner",
           "type": "passive",
           "ApCost": 250
@@ -338,7 +338,13 @@
           "ApCost": 80,
           "id": "dodge",
           "type": "reaction",
-          "speed": "instant"
+          "speed": "instant",
+          "effect": {
+            "name": "addOnDamage",
+            "data": {
+              "name": "dodge"
+            }
+          }
         },
         {
           "sCost": 8,
@@ -348,7 +354,13 @@
           "ApCost": 80,
           "id": "evasion",
           "type": "reaction",
-          "speed": "instant"
+          "speed": "instant",
+          "effect": {
+            "name": "addOnDamage",
+            "data": {
+              "name": "evade"
+            }
+          }
         },
         {
           "sCost": 12,
@@ -486,11 +498,10 @@
         {
           "sCost": 12,
           "name": "Mech Cloak",
-          "description": "After being hit, use your reaction to release a wave of electricity, dealing <20+END> base shock damage and stunning for 1 round",
+          "description": "After being hit, use your reaction to release a wave of electricity, dealing <20+END> base shock damage",
           "ApCost": 100,
           "id": "mechCloak",
           "type": "reaction",
-          "eCost": "40-END",
           "radius": "3",
           "speed": 800
         },
@@ -794,7 +805,7 @@
         },
         {
           "name": "Quick Draw",
-          "description": "Switching a weapon from inventory returns you into the turn order at <40+AGI%> charge",
+          "description": "Switching a weapon from inventory returns you into the turn order at <75+AGI%> charge",
           "ApCost": 350,
           "id": "quickDraw",
           "sCost": 10,
