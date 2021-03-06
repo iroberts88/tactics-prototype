@@ -601,6 +601,9 @@ GameSession.prototype.unitAbility = function(data){
     data.unit = unit;
     if (unit.actionUsed || unit.fainted || unit.dead){return;}
     data.ability = unit.getAbility(data.abilityid);
+    if (data.ability.type == 'passive' || data.ability.type == 'reaction'){
+        return;
+    }
     var player = unit.owner.id;
     var node = this.map.axialMap[data.q][data.r];
     data[ENUMS.ACTIONDATA] = [];

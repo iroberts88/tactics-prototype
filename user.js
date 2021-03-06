@@ -97,7 +97,7 @@ function User() {
                 if (d.guest){
                     //add random units
                     var classes = ['medic','tech','soldier','scout', 'commando', 'splicer', 'marksman'];
-                    for (var i = 0; i < 5; i++){
+                    for (var i = 0; i < 0; i++){
                         var char = new Unit();
                         //init unit
                         var sexes = ['male','female'];

@@ -193,7 +193,7 @@
         {
           "name": "Prepared Shot",
           "sCost": 10,
-          "description": "Reduce turn move to 0. Until next turn, will use your reaction to fire at any unit that comes in range if your equipped gun, dealing <DEX%> increased damage and stopping the unit's movement for that turn",
+          "description": "Reduce turn move to 0. Until next turn, will use your reaction to fire at any unit that comes into range of your equipped gun, dealing <DEX%> increased damage.",
           "id": "preparedShot",
           "speed": "instant",
           "type": "singleunit",
@@ -259,10 +259,10 @@
         {
           "sCost": 10,
           "name": "Energize",
-          "description": "Transfer <END*2%> of your current energy to the target unit",
+          "description": "Transfer up to <END*4%> of your current energy to the target unit",
           "range": "2|2",
-          "ApCost": 25000,
-          "id": "focus",
+          "ApCost": 250,
+          "id": "energize",
           "type": "singleunit",
           "eCost": "0",
           "speed": "instant"

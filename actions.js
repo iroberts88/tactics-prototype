@@ -309,7 +309,7 @@ Actions.prototype.getAction = function(a){
 
 Actions.prototype.testAbility = function(unit,session,data){
 	console.log('test ability!!!');
-	return false;
+	return true;
 }
 
 Actions.prototype.stealth = function(unit,session,data){
@@ -399,6 +399,15 @@ Actions.prototype.quickAttack = function(unit,session,data){
     cData[ENUMS.DIRECTION] = data.d.newDir;
     data[ENUMS.ACTIONDATA].splice(0,0,cData);
     unit.charge += session.chargeMax*(0.3+Math.round(unit.agility.value*1.5)/100);
+	return true;
+}
+Actions.prototype.guile = function(unit,session,data){
+    if (data.reverse){
+    	unit.charisma.nMod -= 3;
+    }else{
+    	unit.charisma.nMod += 3;
+    }
+    unit.charisma.set(true);
 	return true;
 }
 Actions.prototype.agitate = function(unit,session,data){

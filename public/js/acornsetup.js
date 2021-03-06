@@ -295,7 +295,7 @@
                 console.log(data);
                 Player.unEquipItem(data);
             });
-            Acorn.Net.on(ENUMS.DELETEUNIT, function (data) {
+            Acorn.Net.on(ENUMS.DELETECHAR, function (data) {
                 console.log('deleting unit');
                 console.log(data);
                 Player.deleteUnit(data);

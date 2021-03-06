@@ -268,8 +268,19 @@ Player.prototype.setupSocket = function() {
                                 break;
                             }
                             //ability can be equipped. add current slots and add to learned abilities list
+
+                            //check if ability is passive/reaction
+                            console.log(abl);
+                            if (abl.type == 'passive' || abl.type == 'reaction'){
+                                let aFunc = Actions.getAbility(abl.id);
+                                data.reverse = false;
+                                let success = aFunc(unit,this,data);
+                                if (!success){break;}
+                            }
+
                             unit.classInfo.equippedAbilities[aID] = true;
                             unit.setAbilitySlots();
+
                             //update client
                             data[ENUMS.SCOST] = abl.sCost;
                             that.engine.queuePlayer(that,ENUMS.EQUIPABILITY,data);
@@ -302,6 +313,15 @@ Player.prototype.setupSocket = function() {
                             //check if ability is already not equipped
                             if (typeof unit.classInfo.equippedAbilities[aID] == 'undefined'){
                                 break;
+                            }
+
+                            //check if ability is passive/reaction
+                            console.log(abl);
+                            if (abl.type == 'passive' || abl.type == 'reaction'){
+                                let aFunc = Actions.getAbility(abl.id);
+                                data.reverse = true;
+                                let success = aFunc(unit,this,data);
+                                if (!success){break;}
                             }
                             //ability can be un-equipped.
                             delete unit.classInfo.equippedAbilities[aID];
@@ -345,7 +365,7 @@ Player.prototype.setupSocket = function() {
                             that.engine.debug('logoutError',e.stack);
                         }
                         break;
-                    case ENUMS.DELETEUNIT:
+                    case ENUMS.DELETECHAR:
                         try{
                             //get the unit
                             if (!that.engine.validateData(data,[ENUMS.UNITID])){
@@ -358,7 +378,7 @@ Player.prototype.setupSocket = function() {
                                 if (that.user.characters[i].id == uID){
                                     console.log('deleting character: ' + that.user.characters[i].name);
                                     that.user.characters.splice(i,1);
-                                    that.engine.queuePlayer(that,ENUMS.DELETEUNIT,that.engine.createClientData(ENUMS.ID, uID));
+                                    that.engine.queuePlayer(that,ENUMS.DELETECHAR,that.engine.createClientData(ENUMS.UNITID, uID));
                                     continue;
                                 }
                             }
@@ -468,22 +488,20 @@ Player.prototype.setupSocket = function() {
                                     inventory: ['gun_sidearm','weapon_combatKnife']
                                 });
                                 //TODO VALIDATE STATS AMOUNTSSSS, sex, CLASS
-                                for (var i in data.stats){
-                                    char.strength.base = data[ENUMS.STATS][ENUMS.STRENGTH];
-                                    char.strength.set();
-                                    char.endurance.base = data[ENUMS.STATS][ENUMS.ENDURANCE];
-                                    char.endurance.set();
-                                    char.agility.base = data[ENUMS.STATS][ENUMS.AGILITY];
-                                    char.agility.set();
-                                    char.dexterity.base = data[ENUMS.STATS][ENUMS.DEXTERITY];
-                                    char.dexterity.set();
-                                    char.intelligence.base = data[ENUMS.STATS][ENUMS.INTELLIGENCE];
-                                    char.intelligence.set();
-                                    char.willpower.base = data[ENUMS.STATS][ENUMS.WILLPOWER];
-                                    char.willpower.set();
-                                    char.charisma.base = data[ENUMS.STATS][ENUMS.CHARISMA];
-                                    char.charisma.set();
-                                }
+                                char.strength.base = data[ENUMS.STATS][ENUMS.STRENGTH];
+                                char.strength.set();
+                                char.endurance.base = data[ENUMS.STATS][ENUMS.ENDURANCE];
+                                char.endurance.set();
+                                char.agility.base = data[ENUMS.STATS][ENUMS.AGILITY];
+                                char.agility.set();
+                                char.dexterity.base = data[ENUMS.STATS][ENUMS.DEXTERITY];
+                                char.dexterity.set();
+                                char.intelligence.base = data[ENUMS.STATS][ENUMS.INTELLIGENCE];
+                                char.intelligence.set();
+                                char.willpower.base = data[ENUMS.STATS][ENUMS.WILLPOWER];
+                                char.willpower.set();
+                                char.charisma.base = data[ENUMS.STATS][ENUMS.CHARISMA];
+                                char.charisma.set();
 
                                 char.classInfo = new ClassInfo();
                                 char.classInfo.init({unit: char});
@@ -642,7 +660,7 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on(ENUMS.CLIENTCOMMAND, function(data) {
-
+        console.log(data);
         if (!that.engine.validateData(data,[ENUMS.COMMAND])){
             return;
         }

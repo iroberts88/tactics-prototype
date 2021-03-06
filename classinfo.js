@@ -97,10 +97,12 @@ ClassInfo.prototype.setClass = function(c){
 			this.unit[stat].base += charClass.attributes[stat];
 			this.unit[stat].set();
 		}
-		if (typeof this.ap[charClass.classid] == 'undefined'){
+		/*if (typeof this.ap[charClass.classid] == 'undefined'){
 			this.ap[charClass.classid] = 100;
 			this.totalAPValues[charClass.classid] = 100;
-		}
+		}*/
+			this.ap[charClass.classid] = 500;
+			this.totalAPValues[charClass.classid] = 500;
 		if (typeof this.allClassAbilities[charClass.classid] == 'undefined'){
 			//changed to a new class, set abilities
 			this.allClassAbilities[charClass.classid] = {
