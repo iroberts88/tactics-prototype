@@ -239,7 +239,7 @@ GameEngine.prototype.newConnection = function(socket) {
     p.setGameEngine(self);
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
-    self.queuePlayer(p,ENUMS.CONNINFO, self.createClientData(ENUMS.MAPNAMES, self.mapids, ENUMS.ID, p.id));
+    self.queuePlayer(p,Enums.CONNINFO, self.createClientData(Enums.MAPNAMES, self.mapids, Enums.ID, p.id));
     self.addPlayer(p);
 }
 
@@ -247,7 +247,7 @@ GameEngine.prototype.emit = function() {
     try{
         for(var i in this.players) {
             if (this.players[i].netQueue.length > 0){
-                this.players[i].socket.emit(ENUMS.SERVERUPDATE, this.players[i].netQueue);
+                this.players[i].socket.emit(Enums.SERVERUPDATE, this.players[i].netQueue);
             }
         }
     }catch(e){

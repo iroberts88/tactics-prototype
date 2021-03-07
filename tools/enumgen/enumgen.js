@@ -116,6 +116,7 @@ var enums = [
 	'MAXITEMPILE',
 	'MAXSHIELDS',
 	'MAXWEIGHT',
+	'MODAP',
 	'MOVE',
 	'MYUNITS',
 

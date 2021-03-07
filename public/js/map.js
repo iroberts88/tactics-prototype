@@ -113,13 +113,13 @@
         this.cubeMap = {};
 
         try{
-            for (var i in data[ENUMS.MAPDATA]){
+            for (var i in data[Enums.MAPDATA]){
                 if (typeof this.axialMap[i] == 'undefined'){
                     this.axialMap[i] = {};
                 }
-                for (var j in data[ENUMS.MAPDATA][i]){
+                for (var j in data[Enums.MAPDATA][i]){
                     var node = new Node();
-                    node.init(data[ENUMS.MAPDATA][i][j]);
+                    node.init(data[Enums.MAPDATA][i][j]);
                     this.axialMap[i][j] = node;
                 }
             }
@@ -148,12 +148,12 @@
             this.updateSprites(this.container2.children);
             Game.addOverlaySprites();
             Graphics.worldContainer.addChild(this.container2);
-            if (data[ENUMS.STARTZONE1]){
-                for (var i = 0; i < data[ENUMS.STARTZONE1].length;i++){
-                    this.startZone1.push(this.axialMap[data[ENUMS.STARTZONE1][i][ENUMS.Q]][data[ENUMS.STARTZONE1][i][ENUMS.R]]);
+            if (data[Enums.STARTZONE1]){
+                for (var i = 0; i < data[Enums.STARTZONE1].length;i++){
+                    this.startZone1.push(this.axialMap[data[Enums.STARTZONE1][i][Enums.Q]][data[Enums.STARTZONE1][i][Enums.R]]);
                 }
-                for (var i = 0; i < data[ENUMS.STARTZONE2].length;i++){
-                    this.startZone2.push(this.axialMap[data[ENUMS.STARTZONE2][i][ENUMS.Q]][data[ENUMS.STARTZONE2][i][ENUMS.R]]);
+                for (var i = 0; i < data[Enums.STARTZONE2].length;i++){
+                    this.startZone2.push(this.axialMap[data[Enums.STARTZONE2][i][Enums.Q]][data[Enums.STARTZONE2][i][Enums.R]]);
                 }
             }
         }catch(e){
@@ -1004,14 +1004,14 @@
     var Node = function(){}
 
     Node.prototype.init = function(data){
-        this.q = parseInt(data[ENUMS.Q]);
-        this.r = parseInt(data[ENUMS.R]);
+        this.q = parseInt(data[Enums.Q]);
+        this.r = parseInt(data[Enums.R]);
         this.x = parseInt(this.q);
         this.y = parseInt((this.q*-1)-this.r);
         this.z = parseInt(this.r);
-        this.h = data[ENUMS.H];
-        this.tile = data[ENUMS.RESOURCE];
-        this.deleted = data[ENUMS.DELETED];
+        this.h = data[Enums.H];
+        this.tile = data[Enums.RESOURCE];
+        this.deleted = data[Enums.DELETED];
         this.unit = null;
         this.sprite1 = null;
         this.sprite2 = null;

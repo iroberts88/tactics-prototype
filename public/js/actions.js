@@ -30,7 +30,7 @@
             this.currentAction = this.actions[this.actionIndex];
         }else{
             try{
-                var actionFunc = this.getAction(this.currentAction[ENUMS.ACTION]);
+                var actionFunc = this.getAction(this.currentAction[Enums.ACTION]);
                 actionFunc(dt,this,this.currentAction);
 
                 if (this.end && this.hasAMove){
@@ -56,40 +56,40 @@
 
     Actions.prototype.getAction = function(a){
         switch(a){
-            case ENUMS.MOVE:
+            case Enums.MOVE:
                 return this.move;
                 break;
-            case ENUMS.FACE:
+            case Enums.FACE:
                 return this.face;
                 break;
-            case ENUMS.REVEAL:
+            case Enums.REVEAL:
                 return this.reveal;
                 break;
-            case ENUMS.HIDE:
+            case Enums.HIDE:
                 return this.hide;
                 break;
-            case ENUMS.ACTIONUSED:
+            case Enums.ACTIONUSED:
                 return this.actionUsed;
                 break;
-            case ENUMS.ATTACK:
+            case Enums.ATTACK:
                 return this.attack;
                 break;
-            case ENUMS.NOLOS:
+            case Enums.NOLOS:
                 return this.noLos;
                 break;
-            case ENUMS.ACTIONBUBBLE:
+            case Enums.ACTIONBUBBLE:
                 return this.actionBubble;
                 break;
-            case ENUMS.DAMAGETEXT:
+            case Enums.DAMAGETEXT:
                 return this.dmgText;
                 break;
-            case ENUMS.SETENERGY:
+            case Enums.SETENERGY:
                 return this.setEnergy;
                 break;
-            case ENUMS.SLAM:
+            case Enums.SLAM:
                 return this.slam;
                 break;
-            case ENUMS.REVERSAL:
+            case Enums.REVERSAL:
                 return this.reversal;
                 break;
             default:
@@ -115,7 +115,7 @@
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
             data.speed = 0.1; //seconds it takes to move 1 node
-            data.unit = Game.units[data[ENUMS.UNITID]];
+            data.unit = Game.units[data[Enums.UNITID]];
             var t = 1;
             if (!(Game.map.currentRotation%2)){t = 2}
             var sp = 'sprite' + t;
@@ -123,7 +123,7 @@
             if (data.unit.currentNode.unit == data.unit){
                 data.unit.currentNode.unit = null;
             }
-            data.newNode = Game.map.getAxial({x:data[ENUMS.X],y:data[ENUMS.Y],z:data[ENUMS.Z]});
+            data.newNode = Game.map.getAxial({x:data[Enums.X],y:data[Enums.Y],z:data[Enums.Z]});
             Game.map[cont].removeChild(data.unit.sprite);
             Game.map[cont].addChildAt(data.unit.sprite,Game.map[cont].getChildIndex(data.newNode[sp])+1);
             data.startPos = [data.unit.sprite.position.x,data.unit.sprite.position.y];
@@ -151,16 +151,16 @@
             var t = 1;
             if (!(Game.map.currentRotation%2)){t = 2}
             var sp = 'sprite' + t;
-            data.unit = Game.units[data[ENUMS.UNITID]];
-            data.target = Game.units[data[ENUMS.TARGETID]]
+            data.unit = Game.units[data[Enums.UNITID]];
+            data.target = Game.units[data[Enums.TARGETID]]
             if (data.unit.currentNode.unit == data.unit){
                 data.unit.currentNode.unit = null;
             }
             if (data.target.currentNode.unit == data.target){
                 data.target.currentNode.unit = null;
             }
-            data.newNode1 = Game.map.axialMap[data[ENUMS.UNITNEWNODE][ENUMS.Q]][data[ENUMS.UNITNEWNODE][ENUMS.R]];
-            data.newNode2 = Game.map.axialMap[data[ENUMS.TARGETNEWNODE][ENUMS.Q]][data[ENUMS.TARGETNEWNODE][ENUMS.R]];
+            data.newNode1 = Game.map.axialMap[data[Enums.UNITNEWNODE][Enums.Q]][data[Enums.UNITNEWNODE][Enums.R]];
+            data.newNode2 = Game.map.axialMap[data[Enums.TARGETNEWNODE][Enums.Q]][data[Enums.TARGETNEWNODE][Enums.R]];
             data.startPos1 = [data.unit.sprite.position.x,data.unit.sprite.position.y];
             data.startPos2 = [data.target.sprite.position.x,data.target.sprite.position.y];
             data.endPos1 = [data.newNode1[sp].position.x,data.newNode1[sp].position.y-Game.map.TILE_HEIGHT*(data.newNode1.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]];
@@ -195,7 +195,7 @@
             actions.hasAMove = true;
             data.ticker = 0;
             data.speed = 0.33; //seconds it takes to move 1 node
-            data.unit = Game.units[data[ENUMS.UNITID]];
+            data.unit = Game.units[data[Enums.UNITID]];
             var t = 1;
             if (!(Game.map.currentRotation%2)){t = 2}
             var sp = 'sprite' + t;
@@ -203,7 +203,7 @@
             if (data.unit.currentNode.unit == data.unit){
                 data.unit.currentNode.unit = null;
             }
-            data.newNode = Game.map.getAxial({x:data[ENUMS.X],y:data[ENUMS.Y],z:data[ENUMS.Z]});
+            data.newNode = Game.map.getAxial({x:data[Enums.X],y:data[Enums.Y],z:data[Enums.Z]});
             Game.map[cont].removeChild(data.unit.sprite);
             Game.map[cont].addChildAt(data.unit.sprite,Game.map[cont].getChildIndex(data.newNode[sp])+1);
             data.startPos = [data.unit.sprite.position.x,data.unit.sprite.position.y];
@@ -220,7 +220,7 @@
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
             actions.endAction(data);
-            if(data[ENUMS.REDUCELEFT]){
+            if(data[Enums.REDUCELEFT]){
                 data.unit.moveLeft -= 1;
             }
             data.unit.currentNode = data.newNode;
@@ -232,22 +232,22 @@
 
     Actions.prototype.face = function(dt,actions,data){
         //change the unit's facing and end
-        Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTION]);
+        Game.units[data[Enums.UNITID]].setNewDirection(data[Enums.DIRECTION]);
         actions.endAction(data);
     };
 
     Actions.prototype.reveal = function(dt,actions,data){
         //change the unit's facing and end
-        if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
-            if (!Game.units[data[ENUMS.UNITID]].visible){
+        if (typeof Game.units[data[Enums.UNITID]] != 'undefined'){
+            if (!Game.units[data[Enums.UNITID]].visible){
                 var t = 1;
                 if (!(Game.map.currentRotation%2)){t = 2}
-                Game.map['container'+t].addChild(Game.units[data[ENUMS.UNITID]].sprite);
-                Game.units[data[ENUMS.UNITID]].visible = true;
+                Game.map['container'+t].addChild(Game.units[data[Enums.UNITID]].sprite);
+                Game.units[data[Enums.UNITID]].visible = true;
             }
-            Game.units[data[ENUMS.UNITID]].sprite.alpha = 1;
-            Game.units[data[ENUMS.UNITID]].setCurrentNode(data[ENUMS.Q],data[ENUMS.R],Game.map);
-            Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTION]);
+            Game.units[data[Enums.UNITID]].sprite.alpha = 1;
+            Game.units[data[Enums.UNITID]].setCurrentNode(data[Enums.Q],data[Enums.R],Game.map);
+            Game.units[data[Enums.UNITID]].setNewDirection(data[Enums.DIRECTION]);
             Game.updateUnitsBool = true;
         }
         actions.endAction(data);
@@ -255,16 +255,16 @@
 
     Actions.prototype.hide = function(dt,actions,data){
         //change the unit's facing and end
-        if (typeof Game.units[data[ENUMS.UNITID]] != 'undefined'){
-            if (Game.units[data[ENUMS.UNITID]].owner == mainObj.playerID){
-                Game.units[data[ENUMS.UNITID]].sprite.alpha = 0.5;
+        if (typeof Game.units[data[Enums.UNITID]] != 'undefined'){
+            if (Game.units[data[Enums.UNITID]].owner == mainObj.playerID){
+                Game.units[data[Enums.UNITID]].sprite.alpha = 0.5;
             }else{
                 var t = 1;
                 if (!(Game.map.currentRotation%2)){t = 2}
-                Game.map['container'+t].removeChild(Game.units[data[ENUMS.UNITID]].sprite);
-                Game.units[data[ENUMS.UNITID]].visible = false;
-                Game.units[data[ENUMS.UNITID]].currentNode.unit = null;
-                Game.units[data[ENUMS.UNITID]].currentNode = null;
+                Game.map['container'+t].removeChild(Game.units[data[Enums.UNITID]].sprite);
+                Game.units[data[Enums.UNITID]].visible = false;
+                Game.units[data[Enums.UNITID]].currentNode.unit = null;
+                Game.units[data[Enums.UNITID]].currentNode = null;
             }
         }
         actions.endAction(data);
@@ -272,8 +272,8 @@
 
     Actions.prototype.attack = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
-            Game.units[data[ENUMS.UNITID]].addActionBubble(data[ENUMS.WEAPON]);
-            Game.units[data[ENUMS.UNITID]].setNewDirection(data[ENUMS.DIRECTION]);
+            Game.units[data[Enums.UNITID]].addActionBubble(data[Enums.WEAPON]);
+            Game.units[data[Enums.UNITID]].setNewDirection(data[Enums.DIRECTION]);
             data.ticker = 0;
         }
         data.ticker += dt;
@@ -283,14 +283,14 @@
     };
 
     Actions.prototype.noLos = function(dt,actions,data){
-        Game.units[data[ENUMS.UNITID]].addActionBubble('No Line of Sight!');
+        Game.units[data[Enums.UNITID]].addActionBubble('No Line of Sight!');
         actions.endAction(data);
     };
 
     Actions.prototype.actionBubble = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
             data.ticker = 0;
-            Game.units[data[ENUMS.UNITID]].addActionBubble(data[ENUMS.TEXT]);
+            Game.units[data[Enums.UNITID]].addActionBubble(data[Enums.TEXT]);
         }
         data.ticker += dt;
         if (data.ticker >= 1.5){
@@ -299,45 +299,45 @@
     };
     Actions.prototype.dmgText = function(dt,actions,data){
         console.log(data);
-        if (data[ENUMS.OWNERONLY] && Game.units[data[ENUMS.UNITID]].owner != mainObj.playerID){
+        if (data[Enums.OWNERONLY] && Game.units[data[Enums.UNITID]].owner != mainObj.playerID){
             console.log('END')
             actions.endAction(data);
         }
-        if (typeof Game.units[data[ENUMS.UNITID]] == 'undefined'){
+        if (typeof Game.units[data[Enums.UNITID]] == 'undefined'){
             actions.endAction(data);
         }
-        var unit = Game.units[data[ENUMS.UNITID]];
-        unit.addDmgText(data[ENUMS.TEXT],data[ENUMS.TYPE]);
+        var unit = Game.units[data[Enums.UNITID]];
+        unit.addDmgText(data[Enums.TEXT],data[Enums.TYPE]);
         var resetIP = false;
-        if (typeof data[ENUMS.CURRENTHEALTH] != 'undefined'){
-            unit.currentHealth = data[ENUMS.CURRENTHEALTH];
+        if (typeof data[Enums.CURRENTHEALTH] != 'undefined'){
+            unit.currentHealth = data[Enums.CURRENTHEALTH];
             resetIP = true;
         }
-        if (typeof data[ENUMS.CURRENTSHIELDS] != 'undefined'){
-            unit.currentShields = data[ENUMS.CURRENTSHIELDS];
+        if (typeof data[Enums.CURRENTSHIELDS] != 'undefined'){
+            unit.currentShields = data[Enums.CURRENTSHIELDS];
             resetIP = true;
         }
-        if (data[ENUMS.DEAD] && typeof data[ENUMS.DEAD] != 'undefined'){
+        if (data[Enums.DEAD] && typeof data[Enums.DEAD] != 'undefined'){
             unit.currentNode.unit = null;
             unit.setDead();
             unit.dead = true;
             resetIP = true;
-        }else if (typeof data[ENUMS.FAINTED] != 'undefined'){
-            unit.setFainted(data[ENUMS.FAINTED]);
+        }else if (typeof data[Enums.FAINTED] != 'undefined'){
+            unit.setFainted(data[Enums.FAINTED]);
             resetIP = true;
         }
         if (resetIP){
-            unit.infoPane = Game.getUnitInfoPane(data[ENUMS.UNITID]);
+            unit.infoPane = Game.getUnitInfoPane(data[Enums.UNITID]);
         }
         actions.endAction(data);
     };
     Actions.prototype.actionUsed = function(dt,actions,data){
-        Game.units[data[ENUMS.UNITID]].actionUsed = true;
+        Game.units[data[Enums.UNITID]].actionUsed = true;
         actions.endAction(data);
     };
     Actions.prototype.setEnergy = function(dt,actions,data){
-        Game.units[data[ENUMS.UNITID]].currentEnergy = data[ENUMS.VALUE];
-        Game.units[data[ENUMS.UNITID]].infoPane = Game.getUnitInfoPane(data[ENUMS.UNITID]);
+        Game.units[data[Enums.UNITID]].currentEnergy = data[Enums.VALUE];
+        Game.units[data[Enums.UNITID]].infoPane = Game.getUnitInfoPane(data[Enums.UNITID]);
         actions.endAction(data);
     };
 

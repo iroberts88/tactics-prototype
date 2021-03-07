@@ -10,15 +10,15 @@
         
     Inventory.prototype.init = function(data){
         //this.items = data.items;
-        this.maxWeight = Utils.udCheck(data[ENUMS.MAXWEIGHT]);
+        this.maxWeight = Utils.udCheck(data[Enums.MAXWEIGHT]);
         this.items = [];
-        for (var i=0; i<data[ENUMS.ITEMS].length; i++){
+        for (var i=0; i<data[Enums.ITEMS].length; i++){
             var item = new Item();
-            item.init(data[ENUMS.ITEMS][i]);
+            item.init(data[Enums.ITEMS][i]);
             this.items.push(item);
         }
-        this.currentWeight = Utils.udCheck(data[ENUMS.CURRENTWEIGHT]);
-        this.maxItemPile = Utils.udCheck(data[ENUMS.MAXITEMPILE]);
+        this.currentWeight = Utils.udCheck(data[Enums.CURRENTWEIGHT]);
+        this.maxItemPile = Utils.udCheck(data[Enums.MAXITEMPILE]);
         
     }
 
@@ -53,29 +53,29 @@
     var Item = function () {}
         
     Item.prototype.init = function(data){
-        this.id = Utils.udCheck(data[ENUMS.ID]);
-        this.amount = Utils.udCheck(data[ENUMS.AMOUNT]);
-        this.description = Utils.udCheck(data[ENUMS.DESCRIPTION]);
-        this.type = Utils.udCheck(data[ENUMS.TYPE]);
-        this.weight = Utils.udCheck(data[ENUMS.WEIGHT]);
-        this.classes = Utils.udCheck(data[ENUMS.CLASSES]);
-        this.onUse = Utils.udCheck(data[ENUMS.ONUSE]);
-        this.onFire = Utils.udCheck(data[ENUMS.ONFIRE]);
-        this.onEquip = Utils.udCheck(data[ENUMS.ONEQUIP]);
-        this.onHit = Utils.udCheck(data[ENUMS.ONHIT]);
-        this.onTakeDamage = Utils.udCheck(data[ENUMS.ONTAKEDAMAGE]);
-        this.constantEffect = Utils.udCheck(data[ENUMS.CONSTANTEFFECT]);
-        this.onFullRecharge = Utils.udCheck(data[ENUMS.ONFULLRECHARGE]);
-        this.onDepleted = Utils.udCheck(data[ENUMS.ONDEPLETED]);
-        this.name = Utils.udCheck(data[ENUMS.NAME]);
+        this.id = Utils.udCheck(data[Enums.ID]);
+        this.amount = Utils.udCheck(data[Enums.AMOUNT]);
+        this.description = Utils.udCheck(data[Enums.DESCRIPTION]);
+        this.type = Utils.udCheck(data[Enums.TYPE]);
+        this.weight = Utils.udCheck(data[Enums.WEIGHT]);
+        this.classes = Utils.udCheck(data[Enums.CLASSES]);
+        this.onUse = Utils.udCheck(data[Enums.ONUSE]);
+        this.onFire = Utils.udCheck(data[Enums.ONFIRE]);
+        this.onEquip = Utils.udCheck(data[Enums.ONEQUIP]);
+        this.onHit = Utils.udCheck(data[Enums.ONHIT]);
+        this.onTakeDamage = Utils.udCheck(data[Enums.ONTAKEDAMAGE]);
+        this.constantEffect = Utils.udCheck(data[Enums.CONSTANTEFFECT]);
+        this.onFullRecharge = Utils.udCheck(data[Enums.ONFULLRECHARGE]);
+        this.onDepleted = Utils.udCheck(data[Enums.ONDEPLETED]);
+        this.name = Utils.udCheck(data[Enums.NAME]);
         this.eqData = {};
-        this.eqData.range = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.RANGE]);
-        this.eqData.damage = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.DAMAGE]);
-        this.eqData.damageType = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.DAMAGETYPE]);
-        this.eqData.rangeMin = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.RANGEMIN]);
-        this.eqData.rangeMax = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.RANGEMAX]);
-        this.eqData.recharge = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.RECHARGE]);
-        this.eqData.delay = Utils.udCheck(data[ENUMS.EQDATA][ENUMS.DELAY]);
+        this.eqData.range = Utils.udCheck(data[Enums.EQDATA][Enums.RANGE]);
+        this.eqData.damage = Utils.udCheck(data[Enums.EQDATA][Enums.DAMAGE]);
+        this.eqData.damageType = Utils.udCheck(data[Enums.EQDATA][Enums.DAMAGETYPE]);
+        this.eqData.rangeMin = Utils.udCheck(data[Enums.EQDATA][Enums.RANGEMIN]);
+        this.eqData.rangeMax = Utils.udCheck(data[Enums.EQDATA][Enums.RANGEMAX]);
+        this.eqData.recharge = Utils.udCheck(data[Enums.EQDATA][Enums.RECHARGE]);
+        this.eqData.delay = Utils.udCheck(data[Enums.EQDATA][Enums.DELAY]);
     }
 
     window.Item = Item;

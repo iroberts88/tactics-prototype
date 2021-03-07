@@ -1,5 +1,5 @@
 
-var ENUMS = require('./enums.js').Enums;
+var Enums = require('./enums.js').Enums;
 
 var Ability = function(){}
 
@@ -15,21 +15,22 @@ Ability.prototype.init = function(data) {
     this.eCost = data['eCost'];
     this.tickECost = data['tickECost'];
     this.speed = data['speed'];
+    this.data = {};
     this.cData = this.getClientData();
 };
 
 Ability.prototype.getClientData = function(){
     var data = {};
-    data[ENUMS.SCOST] = this.sCost;
-    data[ENUMS.NAME] = this.name;
-    data[ENUMS.DESCRIPTION] = this.description;
-    data[ENUMS.RANGE] = this.range;
-    data[ENUMS.APCOST] = this.ApCost;
-    data[ENUMS.ID] = this.id;
-    data[ENUMS.TYPE] = this.type;
-    data[ENUMS.RADIUS] = this.radius;
-    data[ENUMS.ECOST] = this.eCost;
-    data[ENUMS.SPEED] = this.speed;
+    data[Enums.SCOST] = this.sCost;
+    data[Enums.NAME] = this.name;
+    data[Enums.DESCRIPTION] = this.description;
+    data[Enums.RANGE] = this.range;
+    data[Enums.APCOST] = this.ApCost;
+    data[Enums.ID] = this.id;
+    data[Enums.TYPE] = this.type;
+    data[Enums.RADIUS] = this.radius;
+    data[Enums.ECOST] = this.eCost;
+    data[Enums.SPEED] = this.speed;
     return data;
 }
 exports.Ability = Ability;

@@ -338,13 +338,7 @@
           "ApCost": 80,
           "id": "dodge",
           "type": "reaction",
-          "speed": "instant",
-          "effect": {
-            "name": "addOnDamage",
-            "data": {
-              "name": "dodge"
-            }
-          }
+          "speed": "instant"
         },
         {
           "sCost": 8,
@@ -354,13 +348,7 @@
           "ApCost": 80,
           "id": "evasion",
           "type": "reaction",
-          "speed": "instant",
-          "effect": {
-            "name": "addOnDamage",
-            "data": {
-              "name": "evade"
-            }
-          }
+          "speed": "instant"
         },
         {
           "sCost": 12,

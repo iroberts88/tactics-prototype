@@ -1,5 +1,5 @@
 
-var	ENUMS = require('./enums.js').Enums;
+var	Enums = require('./enums.js').Enums;
 
 var ClassInfo = function(){
 	this.unit = null; //the unit which owns this classInfo
@@ -14,6 +14,7 @@ var ClassInfo = function(){
 	this.equippedAbilities = null;
 	this.ap = null;
 	this.totalAPValues = null;
+	this.abilities = {};
 }
 
 ClassInfo.prototype.init = function(data){
@@ -48,27 +49,27 @@ ClassInfo.prototype.init = function(data){
 }
 ClassInfo.prototype.getClientData = function(){
 	cData = {};
-	cData[ENUMS.CURRENTCLASS] = this.currentClass;
-	cData[ENUMS.BASECLASS] = this.baseClass;
-	cData[ENUMS.BASEID] = this.baseid;
-	cData[ENUMS.CLASSID] = this.classid;
-	cData[ENUMS.AP] = this.ap;
-	cData[ENUMS.TOTALAPVALUES] = this.totalAPValues;
+	cData[Enums.CURRENTCLASS] = this.currentClass;
+	cData[Enums.BASECLASS] = this.baseClass;
+	cData[Enums.BASEID] = this.baseid;
+	cData[Enums.CLASSID] = this.classid;
+	cData[Enums.AP] = this.ap;
+	cData[Enums.TOTALAPVALUES] = this.totalAPValues;
 
-	cData[ENUMS.LEARNEDABILITIES] = {};
+	cData[Enums.LEARNEDABILITIES] = {};
 	for (var i in this.learnedAbilities){
-		cData[ENUMS.LEARNEDABILITIES][i] = true;
+		cData[Enums.LEARNEDABILITIES][i] = true;
 	}
-	cData[ENUMS.EQUIPPEDABILITIES] = {};
+	cData[Enums.EQUIPPEDABILITIES] = {};
 	for (var i in this.equippedAbilities){
-		cData[ENUMS.EQUIPPEDABILITIES][i] = true;
+		cData[Enums.EQUIPPEDABILITIES][i] = true;
 	}
-	cData[ENUMS.ALLCLASSABILITIES] = {};
+	cData[Enums.ALLCLASSABILITIES] = {};
 	for (var i in this.allClassAbilities){
-		cData[ENUMS.ALLCLASSABILITIES][i] = [];
+		cData[Enums.ALLCLASSABILITIES][i] = [];
 		for (var j = 0; j < this.engine.classes[i]['abilities'].length;j++){
 			var ability = this.engine.abilities[this.engine.classes[i]['abilities'][j]['id']];
-			cData[ENUMS.ALLCLASSABILITIES][i].push(ability.cData);
+			cData[Enums.ALLCLASSABILITIES][i].push(ability.cData);
 		}
 	}
 	return cData;

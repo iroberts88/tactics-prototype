@@ -116,17 +116,17 @@ Buff.prototype.init =  function(data){
         //send buff to client
         if(this.unit.owner.socket){
             var cData = {};
-            cData[ENUMS.ID] = this.unit.id;
-            cData[ENUMS.BUFFDATA] = {};
-            cData[ENUMS.BUFFDATA][ENUMS.ID] = this.id;
-            cData[ENUMS.BUFFDATA][ENUMS.TEXTURE] = this.textureId;
-            cData[ENUMS.BUFFDATA][ENUMS.DURATION] = this.duration;
-            cData[ENUMS.BUFFDATA][ENUMS.DEBUFF] = this.debuff;
-            cData[ENUMS.BUFFDATA][ENUMS.NAME] = this.name;
-            cData[ENUMS.BUFFDATA][ENUMS.DESCRIPTION] = this.description;
-            cData[ENUMS.BUFFDATA][ENUMS.EFFECT] = this.effect;
+            cData[Enums.ID] = this.unit.id;
+            cData[Enums.BUFFDATA] = {};
+            cData[Enums.BUFFDATA][Enums.ID] = this.id;
+            cData[Enums.BUFFDATA][Enums.TEXTURE] = this.textureId;
+            cData[Enums.BUFFDATA][Enums.DURATION] = this.duration;
+            cData[Enums.BUFFDATA][Enums.DEBUFF] = this.debuff;
+            cData[Enums.BUFFDATA][Enums.NAME] = this.name;
+            cData[Enums.BUFFDATA][Enums.DESCRIPTION] = this.description;
+            cData[Enums.BUFFDATA][Enums.EFFECT] = this.effect;
 
-            this.unit.owner.session.queueData(ENUMS.ADDBUFF,cData);
+            this.unit.owner.session.queueData(Enums.ADDBUFF,cData);
         }
     }
 }

@@ -113,12 +113,12 @@
         learnAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data[ENUMS.UNITID]){
+                if (Player.units[i].id == data[Enums.UNITID]){
                     unit = Player.units[i];
                 }
             }
-            unit.classInfo.learnedAbilities[data[ENUMS.ABILITYID]] = 1;
-            unit.classInfo.ap[data[ENUMS.CLASSID]] -= data[ENUMS.APCOST];
+            unit.classInfo.learnedAbilities[data[Enums.ABILITYID]] = 1;
+            unit.classInfo.ap[data[Enums.CLASSID]] -= data[Enums.APCOST];
             this.clear();
             this.drawCurrentClass();
         },
@@ -188,11 +188,11 @@
                             console.log('learning ability with id: ' + e.currentTarget.ablID);
                             //check AP then send to client
                             if (LearnAbilities.unitInfo.classInfo.ap[LearnAbilities.fromClass] >= e.currentTarget.ApCost){
-                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                                    ENUMS.COMMAND, ENUMS.LEARNABILITY,
-                                    ENUMS.UNITID, e.currentTarget.unitid,
-                                    ENUMS.CLASSID, e.currentTarget.classid,
-                                    ENUMS.ABILITYID, e.currentTarget.ablID
+                                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                                    Enums.COMMAND, Enums.LEARNABILITY,
+                                    Enums.UNITID, e.currentTarget.unitid,
+                                    Enums.CLASSID, e.currentTarget.classid,
+                                    Enums.ABILITYID, e.currentTarget.ablID
                                 ));
                             }
                         }

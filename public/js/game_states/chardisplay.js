@@ -31,7 +31,7 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(e){
                     if (confirm("Delete unit: <" + CharDisplay.charToDisplay.name + '> ?')){
-                        Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(ENUMS.COMMAND, ENUMS.DELETECHAR, ENUMS.UNITID, CharDisplay.charToDisplay.id));
+                        Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(Enums.COMMAND, Enums.DELETECHAR, Enums.UNITID, CharDisplay.charToDisplay.id));
                     }
                 }
             });

@@ -19,7 +19,7 @@
         },
         deleteUnit: function(data){
             for(var i = 0; i < this.units.length;i++){
-                if (this.units[i].id == data[ENUMS.UNITID]){
+                if (this.units[i].id == data[Enums.UNITID]){
                     this.units.splice(i,1);
                     Acorn.changeState('charScreen');
                     continue;
@@ -28,24 +28,24 @@
         },
         setUnitStat: function(data){
             for(var i = 0; i < this.units.length;i++){
-                if (this.units[i].id == data[ENUMS.UNITID]){
-                    this.units[i].setStat(data[ENUMS.STAT],data[ENUMS.VALUE]);
+                if (this.units[i].id == data[Enums.UNITID]){
+                    this.units[i].setStat(data[Enums.STAT],data[Enums.VALUE]);
                 }
             }
             Characters.refresh = true;
         },
         equipItem: function(data){
             for(var i = 0; i < this.units.length;i++){
-                if (this.units[i].id == data[ENUMS.UNITID]){
-                    this.units[i].equip(data[ENUMS.INDEX]);
+                if (this.units[i].id == data[Enums.UNITID]){
+                    this.units[i].equip(data[Enums.INDEX]);
                 }
             }
             UnitInventory.refresh = true;
         },
         unEquipItem: function(data){
             for(var i = 0; i < this.units.length;i++){
-                if (this.units[i].id == data[ENUMS.UNITID]){
-                    this.units[i].unEquip(data[ENUMS.INDEX]);
+                if (this.units[i].id == data[Enums.UNITID]){
+                    this.units[i].unEquip(data[Enums.INDEX]);
                 }
             }
             UnitInventory.refresh = true;

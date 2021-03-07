@@ -4,7 +4,7 @@ var Item = require('./item.js').Item,
     Unit = require('./unit.js').Unit,
     Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
-    ENUMS = require('./enums.js').Enums;
+    Enums = require('./enums.js').Enums;
 
 
 var Inventory = function () {
@@ -28,7 +28,7 @@ Inventory.prototype.init = function(data){
         this.maxItemPile = 1;
         this.duplicates = true;
         this.maxWeight.init({
-            'id': ENUMS.WEIGHT,
+            'id': Enums.WEIGHT,
             'owner': this.owner,
             'value': 1,
             'min': 1,
@@ -40,7 +40,7 @@ Inventory.prototype.init = function(data){
         //the player's main inventory
         this.maxItemPile = 99;
         this.maxWeight.init({
-            'id': ENUMS.WEIGHT,
+            'id': Enums.WEIGHT,
             'owner': null,
             'value': 1,
             'min': 1,
@@ -65,10 +65,10 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
 
             //send item data to client
             if (updateClient){
-                this.engine.queuePlayer(this.owner.owner,ENUMS.ADDITEMTOUNIT,this.engine.createClientData(
-                    ENUMS.UNITID, this.owner.id, 
-                    ENUMS.ITEM, I.getClientData(), 
-                    ENUMS.WEIGHT, this.currentWeight
+                this.engine.queuePlayer(this.owner.owner,Enums.ADDITEMTOUNIT,this.engine.createClientData(
+                    Enums.UNITID, this.owner.id, 
+                    Enums.ITEM, I.getClientData(), 
+                    Enums.WEIGHT, this.currentWeight
                 ));
             }
             return true;
@@ -104,17 +104,17 @@ Inventory.prototype.addItem = function(id, amt){
                 amountToBeAdded = (this.maxItemPile - this.items[containsItem[1]].amount);
                 this.items[containsItem[1]].amount = this.maxItemPile;
             }
-            data[ENUMS.ITEM] = id;
-            data[ENUMS.AMOUNT] = amountToBeAdded;
+            data[Enums.ITEM] = id;
+            data[Enums.AMOUNT] = amountToBeAdded;
         }else{
             var I = new Item();
             I.init(item);
             I.amount = amt;
             this.items.push(I);
-            data[ENUMS.ITEM] = I.getClientData();
-            data[ENUMS.ITEM][ENUMS.AMOUNT] = amountToBeAdded;
+            data[Enums.ITEM] = I.getClientData();
+            data[Enums.ITEM][Enums.AMOUNT] = amountToBeAdded;
         }
-        this.engine.queuePlayer(this.owner,ENUMS.ADDITEMTOPLAYER,data);
+        this.engine.queuePlayer(this.owner,Enums.ADDITEMTOPLAYER,data);
     }catch(e){
         this.engine.debug('additemplayerError',e,index);
     }
@@ -213,9 +213,9 @@ Inventory.prototype.equip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.engine.queuePlayer(this.owner.owner,ENUMS.EQUIPITEM,this.engine.createClientData(
-                ENUMS.UNITID, this.owner.id, 
-                ENUMS.INDEX, index
+            this.engine.queuePlayer(this.owner.owner,Enums.EQUIPITEM,this.engine.createClientData(
+                Enums.UNITID, this.owner.id, 
+                Enums.INDEX, index
             ));
         }
     }catch(e){
@@ -272,9 +272,9 @@ Inventory.prototype.unEquip = function(index,updateClient){
     
     //update client
         if (updateClient){
-            this.engine.queuePlayer(this.owner.owner,ENUMS.UNEQUIPITEM,this.engine.createClientData(
-                ENUMS.UNITID, this.owner.id,
-                ENUMS.INDEX, index
+            this.engine.queuePlayer(this.owner.owner,Enums.UNEQUIPITEM,this.engine.createClientData(
+                Enums.UNITID, this.owner.id,
+                Enums.INDEX, index
             ));
         }
     }catch(e){
@@ -289,10 +289,10 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
     this._removeItem(index);
     //send item data to client
     if (updateClient){
-        this.engine.queuePlayer(this.owner.owner,ENUMS.REMOVEITEMUNIT,this.engine.createClientData(
-            ENUMS.UNITID, this.owner.id, 
-            ENUMS.INDEX, index, 
-            ENUMS.WEIGHT, this.currentWeight
+        this.engine.queuePlayer(this.owner.owner,Enums.REMOVEITEMUNIT,this.engine.createClientData(
+            Enums.UNITID, this.owner.id, 
+            Enums.INDEX, index, 
+            Enums.WEIGHT, this.currentWeight
         ));
     }
     if (this.owner.weapon > index){
@@ -322,9 +322,9 @@ Inventory.prototype.removeItem = function(index,amt,updateClient){
     }
     //send item data to client
     if (updateClient){
-        this.engine.queuePlayer(this.owner,ENUMS.REMOVEITEM,this.engine.createClientData(
-            ENUMS.INDEX, index,
-            ENUMS.AMOUNT, amt
+        this.engine.queuePlayer(this.owner,Enums.REMOVEITEM,this.engine.createClientData(
+            Enums.INDEX, index,
+            Enums.AMOUNT, amt
         ));
     }
 }

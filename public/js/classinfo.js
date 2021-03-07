@@ -14,22 +14,22 @@
         
     ClassInfo.prototype.init = function(data){
         this.allClassAbilities = {};
-        for (var i in data[ENUMS.ALLCLASSABILITIES]){
+        for (var i in data[Enums.ALLCLASSABILITIES]){
             this.allClassAbilities[i] = [];
-            for (var j = 0; j < data[ENUMS.ALLCLASSABILITIES][i].length;j++){
+            for (var j = 0; j < data[Enums.ALLCLASSABILITIES][i].length;j++){
                 var a = new Ability();
-                a.init(data[ENUMS.ALLCLASSABILITIES][i][j]);
+                a.init(data[Enums.ALLCLASSABILITIES][i][j]);
                 this.allClassAbilities[i].push(a);
             }
         }
-        this.baseClass = data[ENUMS.BASECLASS];
-        this.baseid = data[ENUMS.BASEID];
-        this.classid = data[ENUMS.CLASSID];
-        this.currentClass = data[ENUMS.CURRENTCLASS];
-        this.equippedAbilities = data[ENUMS.EQUIPPEDABILITIES];
-        this.learnedAbilities = data[ENUMS.LEARNEDABILITIES];
-        this.ap = data[ENUMS.AP];
-        this.totalApValues = data[ENUMS.TOTALAPVALUES]; 
+        this.baseClass = data[Enums.BASECLASS];
+        this.baseid = data[Enums.BASEID];
+        this.classid = data[Enums.CLASSID];
+        this.currentClass = data[Enums.CURRENTCLASS];
+        this.equippedAbilities = data[Enums.EQUIPPEDABILITIES];
+        this.learnedAbilities = data[Enums.LEARNEDABILITIES];
+        this.ap = data[Enums.AP];
+        this.totalApValues = data[Enums.TOTALAPVALUES]; 
         
     }
 
@@ -42,16 +42,16 @@
     var Ability = function () {};
         
     Ability.prototype.init = function(data){
-        this.sCost = data[ENUMS.SCOST];
-        this.name = data[ENUMS.NAME];
-        this.description = data[ENUMS.DESCRIPTION];
-        this.range = data[ENUMS.RANGE];
-        this.ApCost = data[ENUMS.APCOST];
-        this.id = data[ENUMS.ID];
-        this.type = data[ENUMS.TYPE];
-        this.radius = data[ENUMS.RADIUS];
-        this.eCost = data[ENUMS.ECOST];
-        this.speed = data[ENUMS.SPEED];
+        this.sCost = data[Enums.SCOST];
+        this.name = data[Enums.NAME];
+        this.description = data[Enums.DESCRIPTION];
+        this.range = data[Enums.RANGE];
+        this.ApCost = data[Enums.APCOST];
+        this.id = data[Enums.ID];
+        this.type = data[Enums.TYPE];
+        this.radius = data[Enums.RADIUS];
+        this.eCost = data[Enums.ECOST];
+        this.speed = data[Enums.SPEED];
     };
 
     window.Ability = Ability;

@@ -1,6 +1,6 @@
 (function(window) {
 
-    ENUMS = {    
+    Enums = {    
         ABILITY: 0,
     ABILITYID: 1,
     ABILITYSLOTS: 2,
@@ -198,8 +198,9 @@
     Z: 194,
     ADDNEWUNIT: 195,
     VISION: 196,
-    FOUND: 197
+    FOUND: 197,
+    MODAP: 198
 
     };
-    window.ENUMS = ENUMS;
+    window.Enums = Enums;
 })(window);

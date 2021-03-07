@@ -1,5 +1,5 @@
 //map    
-var ENUMS = require('./enums.js').Enums;
+var Enums = require('./enums.js').Enums;
 
 var HexMap = function(session){
     this.MAX_HEIGHT = 25;
@@ -658,27 +658,27 @@ HexMap.prototype.getAxialNode = function(data){
 HexMap.prototype.getClientData = function(){
     var cData = {};
 
-    cData[ENUMS.STARTZONE1] = [];
+    cData[Enums.STARTZONE1] = [];
     for (var i = 0; i < this.startZone1.length; i++){
         var node = {}
-        node[ENUMS.Q] = this.startZone1[i].q;
-        node[ENUMS.R] = this.startZone1[i].r;
-        cData[ENUMS.STARTZONE1].push(node)
+        node[Enums.Q] = this.startZone1[i].q;
+        node[Enums.R] = this.startZone1[i].r;
+        cData[Enums.STARTZONE1].push(node)
     }
-    cData[ENUMS.STARTZONE2] = [];
+    cData[Enums.STARTZONE2] = [];
     for (var i = 0; i < this.startZone2.length; i++){
         var node = {}
-        node[ENUMS.Q] = this.startZone2[i].q;
-        node[ENUMS.R] = this.startZone2[i].r;
-        cData[ENUMS.STARTZONE2].push(node)
+        node[Enums.Q] = this.startZone2[i].q;
+        node[Enums.R] = this.startZone2[i].r;
+        cData[Enums.STARTZONE2].push(node)
     }
-    cData[ENUMS.MAPDATA] = {};
+    cData[Enums.MAPDATA] = {};
     for (var i in this.axialMap){
-        if (typeof cData[ENUMS.MAPDATA][i] == 'undefined'){
-            cData[ENUMS.MAPDATA][i] = {};
+        if (typeof cData[Enums.MAPDATA][i] == 'undefined'){
+            cData[Enums.MAPDATA][i] = {};
         }
         for (var j in this.axialMap[i]){
-            cData[ENUMS.MAPDATA][i][j] = this.axialMap[i][j].getClientData();
+            cData[Enums.MAPDATA][i][j] = this.axialMap[i][j].getClientData();
         }
     }
     return cData;
@@ -706,12 +706,12 @@ AxialNode.prototype.init = function(data){
 AxialNode.prototype.getClientData = function(){
     var cData = {};
 
-    cData[ENUMS.NODEID] = this.nodeid;
-    cData[ENUMS.Q] = this.q;
-    cData[ENUMS.R] = this.r;
-    cData[ENUMS.H] = this.h;
-    cData[ENUMS.RESOURCE] = this.tile;
-    cData[ENUMS.DELETED] = this.deleted;
+    cData[Enums.NODEID] = this.nodeid;
+    cData[Enums.Q] = this.q;
+    cData[Enums.R] = this.r;
+    cData[Enums.H] = this.h;
+    cData[Enums.RESOURCE] = this.tile;
+    cData[Enums.DELETED] = this.deleted;
     return cData;
 }
 AxialNode.prototype.print = function(){

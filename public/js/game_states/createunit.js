@@ -70,9 +70,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'soldier';
-                    CreateUnit.soldierButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             this.soldierButton.style.fill = 'gray';
@@ -85,9 +84,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'medic';
-                    CreateUnit.medicButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.medicButton);
@@ -99,9 +97,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'tech';
-                    CreateUnit.techButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.techButton);
@@ -113,9 +110,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'scout';
-                    CreateUnit.scoutButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.scoutButton);
@@ -127,9 +123,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'commando';
-                    CreateUnit.scoutButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.commandoButton);
@@ -141,9 +136,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'splicer';
-                    CreateUnit.scoutButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.splicerButton);
@@ -155,9 +149,8 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.classSelected = 'marksman';
-                    CreateUnit.scoutButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             Graphics.uiContainer.addChild(this.marksmanButton);
@@ -180,6 +173,16 @@
                 "<Willpower> increases max <energy> and <damage resistance> on levelup. It also increases effectiveness of willpower based abilities",
                 "<Charisma> increases <all stats> slightly on levelup. It also increases effectiveness of charisma based abilities"
             ];
+            this.stats = stats;
+            this.recommendedStats = {
+                'soldier': [4,5,4,4,1,2,0],
+                'medic': [1,3,1,1,4,4,6],
+                'tech': [0,3,3,3,8,3,0],
+                'scout': [2,2,8,3,2,1,2],
+                'commando': [2,2,0,3,3,3,7],
+                'splicer': [0,1,5,2,6,6,0],
+                'marksman': [0,2,5,9,2,2,0]
+            };
 
             var h = 0;
             for (var i = 0; i < stats.length;i++){
@@ -257,6 +260,22 @@
             });
             Graphics.uiContainer.addChild(this.pointsText);
 
+            this.recommendedBtn = Graphics.makeUiElement({
+                text: 'Recommended Stats',
+                style: this.style1,
+                position: [Graphics.width/2,this.pointsText.position.y + 100],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(e){
+                    for (let i = 0; i < CreateUnit.recommendedStats[CreateUnit.classSelected].length;i++){
+                        let stat = CreateUnit.stats[i];
+                        CreateUnit.statsAssigned[stat] = 1 + CreateUnit.recommendedStats[CreateUnit.classSelected][i];
+                        CreateUnit[stat + 'Num'].text = CreateUnit.statsAssigned[stat];
+                    }
+                    CreateUnit.points = 0;
+                }
+            });
+            Graphics.uiContainer.addChild(this.recommendedBtn);
+
             this.errorText = Graphics.makeUiElement({
                 text: ' ',
                 style: this.style1,
@@ -271,7 +290,7 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.checkAndCreate()
+                    CreateUnit.checkAndCreate();
                 }
             });
             this.createButton.style.fontSize = 64
@@ -297,9 +316,8 @@
             this.maleButton = Graphics.makeUiElement({text: 'male',style: this.style2, 
                 interactive: true, buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.sex = 'male';
-                    CreateUnit.maleButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             this.maleButton.position.x = this.unitSprite.position.x - this.unitSprite.width/2 - this.maleButton.width/2;
@@ -311,9 +329,8 @@
             this.femaleButton = Graphics.makeUiElement({text: 'female',style: this.style2, 
                 interactive: true, buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    CreateUnit.resetColors();
                     CreateUnit.sex = 'female';
-                    CreateUnit.femaleButton.defaultFill = 'gray';
+                    CreateUnit.resetColors();
                 }
             });
             this.femaleButton.style.fontSize = 32;
@@ -333,6 +350,7 @@
             Graphics.drawBoxAround(this.marksmanButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.splicerButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.createButton,Graphics.uiPrimitives2,{});
+            Graphics.drawBoxAround(this.recommendedBtn,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.femaleButton,Graphics.uiPrimitives2,{});
             Graphics.drawBoxAround(this.maleButton,Graphics.uiPrimitives2,{});
 
@@ -360,12 +378,10 @@
                 }
                 Acorn.Input.setValue(Acorn.Input.Key.TOGGLESTATS, false);
             }
+            CreateUnit[CreateUnit.classSelected + 'Button'].style.fill = 'gray';
+            CreateUnit[CreateUnit.sex + 'Button'].style.fill = 'gray';
         },
         resetColors: function(){
-            CreateUnit.soldierButton.defaultFill = Graphics.pallette.color1;
-            CreateUnit.techButton.defaultFill = Graphics.pallette.color1;
-            CreateUnit.scoutButton.defaultFill = Graphics.pallette.color1;
-            CreateUnit.medicButton.defaultFill = Graphics.pallette.color1;
             CreateUnit.soldierButton.style.fill = Graphics.pallette.color1;
             CreateUnit.techButton.style.fill = Graphics.pallette.color1;
             CreateUnit.scoutButton.style.fill = Graphics.pallette.color1;
@@ -374,8 +390,6 @@
             CreateUnit.splicerButton.style.fill = Graphics.pallette.color1;
             CreateUnit.marksmanButton.style.fill = Graphics.pallette.color1;
 
-            CreateUnit.maleButton.defaultFill = Graphics.pallette.color1;
-            CreateUnit.femaleButton.defaultFill = Graphics.pallette.color1;
             CreateUnit.maleButton.style.fill = Graphics.pallette.color1;
             CreateUnit.femaleButton.style.fill = Graphics.pallette.color1;
 
@@ -418,13 +432,13 @@
                 }
             }
             var sObj = {};
-            sObj[ENUMS.STRENGTH] = this.statsAssigned.strength;
-            sObj[ENUMS.ENDURANCE] = this.statsAssigned.endurance;
-            sObj[ENUMS.AGILITY] = this.statsAssigned.agility;
-            sObj[ENUMS.DEXTERITY] = this.statsAssigned.dexterity;
-            sObj[ENUMS.INTELLIGENCE] = this.statsAssigned.intelligence;
-            sObj[ENUMS.WILLPOWER] = this.statsAssigned.willpower;
-            sObj[ENUMS.CHARISMA] = this.statsAssigned.charisma;
+            sObj[Enums.STRENGTH] = this.statsAssigned.strength;
+            sObj[Enums.ENDURANCE] = this.statsAssigned.endurance;
+            sObj[Enums.AGILITY] = this.statsAssigned.agility;
+            sObj[Enums.DEXTERITY] = this.statsAssigned.dexterity;
+            sObj[Enums.INTELLIGENCE] = this.statsAssigned.intelligence;
+            sObj[Enums.WILLPOWER] = this.statsAssigned.willpower;
+            sObj[Enums.CHARISMA] = this.statsAssigned.charisma;
             if (p < 27){
                 this.errorText.text = "You need to spend all of your stat points!";
                 return;
@@ -453,12 +467,12 @@
             }
             //send to server to create
             console.log("Success!!! send to server to create!");
-            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                ENUMS.COMMAND, ENUMS.ADDUNIT,
-                ENUMS.NAME, name,
-                ENUMS.CLASS, this.classSelected,
-                ENUMS.STATS, sObj,
-                ENUMS.SEX, this.sex
+            Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                Enums.COMMAND, Enums.ADDUNIT,
+                Enums.NAME, name,
+                Enums.CLASS, this.classSelected,
+                Enums.STATS, sObj,
+                Enums.SEX, this.sex
             ));
             document.body.removeChild( document.getElementById('nameInput'));
             Acorn.changeState('charScreen');

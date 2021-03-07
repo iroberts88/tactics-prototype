@@ -60,9 +60,9 @@
                 clickFunc: function onClick(e){
                     if (confirm('Clear all equipped abilities?')){
 
-                        Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                            ENUMS.COMMAND, ENUMS.CLEARABILITIES,
-                            ENUMS.UNITID, e.currentTarget.unitid
+                        Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                            Enums.COMMAND, Enums.CLEARABILITIES,
+                            Enums.UNITID, e.currentTarget.unitid
                         ));
                     }
                 }
@@ -150,11 +150,11 @@
                         interactive: true,buttonMode: true,
                         clickFunc: function onClick(e){
                             //check AP then send to client
-                            Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                                ENUMS.COMMAND, ENUMS.UNEQUIPABILITY,
-                                ENUMS.UNITID, EquipAbilities.unitInfo.id,
-                                ENUMS.CLASSID, EquipAbilities.fromClass,
-                                ENUMS.ABILITYID, e.currentTarget.abl.id
+                            Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                                Enums.COMMAND, Enums.UNEQUIPABILITY,
+                                Enums.UNITID, EquipAbilities.unitInfo.id,
+                                Enums.CLASSID, EquipAbilities.fromClass,
+                                Enums.ABILITYID, e.currentTarget.abl.id
                             ));
                         }
                     });
@@ -178,11 +178,11 @@
                             //check AP then send to client
                             if (EquipAbilities.unitInfo.abilitySlots-EquipAbilities.unitInfo.usedAbilitySlots >= e.currentTarget.abl.sCost){
 
-                                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                                    ENUMS.COMMAND, ENUMS.EQUIPABILITY,
-                                    ENUMS.UNITID, EquipAbilities.unitInfo.id,
-                                    ENUMS.CLASSID, EquipAbilities.fromClass,
-                                    ENUMS.ABILITYID, e.currentTarget.abl.id
+                                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                                    Enums.COMMAND, Enums.EQUIPABILITY,
+                                    Enums.UNITID, EquipAbilities.unitInfo.id,
+                                    Enums.CLASSID, EquipAbilities.fromClass,
+                                    Enums.ABILITYID, e.currentTarget.abl.id
                                 ));
                             }
                         }
@@ -208,31 +208,31 @@
         equipAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data[ENUMS.UNITID]){
+                if (Player.units[i].id == data[Enums.UNITID]){
                     unit = Player.units[i];
                 }
             }
-            unit.classInfo.equippedAbilities[data[ENUMS.ABILITYID]] = 1;
-            unit.usedAbilitySlots += data[ENUMS.SCOST];
+            unit.classInfo.equippedAbilities[data[Enums.ABILITYID]] = 1;
+            unit.usedAbilitySlots += data[Enums.SCOST];
             this.clear();
             this.draw();
         },
         unEquipAbility: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data[ENUMS.UNITID]){
+                if (Player.units[i].id == data[Enums.UNITID]){
                     unit = Player.units[i];
                 }
             }
-            delete unit.classInfo.equippedAbilities[data[ENUMS.ABILITYID]];
-            unit.usedAbilitySlots -= data[ENUMS.SCOST];
+            delete unit.classInfo.equippedAbilities[data[Enums.ABILITYID]];
+            unit.usedAbilitySlots -= data[Enums.SCOST];
             this.clear();
             this.draw();
         },
         clearAbilities: function(data){
             var unit;
             for (var i = 0; i < Player.units.length;i++){
-                if (Player.units[i].id == data[ENUMS.UNITID]){
+                if (Player.units[i].id == data[Enums.UNITID]){
                     unit = Player.units[i];
                 }
             }

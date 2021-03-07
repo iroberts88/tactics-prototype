@@ -80,7 +80,7 @@ function User() {
                                             totalApValues: c[i].classInfo['totalApValues']});
                                         char.classInfo.setBaseClass(c[i].classInfo['baseid']);
                                         char.classInfo.setClass(c[i].classInfo['classid']);
-                                        that.owner.engine.queuePlayer(that.owner,ENUMS.ADDNEWUNIT, that.owner.engine.createClientData(ENUMS.UNITID, char.getClientData()));
+                                        that.owner.engine.queuePlayer(that.owner,Enums.ADDNEWUNIT, that.owner.engine.createClientData(Enums.UNITID, char.getClientData()));
                                         that.characters.push(char);
                                     }
                                 }
@@ -173,7 +173,7 @@ function User() {
                         char.classInfo.setClass(unitClass);
                         char.levelUp();
                         char.level -= 1;
-                        this.owner.engine.queuePlayer(this.owner,ENUMS.ADDNEWUNIT, this.owner.engine.createClientData(ENUMS.UNITID, char.getClientData()));
+                        this.owner.engine.queuePlayer(this.owner,Enums.ADDNEWUNIT, this.owner.engine.createClientData(Enums.UNITID, char.getClientData()));
                         this.characters.push(char);
                     }
 

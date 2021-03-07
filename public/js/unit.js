@@ -87,10 +87,10 @@
     Unit.prototype.init = function(data) {
         //Set up all stats and attributes
         this.updateInfo(data);
-        this.visible = (typeof data[ENUMS.VISIBLE] == 'undefined') ? true : data[ENUMS.VISIBLE];
-        this.direction = data[ENUMS.DIRECTION];
-        if (data[ENUMS.CURRENTNODE]){
-            this.currentNode = Game.map.axialMap[data[ENUMS.CURRENTNODE][ENUMS.Q]][data[ENUMS.CURRENTNODE][ENUMS.R]];
+        this.visible = (typeof data[Enums.VISIBLE] == 'undefined') ? true : data[Enums.VISIBLE];
+        this.direction = data[Enums.DIRECTION];
+        if (data[Enums.CURRENTNODE]){
+            this.currentNode = Game.map.axialMap[data[Enums.CURRENTNODE][Enums.Q]][data[Enums.CURRENTNODE][Enums.R]];
         }else{
             this.currentNode = null;
             this.visible = false;
@@ -133,65 +133,65 @@
     };
 
     Unit.prototype.updateInfo = function(data){
-        this.maximumHealth = Utils.udCheck(data[ENUMS.MAXHEALTH]);
-        this.maximumEnergy = Utils.udCheck(data[ENUMS.MAXENERGY]);
-        this.maximumShields = Utils.udCheck(data[ENUMS.MAXSHIELDS]);
+        this.maximumHealth = Utils.udCheck(data[Enums.MAXHEALTH]);
+        this.maximumEnergy = Utils.udCheck(data[Enums.MAXENERGY]);
+        this.maximumShields = Utils.udCheck(data[Enums.MAXSHIELDS]);
         //shields stay at null until a shield is equipped?
 
-        this.full = Utils.udCheck(data[ENUMS.FULL]);
-        this.currentHealth = Utils.udCheck(data[ENUMS.CURRENTHEALTH]);
-        this.currentEnergy = Utils.udCheck(data[ENUMS.CURRENTENERGY]);
-        this.currentShields = Utils.udCheck(data[ENUMS.CURRENTSHIELDS]);
-        this.move = Utils.udCheck(data[ENUMS.MOVE]);
-        this.moveLeft = Utils.udCheck(data[ENUMS.MOVE]);
-        this.jump = Utils.udCheck(data[ENUMS.JUMP]);
-        this.power = Utils.udCheck(data[ENUMS.POWER]);
-        this.skill = Utils.udCheck(data[ENUMS.SKILL]);
-        this.tactics = Utils.udCheck(data[ENUMS.TACTICS]);
-        this.speed = Utils.udCheck(data[ENUMS.SPEED]);
-        this.abilitySlots = Utils.udCheck(data[ENUMS.ABILITYSLOTS]);
-        this.strength = Utils.udCheck(data[ENUMS.STRENGTH]);
-        this.endurance = Utils.udCheck(data[ENUMS.ENDURANCE]);
-        this.agility = Utils.udCheck(data[ENUMS.AGILITY]);
-        this.dexterity = Utils.udCheck(data[ENUMS.DEXTERITY]);
-        this.willpower = Utils.udCheck(data[ENUMS.WILLPOWER]);
-        this.intelligence = Utils.udCheck(data[ENUMS.INTELLIGENCE]);
-        this.charisma = Utils.udCheck(data[ENUMS.CHARISMA]);
+        this.full = Utils.udCheck(data[Enums.FULL]);
+        this.currentHealth = Utils.udCheck(data[Enums.CURRENTHEALTH]);
+        this.currentEnergy = Utils.udCheck(data[Enums.CURRENTENERGY]);
+        this.currentShields = Utils.udCheck(data[Enums.CURRENTSHIELDS]);
+        this.move = Utils.udCheck(data[Enums.MOVE]);
+        this.moveLeft = Utils.udCheck(data[Enums.MOVE]);
+        this.jump = Utils.udCheck(data[Enums.JUMP]);
+        this.power = Utils.udCheck(data[Enums.POWER]);
+        this.skill = Utils.udCheck(data[Enums.SKILL]);
+        this.tactics = Utils.udCheck(data[Enums.TACTICS]);
+        this.speed = Utils.udCheck(data[Enums.SPEED]);
+        this.abilitySlots = Utils.udCheck(data[Enums.ABILITYSLOTS]);
+        this.strength = Utils.udCheck(data[Enums.STRENGTH]);
+        this.endurance = Utils.udCheck(data[Enums.ENDURANCE]);
+        this.agility = Utils.udCheck(data[Enums.AGILITY]);
+        this.dexterity = Utils.udCheck(data[Enums.DEXTERITY]);
+        this.willpower = Utils.udCheck(data[Enums.WILLPOWER]);
+        this.intelligence = Utils.udCheck(data[Enums.INTELLIGENCE]);
+        this.charisma = Utils.udCheck(data[Enums.CHARISMA]);
 
-        this.physicalRes = Utils.udCheck(data[ENUMS.RESISTANCEPHYSICAL]);
-        this.heatRes = Utils.udCheck(data[ENUMS.RESISTANCEHEAT]);
-        this.coldRes = Utils.udCheck(data[ENUMS.RESISTANCECOLD]);
-        this.acidRes = Utils.udCheck(data[ENUMS.RESISTANCEACID]);
-        this.poisonRes = Utils.udCheck(data[ENUMS.RESISTANCEPOISON]);
-        this.electricRes = Utils.udCheck(data[ENUMS.RESISTANCEELECTRIC]);
-        this.pulseRes = Utils.udCheck(data[ENUMS.RESISTANCEPULSE]);
-        this.radiationRes = Utils.udCheck(data[ENUMS.RESISTANCERADIATION]);
-        this.gravityRes = Utils.udCheck(data[ENUMS.RESISTANCEGRAVITY]);
-        this.viralRes = Utils.udCheck(data[ENUMS.RESISTANCEVIRAL]);
+        this.physicalRes = Utils.udCheck(data[Enums.RESISTANCEPHYSICAL]);
+        this.heatRes = Utils.udCheck(data[Enums.RESISTANCEHEAT]);
+        this.coldRes = Utils.udCheck(data[Enums.RESISTANCECOLD]);
+        this.acidRes = Utils.udCheck(data[Enums.RESISTANCEACID]);
+        this.poisonRes = Utils.udCheck(data[Enums.RESISTANCEPOISON]);
+        this.electricRes = Utils.udCheck(data[Enums.RESISTANCEELECTRIC]);
+        this.pulseRes = Utils.udCheck(data[Enums.RESISTANCEPULSE]);
+        this.radiationRes = Utils.udCheck(data[Enums.RESISTANCERADIATION]);
+        this.gravityRes = Utils.udCheck(data[Enums.RESISTANCEGRAVITY]);
+        this.viralRes = Utils.udCheck(data[Enums.RESISTANCEVIRAL]);
 
-        this.owner = Utils.udCheck(data[ENUMS.OWNER]);
-        this.name = Utils.udCheck(data[ENUMS.NAME]);
-        this.sex = Utils.udCheck(data[ENUMS.SEX]);
-        this.id = Utils.udCheck(data[ENUMS.ID]);
-        if (!Utils._udCheck(data[ENUMS.INVENTORY])){
+        this.owner = Utils.udCheck(data[Enums.OWNER]);
+        this.name = Utils.udCheck(data[Enums.NAME]);
+        this.sex = Utils.udCheck(data[Enums.SEX]);
+        this.id = Utils.udCheck(data[Enums.ID]);
+        if (!Utils._udCheck(data[Enums.INVENTORY])){
             this.inventory = new Inventory();
-            this.inventory.init(data[ENUMS.INVENTORY]);
+            this.inventory.init(data[Enums.INVENTORY]);
         }else{
             this.inventory = null;
         }
-        this.level = Utils.udCheck(data[ENUMS.LEVEL]);
-        this.exp = Utils.udCheck(data[ENUMS.EXP]);
+        this.level = Utils.udCheck(data[Enums.LEVEL]);
+        this.exp = Utils.udCheck(data[Enums.EXP]);
         this.classInfo = new ClassInfo();
-        this.classInfo.init(data[ENUMS.CLASSINFO]);
+        this.classInfo.init(data[Enums.CLASSINFO]);
         
-        this.weapon = Utils.udCheck(data[ENUMS.WEAPON]);
-        this.shield = Utils.udCheck(data[ENUMS.SHIELD]);
-        this.accessory = Utils.udCheck(data[ENUMS.ACCESSORY]);
+        this.weapon = Utils.udCheck(data[Enums.WEAPON]);
+        this.shield = Utils.udCheck(data[Enums.SHIELD]);
+        this.accessory = Utils.udCheck(data[Enums.ACCESSORY]);
 
-        this.class = Utils.udCheck(data[ENUMS.CLASS]);
-        this.charge = Utils.udCheck(data[ENUMS.CHARGE]);
+        this.class = Utils.udCheck(data[Enums.CLASS]);
+        this.charge = Utils.udCheck(data[Enums.CHARGE]);
 
-        this.usedAbilitySlots = Utils.udCheck(data[ENUMS.USEDABILITYSLOTS]);
+        this.usedAbilitySlots = Utils.udCheck(data[Enums.USEDABILITYSLOTS]);
     }
 
     Unit.prototype.getWeapon = function(){
@@ -392,61 +392,61 @@
         console.log(id + '   ' + amt)
         try{
             switch(id){
-                case ENUMS.MAXSHIELDS:
+                case Enums.MAXSHIELDS:
                     this.maximumShields = amt;
                     break;
-                case ENUMS.DELAY:
+                case Enums.DELAY:
                     this.shieldDelay = amt;
                     break;
-                case ENUMS.RECHARGE:
+                case Enums.RECHARGE:
                     this.shieldRecharge = amt;
                     break;
-                case ENUMS.ABILITYSLOTS:
+                case Enums.ABILITYSLOTS:
                     this.abilitySlots = amt;
                     break;
-                case ENUMS.STRENGTH:
+                case Enums.STRENGTH:
                     this.strength = amt;
                     break;
-                case ENUMS.ENDURANCE:
+                case Enums.ENDURANCE:
                     this.endurance = amt;
                     break;
-                case ENUMS.AGILITY:
+                case Enums.AGILITY:
                     this.agility = amt;
                     break;
-                case ENUMS.DEXTERITY:
+                case Enums.DEXTERITY:
                     this.dexterity = amt;
                     break;
-                case ENUMS.INTELLIGENCE:
+                case Enums.INTELLIGENCE:
                     this.intelligence = amt;
                     break;
-                case ENUMS.WILLPOWER:
+                case Enums.WILLPOWER:
                     this.willpower = amt;
                     break;
-                case ENUMS.CHARISMA:
+                case Enums.CHARISMA:
                     this.charisma = amt;
                     break;
-                case ENUMS.MAXHEALTH:
+                case Enums.MAXHEALTH:
                     this.maximumHealth = amt;
                     break;
-                case ENUMS.MAXENERGY:
+                case Enums.MAXENERGY:
                     this.maximumEnergy = amt;
                     break;
-                case ENUMS.POWER:
+                case Enums.POWER:
                     this.power = amt;
                     break;
-                case ENUMS.SKILL:
+                case Enums.SKILL:
                     this.skill = amt;
                     break;
-                case ENUMS.TACTICS:
+                case Enums.TACTICS:
                     this.tactics = amt;
                     break;
-                case ENUMS.MOVE:
+                case Enums.MOVE:
                     this.move = amt;
                     break;
-                case ENUMS.JUMP:
+                case Enums.JUMP:
                     this.jump = amt;
                     break;
-                case ENUMS.SPEED:
+                case Enums.SPEED:
                     this.speed = amt;
                     break;
                 case 'pRes':
@@ -476,7 +476,7 @@
                 case 'gRes':
                     this.gravityRes = amt;
                     break;
-                case ENUMS.WEIGHT:
+                case Enums.WEIGHT:
                     this.inventory.maxWeight = amt;
                     break;
             }

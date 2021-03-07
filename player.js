@@ -5,7 +5,8 @@ var User = require('./user.js').User,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo,
-    ENUMS = require('./enums.js').Enums;
+    Ability = require('./ability.js').Ability,
+    Enums = require('./enums.js').Enums;
 
 const crypto = require('crypto');
 
@@ -113,64 +114,64 @@ Player.prototype.setupSocket = function() {
     // On playerUpdate event
     var that = this;
 
-    this.socket.on([ENUMS.PLAYERUPDATE], function (data) {
+    this.socket.on([Enums.PLAYERUPDATE], function (data) {
         try{
             if (that.session){
                 //if the player is in a session - deal with received data
-               switch(data[ENUMS.COMMAND]){
-                    case ENUMS.EXITGAME:
+               switch(data[Enums.COMMAND]){
+                    case Enums.EXITGAME:
                         try{
                             that.session.handleDisconnect(that,true);
                         }catch(e){
                             that.engine.debug(exitGameError, e.stack,data);
                         }
                         break;
-                    case ENUMS.READY:
-                        if (data[ENUMS.VALUE] == true){
+                    case Enums.READY:
+                        if (data[Enums.VALUE] == true){
                             that.ready = true;
                         }else{
                             console.log('TODO - Player failed to load in. Cancel session and return players to the main menu');
                         }
                         break;
-                    case ENUMS.MOVE:
+                    case Enums.MOVE:
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
-                        if (!that.hasUnit(that.session.turnOrder[0].id) || !that.engine.validateData(data,[ENUMS.Q,ENUMS.R])){
+                        if (!that.hasUnit(that.session.turnOrder[0].id) || !that.engine.validateData(data,[Enums.Q,Enums.R])){
                             return;
                         }
-                        data.q = data[ENUMS.Q];
-                        data.r = data[ENUMS.R];
+                        data.q = data[Enums.Q];
+                        data.r = data[Enums.R];
                         //send the data to session and execute the move
                         that.session.unitMove(data);
                         break;
-                    case ENUMS.ATTACK:
+                    case Enums.ATTACK:
                         console.log('attacking...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         //also check that the session is awaiting turn info and not between turns
-                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo || !that.engine.validateData(data,[ENUMS.Q,ENUMS.R])){
+                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo || !that.engine.validateData(data,[Enums.Q,Enums.R])){
                             return;
                         }
-                        data.q = data[ENUMS.Q];
-                        data.r = data[ENUMS.R];
+                        data.q = data[Enums.Q];
+                        data.r = data[Enums.R];
                         //send the data to session and execute the attack
                         that.session.unitAttack(data);
                         break;
-                    case ENUMS.ABILITY:
+                    case Enums.ABILITY:
                         console.log('using an ability...')
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         //also check that the session is awaiting turn info and not between turns
-                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo|| !that.engine.validateData(data,[ENUMS.Q,ENUMS.R,ENUMS.ABILITYID])){
+                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo|| !that.engine.validateData(data,[Enums.Q,Enums.R,Enums.ABILITYID])){
                             return;
                         }
-                        data.q = data[ENUMS.Q];
-                        data.r = data[ENUMS.R];
-                        data.abilityid = data[ENUMS.ABILITYID];
+                        data.q = data[Enums.Q];
+                        data.r = data[Enums.R];
+                        data.abilityid = data[Enums.ABILITYID];
                         //send the data to session and execute the ability
                         that.session.unitAbility(data);
                         break;
-                    case ENUMS.ITEM: 
+                    case Enums.ITEM: 
                         console.log("Inventory action");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
@@ -181,32 +182,32 @@ Player.prototype.setupSocket = function() {
                         //send the data to session and execute the item
                         that.session.unitItem(data);
                         break;
-                    case ENUMS.ENDTURN:
+                    case Enums.ENDTURN:
                         console.log("ending turn...");
                         console.log(data);
                         //make sure the unit at the top of the turn order is the player's
                         //also check that the session is awaiting turn info and not between turns
-                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo  || !that.engine.validateData(data,[ENUMS.DIRECTION])){
+                        if (!that.hasUnit(that.session.turnOrder[0].id) || that.session.currentInGameState != that.session.inGameStates.WaitingForTurnInfo  || !that.engine.validateData(data,[Enums.DIRECTION])){
                             return;
                         }
-                        data.direction = data[ENUMS.DIRECTION];
+                        data.direction = data[Enums.DIRECTION];
                         //send the data to session and execute the attack
                         that.session.unitEnd(data);
                         break;
                }
             }else{
                 //player is not in a game currently - main menu commands
-                switch(data[ENUMS.COMMAND]){
-                    case ENUMS.LEARNABILITY:
+                switch(data[Enums.COMMAND]){
+                    case Enums.LEARNABILITY:
                         try{
                             //validate data
-                            if (!that.engine.validateData(data,[ENUMS.CLASSID,ENUMS.ABILITYID,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.CLASSID,Enums.ABILITYID,Enums.UNITID])){
                                 console.log('Learn ability error, invalid data');
                                 return;
                             }
-                            var cID = data[ENUMS.CLASSID];
-                            var aID = data[ENUMS.ABILITYID];
-                            var uID = data[ENUMS.UNITID];
+                            var cID = data[Enums.CLASSID];
+                            var aID = data[Enums.ABILITYID];
+                            var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Learn ability error, invalid unit');
@@ -230,23 +231,25 @@ Player.prototype.setupSocket = function() {
                             //ability can be learned. reduce AP and add to learned abilities list
                             unit.classInfo.ap[cID] -= abl.ApCost;
                             unit.classInfo.learnedAbilities[aID] = true;
+                            unit.classInfo.abilities[aID] = new Ability();
+                            unit.classInfo.abilities[aID].init(abl);
                             //update client
-                            data[ENUMS.APCOST] = abl.ApCost;
-                            that.engine.queuePlayer(that,ENUMS.LEARNABILITY,data);
+                            data[Enums.APCOST] = abl.ApCost;
+                            that.engine.queuePlayer(that,Enums.LEARNABILITY,data);
                         }catch(e){
                             that.engine.debug('learnAbilityError',e.stack,data);
                         }
                         break;
-                    case ENUMS.EQUIPABILITY:
+                    case Enums.EQUIPABILITY:
                         try{
                             //validate data
-                            if (!that.engine.validateData(data,[ENUMS.CLASSID,ENUMS.ABILITYID,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.CLASSID,Enums.ABILITYID,Enums.UNITID])){
                                 console.log('Equip ability error, invalid data');
                                 return;
                             }
-                            var cID = data[ENUMS.CLASSID];
-                            var aID = data[ENUMS.ABILITYID];
-                            var uID = data[ENUMS.UNITID];
+                            var cID = data[Enums.CLASSID];
+                            var aID = data[Enums.ABILITYID];
+                            var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Equip ability error, invalid unit');
@@ -256,7 +259,7 @@ Player.prototype.setupSocket = function() {
                             var abl;
                             for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
                                 if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                    abl = unit.classInfo.allClassAbilities[cID][a];
+                                    abl = unit.classInfo.abilities[aID];
                                 }
                             }
                             //check available SLOTS
@@ -273,8 +276,8 @@ Player.prototype.setupSocket = function() {
                             console.log(abl);
                             if (abl.type == 'passive' || abl.type == 'reaction'){
                                 let aFunc = Actions.getAbility(abl.id);
-                                data.reverse = false;
-                                let success = aFunc(unit,this,data);
+                                abl.reverse = false;
+                                let success = aFunc(unit,this,abl);
                                 if (!success){break;}
                             }
 
@@ -282,22 +285,22 @@ Player.prototype.setupSocket = function() {
                             unit.setAbilitySlots();
 
                             //update client
-                            data[ENUMS.SCOST] = abl.sCost;
-                            that.engine.queuePlayer(that,ENUMS.EQUIPABILITY,data);
+                            data[Enums.SCOST] = abl.sCost;
+                            that.engine.queuePlayer(that,Enums.EQUIPABILITY,data);
                         }catch(e){
-                            that.engine.debug('equipAbilityError',e.stack,data);
+                            that.engine.debug('equipAbilityError',e,data);
                         }
                         break;
-                    case ENUMS.UNEQUIPABILITY:
+                    case Enums.UNEQUIPABILITY:
                         try{
                             //validate data
-                            if (!that.engine.validateData(data,[ENUMS.CLASSID,ENUMS.ABILITYID,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.CLASSID,Enums.ABILITYID,Enums.UNITID])){
                                 console.log('UNEQUIP ability error, invalid data');
                                 return;
                             }
-                            var cID = data[ENUMS.CLASSID];
-                            var aID = data[ENUMS.ABILITYID];
-                            var uID = data[ENUMS.UNITID];
+                            var cID = data[Enums.CLASSID];
+                            var aID = data[Enums.ABILITYID];
+                            var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Un-Equip ability error, invalid unit');
@@ -307,7 +310,7 @@ Player.prototype.setupSocket = function() {
                             var abl;
                             for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
                                 if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                    abl = unit.classInfo.allClassAbilities[cID][a];
+                                    abl = unit.classInfo.abilities[aID];
                                 }
                             }
                             //check if ability is already not equipped
@@ -319,28 +322,28 @@ Player.prototype.setupSocket = function() {
                             console.log(abl);
                             if (abl.type == 'passive' || abl.type == 'reaction'){
                                 let aFunc = Actions.getAbility(abl.id);
-                                data.reverse = true;
-                                let success = aFunc(unit,this,data);
+                                abl.reverse = true;
+                                let success = aFunc(unit,this,abl);
                                 if (!success){break;}
                             }
                             //ability can be un-equipped.
                             delete unit.classInfo.equippedAbilities[aID];
                             unit.setAbilitySlots();
                             //update client
-                            data[ENUMS.SCOST] = abl.sCost;
-                            that.engine.queuePlayer(that,ENUMS.UNEQUIPABILITY,data);
+                            data[Enums.SCOST] = abl.sCost;
+                            that.engine.queuePlayer(that,Enums.UNEQUIPABILITY,data);
                         }catch(e){
-                            that.engine.debug('unEquipAbilityError', e.stack,data);
+                            that.engine.debug('unEquipAbilityError', e,data);
                         }
                         break;
-                    case ENUMS.CLEARABILITIES:
+                    case Enums.CLEARABILITIES:
                         try{
                             //get the unit
-                            if (!that.engine.validateData(data,[ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.UNITID])){
                                 console.log('Clear abilities error, invalid data');
                                 return;
                             }
-                            var uID = data[ENUMS.UNITID];
+                            var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Clear abilities error, invalid unit');
@@ -349,15 +352,15 @@ Player.prototype.setupSocket = function() {
                             unit.usedAbilitySlots = 0;
                             unit.classInfo.equippedAbilities = {};
                             //update client
-                            that.engine.queuePlayer(that,ENUMS.CLEARABILITIES,data);
+                            that.engine.queuePlayer(that,Enums.CLEARABILITIES,data);
                         }catch(e){
                             that.engine.debug('clearAbilitiesError',e.stack,data);
                         }
                         break;
-                    case ENUMS.LOGOUT:
+                    case Enums.LOGOUT:
                         try{
                             that.engine.playerLogout(that);
-                            that.engine.queuePlayer(that,ENUMS.LOGOUT, {});
+                            that.engine.queuePlayer(that,Enums.LOGOUT, {});
                             that.user.unlock();
                             that.user.updateDB();
                             that.user = null;
@@ -365,20 +368,20 @@ Player.prototype.setupSocket = function() {
                             that.engine.debug('logoutError',e.stack);
                         }
                         break;
-                    case ENUMS.DELETECHAR:
+                    case Enums.DELETECHAR:
                         try{
                             //get the unit
-                            if (!that.engine.validateData(data,[ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.UNITID])){
                                 console.log('Delete Unit error, invalid data');
                                 return;
                             }
-                            var uID = data[ENUMS.UNITID];
+                            var uID = data[Enums.UNITID];
                             //remove the character from the player's character list
                             for (var i = 0; i < that.user.characters.length;i++){
                                 if (that.user.characters[i].id == uID){
                                     console.log('deleting character: ' + that.user.characters[i].name);
                                     that.user.characters.splice(i,1);
-                                    that.engine.queuePlayer(that,ENUMS.DELETECHAR,that.engine.createClientData(ENUMS.UNITID, uID));
+                                    that.engine.queuePlayer(that,Enums.DELETECHAR,that.engine.createClientData(Enums.UNITID, uID));
                                     continue;
                                 }
                             }
@@ -386,14 +389,14 @@ Player.prototype.setupSocket = function() {
                             that.engine.debug('deleteCharError',e.stack,data);
                         }
                         break;
-                    case ENUMS.ITEMTOUNIT:
+                    case Enums.ITEMTOUNIT:
                         try{
-                            if (!that.engine.validateData(data,[ENUMS.INDEX,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('item to unit error, invalid data');
                                 return;
                             }
-                            var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            var unit = that.getUnit(data[Enums.UNITID]);
+                            var id = that.user.inventory.getItemID(data[Enums.INDEX]);
                             console.log(id);
                             if (!unit || !id){
                                 console.log('itemtoUnit Error');
@@ -402,20 +405,20 @@ Player.prototype.setupSocket = function() {
                             //add item to unit
                             if (unit.inventory.addItemUnit(id,1, true)){
                                 //remove item from player
-                                that.user.inventory.removeItem(data[ENUMS.INDEX],1,true);
+                                that.user.inventory.removeItem(data[Enums.INDEX],1,true);
                             }
                         }catch(e){
                             that.engine.debug('itemToPlayerError',e.stack,data);
                         }
                         break;
-                    case ENUMS.ITEMTOPLAYER:
+                    case Enums.ITEMTOPLAYER:
                         try{
-                            if (!that.engine.validateData(data,[ENUMS.INDEX,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('item to player error, invalid data');
                                 return;
                             }
-                            var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var id = unit.inventory.getItemID(data[ENUMS.INDEX]);
+                            var unit = that.getUnit(data[Enums.UNITID]);
+                            var id = unit.inventory.getItemID(data[Enums.INDEX]);
                             if (!unit || !id){
                                 console.log('itemtoPlayer Error');
                                 return;
@@ -423,56 +426,56 @@ Player.prototype.setupSocket = function() {
                             //add item to player
                             that.user.inventory.addItem(id,1, true);
                             //remove item from unit
-                            unit.inventory.removeItemUnit(data[ENUMS.INDEX],true);
+                            unit.inventory.removeItemUnit(data[Enums.INDEX],true);
                         }catch(e){
                             that.engine.debug('itemToPlayerError',e.stack,data);
                         }
                         break;
-                    case ENUMS.EQUIPITEM:
+                    case Enums.EQUIPITEM:
                         console.log(data);
                         try{
-                            if (!that.engine.validateData(data,[ENUMS.INDEX,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('equip item error, invalid data');
                                 return;
                             }
-                            var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            var unit = that.getUnit(data[Enums.UNITID]);
+                            var id = that.user.inventory.getItemID(data[Enums.INDEX]);
                             if (!unit || !id){
                                 console.log('equip item Error');
                                 return;
                             }
                             //add item to player
-                            unit.inventory.equip(data[ENUMS.INDEX], true);
+                            unit.inventory.equip(data[Enums.INDEX], true);
                         }catch(e){
                             that.engine.debug('equipItemError',e,data);
                         }
                         break;
-                    case ENUMS.UNEQUIPITEM:
+                    case Enums.UNEQUIPITEM:
                         console.log(data);
                         try{
-                            if (!that.engine.validateData(data,[ENUMS.INDEX,ENUMS.UNITID])){
+                            if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('ue item Unit error, invalid data');
                                 return;
                             }
-                            var unit = that.getUnit(data[ENUMS.UNITID]);
-                            var id = that.user.inventory.getItemID(data[ENUMS.INDEX]);
+                            var unit = that.getUnit(data[Enums.UNITID]);
+                            var id = that.user.inventory.getItemID(data[Enums.INDEX]);
                             if (!unit || !id){
                                 console.log('equip item Error');
                                 return;
                             }
                             //add item to player
-                            unit.inventory.unEquip(data[ENUMS.INDEX], true);
+                            unit.inventory.unEquip(data[Enums.INDEX], true);
                         }catch(e){
                             that.engine.debug('unEquipItemError',e.stack,data);
                         }
                         break;
-                    case ENUMS.ADDUNIT:
+                    case Enums.ADDUNIT:
                         //TODO -- validate unit before creation
-                        if (!that.engine.validateData(data,[ENUMS.NAME, ENUMS.SEX,ENUMS.STATS,ENUMS.CLASS])){
+                        if (!that.engine.validateData(data,[Enums.NAME, Enums.SEX,Enums.STATS,Enums.CLASS])){
                             console.log('Add Unit error, invalid data');
                             return;
                         }
-                        if (!that.engine.validateData(data[ENUMS.STATS],[ENUMS.STRENGTH,ENUMS.ENDURANCE,ENUMS.AGILITY,ENUMS.DEXTERITY,ENUMS.INTELLIGENCE,ENUMS.WILLPOWER,ENUMS.CHARISMA])){
+                        if (!that.engine.validateData(data[Enums.STATS],[Enums.STRENGTH,Enums.ENDURANCE,Enums.AGILITY,Enums.DEXTERITY,Enums.INTELLIGENCE,Enums.WILLPOWER,Enums.CHARISMA])){
                             console.log('Add Unit error, invalid STAT data');
                             return;
                         }
@@ -483,41 +486,41 @@ Player.prototype.setupSocket = function() {
                                 char.init({
                                     id: that.engine.getId(),
                                     owner: that,
-                                    name: data[ENUMS.NAME],
-                                    sex: data[ENUMS.SEX],
+                                    name: data[Enums.NAME],
+                                    sex: data[Enums.SEX],
                                     inventory: ['gun_sidearm','weapon_combatKnife']
                                 });
                                 //TODO VALIDATE STATS AMOUNTSSSS, sex, CLASS
-                                char.strength.base = data[ENUMS.STATS][ENUMS.STRENGTH];
+                                char.strength.base = data[Enums.STATS][Enums.STRENGTH];
                                 char.strength.set();
-                                char.endurance.base = data[ENUMS.STATS][ENUMS.ENDURANCE];
+                                char.endurance.base = data[Enums.STATS][Enums.ENDURANCE];
                                 char.endurance.set();
-                                char.agility.base = data[ENUMS.STATS][ENUMS.AGILITY];
+                                char.agility.base = data[Enums.STATS][Enums.AGILITY];
                                 char.agility.set();
-                                char.dexterity.base = data[ENUMS.STATS][ENUMS.DEXTERITY];
+                                char.dexterity.base = data[Enums.STATS][Enums.DEXTERITY];
                                 char.dexterity.set();
-                                char.intelligence.base = data[ENUMS.STATS][ENUMS.INTELLIGENCE];
+                                char.intelligence.base = data[Enums.STATS][Enums.INTELLIGENCE];
                                 char.intelligence.set();
-                                char.willpower.base = data[ENUMS.STATS][ENUMS.WILLPOWER];
+                                char.willpower.base = data[Enums.STATS][Enums.WILLPOWER];
                                 char.willpower.set();
-                                char.charisma.base = data[ENUMS.STATS][ENUMS.CHARISMA];
+                                char.charisma.base = data[Enums.STATS][Enums.CHARISMA];
                                 char.charisma.set();
 
                                 char.classInfo = new ClassInfo();
                                 char.classInfo.init({unit: char});
-                                char.classInfo.setBaseClass(data[ENUMS.CLASS]);
-                                char.classInfo.setClass(data[ENUMS.CLASS]);
+                                char.classInfo.setBaseClass(data[Enums.CLASS]);
+                                char.classInfo.setClass(data[Enums.CLASS]);
                                 //create object to send to the client
                                 char.levelUp();
                                 char.level -= 1;
-                                that.engine.queuePlayer(that,ENUMS.ADDNEWUNIT, that.engine.createClientData(ENUMS.UNITID, char.getClientData()));
+                                that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));
                                 that.user.characters.push(char);
                             }catch(e){
                                 that.engine.debug(that,{'id': 'addUnitError', 'error': e.stack});
                             }
                         }
                         break;
-                    case ENUMS.ADDRANDOMCHAR:
+                    case Enums.ADDRANDOMCHAR:
                                 console.log(data);
                         if (that.user.characters.length < 30){
                             try{
@@ -550,17 +553,17 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.setClass(cl);
                                 char.levelUp();
                                 char.level -= 1;
-                                that.engine.queuePlayer(that,ENUMS.ADDNEWUNIT, that.engine.createClientData(ENUMS.UNITID, char.getClientData()));
+                                that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));
                                 that.user.characters.push(char);
                             }catch(e){
                                 that.engine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
                             }
                         }
                         break;
-                    case ENUMS.TESTGAME:
+                    case Enums.TESTGAME:
                         that.engine.playersWaiting.push(that.id);
                         break;
-                    case ENUMS.CNACELSEARCH:
+                    case Enums.CNACELSEARCH:
                         that.engine.playerCancelSearch(that);
                         break;
                 }
@@ -643,28 +646,28 @@ Player.prototype.setupSocket = function() {
                     sz2.push(Utils.getClientNode(that.engine.maps[d.name].sz2[l]));
                 }
                 that.engine.queuePlayer(that,"editMap",that.engine.createClientData(
-                    ENUMS.FOUND, true,
-                    ENUMS.NAME, d.name,
-                    ENUMS.MAPDATA, mapData,
-                    ENUMS.STARTZONE1, sz1,
-                    ENUMS.STARTZONE2, sz2
+                    Enums.FOUND, true,
+                    Enums.NAME, d.name,
+                    Enums.MAPDATA, mapData,
+                    Enums.STARTZONE1, sz1,
+                    Enums.STARTZONE2, sz2
                 ));
 
             }else{
                 console.log('No map named ' + d.name);
-                that.engine.queuePlayer(that,"editMap", that.engine.createClientData(ENUMS.FOUND,false));
+                that.engine.queuePlayer(that,"editMap", that.engine.createClientData(Enums.FOUND,false));
             }
         }catch(e){
             that.engine.debug(that, {'id': 'createMapError', 'error': e.stack, dMapData: d});
         }
     });
 
-    this.socket.on(ENUMS.CLIENTCOMMAND, function(data) {
+    this.socket.on(Enums.CLIENTCOMMAND, function(data) {
         console.log(data);
-        if (!that.engine.validateData(data,[ENUMS.COMMAND])){
+        if (!that.engine.validateData(data,[Enums.COMMAND])){
             return;
         }
-        if (typeof data[ENUMS.COMMAND] != 'string'){
+        if (typeof data[Enums.COMMAND] != 'string'){
             return;
         }
         // this needs to be parsed: data.command
@@ -672,7 +675,7 @@ Player.prototype.setupSocket = function() {
         //commands:
         try{
             var commandBool = false;
-            var c = data[ENUMS.COMMAND];
+            var c = data[Enums.COMMAND];
             var commands = [];
             var from = 0;
             for (var i = 0; i < c.length; i++){
@@ -808,10 +811,10 @@ Player.prototype.setupSocket = function() {
     });
 
     
-    this.socket.on(ENUMS.LOGINATTEMPT, function (d) {
-        d.sn = d[ENUMS.USERNAME];
-        d.pw = d[ENUMS.PASSWORD];
-        d.guest = d[ENUMS.GUEST];
+    this.socket.on(Enums.LOGINATTEMPT, function (d) {
+        d.sn = d[Enums.USERNAME];
+        d.pw = d[Enums.PASSWORD];
+        d.guest = d[Enums.GUEST];
 
         try{
             if (!that.session){
@@ -821,13 +824,13 @@ Player.prototype.setupSocket = function() {
                     that.user.setOwner(that);
                     that.user.init({guest: true});
                     that.user.setLastLogin(Date.now());
-                    that.engine.queuePlayer(that,ENUMS.LOGIN, that.engine.createClientData(
-                        ENUMS.USERNAME, that.user.userData.username
+                    that.engine.queuePlayer(that,Enums.LOGIN, that.engine.createClientData(
+                        Enums.USERNAME, that.user.userData.username
                     ));
                 }else if (d.sn && d.pw){
 
-                    if (!that.engine.validateData(d,[ENUMS.USERNAME,ENUMS.PASSWORD])){
-                        that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'nvd'));
+                    if (!that.engine.validateData(d,[Enums.USERNAME,Enums.PASSWORD])){
+                        that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'nvd'));
                         return;
                     }
                     d.sn = d.sn.toLowerCase();
@@ -851,35 +854,35 @@ Player.prototype.setupSocket = function() {
                                     that.user.init(data.Item);
                                     that.user.lock();
                                     that.user.setLastLogin(Date.now().toJSON);
-                                    that.engine.queuePlayer(that,ENUMS.LOGIN, that.engine.createClientData(
-                                        ENUMS.USERNAME, that.user.userData.username,
-                                        ENUMS.STATS, that.user.userData.stats
+                                    that.engine.queuePlayer(that,Enums.LOGIN, that.engine.createClientData(
+                                        Enums.USERNAME, that.user.userData.username,
+                                        Enums.STATS, that.user.userData.stats
                                     ));
                                 }else{
-                                    that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'wp'));
+                                    that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'wp'));
                                 }
                             }
                         });
                     }else{
-                        that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'l'));
+                        that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'l'));
                     }
                 }
             }
         }catch(e){
             console.log('Login Attempt failed');
             console.log(e);
-            that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'l'));
+            that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'l'));
         }
     });
     //TODO - set player variable to show they are logged in
     //on the client - catch "loggedIn" and move to the main menu, display stats, add logout button
-    this.socket.on(ENUMS.CREATEUSER, function (d) {
+    this.socket.on(Enums.CREATEUSER, function (d) {
 
-        if (!that.engine.validateData(d,[ENUMS.USERNAME,ENUMS.PASSWORD])){
-            that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'nvd'));
+        if (!that.engine.validateData(d,[Enums.USERNAME,Enums.PASSWORD])){
+            that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'nvd'));
         }
-        d.sn = d[ENUMS.USERNAME];
-        d.pw = d[ENUMS.PASSWORD];
+        d.sn = d[Enums.USERNAME];
+        d.pw = d[Enums.PASSWORD];
         console.log(d);
         try{
             d.sn = d.sn.toLowerCase();
@@ -940,8 +943,8 @@ Player.prototype.setupSocket = function() {
                                         console.log("Create user succeeded:", JSON.stringify(data3, null, 2));
                                         that.engine.users[d.sn] = params3.Item;
                                         that.engine._userIndex[d.sn] = d.sn;
-                                        that.engine.queuePlayer(that,ENUMS.LOGIN, that.engine.createClientData(
-                                            ENUMS.USERNAME, d.sn
+                                        that.engine.queuePlayer(that,Enums.LOGIN, that.engine.createClientData(
+                                            Enums.USERNAME, d.sn
                                         )); 
                                     }
                                 });
@@ -949,11 +952,11 @@ Player.prototype.setupSocket = function() {
                         });
                         
                     }else if (typeof data.Item != 'undefined'){
-                        that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'uiu'));
+                        that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'uiu'));
                     }else if (d.sn.length < 3 || d.sn.length > 16){
-                        that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'ule'));
+                        that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'ule'));
                     }else if (d.pw.length < 8 || d.pw.length > 16){
-                        that.engine.queuePlayer(that,ENUMS.SETLOGINERRORTEXT, that.engine.createClientData(ENUMS.TEXT, 'ple'));
+                        that.engine.queuePlayer(that,Enums.SETLOGINERRORTEXT, that.engine.createClientData(Enums.TEXT, 'ple'));
                     }
                 }
                 });

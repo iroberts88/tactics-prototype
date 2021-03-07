@@ -665,10 +665,10 @@
                 if (!Game.moveActive){
                     return;
                 }
-                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                    ENUMS.COMMAND, ENUMS.MOVE,
-                    ENUMS.Q, node.q,
-                    ENUMS.R, node.r
+                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                    Enums.COMMAND, Enums.MOVE,
+                    Enums.Q, node.q,
+                    Enums.R, node.r
                 ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
@@ -699,10 +699,10 @@
                 if (!Game.attackActive){
                     return;
                 }
-                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                    ENUMS.COMMAND, ENUMS.ATTACK,
-                    ENUMS.Q, node.q,
-                    ENUMS.R, node.r
+                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                    Enums.COMMAND, Enums.ATTACK,
+                    Enums.Q, node.q,
+                    Enums.R, node.r
                 ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
                 Game.attackActive = false;
@@ -750,11 +750,11 @@
                 if (!Game.abilityActive){
                     return;
                 }
-                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                    ENUMS.COMMAND, ENUMS.ABILITY,
-                    ENUMS.ABILITYID, Game.abilityInfo.id,
-                    ENUMS.Q, node.q,
-                    ENUMS.R, node.r
+                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                    Enums.COMMAND, Enums.ABILITY,
+                    Enums.ABILITYID, Game.abilityInfo.id,
+                    Enums.Q, node.q,
+                    Enums.R, node.r
                 ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }
@@ -775,9 +775,9 @@
             var text = "End " + this.units[this.turnList[0]].name + 's turn facing ' + dir + '?';
             var y = function(){
                 console.log('Send end command!!');
-                Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                    ENUMS.COMMAND, ENUMS.ENDTURN,
-                    ENUMS.DIRECTION, dir,
+                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                    Enums.COMMAND, Enums.ENDTURN,
+                    Enums.DIRECTION, dir,
                 ));
                 Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
             }

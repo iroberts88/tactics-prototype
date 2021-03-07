@@ -17,8 +17,8 @@
                 style: this.style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    Acorn.Net.socket_.emit(ENUMS.PLAYERUPDATE,Utils.createServerData(
-                        ENUMS.COMMAND, ENUMS.CENCELSEARCH
+                    Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                        Enums.COMMAND, Enums.CENCELSEARCH
                     ));
                     Acorn.changeState('mainMenu');
                 }

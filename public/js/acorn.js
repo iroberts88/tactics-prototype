@@ -310,7 +310,7 @@
             // Start network connection
             console.log("Acorn.Net: Trying to set up socket....");
             this.socket_ = io.connect();
-            this.socket_.on(ENUMS.SERVERUPDATE, function(data) {
+            this.socket_.on(Enums.SERVERUPDATE, function(data) {
                 for (var i = 0; i < data.length;i++){   
                     if(Acorn.Net.callbacks_[data[i].call]) {
                         Acorn.Net.callbacks_[data[i].call](data[i].data);

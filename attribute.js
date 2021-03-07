@@ -1,5 +1,5 @@
 
-var ENUMS = require('./enums.js').Enums;
+var Enums = require('./enums.js').Enums;
 
 var Attribute = function(){
     this.owner = null;
@@ -72,21 +72,21 @@ Attribute.prototype.set = function(updateClient = false){
     let fun = null;
     for (let i = 0;i < this.onChange.length;i++){
         func = this.onChange[i].func;
-        func(updateClient);
+        func(updateClient,this,this.onChange[i].ability);
     }
     try{
         if (updateClient && this.updateClient){
             if (this.player.session){
-                this.player.session.queueDataIfIdentified(ENUMS.SETUNITSTAT,this.engine.createClientData(
-                    ENUMS.UNITID, this.owner.id,
-                    ENUMS.STAT, this.id,
-                    ENUMS.VALUE, this.value
+                this.player.session.queueDataIfIdentified(Enums.SETUNITSTAT,this.engine.createClientData(
+                    Enums.UNITID, this.owner.id,
+                    Enums.STAT, this.id,
+                    Enums.VALUE, this.value
                 ));
             }else{
-                this.engine.queuePlayer(this.player, ENUMS.SETUNITSTAT,this.engine.createClientData(
-                    ENUMS.UNITID, this.owner.id,
-                    ENUMS.STAT, this.id,
-                    ENUMS.VALUE, this.value
+                this.engine.queuePlayer(this.player, Enums.SETUNITSTAT,this.engine.createClientData(
+                    Enums.UNITID, this.owner.id,
+                    Enums.STAT, this.id,
+                    Enums.VALUE, this.value
                 ));
 
             }
