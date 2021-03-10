@@ -397,7 +397,6 @@ Player.prototype.setupSocket = function() {
                             }
                             var unit = that.getUnit(data[Enums.UNITID]);
                             var id = that.user.inventory.getItemID(data[Enums.INDEX]);
-                            console.log(id);
                             if (!unit || !id){
                                 console.log('itemtoUnit Error');
                                 return;
@@ -432,7 +431,6 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case Enums.EQUIPITEM:
-                        console.log(data);
                         try{
                             if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('equip item error, invalid data');
@@ -451,7 +449,6 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case Enums.UNEQUIPITEM:
-                        console.log(data);
                         try{
                             if (!that.engine.validateData(data,[Enums.INDEX,Enums.UNITID])){
                                 console.log('ue item Unit error, invalid data');
@@ -521,7 +518,6 @@ Player.prototype.setupSocket = function() {
                         }
                         break;
                     case Enums.ADDRANDOMCHAR:
-                                console.log(data);
                         if (that.user.characters.length < 30){
                             try{
                                 console.log('adding char..')
@@ -627,7 +623,6 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on('editMap', function (d) {
-        console.log(d);
         try{
             if (typeof that.engine.maps[d.name] != 'undefined'){
                 var mapData = {};
@@ -663,7 +658,6 @@ Player.prototype.setupSocket = function() {
     });
 
     this.socket.on(Enums.CLIENTCOMMAND, function(data) {
-        console.log(data);
         if (!that.engine.validateData(data,[Enums.COMMAND])){
             return;
         }

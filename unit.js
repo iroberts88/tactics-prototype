@@ -110,16 +110,6 @@ var Unit = function(){
 
     this.fainted = false;
 
-    this.onTakeDamage = []; //list of effects when the unit takes damage
-    this.onAttack = []; //list of effects when the unit makes a weapon attack
-    this.onMove = []; //list of effects when the unit moves
-    this.onEnemyMove = [] //list of effects when an enemy unit moves
-    this.onTurnEnd = [];
-    this.onTargetFaint = [];
-    this.onTargetKill = [];
-    this.onFaint = [];
-    this.onKill = [];
-    this.onTurnStart = [];
 
     this.reaction = 1;
 
@@ -134,6 +124,144 @@ var Unit = function(){
         type:"weapon",
         weight:0
     });
+
+
+    this.onTakeDamage = []; //list of effects when the unit takes damage
+    this.onAction = [];
+    this.onMove = []; //list of effects when the unit moves
+    this.onEnemyMove = [] //list of effects when an enemy unit moves
+    this.onTurnEnd = [];
+    this.onTurnStart = [];
+    this.onFaint = [];
+    this.onDeath = [];
+}
+
+Unit.prototype.addOnTakeDamage = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnTakeDamage');
+        console.log(obj);
+    }
+    this.onTakeDamage.push(obj);
+}
+Unit.prototype.removeOnTakeDamage = function(s){
+    for (let i = 0;i < this.onTakeDamage.length;i++){
+        if (this.onTakeDamage.name == n){
+            this.onTakeDamage.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnAction = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnAction');
+        console.log(obj);
+    }
+    this.onAction.push(obj);
+}
+Unit.prototype.removeOnAction = function(s){
+    for (let i = 0;i < this.onAction.length;i++){
+        if (this.onAction.name == n){
+            this.onAction.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnMove = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnMove');
+        console.log(obj);
+    }
+    this.onMove.push(obj);
+}
+Unit.prototype.removeOnMove = function(s){
+    for (let i = 0;i < this.onMove.length;i++){
+        if (this.onMove.name == n){
+            this.onMove.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnEnemyMove = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnEnemyMove');
+        console.log(obj);
+    }
+    this.onEnemyMove.push(obj);
+}
+Unit.prototype.removeOnEnemyMove = function(s){
+    for (let i = 0;i < this.onEnemyMove.length;i++){
+        if (this.onEnemyMove.name == n){
+            this.onEnemyMove.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnTurnEnd = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnTurnEnd');
+        console.log(obj);
+    }
+    this.onTurnEnd.push(obj);
+}
+Unit.prototype.removeOnTurnEnd = function(s){
+    for (let i = 0;i < this.onTurnEnd.length;i++){
+        if (this.onTurnEnd.name == n){
+            this.onTurnEnd.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnTurnStart = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnTurnStart');
+        console.log(obj);
+    }
+    this.onTurnStart.push(obj);
+}
+Unit.prototype.removeOnTurnStart = function(s){
+    for (let i = 0;i < this.onTurnStart.length;i++){
+        if (this.onTurnStart.name == n){
+            this.onTurnStart.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnFaint = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnFaint');
+        console.log(obj);
+    }
+    this.onFaint.push(obj);
+}
+Unit.prototype.removeOnFaint = function(s){
+    for (let i = 0;i < this.onFaint.length;i++){
+        if (this.onFaint.name == n){
+            this.onFaint.splice(i,1);
+            return;
+        }
+    }
+}
+
+Unit.prototype.addOnDeath = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnDeath');
+        console.log(obj);
+    }
+    this.onDeath.push(obj);
+}
+Unit.prototype.removeOnDeath = function(s){
+    for (let i = 0;i < this.onDeath.length;i++){
+        if (this.onDeath.name == n){
+            this.onDeath.splice(i,1);
+            return;
+        }
+    }
 }
 
 Unit.prototype.reset = function(){

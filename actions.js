@@ -15,7 +15,11 @@ ActionEnums = {
 	Poison: 'poison',
 	HealingFieldEffect: 'healingFieldEffect',
 	CheckStealthRemove: 'checkStealthRemove',
-	PreparedShotAttack: 'preparedShotAttack'
+	PreparedShotAttack: 'preparedShotAttack',
+
+	CounterAttackEffect: 'counterAttackEffect',
+	EvasionEffect: 'evasionEffect',
+	DodgeEffect: 'dodgeEffect'
 };
 
 AbilityEnums = {
@@ -24,7 +28,7 @@ AbilityEnums = {
 	Agitate: 'agitate',
 	Cheer: 'cheer',
 	Climber: 'climber',
-	Counterattack: 'counterattack',
+	Counterattack: 'counterAttack',
 	Dodge: 'dodge',
 	Evasion: 'evasion',
 	Flare: 'flare',
@@ -299,6 +303,15 @@ Actions.prototype.getAction = function(a){
 		case ActionEnums.PreparedShotAttack:
 			return this.preparedShotAttack;
 			break
+		case ActionEnums.EvasionEffect:
+			return this.evasionEffect;
+			break
+		case ActionEnums.DodgeEffect:
+			return this.dodgeEffect;
+			break
+		case ActionEnums.CounterAttackEffect:
+			return this.counterAttackEffect;
+			break
 	}
 }
 
@@ -410,18 +423,6 @@ Actions.prototype.guile = function(unit,session,abl){
     unit.charisma.set(true);
 	return true;
 }
-Actions.prototype.dodge = function(unit,session,abl){
-    if (abl.reverse){
-    }else{
-    }
-	return true;
-}
-Actions.prototype.evasion = function(unit,session,abl){
-    if (abl.reverse){
-    }else{
-    }
-	return true;
-}
 Actions.prototype.climber = function(unit,session,abl){
 	var val = (Math.ceil(unit.strength.value/4));
 	abl.data.value = val;
@@ -445,9 +446,33 @@ Actions.prototype.climber = function(unit,session,abl){
     unit.jump.set(true);
 	return true;
 }
-Actions.prototype.counterattack = function(unit,session,abl){
+Actions.prototype.dodge = function(unit,session,abl){
     if (abl.reverse){
+    	unit.removeOnTakeDamage('dodge');
     }else{
+    	unit.addOnTakeDamage({
+    		name: 'dodgeEffect'
+    	})
+    }
+	return true;
+}
+Actions.prototype.evasion = function(unit,session,abl){
+    if (abl.reverse){
+    	unit.removeOnTakeDamage('evasion');
+    }else{
+    	unit.addOnTakeDamage({
+    		name: 'evasionEffect'
+    	})
+    }
+	return true;
+}
+Actions.prototype.counterAttack = function(unit,session,abl){
+    if (abl.reverse){
+    	unit.removeOnTakeDamage('counterAttack');
+    }else{
+    	unit.addOnTakeDamage({
+    		name: 'counterAttackEffect'
+    	})
     }
 	return true;
 }
@@ -1461,8 +1486,8 @@ Actions.prototype.getAbility = function(a){
 		case AbilityEnums.Guile:
 			return this.guile;
 			break;
-		case AbilityEnums.Counterattack:
-			return this.counterattack;
+		case AbilityEnums.CounterAttack:
+			return this.counterAttack;
 			break;
 		case AbilityEnums.Evasion:
 			return this.evasion;
