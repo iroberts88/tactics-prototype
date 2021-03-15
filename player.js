@@ -6,6 +6,7 @@ var User = require('./user.js').User,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo,
     Ability = require('./ability.js').Ability,
+    Actions = require('./actions.js').Actions,
     Enums = require('./enums.js').Enums;
 
 const crypto = require('crypto');
@@ -205,37 +206,13 @@ Player.prototype.setupSocket = function() {
                                 console.log('Learn ability error, invalid data');
                                 return;
                             }
-                            var cID = data[Enums.CLASSID];
-                            var aID = data[Enums.ABILITYID];
                             var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Learn ability error, invalid unit');
                                 return;
                             }
-                            //get the ability
-                            var abl;
-                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                    abl = unit.classInfo.allClassAbilities[cID][a];
-                                }
-                            }
-                            //check available AP
-                            if (unit.classInfo.ap[cID] < abl.ApCost){
-                                break;
-                            }
-                            //check if ability is already learned
-                            if (unit.classInfo.learnedAbilities[aID]){
-                                break;
-                            }
-                            //ability can be learned. reduce AP and add to learned abilities list
-                            unit.classInfo.ap[cID] -= abl.ApCost;
-                            unit.classInfo.learnedAbilities[aID] = true;
-                            unit.classInfo.abilities[aID] = new Ability();
-                            unit.classInfo.abilities[aID].init(abl);
-                            //update client
-                            data[Enums.APCOST] = abl.ApCost;
-                            that.engine.queuePlayer(that,Enums.LEARNABILITY,data);
+                            unit.classInfo.learnAbility(data);
                         }catch(e){
                             that.engine.debug('learnAbilityError',e.stack,data);
                         }
@@ -247,46 +224,13 @@ Player.prototype.setupSocket = function() {
                                 console.log('Equip ability error, invalid data');
                                 return;
                             }
-                            var cID = data[Enums.CLASSID];
-                            var aID = data[Enums.ABILITYID];
                             var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Equip ability error, invalid unit');
                                 return;
                             }
-                            //get the ability
-                            var abl;
-                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                    abl = unit.classInfo.abilities[aID];
-                                }
-                            }
-                            //check available SLOTS
-                            if (unit.abilitySlots.value - unit.usedAbilitySlots < abl.sCost){
-                                break;
-                            }
-                            //check if ability is already equipped
-                            if (unit.classInfo.equippedAbilities[aID]){
-                                break;
-                            }
-                            //ability can be equipped. add current slots and add to learned abilities list
-
-                            //check if ability is passive/reaction
-                            console.log(abl);
-                            if (abl.type == 'passive' || abl.type == 'reaction'){
-                                let aFunc = Actions.getAbility(abl.id);
-                                abl.reverse = false;
-                                let success = aFunc(unit,this,abl);
-                                if (!success){break;}
-                            }
-
-                            unit.classInfo.equippedAbilities[aID] = true;
-                            unit.setAbilitySlots();
-
-                            //update client
-                            data[Enums.SCOST] = abl.sCost;
-                            that.engine.queuePlayer(that,Enums.EQUIPABILITY,data);
+                            unit.classInfo.equipAbility(data);
                         }catch(e){
                             that.engine.debug('equipAbilityError',e,data);
                         }
@@ -294,44 +238,18 @@ Player.prototype.setupSocket = function() {
                     case Enums.UNEQUIPABILITY:
                         try{
                             //validate data
+                            console.log(data);
                             if (!that.engine.validateData(data,[Enums.CLASSID,Enums.ABILITYID,Enums.UNITID])){
                                 console.log('UNEQUIP ability error, invalid data');
                                 return;
                             }
-                            var cID = data[Enums.CLASSID];
-                            var aID = data[Enums.ABILITYID];
                             var uID = data[Enums.UNITID];
                             var unit = that.user.getUnit(uID);
                             if (!unit){
                                 console.log('Un-Equip ability error, invalid unit');
                                 return;
                             }
-                            //get the ability
-                            var abl;
-                            for (var a = 0; a < unit.classInfo.allClassAbilities[cID].length;a++){
-                                if (aID == unit.classInfo.allClassAbilities[cID][a].id){
-                                    abl = unit.classInfo.abilities[aID];
-                                }
-                            }
-                            //check if ability is already not equipped
-                            if (typeof unit.classInfo.equippedAbilities[aID] == 'undefined'){
-                                break;
-                            }
-
-                            //check if ability is passive/reaction
-                            console.log(abl);
-                            if (abl.type == 'passive' || abl.type == 'reaction'){
-                                let aFunc = Actions.getAbility(abl.id);
-                                abl.reverse = true;
-                                let success = aFunc(unit,this,abl);
-                                if (!success){break;}
-                            }
-                            //ability can be un-equipped.
-                            delete unit.classInfo.equippedAbilities[aID];
-                            unit.setAbilitySlots();
-                            //update client
-                            data[Enums.SCOST] = abl.sCost;
-                            that.engine.queuePlayer(that,Enums.UNEQUIPABILITY,data);
+                            unit.classInfo.unEquipAbility(data);
                         }catch(e){
                             that.engine.debug('unEquipAbilityError', e,data);
                         }
@@ -504,9 +422,10 @@ Player.prototype.setupSocket = function() {
                                 char.charisma.set();
 
                                 char.classInfo = new ClassInfo();
-                                char.classInfo.init({unit: char});
+                                char.classInfo.setUnit(char);
                                 char.classInfo.setBaseClass(data[Enums.CLASS]);
                                 char.classInfo.setClass(data[Enums.CLASS]);
+                                char.classInfo.init({});
                                 //create object to send to the client
                                 char.levelUp();
                                 char.level -= 1;
@@ -544,9 +463,10 @@ Player.prototype.setupSocket = function() {
                                     char[randStat].set();
                                 }
                                 char.classInfo = new ClassInfo();
-                                char.classInfo.init({unit: char});
+                                char.classInfo.setUnit(char);
                                 char.classInfo.setBaseClass(cl);
                                 char.classInfo.setClass(cl);
+                                char.classInfo.init({});
                                 char.levelUp();
                                 char.level -= 1;
                                 that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));

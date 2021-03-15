@@ -104,6 +104,7 @@ var enums = [
 	'LEARNABILITY',
 	'LEARNEDABILITIES',
 	'LEVEL',
+	'LOG',
 	'LOGOUT',
 	'LOGIN',
 	'LOGINATTEMPT',

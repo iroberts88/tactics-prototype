@@ -321,7 +321,7 @@
         {
           "sCost": 15,
           "name": "Stealth",
-          "description": "Become hidden. Your speed is reduced by <50-AGI*2%>, and you lose 15 energy per turn. Attacking from stealth deals 30 bonus damage. You cannot enter stealth if the rest of your team is dead, unconscious, or hidden. You will also be revealed if an enemy tries to move to your current node, or you if perform another attack or action.",
+          "description": "Become hidden. Your speed is reduced by <40-AGI*2%>, and you lose 15 energy per turn. Attacking from stealth deals 30 bonus damage. You cannot enter stealth if the rest of your team is dead, unconscious, or hidden. You will also be revealed if an enemy tries to move to your current node, or you if perform another attack or action.",
           "range": "self",
           "ApCost": 100,
           "id": "stealth",
@@ -333,7 +333,7 @@
         {
           "sCost": 8,
           "name": "Dodge",
-          "description": "Use your reaction to reduce incoming melee or projectile based damage by <AGI*5%>",
+          "description": "Use your reaction to reduce an incoming attack by <AGI*4%>",
           "range": "self",
           "ApCost": 80,
           "id": "dodge",
@@ -343,7 +343,7 @@
         {
           "sCost": 8,
           "name": "Evasion",
-          "description": "Use your reaction to reduce incoming AoE based damage by <AGI*5%>",
+          "description": "Use your reaction to reduce incoming AoE based damage by <AGI*4%>",
           "range": "self",
           "ApCost": 80,
           "id": "evasion",
@@ -621,7 +621,7 @@
         },
         {
           "name": "Cybernetics: Legs",
-          "description": "Mechanically enhance unit's legs, increasing agility by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's legs, increasing agility by 3",
           "ApCost": 300,
           "id": "cybLegs",
           "sCost": 15,
@@ -629,7 +629,7 @@
         },
         {
           "name": "Cybernetics: Arms",
-          "description": "Mechanically enhance unit's arms, increasing strength by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's arms, increasing strength by 3",
           "ApCost": 300,
           "id": "cybArms",
           "sCost": 15,
@@ -637,7 +637,7 @@
         },
         {
           "name": "Cybernetics: Brain",
-          "description": "Mechanically enhance unit's cerebral cortex, increasing intelligence by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's cerebral cortex, increasing intelligence by 3",
           "ApCost": 300,
           "id": "cybBrain",
           "sCost": 15,
@@ -645,7 +645,7 @@
         },
         {
           "name": "Cybernetics: Eyes",
-          "description": "Mechanically enhance unit's eyes, increasing dexterity by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's eyes, increasing dexterity by 3",
           "ApCost": 300,
           "id": "cybEyes",
           "sCost": 15,
@@ -653,7 +653,7 @@
         },
         {
           "name": "Cybernetics: Lungs",
-          "description": "Mechanically enhance unit's resperitory system, increasing endurance by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's resperitory system, increasing endurance by 3",
           "ApCost": 300,
           "id": "cybLungs",
           "sCost": 15,
@@ -661,7 +661,7 @@
         },
         {
           "name": "Cybernetics: Heart",
-          "description": "Mechanically enhance unit's body, increasing willpower by 3 and increasing incoming pulse and shock damage by <20-WIL%>",
+          "description": "Mechanically enhance unit's body, increasing willpower by 3",
           "ApCost": 300,
           "id": "cybHeart",
           "sCost": 15,

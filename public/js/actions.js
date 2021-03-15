@@ -15,7 +15,8 @@
         ActionUsed: 'actionUsed',
         SetEnergy: 'setEnergy',
         Slam: 'slam',
-        Reversal: 'reversal'
+        Reversal: 'reversal',
+        Log: 'log'
     };
 
     Actions.prototype.init = function(actions){
@@ -92,6 +93,9 @@
             case Enums.REVERSAL:
                 return this.reversal;
                 break;
+            case Enums.LOG:
+                return this.log;
+                break;
             default:
                 return this.test;
                 break;
@@ -110,6 +114,11 @@
         if (data.ticker > 0.5){
             actions.endAction(data);
         }
+    };
+    Actions.prototype.log = function(dt,actions,data){
+        console.log(data);
+        Game.activityLogMsg(data[Enums.TEXT]);
+        actions.endAction(data);
     };
     Actions.prototype.slam = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){

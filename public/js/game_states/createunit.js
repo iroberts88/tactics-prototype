@@ -9,9 +9,9 @@
             Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
             
             this.style1 = AcornSetup.baseStyle;
-            this.style1.font = '48px Orbitron';
+            this.style1.font = '48px Roboto';
             this.style2 = AcornSetup.baseStyle;
-            this.style2.font = '48px Sigmar One';
+            this.style2.font = '48px Roboto';
             //back button
             this.classSelected = 'soldier';
             this.statsAssigned = {

@@ -5,18 +5,16 @@
     Game = {
         chargeMax: 1000000,
         timePerTurn: null,
-        timePerReaction: null,
         delayBetweenStates: null,
         betweenStateTicker: 0,
         turnTicker: Date.now(),
-        reactionTicker: Date.now(),
         currentState: 'idle',
         states: {
             Idle: 'idle',
             BetweenStates: 'betweenStates',
             Turn: 'turn',
-            Reaction: 'reaction'
         },
+        ALStyle: null,
         currentNode: null,
         outlineFilterRed: new PIXI.filters.OutlineFilter(2, 0xff9999),
         filtersOn: function (e) {
@@ -94,14 +92,14 @@
         endGame: null,
         won: null,
 
+        activityLog: null,
+
         init: function() {
             //init variables
             this.timePerTurn = null;
-            this.timePerReaction = null;
             this.delayBetweenStates = null;
             this.betweenStateTicker = 0;
             this.turnTicker = Date.now();
-            this.reactionTicker = Date.now();
             this.currentState = 'idle';
             this.currentNode = null;
             this.setNewHoveredNode = null; //set a new hovered over node
@@ -141,6 +139,16 @@
             this.currentToolTip = null;
             this.endGame = null;
             this.won = null;
+
+            this.ALStyle = {
+                font: '16px Roboto',
+                fill: '#AACCDD',
+                align: 'left',
+                stroke: '#000000',
+                strokeThickness: 1,
+                wordWrap: true,
+                wordWrapWidth: Graphics.width*0.2
+            };
 
             this.drawBG();
             Graphics.worldContainer.addChild(this.map.container2);
@@ -271,6 +279,26 @@
 
             Graphics.showLoadingMessage(false);
 
+            this.activityLog = new PIXI.Container();
+            this.activityLogArr = [];
+            this.activityLog.position.x = Graphics.width*.20;
+            this.activityLog.position.y = Graphics.height*0.8;
+            Graphics.uiContainer.addChild(this.activityLog);
+        },
+        activityLogMsg: function(string){
+            var txt = new PIXI.Text(string,this.ALStyle);
+            txt.anchor.x = 0;
+            txt.anchor.y = 0;
+            for (let i = 0;i < this.activityLogArr.length;i++){
+                this.activityLogArr[i].position.y += (txt.height + 3);
+            }
+            this.activityLog.addChild(txt);
+            this.activityLogArr.push(txt);
+            if (this.activityLogArr.length > 20){
+                this.activityLog.removeChild(this.activityLogArr[0]);
+                this.activityLogArr[0].destroy();
+                this.activityLogArr.shift();
+            }
         },
         addUnit: function(unit){
             var x = 0;
@@ -430,7 +458,6 @@
             //the first turn starts
             this.betweenStateTicker = 0;
             this.turnTicker = Date.now();
-            this.reactionTicker = Date.now();
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
             this.resetTurnMenu();
@@ -453,7 +480,6 @@
             this.timeText.visible = false;
             this.betweenStateTicker = 0;
             this.turnTicker = Date.now();
-            this.reactionTicker = Date.now();
             this.currentState = this.states.BetweenStates;
             Graphics.uiContainer.removeChild(this.turnMenu);
 
@@ -631,14 +657,6 @@
                     if (time >= this.timePerTurn){
                         this.currentState = this.states.Idle;
                         this.timeText.visible = false;
-                    }
-                    break;
-                case this.states.Reaction:
-                    var time = Math.floor((Date.now() - this.reactionTicker) / 1000);
-                    //this.timeText.text = 'Time left: ' + (this.timePerTurn - time);
-                    if (time >= this.timePerReaction){
-                        this.currentState = this.states.Idle;
-                        //this.timeText.visible = false;
                     }
                     break;
             }
@@ -1478,7 +1496,7 @@
             var gfx = new PIXI.Graphics();
             var color = 0x0000FF;
             var style  = {
-                font: '32px Sigmar One',
+                font: '32px Roboto',
                 fill: 'white',
                 align: 'left',
                 stroke: '#000000',
@@ -1692,7 +1710,7 @@
             cont.addChild(shText);
 
             var style2 = {
-                font: '20px Verdana',
+                font: '20px Roboto',
                 fill: Graphics.pallette.color1,
                 align: 'left',
                 stroke: '#000000',

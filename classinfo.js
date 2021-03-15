@@ -1,5 +1,6 @@
 
-var	Enums = require('./enums.js').Enums;
+var	Enums = require('./enums.js').Enums,
+    Ability = require('./ability.js').Ability;
 
 var ClassInfo = function(){
 	this.unit = null; //the unit which owns this classInfo
@@ -7,46 +8,161 @@ var ClassInfo = function(){
 	this.currentClass = null;
 	this.baseClass = null;
 	this.baseid = null;
-	this.classid = null;
-	this.allClassAbilities = null;
+	this.classid = null; 	
+	this.allClassAbilities = {};
 
-	this.learnedAbilities = null;
-	this.equippedAbilities = null;
-	this.ap = null;
-	this.totalAPValues = null;
+	//set on init
+	this.learnedAbilities = {};
+	this.equippedAbilities = {};
+	this.ap = {};
+	this.totalAPValues = {};
 	this.abilities = {};
+	this.allClassAbilities = {};
 }
 
 ClassInfo.prototype.init = function(data){
-	this.unit = data.unit;
-	this.engine = this.unit.engine;
 	if (typeof data.learned != 'undefined'){
-		this.learnedAbilities = data.learned;
-	}else{
-		this.learnedAbilities = {};
+		for (var i in data.learned){
+			for (var j in this.allClassAbilities){
+				for (var k = 0; k < this.allClassAbilities[j].length;k++){
+					if (this.allClassAbilities[j][k]['id'] == i){
+						var d = {};
+						d[Enums.CLASSID] = j;
+						d[Enums.ABILITYID] = i;
+						this.learnAbility(d,false);
+					}
+				}
+			}
+		}
 	}
 	if (typeof data.equipped != 'undefined'){
-		this.equippedAbilities = data.equipped;
+		for (var i in data.equipped){
+			for (var j in this.allClassAbilities){
+				for (var k = 0; k < this.allClassAbilities[j].length;k++){
+					if (this.allClassAbilities[j][k]['id'] == i){
+						var d = {};
+						d[Enums.CLASSID] = j;
+						d[Enums.ABILITYID] = i;
+						this.equipAbility(d,false);
+					}
+				}
+			}
+		}
 		//cehck for passives and reactions
-	}else{
-		this.equippedAbilities = {};
 	}
 	if (typeof data.allClassAbilities != 'undefined'){
 		this.allClassAbilities = data.allClassAbilities;
-	}else{
-		this.allClassAbilities = {};
 	}
 	if (typeof data.ap != 'undefined'){
 		this.ap = data.ap;
-	}else{
-		this.ap = {};
 	}
 	if (typeof data.totalAPValues != 'undefined'){
 		this.totalAPValues = data.totalAPValues;
-	}else{
-		this.totalAPValues = {};
 	}
 }
+
+ClassInfo.prototype.learnAbility = function(data,updateClient = true){
+    var cID = data[Enums.CLASSID];
+    var aID = data[Enums.ABILITYID];
+    //get the ability
+    var abl;
+    for (var a = 0; a < this.allClassAbilities[cID].length;a++){
+        if (aID == this.allClassAbilities[cID][a].id){
+            abl = this.allClassAbilities[cID][a];
+        }
+    }
+    //check available AP
+    if (this.ap[cID] < abl.ApCost){
+        return false;
+    }
+    //check if ability is already learned
+    if (this.learnedAbilities[aID]){
+        return false;
+    }
+    //ability can be learned. reduce AP and add to learned abilities list
+    this.ap[cID] -= abl.ApCost;
+    this.learnedAbilities[aID] = true;
+    this.abilities[aID] = new Ability();
+    this.abilities[aID].init(abl);
+    //update client
+    if (updateClient){
+	    data[Enums.APCOST] = abl.ApCost;
+	    this.engine.queuePlayer(this.unit.owner,Enums.LEARNABILITY,data);
+	}
+}
+ClassInfo.prototype.equipAbility = function(data,updateClient = true){
+    var cID = data[Enums.CLASSID];
+    var aID = data[Enums.ABILITYID];
+
+    //get the ability
+    if (!this.learnedAbilities[aID]){
+        return false;
+    }
+    var abl;
+    for (var a = 0; a < this.allClassAbilities[cID].length;a++){
+        if (aID == this.allClassAbilities[cID][a].id){
+            abl = this.abilities[aID];
+        }
+    }
+    //check available SLOTS
+    if (this.unit.abilitySlots.value - this.unit.usedAbilitySlots < abl.sCost){
+        return false;
+    }
+    //check if ability is already equipped
+    if (this.equippedAbilities[aID]){
+        return false;
+    }
+    //ability can be equipped. add current slots and add to learned abilities list
+
+    //check if ability is passive/reaction
+    if (abl.type == 'passive' || abl.type == 'reaction'){
+        let aFunc = this.engine.actions.getAbility(abl.id);
+        abl.reverse = false;
+        let success = aFunc(this.unit,abl);
+        if (!success){return false;}
+    }
+
+    this.equippedAbilities[aID] = true;
+    this.unit.setAbilitySlots();
+
+    //update client
+    if (updateClient){
+	    data[Enums.SCOST] = abl.sCost;
+	    this.engine.queuePlayer(this.unit.owner,Enums.EQUIPABILITY,data);
+	}
+}
+ClassInfo.prototype.unEquipAbility = function(data,updateClient = true){
+    var cID = data[Enums.CLASSID];
+    var aID = data[Enums.ABILITYID];
+    //get the ability
+    var abl;
+    for (var a = 0; a < this.allClassAbilities[cID].length;a++){
+        if (aID == this.allClassAbilities[cID][a].id){
+            abl = this.abilities[aID];
+        }
+    }
+    //check if ability is already not equipped
+    if (typeof this.equippedAbilities[aID] == 'undefined'){
+        return false;
+    }
+
+    //check if ability is passive/reaction
+    if (abl.type == 'passive' || abl.type == 'reaction'){
+        let aFunc = this.engine.actions.getAbility(abl.id);
+        abl.reverse = true;
+        let success = aFunc(this.unit,abl);
+        if (!success){return false;}
+    }
+    //ability can be un-equipped.
+    delete this.equippedAbilities[aID];
+    this.unit.setAbilitySlots();
+    //update client
+    if (updateClient){
+	    data[Enums.SCOST] = abl.sCost;
+	    this.engine.queuePlayer(this.unit.owner,Enums.UNEQUIPABILITY,data);
+	}
+}
+
 ClassInfo.prototype.getClientData = function(){
 	cData = {};
 	cData[Enums.CURRENTCLASS] = this.currentClass;
@@ -102,8 +218,8 @@ ClassInfo.prototype.setClass = function(c){
 			this.ap[charClass.classid] = 100;
 			this.totalAPValues[charClass.classid] = 100;
 		}*/
-			this.ap[charClass.classid] = 500;
-			this.totalAPValues[charClass.classid] = 500;
+			this.ap[charClass.classid] = 5000;
+			this.totalAPValues[charClass.classid] = 5000;
 		if (typeof this.allClassAbilities[charClass.classid] == 'undefined'){
 			//changed to a new class, set abilities
 			this.allClassAbilities[charClass.classid] = {
@@ -130,13 +246,17 @@ ClassInfo.prototype.setBaseClass = function(c){
 			this.unit[stat].set();
 		}
 		if (typeof this.ap[charClass.classid] == 'undefined'){
-			this.ap[charClass.classid] = 100;
-			this.totalAPValues[charClass.classid] = 100;
+			this.ap[charClass.classid] = 1000;
+			this.totalAPValues[charClass.classid] = 1000;
 		}
 	}catch(e){
 		console.log("ERROR: unable to set base class");
 		console.log(e.stack);
 	}
+}
+ClassInfo.prototype.setUnit = function(u){
+	this.unit = u;
+	this.engine = this.unit.engine;
 }
 
 exports.ClassInfo = ClassInfo;

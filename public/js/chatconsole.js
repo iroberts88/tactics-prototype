@@ -12,7 +12,7 @@
             //ChatConsole.socket = socket;
         },
         reset: function(){
-            ChatConsole.textSprite = new PIXI.Text('', {font:"20px Verdana",fill:'white',wordWrap: false});
+            ChatConsole.textSprite = new PIXI.Text('', {font:"20px Roboto",fill:'white',wordWrap: false});
             ChatConsole.textSprite.anchor.x = 0;
             ChatConsole.textSprite.anchor.y = 1;
             ChatConsole.textSprite.position.x = 5;

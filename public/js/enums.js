@@ -199,7 +199,8 @@
     ADDNEWUNIT: 195,
     VISION: 196,
     FOUND: 197,
-    MODAP: 198
+    MODAP: 198,
+    LOG: 199
 
     };
     window.Enums = Enums;

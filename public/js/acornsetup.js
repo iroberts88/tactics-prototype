@@ -3,7 +3,7 @@
     AcornSetup = {
         
         baseStyle: {
-            font: '64px Verdana',
+            font: '64px Roboto',
             fill: Graphics.pallette.color1,
             align: 'left',
             stroke: '#000000',
@@ -11,16 +11,16 @@
         },
 
         baseStyle2: {
-            font: '32px Verdana',
-            fill: '#AACCDD',
+            font: '32px Roboto',
+            fill: '#dbfff2',
             align: 'left',
             stroke: '#000000',
             strokeThickness: 2,
         },
 
         baseStyle3: {
-            font: '18px Sigmar One',
-            fill: '#AACCDD',
+            font: '18px Roboto',
+            fill: '#dbfff2',
             align: 'left',
             stroke: '#000000',
             strokeThickness: 2,
@@ -407,6 +407,7 @@
             });
 
             Acorn.Net.on(Enums.SETMOVELEFT, function (data) {
+                console.log(data);
                 if (!Game.units){
                     return;
                 }
@@ -923,7 +924,7 @@
                     this.rhombus.style.fontSize = 64;
                     Graphics.uiContainer.addChild(this.rhombus);
 
-                    var barStyle = {font: '50px Verdana', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'}
+                    var barStyle = {font: '50px Roboto', fill: 'hsla(93, 100%, 50%, 0)', align: 'left'}
                     this.sizeBar = Graphics.makeUiElement({
                         text: '____________________',
                         style: barStyle,

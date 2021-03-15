@@ -210,7 +210,7 @@
       ],
       "usable": false,
       "itemid": "accessory_focus",
-      "description": "Increases the user's focus",
+      "description": "Tactical visor allows the user to focus clearly on a target. DEX +1",
       "name": "Focus",
       "weight": 1,
       "eqData": {

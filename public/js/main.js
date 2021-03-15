@@ -24,7 +24,7 @@ $(function() {
     //Configure fonts
     WebFontConfig = {
       google: {
-        families: [ 'Audiowide', 'Arvo', 'Podkova:700' , 'Electrolize', 'Orbitron', 'Sigmar One','Audiowide']
+        families: [ 'Audiowide', 'Arvo', 'Podkova:700' , 'Electrolize', 'Orbitron', 'Sigmar One','Roboto']
       },
 
       active: function() {

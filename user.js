@@ -97,7 +97,7 @@ function User() {
                 if (d.guest){
                     //add random units
                     var classes = ['medic','tech','soldier','scout', 'commando', 'splicer', 'marksman'];
-                    for (var i = 0; i < 0; i++){
+                    for (var i = 0; i < 5; i++){
                         var char = new Unit();
                         //init unit
                         var sexes = ['male','female'];
@@ -115,7 +115,7 @@ function User() {
                             abilitySlots: 999,
                             name: name,
                             sex: sexes[Math.floor(Math.random()*sexes.length)],
-                            inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield'],
+                            inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield', 'compound_healing'],
                             weapon: Math.floor(Math.random()*2),
                             shield: 3,
                             accessory: 2
@@ -133,15 +133,14 @@ function User() {
                         //var unitClass = 'soldier';
                         var learned = {};
                         var equipped = {}; 
-                        var ap = {};
                         switch(unitClass){
                             case 'medic':
                                 learned = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
                                 equipped = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
                                 break;
                             case 'tech':
-                                learned = {'dictate': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
-                                equipped = {'dictate': true, "grenade" : true, "scan" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                learned = {'dictate': true, "grenade" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                equipped = {'dictate': true, "grenade" : true,"repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
                                 break;
                             case 'soldier':
                                 learned = { "momentum" : true, "battlecry" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
@@ -160,17 +159,17 @@ function User() {
                                 equipped = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
                                 break;
                             case 'marksman':
-                                learned = {"aim": true};
-                                equipped = {"aim": true};
+                                learned = { "scan" : true, "aim": true};
+                                equipped = { "scan" : true, "aim": true};
                                 break;
                         }
                         char.classInfo = new ClassInfo();
-                        char.classInfo.init({unit: char, 
-                            learned: learned,
-                            equipped: equipped,
-                            ap: ap});
+                        char.classInfo.setUnit(char);
                         char.classInfo.setBaseClass(unitClass);
                         char.classInfo.setClass(unitClass);
+                        char.classInfo.init({unit: char, 
+                            learned: learned,
+                            equipped: equipped});
                         char.levelUp();
                         char.level -= 1;
                         this.owner.engine.queuePlayer(this.owner,Enums.ADDNEWUNIT, this.owner.engine.createClientData(Enums.UNITID, char.getClientData()));

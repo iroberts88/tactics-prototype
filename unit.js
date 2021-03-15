@@ -1,6 +1,7 @@
 var User = require('./user.js').User,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
+    Actions = require('./actions.js').Actions,
     Item = require('./item.js').Item,
     UnitAI = require('./unitai.js').UnitAI,
     Enums = require('./enums.js').Enums;
@@ -126,14 +127,19 @@ var Unit = function(){
     });
 
 
-    this.onTakeDamage = []; //list of effects when the unit takes damage
+    this.onTakeDamage = []; //list of effects before the unit takes damage
+    this.onAfterTakeDamage = []; //list of effects after the unit takes damage
     this.onAction = [];
+    this.onAttack = [];
     this.onMove = []; //list of effects when the unit moves
     this.onEnemyMove = [] //list of effects when an enemy unit moves
     this.onTurnEnd = [];
     this.onTurnStart = [];
     this.onFaint = [];
     this.onDeath = [];
+
+    this.currentNode = null;
+    this.currentSession = null;
 }
 
 Unit.prototype.addOnTakeDamage = function(obj){
@@ -143,10 +149,25 @@ Unit.prototype.addOnTakeDamage = function(obj){
     }
     this.onTakeDamage.push(obj);
 }
-Unit.prototype.removeOnTakeDamage = function(s){
+Unit.prototype.removeOnTakeDamage = function(n){
     for (let i = 0;i < this.onTakeDamage.length;i++){
         if (this.onTakeDamage.name == n){
             this.onTakeDamage.splice(i,1);
+            return;
+        }
+    }
+}
+Unit.prototype.addOnAfterTakeDamage = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnAfterTakeDamage');
+        console.log(obj);
+    }
+    this.onAfterTakeDamage.push(obj);
+}
+Unit.prototype.removeOnAfterTakeDamage = function(n){
+    for (let i = 0;i < this.onAfterTakeDamage.length;i++){
+        if (this.onAfterTakeDamage.name == n){
+            this.onAfterTakeDamage.splice(i,1);
             return;
         }
     }
@@ -159,10 +180,25 @@ Unit.prototype.addOnAction = function(obj){
     }
     this.onAction.push(obj);
 }
-Unit.prototype.removeOnAction = function(s){
+Unit.prototype.removeOnAction = function(n){
     for (let i = 0;i < this.onAction.length;i++){
         if (this.onAction.name == n){
             this.onAction.splice(i,1);
+            return;
+        }
+    }
+}
+Unit.prototype.addOnAttack = function(obj){
+    if (typeof obj.name == 'undefined'){
+        console.log('no name? addOnAttack');
+        console.log(obj);
+    }
+    this.onAttack.push(obj);
+}
+Unit.prototype.removeOnAttack = function(n){
+    for (let i = 0;i < this.onAttack.length;i++){
+        if (this.onAttack.name == n){
+            this.onAttack.splice(i,1);
             return;
         }
     }
@@ -175,7 +211,7 @@ Unit.prototype.addOnMove = function(obj){
     }
     this.onMove.push(obj);
 }
-Unit.prototype.removeOnMove = function(s){
+Unit.prototype.removeOnMove = function(n){
     for (let i = 0;i < this.onMove.length;i++){
         if (this.onMove.name == n){
             this.onMove.splice(i,1);
@@ -191,7 +227,7 @@ Unit.prototype.addOnEnemyMove = function(obj){
     }
     this.onEnemyMove.push(obj);
 }
-Unit.prototype.removeOnEnemyMove = function(s){
+Unit.prototype.removeOnEnemyMove = function(n){
     for (let i = 0;i < this.onEnemyMove.length;i++){
         if (this.onEnemyMove.name == n){
             this.onEnemyMove.splice(i,1);
@@ -207,7 +243,7 @@ Unit.prototype.addOnTurnEnd = function(obj){
     }
     this.onTurnEnd.push(obj);
 }
-Unit.prototype.removeOnTurnEnd = function(s){
+Unit.prototype.removeOnTurnEnd = function(n){
     for (let i = 0;i < this.onTurnEnd.length;i++){
         if (this.onTurnEnd.name == n){
             this.onTurnEnd.splice(i,1);
@@ -223,7 +259,7 @@ Unit.prototype.addOnTurnStart = function(obj){
     }
     this.onTurnStart.push(obj);
 }
-Unit.prototype.removeOnTurnStart = function(s){
+Unit.prototype.removeOnTurnStart = function(n){
     for (let i = 0;i < this.onTurnStart.length;i++){
         if (this.onTurnStart.name == n){
             this.onTurnStart.splice(i,1);
@@ -239,7 +275,7 @@ Unit.prototype.addOnFaint = function(obj){
     }
     this.onFaint.push(obj);
 }
-Unit.prototype.removeOnFaint = function(s){
+Unit.prototype.removeOnFaint = function(n){
     for (let i = 0;i < this.onFaint.length;i++){
         if (this.onFaint.name == n){
             this.onFaint.splice(i,1);
@@ -255,7 +291,7 @@ Unit.prototype.addOnDeath = function(obj){
     }
     this.onDeath.push(obj);
 }
-Unit.prototype.removeOnDeath = function(s){
+Unit.prototype.removeOnDeath = function(n){
     for (let i = 0;i < this.onDeath.length;i++){
         if (this.onDeath.name == n){
             this.onDeath.splice(i,1);
@@ -266,7 +302,7 @@ Unit.prototype.removeOnDeath = function(s){
 
 Unit.prototype.reset = function(){
     //things that reset with each new game
-    this.moveLeft = 0;
+    this.moveLeft = this.move.value;
     //shields
     this.currentShields = this.maximumShields.value;
 
@@ -434,7 +470,7 @@ Unit.prototype.init = function(data) {
         'max': 999, //TODO should check if current absl are too high, possibly resetting abilities
 
         formula: function(){
-            return Math.round((this.base+this.nMod)*this.pMod);
+            return Math.round((this.base+this.nMod)*this.pMod) + 1000;
         }
     });
     this.strength = new Attribute();
@@ -669,13 +705,39 @@ Unit.prototype.endTurn = function(){
             i -= 1;
         }
     }
-    this.moveLeft = 0;
+    this.setMoveLeft(this.move.value);
+    this.reaction = 1;
 };
 
-Unit.prototype.damage = function(type,value,aData){
+Unit.prototype.damage = function(data){
     //damage based on type
-    if (typeof aData == 'undefined'){
-        aData = [];
+    var type = Utils.udCheck(data.damageType,null,data.damageType);
+    var value = Utils.udCheck(data.value,null,data.value);
+    var aData = Utils.udCheck(data.actionData,[],data.actionData);
+    var source = Utils.udCheck(data.source,null,data.source);
+    var attackType = Utils.udCheck(data.attackType,'attack',data.attackType);
+
+    if (source){
+        if (this.owner != source.owner){
+            for (let i = 0; i < this.onTakeDamage.length;i++){
+                let aFunc = Actions.getAction(this.onTakeDamage[i].name);
+                this.onTakeDamage[i].type = type;
+                this.onTakeDamage[i].value = value;
+                this.onTakeDamage[i].aData = aData;
+                this.onTakeDamage[i].source = source;
+                this.onTakeDamage[i].attackType = attackType;
+                let success = aFunc(this,this.onTakeDamage[i]);
+                if (success){
+                    console.log('success - ' + this.onTakeDamage[i].name)
+                    type = success.type;
+                    value = success.value;
+                    aData = success.aData;
+                    source = source;
+                    attackType = success.attackType;
+                }
+            }
+        }
+        console.log(value);
     }
     switch(type){
         case this.engine.dmgTypeEnums.Gravity:
@@ -772,8 +834,30 @@ Unit.prototype.damage = function(type,value,aData){
     cData[Enums.FAINTED] = this.fainted;
     cData[Enums.DEAD] = this.dead;
     cData[Enums.TYPE] = type;
-
     aData.push(cData);
+
+    if (source){
+        if (this.owner != source.owner){
+            console.log(this.onAfterTakeDamage)
+            for (let i = 0; i < this.onAfterTakeDamage.length;i++){
+                let aFunc = Actions.getAction(this.onAfterTakeDamage[i].name);
+                this.onAfterTakeDamage[i].type = type;
+                this.onAfterTakeDamage[i].value = value;
+                this.onAfterTakeDamage[i].aData = aData;
+                this.onAfterTakeDamage[i].source = source;
+                this.onAfterTakeDamage[i].attackType = attackType;
+                let success = aFunc(this,this.onAfterTakeDamage[i]);
+                if (success){
+                    console.log('success - ' + this.onAfterTakeDamage[i].name)
+                    type = success.type;
+                    value = success.value;
+                    aData = success.aData;
+                    source = source;
+                    attackType = success.attackType;
+                }
+            }
+        }
+    }
     return aData;
 };
 Unit.prototype._damage = function(value){
@@ -787,7 +871,7 @@ Unit.prototype._damage = function(value){
     this.currentHealth -= value;
 }
 Unit.prototype.setMoveLeft = function(val){
-    this.moveLeft += val;
+    this.moveLeft = val;
     if (this.moveLeft < 0){
         this.moveLeft = 0;
     }
@@ -829,7 +913,7 @@ Unit.prototype.levelUp = function(update){
     this.maximumEnergy.base += this.charisma.base*0.08;
     this.maximumEnergy.set(update);
 
-    var resTypes = ['physical','heat','cold','acid','poison','gravity','electric','radiation'];
+    var resTypes = ['physical','heat','cold','acid','poison','gravity','electric','radiation', 'pulse'];
 
     for (var i = 0; i < resTypes.length;i++){
         this[resTypes[i] + 'Res'].base += 0.1;

@@ -5,6 +5,7 @@
 var GameSession = require('./gamesession.js').GameSession,
     Player = require('./player.js').Player,
     Ability = require('./ability.js').Ability,
+    Actions = require('./actions.js').Actions,
     Utils = require('./utils.js').Utils,
     AWS = require("aws-sdk");
 
@@ -35,6 +36,8 @@ var GameEngine = function() {
     //variables for ID's
     this.idIterator = 0;
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
+
+    this.actions = Actions;
 
     this.debugList = {}; //used avoid overloading debug.txt
     fs.truncate('debug.txt', 0, function(){console.log('debug.txt cleared')})
