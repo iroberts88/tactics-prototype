@@ -675,7 +675,7 @@ Actions.prototype.scan = function(unit,data){
 		if (nextUnit.owner != unit.owner){
 			//send down detailed unit info!
 			unit.owner.identifiedUnits[nextUnit.id] = true;
-			unit.owner.unit.owner.session.queuePlayer(unit.owner,Enums.UPDATEUNITINFO,unit.engine.createClientData(
+			unit.owner.session.queuePlayer(unit.owner,Enums.UPDATEUNITINFO,unit.engine.createClientData(
 		        Enums.UNITID, nextUnit.id,
 		        Enums.UNITINFO, nextUnit.getClientData()
 			));
@@ -1347,7 +1347,7 @@ Actions.prototype.healingField = function(unit,data){
     unit.owner.session.queueData(Enums.ADDUNIT,unit.engine.createClientData(Enums.UNITINFO, hField.getLessClientData()));
 
     unit.owner.identifiedUnits[hField.id] = true;
-	unit.owner.unit.owner.session.queuePlayer(unit.owner,Enums.UPDATEUNITINFO,unit.engine.createClientData(
+	unit.owner.session.queuePlayer(unit.owner,Enums.UPDATEUNITINFO,unit.engine.createClientData(
         Enums.UNITID, hField.id,
         Enums.UNITINFO, hField.getClientData()
 	));

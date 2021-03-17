@@ -784,6 +784,27 @@
             this.uiWindows.push(s);
         },
 
+        tryToItem: function(pos, text){
+
+            var y = function(){
+                console.log('Send item!!');
+                if (!Game.abilityActive){
+                    return;
+                }
+                Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(
+                    Enums.COMMAND, Enums.ITEM,
+                    Enums.ITEM, pos
+                ));
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var n = function(){
+                Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
+            }
+            var s = this.getConfirmationWindow(text,y,n);
+            Graphics.uiContainer.addChild(s);
+            this.uiWindows.push(s);
+        },
+
         tryToEnd: function(dir){
             //check if its your unit
             if (this.units[this.turnList[0]].owner != window.playerID){
@@ -807,7 +828,7 @@
             this.uiWindows.push(s);
         },
 
-        getConfirmationWindow: function(text,yesFunc,noFunc,node){
+        getConfirmationWindow: function(text,yesFunc,noFunc,node = null){
             //get the confirmatin window for move/attack/end etc.
             //text is the text above the window
             //yesFunc is the click function for Confirm
@@ -1397,15 +1418,54 @@
             h += abText.height + 5;
             cont.uiElements = [];
             for (var i = 0; i < unit.inventory.items.length;i++){
-                var item = unit.inventory.items[i];
-                var clickFunc = function(e){
+                let item = unit.inventory.items[i];
+                let clickFunc = function(e){
                     console.log('clicked! ' + e.currentTarget.itemInfo.name);
+                    let t = '';
+                    switch(e.currentTarget.itemInfo.type){
+                        case 'weapon':
+                            if (e.currentTarget.unit.inventory.items[e.currentTarget.unit.weapon] != e.currentTarget.itemInfo){
+                                t = "Equip " + e.currentTarget.itemInfo.name + '?';
+                            }else{
+                                t = "Unequip " + e.currentTarget.itemInfo.name + '?';
+                            }
+                            Game.tryToItem(e.currentTarget.ipos, t);
+                            break;
+                        case 'gun':
+                            if (e.currentTarget.unit.inventory.items[e.currentTarget.unit.weapon] != e.currentTarget.itemInfo){
+                                t = "Equip " + e.currentTarget.itemInfo.name + '?';
+                            }else{
+                                t = "Unequip " + e.currentTarget.itemInfo.name + '?';
+                            }
+                            Game.tryToItem(e.currentTarget.ipos, t);
+                            break;
+                        case 'shield':
+                            if (e.currentTarget.unit.inventory.items[e.currentTarget.unit.shield] != e.currentTarget.itemInfo){
+                                t = "Equip " + e.currentTarget.itemInfo.name + '?';
+                            }else{
+                                t = "Unequip " + e.currentTarget.itemInfo.name + '?';
+                            }
+                            Game.tryToItem(e.currentTarget.ipos, t);
+                            break;
+                        case 'accessory':
+                            if (e.currentTarget.unit.inventory.items[e.currentTarget.unit.accessory] != e.currentTarget.itemInfo){
+                                t = "Equip " + e.currentTarget.itemInfo.name + '?';
+                            }else{
+                                t = "Unequip " + e.currentTarget.itemInfo.name + '?';
+                            }
+                            Game.tryToItem(e.currentTarget.ipos, t);
+                            break;
+                        case 'compound':
+                            Game.tryToItem(e.currentTarget.ipos, "Use " + e.currentTarget.itemInfo.name + '?');
+                            break;
+                    }
                 }
-                var mOverFunc = function(e){
+                let mOverFunc = function(e){
                     console.log('moused over!! ' + e.currentTarget.itemInfo.name);
                 }
+                let txt = ((unit.weapon == i || unit.accessory == i || unit.shield == i) ? ' (E) ' : '') + item.name;
                 var iButton = Graphics.makeUiElement({
-                    text: item.name,
+                    text: txt,
                     style: style,
                     interactive: true,
                     buttonMode: true,
@@ -1422,6 +1482,8 @@
                 iButton.tooltip = new Tooltip();
                 iButton.tooltip.getItemTooltip(iButton,item);
                 iButton.itemInfo = item;
+                iButton.unit = unit;
+                iButton.ipos = i;
                 cont.addChild(iButton);
                 cont.uiElements.push(iButton);
                 h += iButton.height + 10;

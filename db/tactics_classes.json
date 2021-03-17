@@ -208,6 +208,14 @@
           "id": "gunner",
           "type": "passive",
           "ApCost": 250
+        },
+        {
+          "name": "Expert Sighting",
+          "sCost": 1,
+          "description": "Ranged attacks will never hit units blocking LOS of your target.",
+          "id": "gunner",
+          "type": "passive",
+          "ApCost": 500
         }
       ],
       "name": "Marksman"
