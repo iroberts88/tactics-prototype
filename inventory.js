@@ -133,7 +133,7 @@ Inventory.prototype.changeWeight = function(amt,mult){
 
 Inventory.prototype.equip = function(index,updateClient){
     //attempts to equip the item at the given index
-    if (typeof index != 'number'){return;}
+    if (typeof index != 'number'){return false;}
 
     try{
         var item = this.items[index];
@@ -149,6 +149,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('weaponUnEquipActionError',e,index);
+                return false;
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -158,6 +159,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('weaponEquipActionError',e,index);
+                return false;
             }
             this.owner.weapon = index;
         }else if (item.type == 'shield'){
@@ -172,6 +174,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('shieldUnEquipActionError',e,index);
+                return false;
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -181,6 +184,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('shieldEquipActionError',e,index);
+                return false;
             }
             this.owner.shield = index;
             this.owner.maximumShields.set();
@@ -196,6 +200,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('accessoryUnEquipActionError',e,index);
+                return false;
             }
             try{
                 for (var i = 0; i < item.eqData.onEquip.length;i++){
@@ -205,10 +210,11 @@ Inventory.prototype.equip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('accessoryEquipActionError',e,index);
+                return false;
             }
             this.owner.accessory = index;
         }else{
-            return;
+            return false;
         }
     
     //update client
@@ -218,6 +224,7 @@ Inventory.prototype.equip = function(index,updateClient){
                 Enums.INDEX, index
             ));
         }
+        return true;
     }catch(e){
         this.engine.debug('equipItemError',e,index);
     }
@@ -238,6 +245,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('weaponUnEquipError',e,item);
+                return false;
             }
             this.owner.weapon = null;
         }else if (item.type == 'shield'){
@@ -251,6 +259,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('shieldUnEquipError',e,item);
+                return false;
             }
             this.owner.shield = null;
         }else if (item.type == 'accessory'){
@@ -264,10 +273,11 @@ Inventory.prototype.unEquip = function(index,updateClient){
                 }
             }catch(e){
                 this.engine.debug('accessoryUnEquipError',e,item);
+                return false;
             }
             this.owner.accessory = null;
         }else{
-            return;
+            return false;
         }
     
     //update client
@@ -277,6 +287,7 @@ Inventory.prototype.unEquip = function(index,updateClient){
                 Enums.INDEX, index
             ));
         }
+        return true;
     }catch(e){
         this.engine.debug('unequipItemError',e,index);
     }

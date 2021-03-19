@@ -360,7 +360,7 @@ Player.prototype.setupSocket = function() {
                                 console.log('equip item Error');
                                 return;
                             }
-                            //add item to player
+                            //equip item
                             unit.inventory.equip(data[Enums.INDEX], true);
                         }catch(e){
                             that.engine.debug('equipItemError',e,data);
@@ -378,7 +378,7 @@ Player.prototype.setupSocket = function() {
                                 console.log('equip item Error');
                                 return;
                             }
-                            //add item to player
+                            //unequip item
                             unit.inventory.unEquip(data[Enums.INDEX], true);
                         }catch(e){
                             that.engine.debug('unEquipItemError',e.stack,data);

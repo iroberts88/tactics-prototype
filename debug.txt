@@ -1,4 +1,0 @@
-2021-03-17T18:57:09.050Z - [object Object] 
- undefined 
- {"id":"error","error":"TypeError: Cannot read property 'owner' of undefined\n    at Actions.scan (C:\\Users\\iroberts\\Documents\\GitHub\\tactics-prototype\\actions.js:678:20)\n    at GameSession.unitAbility (C:\\Users\\iroberts\\Documents\\GitHub\\tactics-prototype\\gamesession.js:729:31)\n    at Socket.<anonymous> (C:\\Users\\iroberts\\Documents\\GitHub\\tactics-prototype\\player.js:173:38)\n    at Socket.emit (events.js:182:13)\n    at Socket.EventEmitter.emit (domain.js:442:20)\n    at C:\\Users\\iroberts\\Documents\\GitHub\\tactics-prototype\\node_modules\\socket.io\\lib\\socket.js:528:12\n    at process._tickCallback (internal/process/next_tick.js:61:11)","n":1}
-

@@ -813,190 +813,85 @@ GameSession.prototype.unitAbility = function(data){
                        
 GameSession.prototype.unitItem = function(data){ //check if ability is valid and execute
     var unit = this.allUnits[this.turnOrder[0].id];
-    data.unit = unit;
     if (unit.actionUsed || unit.fainted || unit.dead){return;}
-    data.item = unit.inventory.items[data[Enums.ITEM]];
-    if (typeof data.item == 'undefined'){
+    var item = unit.inventory.items[data[Enums.ITEM]];
+    if (typeof item == 'undefined'){
         console.log('bad item data');
         return;
     }
-    data[Enums.ACTIONDATA] = [];
+    var success = false;
+    var compound = false;
+    var cData = {};
+    cData[Enums.ACTIONDATA] = [];
+    console.log(item.type);
     switch(item.type){
         case 'gun':
+            if (unit.inventory.items[unit.weapon] == item){
+                //UNEQUIP
+                success = unit.inventory.unEquip(data[Enums.ITEM], true);
+            }else{
+                success = unit.inventory.equip(data[Enums.ITEM], true);
+            }
             break;
         case 'weapon':
+            if (unit.inventory.items[unit.weapon] == item){
+                //UNEQUIP
+                success = unit.inventory.unEquip(data[Enums.ITEM], true);
+            }else{
+                success = unit.inventory.equip(data[Enums.ITEM], true);
+            }
             break;
         case 'shield':
+            if (unit.inventory.items[unit.shield] == item){
+                //UNEQUIP
+                success = unit.inventory.unEquip(data[Enums.ITEM], true);
+            }else{
+                success = unit.inventory.equip(data[Enums.ITEM], true);
+            }
             break;
         case 'accessory':
+            if (unit.inventory.items[unit.accessory] == item){
+                //UNEQUIP
+                success = unit.inventory.unEquip(data[Enums.ITEM], true);
+            }else{
+                success = unit.inventory.equip(data[Enums.ITEM], true);
+            }
             break;
         case 'compound':
+            compound = true;
             break;
 
     }
-    /*
-    data.ability = unit.getAbility(data.abilityid);
-    if (data.ability.type == 'passive' || data.ability.type == 'reaction'){
-        return;
-    }
-    var player = unit.owner.id;
-    var node = this.map.axialMap[data.q][data.r];
-    data.ablMod = 1.0;
-    switch(data.ability.range){
-        case 'self':
-            //this should pop up a confirm window immediately?
-            possibleNodes = [unit.currentNode];
-            break;
-        case 'melee':
-            var weapon = unit.getWeapon();
-            if (weapon.type == 'gun'){
-                return;
-            }
-            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
-            break;
-        case 'ranged':
-            var weapon = unit.getWeapon();
-            if (weapon.type == 'weapon'){
-                return;
-            }
-            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
-            break;
-        case 'weapon':
-            var weapon = unit.getWeapon();
-            possibleNodes = weapon.getWeaponNodes(this.map,unit.currentNode);
-            break;
-        default:
-            //range is a special string, parse for ability distance
-            var range = this.parseRange(unit,data.ability.range);
-            possibleNodes = this.map.cubeSpiral(this.map.getCube(unit.currentNode),range.d);
-            for (var i = 0; i < possibleNodes.length;i++){
-                if (data.ability.projectile){
-                    if (possibleNodes[i].h - unit.currentNode.h > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
-                        possibleNodes.splice(i,1);
-                        i -= 1;
-                    }
-                }else{
-                    if (Math.abs(unit.currentNode.h - possibleNodes[i].h) > range.h || (unit.currentNode == possibleNodes[i] && !range.s)){
-                        possibleNodes.splice(i,1);
-                        i -= 1;
-                    }
-                }
-            }
-            break;
-    }
-    var gotNode = false;
-    for (var i = 0; i < possibleNodes.length;i++){
-        if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
-            //node is valid!
-            //execute the ability!!
-            if (node.unit){
-                data.target = node.unit;
-            }
-            gotNode = true;
-            var energy = this.parseStringCode(unit,data.ability.eCost);
-            if (unit.currentEnergy >= energy){
-                unit.currentEnergy -= energy;
-                var cData = {};
-                cData[Enums.ACTION] = Enums.SETENERGY;
-                cData[Enums.UNITID] = unit.id;
-                cData[Enums.VALUE] = unit.currentEnergy;
-                data[Enums.ACTIONDATA].push(cData);
-            }else{
-                var cData = {};
-                cData[Enums.ACTIONDATA] = [{}];
-                cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.SETENERGY;
-                cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-                cData[Enums.ACTIONDATA][0][Enums.TEXT] = 'Not enough energy';
-                this.queuePlayer(unit.owner,Enums.ACTION,cData);
-                return;
-            }
-            if (typeof data.ability.speed == 'undefined' || data.ability.speed == 'instant'){
-                unit.removeBuffsWithTag('removeOnAction');
-                var aFunc = Actions.getAbility(data.ability.id);
-                var success = aFunc(unit,data);
-                if (!success){
-                    unit.currentEnergy += energy;
-                    var cData = {};
-                    cData[Enums.ACTIONDATA] = [{}];
-                    cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.DAMAGETEXT;
-                    cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-                    cData[Enums.ACTIONDATA][0][Enums.TEXT] = 'Action failed';
-                    this.queuePlayer(unit.owner,Enums.ACTION,cData);
-                    return;
-                }
-
-                var cData5 = {};
-                cData5[Enums.ACTION] = Enums.LOG;
-                cData5[Enums.TEXT] = ' - ' + data.unit.name + ' used ' + data.ability.name;
-                data[Enums.ACTIONDATA].push(cData5);
-            }else{
-                //The ability has a cast time
-                //add cast time to the turn order and start casting!
-                var speed = Math.round((unit.speed.value + this.parseStringCode(unit,data.ability.speed)) * unit.castingSpeedMod.value);
-                console.log('Cast speed: ' + speed);
-                abData = {
-                    id: this.engine.getId(),
-                    isCastTimer: true,
-                    abilityData: data.ability,
-                    unitid: unit.id,
-                    data: data,
-                    speed: speed,
-                    charge: 0
-                }
-                this.allUnits[abData.id] = abData;
-                unit.casting = abData.id;
-                var cData = {};
-                cData[Enums.ABILITYID] = abData.id;
-                cData[Enums.ISCASTTIMER] = true;
-                cData[Enums.UNIT] = unit.id;
-                cData[Enums.ID] = abData.id;
-                cData[Enums.NAME] = data.ability.name;
-                cData[Enums.SPEED] = speed;
-                cData[Enums.CHARGE] = 0;
-                this.queueData(Enums.ADDCASTTIMER,cData);
-
-                var cData2 = {};
-                cData2[Enums.ACTION] = Enums.DAMAGETEXT;
-                cData2[Enums.UNITID] = unit.id;
-                cData2[Enums.TEXT] = 'casting...';
-                data[Enums.ACTIONDATA].push(cData2);
-
-                var cData5 = {};
-                cData5[Enums.ACTION] = Enums.LOG;
-                cData5[Enums.TEXT] = ' - ' + data.unit.name + ' used ' + data.ability.name;
-                data[Enums.ACTIONDATA].push(cData5);
-            }
+    if (!success){
+        return false;
+    }else{
+        if (!compound){
+            let d1 = {}
+            d1[Enums.ACTION] = Enums.DAMAGETEXT;
+            d1[Enums.UNITID] = unit.id;
+            d1[Enums.TEXT] = 'Equip Change';
+            cData[Enums.ACTIONDATA].push(d1);
+            let d2 = {}
+            d2[Enums.ACTION] = Enums.LOG;
+            d1[Enums.TEXT] = unit.name + ' changed equipment';
+            cData[Enums.ACTIONDATA].push(d2);
         }
     }
-    if (!gotNode){
-        var cData3 = {};
-        cData3[Enums.ACTION] = Enums.DAMAGETEXT;
-        cData3[Enums.UNITID] = unit.id;
-        cData3[Enums.TEXT] = 'get node failed...';
-        data[Enums.ACTIONDATA].push(cData3);
-        var cData4 = {};
-        cData4[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
-        this.queuePlayer(unit.owner,Enums.ACTION,cData4);
-        return;
-    }
-    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});
+    var apamt = unit.addAp({classid: unit.classInfo.currentClass,mod: 0.5});
     var cData5 = {};
     cData5[Enums.ACTION] = Enums.DAMAGETEXT;
     cData5[Enums.UNITID] = unit.id;
     cData5[Enums.TEXT] = '+' + apamt + ' AP';
     cData5[Enums.OWNERONLY] = true;
-    data[Enums.ACTIONDATA].push(cData5);
-    data.unit.actionUsed = true;
-
+    cData[Enums.ACTIONDATA].push(cData5);
+    unit.actionUsed = true;
     var cData6 = {};
     cData6[Enums.ACTION] = Enums.ACTIONUSED;
     cData6[Enums.UNITID] = unit.id;
-    data[Enums.ACTIONDATA].push(cData6);
-
+    cData[Enums.ACTIONDATA].push(cData6);
     var cData7 = {};
-    cData7[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
+    cData7[Enums.ACTIONDATA] = cData[Enums.ACTIONDATA];
     this.queuePlayer(unit.owner,Enums.ACTION,cData7);
-    */
 }
                       
 GameSession.prototype.unitEnd = function(data){
