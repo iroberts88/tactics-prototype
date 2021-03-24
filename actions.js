@@ -21,7 +21,8 @@ ActionEnums = {
 	DodgeEffect: 'dodgeEffect',
 
 	//items
-	healingCompound: 'healingCompound'
+	HealingCompound: 'healingCompound',
+	VigorCompound: 'vigorCompound'
 };
 
 AbilityEnums = {
@@ -152,6 +153,24 @@ Actions.prototype.healingCompound = function(unit,data){
 		source: unit,
 		attackType: 'ability'
 	});
+	return true;
+}
+Actions.prototype.vigorCompound = function(unit,data){
+	unit.currentEnergy += data['value'];
+	if (unit.currentEnergy > unit.maximumEnergy.value){
+		unit.currentEnergy = unit.maximumEnergy.value;
+	}
+	var cData = {};
+	cData[Enums.ACTION] = Enums.DAMAGETEXT;
+	cData[Enums.UNITID] = unit.id;
+	cData[Enums.TEXT] = "Energy +" + data['value'];
+	data[Enums.ACTIONDATA].push(cData);
+	var cData2 = {};
+	cData2[Enums.ACTION] = Enums.SETENERGY;
+	cData2[Enums.UNITID] = unit.id;
+	cData2[Enums.VALUE] = unit.currentEnergy;
+	data[Enums.ACTIONDATA].push(cData2);
+
 	return true;
 }
 
@@ -398,6 +417,9 @@ Actions.prototype.getAction = function(a){
 		//items
 		case ActionEnums.HealingCompound:
 			return this.healingCompound;
+			break
+		case ActionEnums.VigorCompound:
+			return this.vigorCompound;
 			break
 	}
 }
@@ -1252,9 +1274,10 @@ Actions.prototype.healingField = function(unit,data){
 	    }
     });
     hField.classInfo = new ClassInfo();
-    hField.classInfo.init({unit: unit});
+    hField.classInfo.setUnit(unit);
     hField.classInfo.setBaseClass('');
     hField.classInfo.setClass('');
+    hField.classInfo.init({unit: unit});
     hField.setCurrentNode(node);
     hField.direction = 'North'
     unit.owner.session.allUnits[hField.id] = hField;

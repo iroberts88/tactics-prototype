@@ -96,11 +96,32 @@ HexMap.prototype.initCubeMap = function(){
     }
 }
 
+
+//returns a cube node when given an axial node
+HexMap.prototype.cubeExistsAt = function(x,y,z){
+    if (typeof this.cubeMap[x] != 'undefined'){
+        if (typeof this.cubeMap[x][y] != 'undefined'){
+            if (typeof this.cubeMap[x][y][z] != 'undefined'){
+                return this.cubeMap[x][y][z];
+            }
+        }
+    }
+    return false;
+}
+
 //returns a cube node when given an axial node
 HexMap.prototype.getCube = function(axialNode){
     return this.cubeMap[axialNode.q][-axialNode.q-axialNode.r][axialNode.r];
 };
-
+//returns a cube node when given an axial node
+HexMap.prototype.axialExistsAt = function(q,r){
+    if (typeof this.axialMap[q] != 'undefined'){
+        if (typeof this.axialMap[q][r] != 'undefined'){
+            return this.axialMap[q][r];
+        }
+    }
+    return false;
+}
 //returns an axial node when given a cube node
 HexMap.prototype.getAxial = function(cubeNode){
     return this.axialMap[cubeNode.x][cubeNode.z];
@@ -195,6 +216,35 @@ HexMap.prototype.cubeDistance = function(a,b){
     return Math.round(Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y),Math.abs(a.z-b.z)));
 };
 
+
+HexMap.prototype.cubeSpiral2 = function(center,radius){
+    //ring + diagonals
+    var results = [];
+    for (var k = 0; k <= radius;k++){
+        var arr = this.cubeRing(center,k);
+        if (radius%2 != 0){
+            //need to add diagonals at this radius
+            var diagRadius = Math.ceil(radius/2);
+            for (var j = 0; j < this.cubeDiagonals.length;j++){
+                let x = (center.x+(this.cubeDiagonals[j][0]*diagRadius));
+                let y = (center.y+(this.cubeDiagonals[j][1]*diagRadius));
+                let z = (center.z+(this.cubeDiagonals[j][2]*diagRadius));
+                var c = this.cubeExistsAt(x,y,z)
+                if (c){
+                    var ax = this.getAxial(c);
+                    if (!ax.deleted){
+                        results.push(ax);
+                    }
+                }
+            }
+        }
+        for (var i = 0; i < arr.length;i++){
+            results.push(arr[i]);
+        }
+    }
+    return results;
+}
+
 HexMap.prototype.cubeRound = function(cube){
     var rx = Math.trunc(Math.round(cube.x));
     var ry = Math.trunc(Math.round(cube.y));
@@ -229,6 +279,488 @@ HexMap.prototype.cubeLineDraw = function(a,b){
     }
     return results;
 }
+
+
+HexMap.prototype.line1Nodes = function(uNode,tNode,radius){
+    let dir = this.axialDirections[this.getNewDirectionAxial(uNode,tNode)];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line2Nodes = function(uNode,tNode,radius){
+    let dir = this.axialDirections[this.getNewDirectionAxial(uNode,tNode)];
+    let dir2 = this.axialDirections[this.getNewDirectionAxial(tNode,uNode)];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            console.log(dir)
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line3Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line4Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let startDir3 = ((startDir - 1) == -1 ? 5 : (startDir - 1));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line5Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir3 = ((startDir - 2) < 0 ? (startDir - 2 + 6) : (startDir - 2));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line6Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let startDir3 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
+    let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir4[0]*i),uNode.r+(dir4[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir4[0]*i)][uNode.r+(dir4[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line7Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir4 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir4[0]*i),uNode.r+(dir4[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir4[0]*i)][uNode.r+(dir4[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line8Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir5 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let dir5 = this.axialDirections[startDir5];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir4[0]*i),uNode.r+(dir4[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir4[0]*i)][uNode.r+(dir4[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir5[0]*i),uNode.r+(dir5[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir5[0]*i)][uNode.r+(dir5[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.line9Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir5 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let startDir6 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let dir5 = this.axialDirections[startDir5];
+    let dir6 = this.axialDirections[startDir6];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir[0]*i)][uNode.r+(dir[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir4[0]*i),uNode.r+(dir4[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir4[0]*i)][uNode.r+(dir4[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir5[0]*i),uNode.r+(dir5[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir5[0]*i)][uNode.r+(dir5[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir6[0]*i),uNode.r+(dir6[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir6[0]*i)][uNode.r+(dir6[1]*i)]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.cone1Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+        }
+    }
+    return results;
+}
+HexMap.prototype.cone2Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let startDir3 = ((startDir + 1) > 5 ? (startDir + 1 - 6) : (startDir + 1));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(aQ+(dir3[0]*j),aR+(dir3[1]*j))){
+                results.push(this.axialMap[aQ+(dir3[0]*j)][aR+(dir3[1]*j)]);
+            }
+        }
+    }
+    if (this.axialExistsAt(uNode.q+(dir[0]*(radius+1)),uNode.r+(dir[1]*(radius+1)))){
+        results.push(this.axialMap[uNode.q+(dir[0]*(radius+1))][uNode.r+(dir[1]*(radius+1))]);
+    }
+    return results;
+}
+HexMap.prototype.cone3Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(aQ+(dir3[0]*j),aR+(dir3[1]*j))){
+                results.push(this.axialMap[aQ+(dir3[0]*j)][aR+(dir3[1]*j)]);
+            }
+        }
+    }
+    return results;
+}
+HexMap.prototype.cone4Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    let nR = null;
+    let nQ = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        nQ = uNode.q+(dir3[0]*i);
+        nR = uNode.r+(dir3[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+        for (let k = 0; k < i;k++){
+            if (this.axialExistsAt(nQ+(dir[0]*k),nR+(dir[1]*k))){
+                results.push(this.axialMap[nQ+(dir[0]*k)][nR+(dir[1]*k)]);
+            }
+        }
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(aQ+(dir3[0]*j),aR+(dir3[1]*j))){
+                results.push(this.axialMap[aQ+(dir3[0]*j)][aR+(dir3[1]*j)]);
+            }
+        }
+    }
+    return results;
+}
+HexMap.prototype.cone5Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir2[0]*i),uNode.r+(dir2[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir2[0]*i)][uNode.r+(dir2[1]*i)]);
+        }
+        if (this.axialExistsAt(uNode.q+(dir3[0]*i),uNode.r+(dir3[1]*i))){
+            results.push(this.axialMap[uNode.q+(dir3[0]*i)][uNode.r+(dir3[1]*i)]);
+        }
+        for (let j = 1; j <= radius;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(aQ+(dir3[0]*j),aR+(dir3[1]*j))){
+                results.push(this.axialMap[aQ+(dir3[0]*j)][aR+(dir3[1]*j)]);
+            }
+        }
+
+    }
+    return results;
+}
+
+HexMap.prototype.cone6Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let startDir3 = ((startDir + 1) > 5 ? (startDir + 1 - 6) : (startDir + 1));
+    let startDir4 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir5 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
+    let startDir6 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let dir5 = this.axialDirections[startDir5];
+    let dir6 = this.axialDirections[startDir6];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    let nQ = null;
+    let nR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        nQ = uNode.q+(dir6[0]*i);
+        nR = uNode.r+(dir6[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            results.push(this.axialMap[aQ][aR]);
+        }
+        if (this.axialExistsAt(nQ,nR)){
+            results.push(this.axialMap[nQ][nR]);
+        }
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(aQ+(dir3[0]*j),aR+(dir3[1]*j))){
+                results.push(this.axialMap[aQ+(dir3[0]*j)][aR+(dir3[1]*j)]);
+            }
+            if (this.axialExistsAt(nQ+(dir4[0]*j),nR+(dir4[1]*j))){
+                results.push(this.axialMap[nQ+(dir4[0]*j)][nR+(dir4[1]*j)]);
+            }
+            if (this.axialExistsAt(nQ+(dir5[0]*j),nR+(dir5[1]*j))){
+                results.push(this.axialMap[nQ+(dir5[0]*j)][nR+(dir5[1]*j)]);
+            }
+        }
+    }
+    if (this.axialExistsAt(uNode.q+(dir[0]*(radius+1)),uNode.r+(dir[1]*(radius+1)))){
+        results.push(this.axialMap[uNode.q+(dir[0]*(radius+1))][uNode.r+(dir[1]*(radius+1))]);
+    }
+    if (this.axialExistsAt(uNode.q+(dir6[0]*(radius+1)),uNode.r+(dir6[1]*(radius+1)))){
+        results.push(this.axialMap[uNode.q+(dir6[0]*(radius+1))][uNode.r+(dir6[1]*(radius+1))]);
+    }
+    return results
+}
+
+HexMap.prototype.cone7Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
+    let startDir3 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
+    let startDir4 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
+    let dir = this.axialDirections[startDir];
+    let dir2 = this.axialDirections[startDir2];
+    let dir3 = this.axialDirections[startDir3];
+    let dir4 = this.axialDirections[startDir4];
+    let results = [];
+    let aQ = null;
+    let aR = null;
+    let nQ = null;
+    let nR = null;
+    for (let i = 1;i<=radius;i++){
+        aQ = uNode.q+(dir[0]*i);
+        aR = uNode.r+(dir[1]*i);
+        nQ = uNode.q+(dir3[0]*i);
+        nR = uNode.r+(dir3[1]*i);
+        if (this.axialExistsAt(aQ,aR)){
+            aNode = this.axialMap[aQ][aR];
+            results.push(this.axialMap[aQ][aR]);
+        }
+        if (this.axialExistsAt(nQ,nR)){
+            aNode = this.axialMap[nQ][nR];
+            results.push(this.axialMap[nQ][nR]);
+        }
+
+        for (let j = 1; j <= i;j++){
+            if (this.axialExistsAt(aQ+(dir2[0]*j),aR+(dir2[1]*j))){
+                results.push(this.axialMap[aQ+(dir2[0]*j)][aR+(dir2[1]*j)]);
+            }
+            if (this.axialExistsAt(nQ+(dir4[0]*j),nR+(dir4[1]*j))){
+                results.push(this.axialMap[nQ+(dir4[0]*j)][nR+(dir4[1]*j)]);
+            }
+        }
+    }
+    return results;
+}
+
+HexMap.prototype.diag1Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let d = this.cubeDiagonals[startDir];
+    let results = [];
+    let x = null;
+    let y = null;
+    let z = null;
+    for (let i = 1;i<=radius;i++){
+        x = uNode.x + d[0]*i;
+        y = uNode.y + d[1]*i;
+        z = uNode.z + d[2]*i;
+        if (this.cubeExistsAt(x,y,z)){
+            results.push(this.cubeMap[x][y][z]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.diag2Nodes = function(uNode,tNode,radius){
+    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir2 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
+    let d = this.cubeDiagonals[startDir];
+    let d2 = this.cubeDiagonals[startDir2];
+    let results = [];
+    for (let i = 1;i<=radius;i++){
+        if (this.cubeExistsAt(uNode.x + d[0]*i,uNode.y + d[1]*i,uNode.z + d[2]*i)){
+            results.push(this.cubeMap[uNode.x + d[0]*i][uNode.y + d[1]*i][uNode.z + d[2]*i]);
+        }
+        if (this.cubeExistsAt(uNode.x + d2[0]*i,uNode.y + d2[1]*i,uNode.z + d2[2]*i)){
+            results.push(this.cubeMap[uNode.x + d2[0]*i][uNode.y + d2[1]*i][uNode.z + d2[2]*i]);
+        }
+    }
+    return results;
+}
+
 
 HexMap.prototype.lerp = function(a,b,t){
     return a + (b-a) * t;
@@ -638,6 +1170,18 @@ HexMap.prototype.merge = function(left,right){
 
 HexMap.prototype.getUnitsInRadius = function(center,radius){
     var nodes = this.cubeSpiral(center,radius);
+    var results = [];
+    for (var i = 0; i < nodes.length;i++){
+        if (nodes[i].unit){
+            if (nodes[i].unit.fainted || nodes[i].unit.dead){
+                continue;
+            }
+            results.push(nodes[i]);
+        }
+    }
+    return results;
+}
+HexMap.prototype.getUnitsInNodeList = function(nodes){
     var results = [];
     for (var i = 0; i < nodes.length;i++){
         if (nodes[i].unit){

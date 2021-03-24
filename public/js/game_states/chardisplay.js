@@ -145,7 +145,7 @@
                 "<Agility> increases <speed> on levelup. It also increases effectiveness of agility based abilities",
                 "<Dexterity> increases <skill> on levelup. It also increases effectiveness of dexterity based abilities",
                 "<Intelligence> increases <ability slots> and <tactics> on levelup. It also increases effectiveness of intelligence based abilities",
-                "<Willpower> increases max <energy> and <damage resistance> on levelup. It also increases effectiveness of willpower based abilities",
+                "<Willpower> increases max <energy> on levelup. It also increases damage resistance and increases effectiveness of willpower based abilities",
                 "<Charisma> increases <all stats> slightly on levelup. It also increases effectiveness of charisma based abilities",
                 '',
                 "Number of hexes a unit can move during it's turn",

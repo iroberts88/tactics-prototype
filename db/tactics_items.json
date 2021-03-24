@@ -84,7 +84,7 @@
       "value": 100,
       "onUse": [
         {
-          "name": "alterHealth",
+          "name": "healingCompound",
           "value": 30
         }
       ],
@@ -100,7 +100,7 @@
       "value": 150,
       "onUse": [
         {
-          "name": "alterEnergy",
+          "name": "vigorCompound",
           "value": 25
         }
       ],

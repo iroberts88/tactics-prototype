@@ -7,7 +7,8 @@ var Player = require('./player.js').Player,
     Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap,
     Utils = require('./utils.js').Utils,
-    Enums = require('./enums.js').Enums;
+    Utils = require('./utils.js').Utils,
+    UnitAI = require('./unitai.js').UnitAI;
 
 var AWS = require("aws-sdk");
 AWS.config.update({
@@ -88,7 +89,7 @@ GameSession.prototype.init = function (data) {
     //    names.push(i);
     //}
     //var name = names[Math.floor(Math.random()*names.length)];
-    var name = ['test3']
+    var name = ['test4']
     //var name = 'hugeHex';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
@@ -873,7 +874,7 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
 
             for (var i = 0;i < item.onUse.length;i++){
                 item.onUse[i][Enums.ACTIONDATA] = cData[Enums.ACTIONDATA];
-                var action = Actions.getAction(item.onUse[i]['action']);
+                var action = Actions.getAction(item.onUse[i]['name']);
                 action(unit, item.onUse[i]);
             }
             success = true;

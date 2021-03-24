@@ -130,7 +130,7 @@ function User() {
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
                         }
-                        //var unitClass = 'soldier';
+                        var unitClass = 'splicer';
                         var learned = {};
                         var equipped = {}; 
                         switch(unitClass){

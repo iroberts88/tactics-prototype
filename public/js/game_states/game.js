@@ -1263,6 +1263,13 @@
                             axial.mouseOverNodes.push(mONodes[j]);
                         }
                         break;
+                    case 'circle2':
+                        var mONodes = this.map.cubeSpiral2(axial,n-1);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+
                     case 'line':
                         var mONodes = this.map.line1Nodes(unit.currentNode,axial,n);
                         for (var j = 0; j < mONodes.length;j++){
@@ -1270,34 +1277,144 @@
                         }
                         break;
                     case 'line2':
+                        var mONodes = this.map.line2Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'line3':
+                        var mONodes = this.map.line3Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'line4':
+                        var mONodes = this.map.line4Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
+                    case 'line5':
+                        var mONodes = this.map.line5Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'line6':
+                        var mONodes = this.map.line6Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'line7':
+                        var mONodes = this.map.line7Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'line8':
+                        var mONodes = this.map.line8Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'line9':
+                        var mONodes = this.map.line9Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+
                     case 'cone':
+                        var mONodes = this.map.cone1Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone2':
+                        var mONodes = this.map.cone2Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone3':
+                        var mONodes = this.map.cone3Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone4':
+                        var mONodes = this.map.cone4Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone5':
+                        var mONodes = this.map.cone5Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone6':
+                        var mONodes = this.map.cone6Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'cone7':
+                        var mONodes = this.map.cone7Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
-                    case 'circle2':
-                        break;
+
                     case 'diag':
+                        var mONodes = this.map.diag1Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'diag2':
+                        var mONodes = this.map.diag2Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'diag3':
+                        var mONodes = this.map.diag3Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     case 'diag4':
+                        var mONodes = this.map.diag4Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'diag5':
+                        var mONodes = this.map.diag5Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'diag6':
+                        var mONodes = this.map.diag6Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'diag7':
+                        var mONodes = this.map.diag7Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
+                        break;
+                    case 'diag8':
+                        var mONodes = this.map.diag8Nodes(unit.currentNode,axial,n);
+                        for (var j = 0; j < mONodes.length;j++){
+                            axial.mouseOverNodes.push(mONodes[j]);
+                        }
                         break;
                     default:
                         break;
@@ -1956,6 +2073,7 @@
                     this.removeOverlaySprites();
                     for (var i = 0; i < node.mouseOverNodes.length;i++){
                         var n = node.mouseOverNodes[i];
+                        if (!n){continue;}
                         if (Game.abilityNodes[n.q+','+n.r]){
                             n.overlaySprite1.tint = 0xFF0000;
                             n.overlaySprite2.tint = 0xFF0000;

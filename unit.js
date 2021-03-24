@@ -514,7 +514,21 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 1,
         'min': 1,
-        'max': 20
+        'max': 20,
+        next: function(uc){
+            try{
+                this.owner.physicalRes.set(uc);
+                this.owner.heatRes.set(uc);
+                this.owner.coldRes.set(uc);
+                this.owner.acidRes.set(uc);
+                this.owner.poisonRes.set(uc);
+                this.owner.electricRes.set(uc);
+                this.owner.pulseRes.set(uc);
+                this.owner.viralRes.set(uc);
+                this.owner.radiationRes.set(uc);
+                this.owner.gravityRes.set(uc);
+            }catch(e){}
+        }
     });
     this.intelligence = new Attribute();
     this.intelligence.init({
@@ -539,7 +553,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 75
+        'max': 75,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.heatRes = new Attribute();
     this.heatRes.init({
@@ -547,7 +564,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 100,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.coldRes = new Attribute();
     this.coldRes.init({
@@ -555,7 +575,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 100,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.acidRes = new Attribute();
     this.acidRes.init({
@@ -563,7 +586,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 100,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.poisonRes = new Attribute();
     this.poisonRes.init({
@@ -571,7 +597,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 100,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.electricRes = new Attribute();
     this.electricRes.init({
@@ -579,7 +608,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 100
+        'max': 100,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.pulseRes = new Attribute();
     this.pulseRes.init({
@@ -587,7 +619,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 75
+        'max': 75,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.viralRes = new Attribute();
     this.viralRes.init({
@@ -595,7 +630,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 75
+        'max': 75,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.radiationRes = new Attribute();
     this.radiationRes.init({
@@ -603,7 +641,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 75
+        'max': 75,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.gravityRes = new Attribute();
     this.gravityRes.init({
@@ -611,7 +652,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': 0,
         'min': 0,
-        'max': 75
+        'max': 75,
+        formula: function(){
+            return Math.round((this.base+this.nMod+this.owner.willpower.value)*this.pMod);
+        }
     });
     this.healMod = new Attribute();
     this.healMod.init({
