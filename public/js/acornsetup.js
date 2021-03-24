@@ -203,10 +203,14 @@
                 console.log(data);
                 for (var i = 0; i < Player.units.length; i++){
                     if (data[Enums.UNITID] == Player.units[i].id){
-                        var item = new Item();
-                        item.init(data[Enums.ITEM]);
-                        Player.units[i].inventory.items.push(item);
-                        Player.units[i].inventory.currentWeight = data[Enums.WEIGHT];
+                        Player.units[i].addItem(data[Enums.ITEM],data[Enums.WEIGHT]);
+                    }
+                }
+                if (Acorn.currentState == 'game'){
+                    for (var i in Game.units.length){
+                        if (data[Enums.UNITID] == Game.units[i].id){
+                            Game.units[i].addItem(data[Enums.ITEM],data[Enums.WEIGHT]);
+                        }
                     }
                 }
                 if (Acorn.currentState == 'unitInventoryMenu'){
@@ -243,22 +247,14 @@
                 for (var i = 0; i < Player.units.length; i++){
                     if (data[Enums.UNITID] == Player.units[i].id){
                         var unit = Player.units[i];
-                        unit.inventory.items.splice(data[Enums.INDEX],1);
-                        unit.inventory.currentWeight = data[Enums.WEIGHT];
-                        if (unit.weapon > data[Enums.INDEX]){
-                            unit.weapon -= 1;
-                        }else if (unit.weapon == data[Enums.INDEX]){
-                            unit.weapon = null;
-                        }
-                        if (unit.shield > data[Enums.INDEX]){
-                            unit.shield -= 1;
-                        }else if (unit.shield == data[Enums.INDEX]){
-                            unit.shield = null;
-                        }
-                        if (unit.accessory > data[Enums.INDEX]){
-                            unit.accessory -= 1;
-                        }else if (unit.accessory == data[Enums.INDEX]){
-                            unit.accessory = null;
+                        unit.removeItem(data[Enums.INDEX],data[Enums.WEIGHT])
+                    }
+                }
+                if (Acorn.currentState == 'game'){
+                    for (var i in Game.units){
+                        if (data[Enums.UNITID] == Game.units[i].id){
+                            var unit = Game.units[i];
+                            unit.removeItem(data[Enums.INDEX],data[Enums.WEIGHT])
                         }
                     }
                 }
@@ -301,7 +297,6 @@
                 Player.deleteUnit(data);
             });
             Acorn.Net.on(Enums.SETUNITSTAT, function (data) {
-                console.log(data);
                 try{
                     if (Player.inGame){
                         Game.units[data[Enums.UNITID]].setStat(data[Enums.STAT],data[Enums.VALUE])
@@ -320,6 +315,15 @@
                         for (var j in Player.units[i].classInfo.ap){
                             if (j == data[Enums.CLASSID]){
                                 Player.units[i].classInfo.ap[j] = data[Enums.VALUE];
+                            }
+                        }
+                    }
+                }
+                for (var i in Game.units){
+                    if (data[Enums.UNITID] == Game.units[i].id){
+                        for (var j in Game.units[i].classInfo.ap){
+                            if (j == data[Enums.CLASSID]){
+                                Game.units[i].classInfo.ap[j] = data[Enums.VALUE];
                             }
                         }
                     }

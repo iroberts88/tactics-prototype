@@ -514,5 +514,30 @@
             }
         }
     }
+    Unit.prototype.addItem = function(idata,weight){
+        var item = new Item();
+        item.init(idata);
+        this.inventory.items.push(item);
+        this.inventory.currentWeight = weight;
+    }
+    Unit.prototype.removeItem = function(index,weight){
+        this.inventory.items.splice(index,1);
+        this.inventory.currentWeight = weight;
+        if (this.weapon > index){
+            this.weapon -= 1;
+        }else if (this.weapon == index){
+            this.weapon = null;
+        }
+        if (this.shield > index){
+            this.shield -= 1;
+        }else if (this.shield == index){
+            this.shield = null;
+        }
+        if (this.accessory > index){
+            this.accessory -= 1;
+        }else if (this.accessory == index){
+            this.accessory = null;
+        }
+    }
     window.Unit = Unit;
 })(window);

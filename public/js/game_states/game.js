@@ -1025,6 +1025,11 @@
                         position: [w/2,h],
                         clickFunc: function onClick(){
                             Game.clearOverlaySprites();
+                            if (Game.abilityMenu){
+                                Graphics.uiContainer.removeChild(Game.abilityMenu);
+                                Game.abilityMenu.destroy({children: true});
+                                Game.abilityMenu = null;
+                            }
                             Game.abilityActive = true;
                             Game.abilityMenu = Game.getAbilityMenu(Game.units[Game.turnList[0]]);
                             Game.abilityMenu.position.x = Game.turnMenu.position.x;
@@ -1055,6 +1060,11 @@
                         position: [w/2,h],
                         clickFunc: function onClick(){
                             Game.clearOverlaySprites();
+                            if (Game.abilityMenu){
+                                Graphics.uiContainer.removeChild(Game.abilityMenu);
+                                Game.abilityMenu.destroy({children: true});
+                                Game.abilityMenu = null;
+                            }
                             Game.abilityActive = true;
                             Game.abilityMenu = Game.getItemMenu(Game.units[Game.turnList[0]]);
                             Game.abilityMenu.position.x = Game.turnMenu.position.x;
@@ -1408,7 +1418,7 @@
                 return null;
             }
 
-            var abText = new PIXI.Text('Choose an Item! (not implemented)', style);
+            var abText = new PIXI.Text('Choose an Item!', style);
             abText.style.fill = 'blue';
             abText.anchor.x = 0.5;
             abText.position.x = w*0.5;
@@ -1464,6 +1474,7 @@
                     console.log('moused over!! ' + e.currentTarget.itemInfo.name);
                 }
                 let txt = ((unit.weapon == i || unit.accessory == i || unit.shield == i) ? ' (E) ' : '') + item.name;
+                console.log(txt);
                 var iButton = Graphics.makeUiElement({
                     text: txt,
                     style: style,
@@ -1473,7 +1484,6 @@
                     position: [w/2,h],
                     clickFunc: clickFunc,
                     mOverFunc: mOverFunc
-
                 });
                 while(iButton.width > w - 10){
                     iButton.scale.x = iButton.scale.x*0.95;

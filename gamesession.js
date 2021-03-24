@@ -6,6 +6,7 @@ var Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
     Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap,
+    Utils = require('./utils.js').Utils,
     Enums = require('./enums.js').Enums;
 
 var AWS = require("aws-sdk");
@@ -360,6 +361,11 @@ GameSession.prototype.getTurnOrder = function(){
         aFunc(this.allUnits[abl.unitid],abl.data);
         var cData = {};
         cData[Enums.ACTIONDATA] = abl.data[Enums.ACTIONDATA];
+        cData[Enums.ACTIONDATA].splice(0,0,Utils.createClientData(
+            Enums.ACTION,Enums.ACTIONBUBBLE,
+            Enums.UNITID,abl.unitid,
+            Enums.TEXT,abl.abilityData.name
+        ));
         this.queueData(Enums.ACTION,cData);
         var cData2 = {};
         cData2[Enums.UNITID] = this.turnOrder[0].id;
@@ -806,6 +812,12 @@ GameSession.prototype.unitAbility = function(data){
     cData6[Enums.UNITID] = unit.id;
     data[Enums.ACTIONDATA].push(cData6);
 
+    var cData8 = {};
+    cData8[Enums.UNITID] = unit.id;
+    cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
+    cData8[Enums.TEXT] = data.ability.name;
+    data[Enums.ACTIONDATA].splice(0,0,cData8);
+
     var cData7 = {};
     cData7[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
     this.queuePlayer(unit.owner,Enums.ACTION,cData7);
@@ -858,7 +870,19 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
             }
             break;
         case 'compound':
+
+            for (var i = 0;i < item.onUse.length;i++){
+                item.onUse[i][Enums.ACTIONDATA] = cData[Enums.ACTIONDATA];
+                var action = Actions.getAction(item.onUse[i]['action']);
+                action(unit, item.onUse[i]);
+            }
+            success = true;
             compound = true;
+
+            let d2 = {}
+            d2[Enums.ACTION] = Enums.LOG;
+            d2[Enums.TEXT] = '- ' + unit.name + ' used a ' + item.name;
+            cData[Enums.ACTIONDATA].push(d2);
             break;
 
     }
@@ -873,8 +897,20 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
             cData[Enums.ACTIONDATA].push(d1);
             let d2 = {}
             d2[Enums.ACTION] = Enums.LOG;
-            d1[Enums.TEXT] = unit.name + ' changed equipment';
+            d2[Enums.TEXT] = '- ' + unit.name + ' changed equipment';
             cData[Enums.ACTIONDATA].push(d2);
+
+            var cData8 = {};
+            cData8[Enums.UNITID] = unit.id;
+            cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
+            cData8[Enums.TEXT] = "Equipment Change";
+            cData[Enums.ACTIONDATA].splice(0,0,cData8);
+        }else{
+            var cData8 = {};
+            cData8[Enums.UNITID] = unit.id;
+            cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
+            cData8[Enums.TEXT] = item.name;
+            cData[Enums.ACTIONDATA].splice(0,0,cData8);
         }
     }
     var apamt = unit.addAp({classid: unit.classInfo.currentClass,mod: 0.5});
@@ -889,6 +925,8 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
     cData6[Enums.ACTION] = Enums.ACTIONUSED;
     cData6[Enums.UNITID] = unit.id;
     cData[Enums.ACTIONDATA].push(cData6);
+
+
     var cData7 = {};
     cData7[Enums.ACTIONDATA] = cData[Enums.ACTIONDATA];
     this.queuePlayer(unit.owner,Enums.ACTION,cData7);

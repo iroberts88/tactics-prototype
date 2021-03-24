@@ -317,13 +317,13 @@
         {
           "sCost": 8,
           "name": "Flare",
-          "description": "Reveal stealthed/hidden units and items in the area. Units in the area will face the center node",
+          "description": "Reveal stealthed/hidden units and items in the area. Units in the area will face away the center node",
           "range": "5|5|self",
           "ApCost": 50,
           "id": "flare",
           "type": "anyhex",
           "radius": "<2+INT/3> circle",
-          "eCost": 5,
+          "eCost": 2,
           "speed": "1000"
         },
         {
@@ -933,7 +933,7 @@
           "id": "influence",
           "type": "singleunit",
           "radius": "<1+CHA/5> circle",
-          "eCost": "10",
+          "eCost": 10,
           "speed": "instant"
         }
       ],
