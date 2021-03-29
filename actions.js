@@ -1475,10 +1475,173 @@ Actions.prototype.preparedShot = function(unit,data){
 
 Actions.prototype.fireBreath = function(unit,data){
 
-	var radius = Math.floor(1+unit.intelligence.value/10);
-	var node = unit.owner.session.map.axialMap[data.q][data.r];
-	var nodes = unit.owner.session.map.getUnitsInRadius(node,radius);
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'heat';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
 
+Actions.prototype.iceShards = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'cold';
+	console.log('len:' + nodes.length)
+	for (var i = 0; i < nodes.length;i++){
+		console.log('damaging??')
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'ability'
+		});
+	}
+	return true;
+}
+Actions.prototype.detonate = function(unit,data){
+	if (typeof data.dmgType == 'undefined'){
+		data.dmgType = 'expl';
+	}
+	if (typeof data.txt == 'undefined'){
+		data.txt = 'Detonate';
+	}if (typeof data.dmg == 'undefined'){
+		data.dmg = 25 + unit.willpower.value;
+	}
+	var radius = Math.floor(2+unit.intelligence.value/6);
+	var node = unit.currentNode;
+	var nodes = unit.owner.session.map.getUnitsInRadius(node,radius);
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.thunderCross = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'elec';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.viralCloud = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'viral';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+Actions.prototype.empoison = function(unit,data){
+
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'poison';
+	if (node.unit){
+		data[Enums.ACTIONDATA] = node.unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'ability'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.energyBlast = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'pulse';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.gammaTendrils = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'radi';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.voidScream = function(unit,data){
+
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'grav';
 	for (var i = 0; i < nodes.length;i++){
 		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
 			damageType: data.dmgType,
@@ -1685,7 +1848,7 @@ Actions.prototype.getAbility = function(a){
 			return this.gammaTendrils;
 			break;
 		case AbilityEnums.VoidScream:
-			return this.VoidScream;
+			return this.voidScream;
 			break;
 
 		default:

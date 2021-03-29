@@ -1151,8 +1151,10 @@ GameSession.prototype.checkEnd = function(){
         var p = this.players[i];
         for (var j in this.allUnits){
             var unit = this.allUnits[j];
-            if (unit.owner.id == p.id && (!unit.dead && !unit.fainted)){
-                playerHasActiveUnit = true;
+            if (!unit.isCastTimer){
+                if (unit.owner.id == p.id && (!unit.dead && !unit.fainted)){
+                    playerHasActiveUnit = true;
+                }
             }
         }
         if (playerHasActiveUnit){

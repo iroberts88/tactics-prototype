@@ -170,6 +170,17 @@ HexMap.prototype.getNewDirectionAxial = function(startNode,endNode){
     return null;
 };
 
+HexMap.prototype.getNewDirectionAxial2 = function(startNode,endNode){
+    var qMove = endNode.q - startNode.q;
+    var rMove = endNode.r - startNode.r;
+    for (var i = 0; i < this.axialDirections.length;i++){
+        if (qMove == this.axialDirections[i][0] && rMove == this.axialDirections[i][1]){
+            return i;
+        }
+    }
+    return null;
+};
+
 //returns the direction when moving from one cube node to another
 HexMap.prototype.getNewDirectionCube = function(startNode,endNode){
     var xMove = startNode.x - endNode.x;
@@ -192,7 +203,7 @@ HexMap.prototype.cubeRing = function(center,radius){
         for (var j = 0; j < radius;j++){
             try{
                 var c = this.cubeMap[cubeNode[0]][cubeNode[1]][cubeNode[2]];
-                results.push(c);
+                results.push(this.getAxial(c));
             }catch(e){}
             var d = this.cubeDirections[i];
             cubeNode = [cubeNode[0]+d[0],cubeNode[1]+d[1],cubeNode[2]+d[2]];
@@ -282,7 +293,7 @@ HexMap.prototype.cubeLineDraw = function(a,b){
 
 
 HexMap.prototype.line1Nodes = function(uNode,tNode,radius){
-    let dir = this.axialDirections[this.getNewDirectionAxial(uNode,tNode)];
+    let dir = this.axialDirections[this.getNewDirectionAxial2(uNode,tNode)];
     let results = [];
     for (let i = 1;i<=radius;i++){
         if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
@@ -292,8 +303,8 @@ HexMap.prototype.line1Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line2Nodes = function(uNode,tNode,radius){
-    let dir = this.axialDirections[this.getNewDirectionAxial(uNode,tNode)];
-    let dir2 = this.axialDirections[this.getNewDirectionAxial(tNode,uNode)];
+    let dir = this.axialDirections[this.getNewDirectionAxial2(uNode,tNode)];
+    let dir2 = this.axialDirections[this.getNewDirectionAxial2(tNode,uNode)];
     let results = [];
     for (let i = 1;i<=radius;i++){
         if (this.axialExistsAt(uNode.q+(dir[0]*i),uNode.r+(dir[1]*i))){
@@ -307,7 +318,7 @@ HexMap.prototype.line2Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line3Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let dir = this.axialDirections[startDir];
     let dir2 = this.axialDirections[startDir2];
@@ -323,7 +334,7 @@ HexMap.prototype.line3Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line4Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let startDir3 = ((startDir - 1) == -1 ? 5 : (startDir - 1));
     let dir = this.axialDirections[startDir];
@@ -344,7 +355,7 @@ HexMap.prototype.line4Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line5Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let startDir3 = ((startDir - 2) < 0 ? (startDir - 2 + 6) : (startDir - 2));
     let dir = this.axialDirections[startDir];
@@ -365,7 +376,7 @@ HexMap.prototype.line5Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line6Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let startDir3 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
     let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
@@ -391,7 +402,7 @@ HexMap.prototype.line6Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line7Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let startDir4 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
@@ -417,7 +428,7 @@ HexMap.prototype.line7Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line8Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
@@ -448,7 +459,7 @@ HexMap.prototype.line8Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.line9Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 1) == 6 ? 0 : (startDir + 1));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let startDir4 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
@@ -484,7 +495,7 @@ HexMap.prototype.line9Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.cone1Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let dir = this.axialDirections[startDir];
     let dir2 = this.axialDirections[startDir2];
@@ -506,7 +517,7 @@ HexMap.prototype.cone1Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.cone2Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
     let startDir3 = ((startDir + 1) > 5 ? (startDir + 1 - 6) : (startDir + 1));
     let dir = this.axialDirections[startDir];
@@ -536,7 +547,7 @@ HexMap.prototype.cone2Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.cone3Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let dir = this.axialDirections[startDir];
@@ -564,7 +575,7 @@ HexMap.prototype.cone3Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.cone4Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let dir = this.axialDirections[startDir];
@@ -600,7 +611,7 @@ HexMap.prototype.cone4Nodes = function(uNode,tNode,radius){
     return results;
 }
 HexMap.prototype.cone5Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 4) > 5 ? (startDir + 4 - 6) : (startDir + 4));
     let startDir3 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let dir = this.axialDirections[startDir];
@@ -635,7 +646,7 @@ HexMap.prototype.cone5Nodes = function(uNode,tNode,radius){
 }
 
 HexMap.prototype.cone6Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
     let startDir3 = ((startDir + 1) > 5 ? (startDir + 1 - 6) : (startDir + 1));
     let startDir4 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
@@ -688,7 +699,7 @@ HexMap.prototype.cone6Nodes = function(uNode,tNode,radius){
 }
 
 HexMap.prototype.cone7Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 2) > 5 ? (startDir + 2 - 6) : (startDir + 2));
     let startDir3 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
     let startDir4 = ((startDir + 5) > 5 ? (startDir + 5 - 6) : (startDir + 5));
@@ -728,7 +739,7 @@ HexMap.prototype.cone7Nodes = function(uNode,tNode,radius){
 }
 
 HexMap.prototype.diag1Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let d = this.cubeDiagonals[startDir];
     let results = [];
     let x = null;
@@ -739,23 +750,23 @@ HexMap.prototype.diag1Nodes = function(uNode,tNode,radius){
         y = uNode.y + d[1]*i;
         z = uNode.z + d[2]*i;
         if (this.cubeExistsAt(x,y,z)){
-            results.push(this.cubeMap[x][y][z]);
+            results.push(this.getAxial(this.cubeMap[x][y][z]));
         }
     }
     return results;
 }
 HexMap.prototype.diag2Nodes = function(uNode,tNode,radius){
-    let startDir = this.getNewDirectionAxial(uNode,tNode);
+    let startDir = this.getNewDirectionAxial2(uNode,tNode);
     let startDir2 = ((startDir + 3) > 5 ? (startDir + 3 - 6) : (startDir + 3));
     let d = this.cubeDiagonals[startDir];
     let d2 = this.cubeDiagonals[startDir2];
     let results = [];
     for (let i = 1;i<=radius;i++){
         if (this.cubeExistsAt(uNode.x + d[0]*i,uNode.y + d[1]*i,uNode.z + d[2]*i)){
-            results.push(this.cubeMap[uNode.x + d[0]*i][uNode.y + d[1]*i][uNode.z + d[2]*i]);
+            results.push(this.getAxial(this.cubeMap[uNode.x + d[0]*i][uNode.y + d[1]*i][uNode.z + d[2]*i]));
         }
         if (this.cubeExistsAt(uNode.x + d2[0]*i,uNode.y + d2[1]*i,uNode.z + d2[2]*i)){
-            results.push(this.cubeMap[uNode.x + d2[0]*i][uNode.y + d2[1]*i][uNode.z + d2[2]*i]);
+            results.push(this.getAxial(this.cubeMap[uNode.x + d2[0]*i][uNode.y + d2[1]*i][uNode.z + d2[2]*i]));
         }
     }
     return results;
@@ -1169,6 +1180,7 @@ HexMap.prototype.merge = function(left,right){
 }
 
 HexMap.prototype.getUnitsInRadius = function(center,radius){
+    //get units in circle radius around center node
     var nodes = this.cubeSpiral(center,radius);
     var results = [];
     for (var i = 0; i < nodes.length;i++){
@@ -1180,6 +1192,98 @@ HexMap.prototype.getUnitsInRadius = function(center,radius){
         }
     }
     return results;
+}
+HexMap.prototype.getNodesInRadius = function(center,target,radius,type){
+    switch(type){
+        case 'circle':
+            return this.getUnitsInNodeList(this.cubeSpiral(target,radius));
+            break;
+        case 'circle2':
+            console.log("CONEZ")
+            console.log(center.q + ',' + center.r + ' -- ' + target.q + ',' + target.r)
+            var test = this.cubeSpiral2(target,radius);
+            for (var i = 0; i < test.length;i++){
+                console.log("TEST: " + test[i].q + ',' + test[i].r);
+            }
+            return this.getUnitsInNodeList(this.cubeSpiral2(target,radius));
+            break;
+        case 'line':
+            return this.getUnitsInNodeList(this.line1Nodes(center,target,radius));
+            break;
+        case 'line2':
+            return this.getUnitsInNodeList(this.line2Nodes(center,target,radius));
+            break;
+        case 'line3':
+            return this.getUnitsInNodeList(this.line3Nodes(center,target,radius));
+            break;
+        case 'line4':
+            return this.getUnitsInNodeList(this.line4Nodes(center,target,radius));
+            break;
+        case 'line5':
+            return this.getUnitsInNodeList(this.line5Nodes(center,target,radius));
+            break;
+        case 'line6':
+            return this.getUnitsInNodeList(this.line6Nodes(center,target,radius));
+            break;
+        case 'line7':
+            return this.getUnitsInNodeList(this.line7Nodes(center,target,radius));
+            break;
+        case 'line8':
+            return this.getUnitsInNodeList(this.line8Nodes(center,target,radius));
+            break;
+        case 'line9':
+            return this.getUnitsInNodeList(this.line9Nodes(center,target,radius));
+            break;
+
+        case 'cone':
+            return this.getUnitsInNodeList(this.cone1Nodes(center,target,radius));
+            break;
+        case 'cone2':
+            return this.getUnitsInNodeList(this.cone2Nodes(center,target,radius));
+            break;
+        case 'cone3':
+            return this.getUnitsInNodeList(this.cone3Nodes(center,target,radius));
+            break;
+        case 'cone4':
+            return this.getUnitsInNodeList(this.cone4Nodes(center,target,radius));
+            break;
+        case 'cone5':
+            return this.getUnitsInNodeList(this.cone5Nodes(center,target,radius));
+            break;
+        case 'cone6':
+            return this.getUnitsInNodeList(this.cone6Nodes(center,target,radius));
+            break;
+        case 'cone7':
+            return this.getUnitsInNodeList(this.cone7Nodes(center,target,radius));
+            break;
+
+        case 'diag':
+            return this.getUnitsInNodeList(this.diag1Nodes(center,target,radius));
+            break;
+        case 'diag2':
+            return this.getUnitsInNodeList(this.diag2Nodes(center,target,radius));
+            break;
+        case 'diag3':
+            return this.getUnitsInNodeList(this.diag3Nodes(center,target,radius));
+            break;
+        case 'diag4':
+            return this.getUnitsInNodeList(this.diag4Nodes(center,target,radius));
+            break;
+        case 'diag5':
+            return this.getUnitsInNodeList(this.diag5Nodes(center,target,radius));
+            break;
+        case 'diag6':
+            return this.getUnitsInNodeList(this.diag6Nodes(center,target,radius));
+            break;
+        case 'diag7':
+            return this.getUnitsInNodeList(this.diag7Nodes(center,target,radius));
+            break;
+        case 'diag8':
+            return this.getUnitsInNodeList(this.diag8Nodes(center,target,radius));
+            break;
+    }
+    console.log('radius error?')
+    return [];
 }
 HexMap.prototype.getUnitsInNodeList = function(nodes){
     var results = [];
