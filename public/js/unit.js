@@ -280,7 +280,7 @@
                 case 'grav':
                     text.style.fill = 0xd000ff;
                     break;
-                case 'corr':
+                case 'acid':
                     text.style.fill = 0x7bff00;
                     break;
                 case 'cold':

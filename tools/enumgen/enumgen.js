@@ -190,6 +190,7 @@ var enums = [
 	'STAT',
 	'STATS',
 	'STRENGTH',
+	'SYNTHETIC',
 
 	'TACTICS',
 	'TARGETID',

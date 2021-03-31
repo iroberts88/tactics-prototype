@@ -49,7 +49,7 @@ var GameEngine = function() {
         Gravity: 'grav',
         Electric: 'elec',
         Poison: 'pois',
-        Corrosive: 'corr',
+        Acid: 'acid',
         Cold: 'cold',
         Heat: 'heat',
         Radiation: 'radi',

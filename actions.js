@@ -106,7 +106,8 @@ AbilityEnums = {
 	Empoison: 'empoison',
 	EnergyBlast: 'enrgyBlast',
 	GammaTendrils: 'gammaTendrils',
-	VoidScream: 'voidScream'
+	VoidScream: 'voidScream',
+	AcidSpit: 'acidSpit'
 
 };
 
@@ -781,7 +782,7 @@ Actions.prototype.flareGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'heat';
 	data.txt = 'Flare Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -789,7 +790,7 @@ Actions.prototype.cryoGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'cold';
 	data.txt = 'Cryo Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -797,7 +798,7 @@ Actions.prototype.shockGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'elec';
 	data.txt = 'Shock Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -805,7 +806,7 @@ Actions.prototype.bioGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'viral';
 	data.txt = 'Bio Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -813,7 +814,7 @@ Actions.prototype.toxicGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'pois';
 	data.txt = 'Toxic Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -821,7 +822,7 @@ Actions.prototype.empGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'puls';
 	data.txt = 'EMP Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -829,7 +830,7 @@ Actions.prototype.unstableGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'radi';
 	data.txt = 'Unstable Grenade';
-	data.dmg = 10;
+	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
 
@@ -837,6 +838,13 @@ Actions.prototype.voidGrenade = function(unit,data){
 	Actions = require('./actions.js').Actions
 	data.dmgType = 'grav';
 	data.txt = 'Void Grenade';
+	data.dmg = 15;
+	return Actions.grenade(unit,data);
+}
+Actions.prototype.corrosiveGrenade = function(unit,data){
+	Actions = require('./actions.js').Actions
+	data.dmgType = 'acid';
+	data.txt = 'Corrosive Grenade';
 	data.dmg = 15;
 	return Actions.grenade(unit,data);
 }
@@ -1184,11 +1192,12 @@ Actions.prototype.heroicLeap = function(unit,data){
 Actions.prototype.firstAid = function(unit,data){
 	var node = unit.owner.session.map.axialMap[data.q][data.r];
 	var u = node.unit;
-	if (u.mechanical){
-		return false;
-	}
 	if (!u){return false;}
 	value = Math.round(u.maximumHealth.value * ((25+unit.charisma.value*2)/100));
+
+	if (u.synthetic.value > 0){
+		value = Math.floor(value -(value*u.synthetic.value));
+	}
 	u.damage({
 		damageType: 'heal',
 		value: value,
@@ -1261,8 +1270,7 @@ Actions.prototype.healingField = function(unit,data){
 	    owner: unit.owner,
 	    engine: unit.engine,
 	    id: unit.owner.session.getId(),
-	    mechanical: true,
-	    human: false,
+	    synthetic: 1.0,
 	    speed: unit.speed.value/5*unit.intelligence.value,
 	    maximumHealth: (50 + (unit.intelligence.value*5))*(1+unit.tactics.value/100),
 	    ai: true,
@@ -1580,7 +1588,7 @@ Actions.prototype.viralCloud = function(unit,data){
 Actions.prototype.empoison = function(unit,data){
 
 	let node = unit.owner.session.map.axialMap[data.q][data.r];
-	data.dmg = 25 + unit.willpower.value;
+	data.dmg = 30 + unit.willpower.value;
 	data.dmgType = 'poison';
 	if (node.unit){
 		data[Enums.ACTIONDATA] = node.unit.damage({
@@ -1642,6 +1650,25 @@ Actions.prototype.voidScream = function(unit,data){
 	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
 	data.dmg = 25 + unit.willpower.value;
 	data.dmgType = 'grav';
+	for (var i = 0; i < nodes.length;i++){
+		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
+			damageType: data.dmgType,
+			value: Math.round(data.dmg+(data.dmg*unit.tactics.value/100)),
+			actionData: data[Enums.ACTIONDATA],
+			source: unit,
+			attackType: 'aoe'
+		});
+	}
+	return true;
+}
+
+Actions.prototype.acidSpit = function(unit,data){
+    let n = Utils.getRadiusN(unit,data.ability.radius);
+    let type = Utils.getRadiusType(data.ability.radius);
+	let node = unit.owner.session.map.axialMap[data.q][data.r];
+	let nodes = unit.owner.session.map.getNodesInRadius(unit.currentNode,node,n,type);
+	data.dmg = 25 + unit.willpower.value;
+	data.dmgType = 'acid';
 	for (var i = 0; i < nodes.length;i++){
 		data[Enums.ACTIONDATA] = nodes[i].unit.damage({
 			damageType: data.dmgType,
@@ -1849,6 +1876,9 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.VoidScream:
 			return this.voidScream;
+			break;
+		case AbilityEnums.AcidSpit:
+			return this.acidSpit;
 			break;
 
 		default:

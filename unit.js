@@ -68,8 +68,7 @@ var Unit = function(){
 
     this.healMod = null
 
-    this.mechanical = null; //a mechanical unit
-    this.human = null; //a human unit
+    this.synthetic = null; //% of the unit that is synthetic
 
     this.usedAbilitySlots = null;
 
@@ -334,8 +333,6 @@ Unit.prototype.init = function(data) {
     this.level = (typeof data.level == 'undefined') ? 1 : data['level'];
     this.exp = (typeof data.exp == 'undefined') ? 0 : data['exp'];
     
-    this.mechanical = (typeof data.mechanical == 'undefined') ? false : data['mechanical'];
-    this.human = (typeof data.human == 'undefined') ? true : data['human'];
 
     this.ai = (typeof data.ai == 'undefined') ? false : data.ai;
     this.aiInfo = data.aiInfo;
@@ -685,6 +682,16 @@ Unit.prototype.init = function(data) {
         'clientUpdate': false
     });
 
+
+    this.synthetic = new Attribute();
+    this.synthetic.init({
+        'id': Enums.SYNTHETIC,
+        'owner': this,
+        'value': (typeof data.synthetic == 'undefined') ? 0 : data['synthetic'],
+        'min': 0,
+        'max': 1
+    });
+
     var Inventory = require('./inventory.js').Inventory;
     this.inventory = new Inventory();
     this.inventory.init({
@@ -783,54 +790,73 @@ Unit.prototype.damage = function(data){
         }
         console.log(value);
     }
+    let v = 0;
     switch(type){
         case this.engine.dmgTypeEnums.Gravity:
+            //does extra damage based on unit weight
             value -= Math.round(value*(this.gravityRes.value/100));
             var mod = 8/(60/this.inventory.currentWeight);
             value = Math.ceil(value*mod);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Electric:
+            //does double damage to shields
             value -= Math.round(value*(this.electricRes.value/100));
             if (this.currentShields > 0){
-                value = value*2;
+                if (value*2 <= this.currentShields){
+                    value = value*2;
+                }else{
+                    value += this.currentShields/2;
+                }
             }
+            value = Math.round(value);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Poison:
+            //ignores shields
             value -= Math.round(value*(this.poisonRes.value/100));
             this.currentHealth -= value;
             break;
         case this.engine.dmgTypeEnums.Viral:
+            //cannot damage shielded targets
             value -= Math.round(value*(this.viralRes.value/100));
+            if (this.currentShields){
+                value = 0;
+            }
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Heat:
+            //25% more dmg to organics
             value -= Math.round(value*(this.heatRes.value/100));
+            v = 1+(1-this.synthetic.value)*0.25
+            value = Math.round(value*v);
+            this._damage(value);
+            break;
+        case this.engine.dmgTypeEnums.Acid:
+            //25% more dmg to synthetics
+            value -= Math.round(value*(this.acidRes.value/100));
+            v = 1+(this.synthetic.value)*0.25
+            value = Math.round(value*v);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Cold:
             value -= Math.round(value*(this.coldRes.value/100));
+            //reduces move by 1
+            this.moveLeft -= 1;
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Radiation:
+            //+50% dmg to organics, 0 to synthetics
             value -= Math.round(value*(this.radiationRes.value/100));
-            if (this.mechanical){
-                value = 0;
-            }
-            if (this.human){
-                value = value*3;
-            }
+            v = (1-this.synthetic.value)*1.5
+            value = Math.round(value*v);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Pulse:
+            //+50% dmg to synthetics, 0 to organics
             value -= Math.round(value*(this.pulseRes.value/100));
-            if (this.mechanical){
-                value = value*3;
-            }
-            if (this.human){
-                value = 0;
-            }
+            v = (this.synthetic.value)*1.5
+            value = Math.round(value*v);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Explosive:
@@ -1019,8 +1045,7 @@ Unit.prototype.getDBObj = function(){
     dbObj['radiationRes'] = this.radiationRes.base;
     dbObj['gravityRes'] = this.gravityRes.base;
 
-    dbObj['mechanical'] = this.mechanical; //a mechanical unit
-    dbObj['human'] = this.human; //a human unit
+    dbObj['synthetic'] = this.synthetic.value;
 
     dbObj['usedAbilitySlots'] = this.usedAbilitySlots;
     return dbObj;

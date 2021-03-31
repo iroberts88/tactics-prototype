@@ -139,8 +139,8 @@ function User() {
                                 equipped = {'influence': true, "firstAid" : true, "resuscitate" : true, "healingField" : true, "recovery" : true, "sprint" : true, "precisionStrike" : true, "cripple" : true, "shieldBoost" : true, "concentrate" : true };
                                 break;
                             case 'tech':
-                                learned = {'dictate': true, "grenade" : true, "repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
-                                equipped = {'dictate': true, "grenade" : true,"repair" : true, "resUp" : true, "mechCloak" : true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                learned = {'dictate': true, "grenade" : true, "repair" : true, "resUp" : true, "mechCloak" : true,"corrosiveGrenade": true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
+                                equipped = {'dictate': true, "grenade" : true,"repair" : true, "resUp" : true, "mechCloak" : true,"corrosiveGrenade": true,"center": true, "flareGrenade" : true, "cryoGrenade" : true, "shockGrenade" : true, "viralGrenade" : true, "poisonGrenade" : true, "empGrenade" : true, "unstableGrenade" : true, "voidGrenade" : true, "cybLegs" : true, "cybArms" : true, "cybBrain" : true, "cybEyes" : true, "cybLungs" : true, "cybHeart" : true };
                                 break;
                             case 'soldier':
                                 learned = { "momentum" : true, "battlecry" : true, "heroicLeap" : true, "heroicCharge" : true, "powerAttack" : true, "powerShot" : true, "hardy" : true, "vengeance" : true, "reversal" : true, "slam" : true, "opportunity" : true, "quickDraw" : true };
@@ -151,8 +151,8 @@ function User() {
                                 equipped = {'cheer': true, "stealth" : true, "flare" : true, "dodge" : true, "evasion" : true, "quickAttack" : true, "agitate" : true, "climber" : true, "counterAttack" : true, "guile" : true, "poisonWeapon" : true, "interrupt" : true };
                                 break;
                             case 'splicer':
-                                learned = {"center": true, "fireBreath": true, "iceShards": true, "detonate": true,'thunderCross': true, 'viralCloud': true, 'empoison': true, 'energyBlast': true, 'gammaTendrils': true, 'voidScream': true};
-                                equipped = {"center": true, "fireBreath": true, "iceShards": true, "detonate": true,'thunderCross': true, 'viralCloud': true, 'empoison': true, 'energyBlast': true, 'gammaTendrils': true, 'voidScream': true};
+                                learned = {"acidSpit": true,"center": true, "fireBreath": true, "iceShards": true, "detonate": true,'thunderCross': true, 'viralCloud': true, 'empoison': true, 'energyBlast': true, 'gammaTendrils': true, 'voidScream': true};
+                                equipped = {"acidSpit": true,"center": true, "fireBreath": true, "iceShards": true, "detonate": true,'thunderCross': true, 'viralCloud': true, 'empoison': true, 'energyBlast': true, 'gammaTendrils': true, 'voidScream': true};
                                 break;
                             case 'commando':
                                 learned = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};

@@ -65,6 +65,19 @@
         },
         {
           "sCost": 12,
+          "name": "Acid Spit",
+          "description": "A corrosive spray erupts forward dealing <25+WIL> acid damage",
+          "range": "1|5",
+          "ApCost": 100,
+          "id": "acidSpit",
+          "type": "anyhex",
+          "radius": "<8+INT/2> cone2",
+          "eCost": 60,
+          "speed": "1200",
+          "projectile": false
+        },
+        {
+          "sCost": 12,
           "name": "Detonate",
           "description": "Explosive energy radiates outwards dealing <25+WIL> explosive damage",
           "range": "self",
@@ -79,7 +92,7 @@
         {
           "sCost": 12,
           "name": "Thunder Cross",
-          "description": "Electric energy radiates outwards dealing <25+WIL> electric damage",
+          "description": "Electric energy blasts forward and backward dealing <25+WIL> electric damage",
           "range": "1|5",
           "ApCost": 100,
           "id": "thunderCross",
@@ -105,8 +118,8 @@
         {
           "sCost": 12,
           "name": "Empoison",
-          "description": "Poison a unit dealing <20+WIL> toxic damage",
-          "range": "<3+WIL/5> | <3+WIL/5> | self",
+          "description": "Poison a singleunit dealing <30+WIL> toxic damage",
+          "range": "<3+WIL/2> | <3+WIL/2> | self",
           "ApCost": 150,
           "id": "empoison",
           "type": "singleunit",
@@ -117,7 +130,7 @@
         {
           "sCost": 12,
           "name": "Energy Blast",
-          "description": "Create a blast of energy dealing <20+WIL> pulse damage in a small area",
+          "description": "Create a blast of energy dealing <25+WIL> pulse damage in a small area",
           "range": "1|5",
           "ApCost": 150,
           "id": "energyBlast",
@@ -130,20 +143,20 @@
         {
           "sCost": 12,
           "name": "Gamma Tendrils",
-          "description": "Tendtrils of gamma radiation deal <20+WIL> radiation damage in a straight line",
+          "description": "Tendtrils of gamma radiation deal <25+WIL> radiation damage in a straight line",
           "range": "1|5",
           "ApCost": 150,
           "id": "gammaTendrils",
           "type": "anyhex",
           "eCost": 60,
           "speed": "1000",
-          "radius": "<2+INT/2> line4",
+          "radius": "<2+INT/2> line",
           "projectile": false
         },
         {
           "sCost": 12,
           "name": "Void Scream",
-          "description": "Deal <20+WIL> crushing gravity damage in a forward and backward cone",
+          "description": "Deal <25+WIL> crushing gravity damage in a forward and backward cone",
           "range": "1|5",
           "ApCost": 150,
           "id": "voidScream",
@@ -193,7 +206,7 @@
         {
           "name": "Prepared Shot",
           "sCost": 10,
-          "description": "Reduce turn move to 0. Until next turn, will use your reaction to fire at any unit that comes into range of your equipped gun, dealing <DEX%> increased damage.",
+          "description": "Reduce turn move to 0. Until next turn, you will fire at the first unit that comes into range of your equipped gun, dealing <DEX%> increased damage.",
           "id": "preparedShot",
           "speed": "instant",
           "type": "singleunit",
@@ -504,7 +517,7 @@
         {
           "sCost": 8,
           "name": "Flare Grenade",
-          "description": "Lob a grenade that deals 20 heat damage",
+          "description": "Lob a grenade that deals 15 heat damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "flareGrenade",
@@ -518,7 +531,7 @@
         {
           "sCost": 8,
           "name": "Cryo Grenade",
-          "description": "Lob a grenade that deals 20 cold damage",
+          "description": "Lob a grenade that deals 15 cold damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "cryoGrenade",
@@ -532,7 +545,7 @@
         {
           "sCost": 8,
           "name": "Grenade",
-          "description": "Lob a grenade that deals 20 explosive damage",
+          "description": "Lob a grenade that deals 15 explosive damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "grenade",
@@ -545,8 +558,22 @@
         },
         {
           "sCost": 8,
+          "name": "Corrosive Grenade",
+          "description": "Lob a grenade that deals 15 acid damage",
+          "range": "<3+STR/5> | <3+STR/5> | self",
+          "ApCost": 100,
+          "id": "corrosiveGrenade",
+          "type": "anyhex",
+          "radius": "<2+INT/10>",
+          "eCost": 40,
+          "speed": "instant",
+          "projectile": true,
+          "arc": true
+        },
+        {
+          "sCost": 8,
           "name": "Shock Grenade",
-          "description": "Lob a grenade that deals 20 shock damage",
+          "description": "Lob a grenade that deals 15 shock damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "shockGrenade",
@@ -560,7 +587,7 @@
         {
           "sCost": 8,
           "name": "Bio Grenade",
-          "description": "Lob a grenade that deals 20 viral damage",
+          "description": "Lob a grenade that deals 15 viral damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "viralGrenade",
@@ -574,7 +601,7 @@
         {
           "sCost": 8,
           "name": "Toxic Grenade",
-          "description": "Lob a grenade that deals 20 poison damage",
+          "description": "Lob a grenade that deals 15 poison damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 100,
           "id": "poisonGrenade",
@@ -588,7 +615,7 @@
         {
           "sCost": 12,
           "name": "EMP Grenade",
-          "description": "Lob a grenade that that deals 20 pulse damage",
+          "description": "Lob a grenade that that deals 15 pulse damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 200,
           "id": "empGrenade",
@@ -602,7 +629,7 @@
         {
           "sCost": 12,
           "name": "Unstable Grenade",
-          "description": "Lob a grenade that deals 20 radiation damage",
+          "description": "Lob a grenade that deals 15 radiation damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 200,
           "id": "unstableGrenade",
@@ -616,7 +643,7 @@
         {
           "sCost": 15,
           "name": "Void Grenade",
-          "description": "Lob a grenade that deals 25 gravity damage",
+          "description": "Lob a grenade that deals 15 gravity damage",
           "range": "<3+STR/5> | <3+STR/5> | self",
           "ApCost": 250,
           "id": "voidGrenade",
