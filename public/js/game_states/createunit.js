@@ -204,7 +204,7 @@
                     alpha: 0.5
                 });
 
-                if (i == 0){h = t.height;}
+                if (i == 0){h = t.height*1.5;}
                 t.position.x = Graphics.width/2 - t.width/2;
                 t.position.y = statText.position.y + 75 + i*h;
                 Graphics.uiContainer.addChild(t);

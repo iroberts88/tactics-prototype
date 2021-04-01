@@ -226,7 +226,7 @@
           "name": "Expert Sighting",
           "sCost": 1,
           "description": "Ranged attacks will never hit units blocking LOS of your target.",
-          "id": "gunner",
+          "id": "expertSighting",
           "type": "passive",
           "ApCost": 500
         }

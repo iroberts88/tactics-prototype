@@ -1,6 +1,7 @@
 //actions.js
 var Buff = require('./buff.js').Buff,
     ClassInfo = require('./classinfo.js').ClassInfo,
+    ClientActions = require('./clientActions.js').ClientActions,
     Utils = require('./utils.js').Utils,
     Enums = require('./enums.js').Enums;
 
@@ -10,7 +11,8 @@ ActionEnums = {
 	AlterCurrentEnergy: 'alterCurrentEnergy',
 	AlterHealthByPercent: 'alterHealthByPercent',
 	SetHidden: 'setHidden',
-	AddOnAttackEffect: 'addOnAttackEffect',
+	AddOnAttack: 'addOnAttack',
+	AddOnEnemyMove: 'addOnEnemyMove',
 	Poison: 'poison',
 	HealingFieldEffect: 'healingFieldEffect',
 	CheckStealthRemove: 'checkStealthRemove',
@@ -88,6 +90,7 @@ AbilityEnums = {
 	PreparedShot: 'preparedShot',
 	Aim: 'aim',
 	Scan: 'scan',
+	ExpertSighting: 'expertSighting',
 
 	//commando abilities
 	Instruct: 'instruct',
@@ -161,21 +164,10 @@ Actions.prototype.vigorCompound = function(unit,data){
 	if (unit.currentEnergy > unit.maximumEnergy.value){
 		unit.currentEnergy = unit.maximumEnergy.value;
 	}
-	var cData = {};
-	cData[Enums.ACTION] = Enums.DAMAGETEXT;
-	cData[Enums.UNITID] = unit.id;
-	cData[Enums.TEXT] = "Energy +" + data['value'];
-	data[Enums.ACTIONDATA].push(cData);
-	var cData2 = {};
-	cData2[Enums.ACTION] = Enums.SETENERGY;
-	cData2[Enums.UNITID] = unit.id;
-	cData2[Enums.VALUE] = unit.currentEnergy;
-	data[Enums.ACTIONDATA].push(cData2);
-
+	data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,"Energy +" + data['value']));
+	data[Enums.ACTIONDATA].push(ClientActions.setEnergy(unit.id,unit.currentEnergy));
 	return true;
 }
-
-
 Actions.prototype.poison = function(unit,data){
 	var Buff = require('./buff.js').Buff;
 	var buffData = unit.owner.engine.buffs["buff_poison"];
@@ -190,26 +182,25 @@ Actions.prototype.poison = function(unit,data){
         'type': 'pois'
 	});
 	var cData = {};
-	cData[Enums.ACTIONDATA] = [{}];
-	cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.DAMAGETEXT;
-	cData[Enums.ACTIONDATA][0][Enums.UNITID] = data.target.id;
-	cData[Enums.ACTIONDATA][0][Enums.TEXT] = "Poisoned";
+	cData[Enums.ACTIONDATA] = [ClientActions.damageText(data.target.id,"Poisoned")];
 	unit.owner.session.queueData(Enums.ACTION,cData);
 	return false;
 }
-Actions.prototype.addOnAttackEffect = function(unit,data){
-	
-	if (data.reverse){
-		for (var i = 0; i < unit.onAttack.length;i++){
-			if (unit.onAttack.action == data.actionid){
-				unit.onAttack.splice(i,1);
-				i-=1;
-			}
-		}
+Actions.prototype.addOnAttack = function(unit,data){
+	if (data['reverse']){
+		unit.removeOnAttack(data['effect']);
 	}else{
-		unit.onAttack.push(data.effect)
+		unit.addOnAttack(data['effect'])
 	}
-	console.log(unit.onAttack);
+	return false;
+}
+Actions.prototype.addOnEnemyMove = function(unit,data){
+	console.log(data);
+	if (data['reverse']){
+		unit.removeOnEnemyMove(data['name']);
+	}else{
+		unit.addOnEnemyMove(data['effect'])
+	}
 	return false;
 }
 Actions.prototype.alterCurrentEnergy = function(unit,data){
@@ -218,18 +209,12 @@ Actions.prototype.alterCurrentEnergy = function(unit,data){
 		unit.currentEnergy -= value;
 	}else{
 		var cData = {};
-		cData[Enums.ACTIONDATA] = [{}];
-		cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.DAMAGETEXT;
-		cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-		cData[Enums.ACTIONDATA][0][Enums.TEXT] = "Not Enough Energy";
+		cData[Enums.ACTIONDATA] = [ClientActions.damageText(unit.id,"NOT ENOUGH ENERGY")];
 		unit.owner.session.queueData(Enums.ACTION,cData);
 		return true;
 	}
 	var cData = {};
-	cData[Enums.ACTIONDATA] = [{}];
-	cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.SETENERGY;
-	cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-	cData[Enums.ACTIONDATA][0][Enums.VALUE] = unit.currentEnergy;
+	cData[Enums.ACTIONDATA] = [ClientActions.setEnergy(unit.id,unit.currentEnergy)];
 	unit.owner.session.queueData(Enums.ACTION,cData);
 
 	return false;
@@ -240,20 +225,13 @@ Actions.prototype.setHidden = function(unit,data){
 		if (unit.hidden){
 			unit.hidden = false;
 			var cData = {};
-			cData[Enums.ACTIONDATA] = [{}];
-			cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.REVEAL;
-			cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-			cData[Enums.ACTIONDATA][0][Enums.DIRECTIONS] = unit.direction;
-			cData[Enums.ACTIONDATA][0][Enums.Q] = unit.currentNode.q;
-			cData[Enums.ACTIONDATA][0][Enums.R] = unit.currentNode.r;
+			cData[Enums.ACTIONDATA] = [ClientActions.reveal(unit.id,unit.direction,unit.currentNode.q,unit.currentNode.r)];
 			unit.owner.session.queueData(Enums.ACTION,cData);
 		}
 	}else{
 		unit.hidden = true;
 		var cData = {};
-		cData[Enums.ACTIONDATA] = [{}];
-		cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.HIDE;
-		cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
+		cData[Enums.ACTIONDATA] = [ClientActions.hide(unit.id)];
 		unit.owner.session.queueData(Enums.ACTION,cData);
 	}
 	return false;
@@ -261,18 +239,14 @@ Actions.prototype.setHidden = function(unit,data){
 
 Actions.prototype.healingFieldEffect = function(unit,data){
 	//get all units in radius;
-	var radius = data.radius;
-	var node = unit.currentNode
-	var nodes = unit.owner.session.map.getUnitsInRadius(node,radius);
+	let radius = data.radius;
+	let node = unit.currentNode
+	let nodes = unit.owner.session.map.getUnitsInRadius(node,radius);
 
-	var aData = {};
-	aData[Enums.UNITID] = unit.id;
-	aData[Enums.ACTION] = Enums.ACTIONBUBBLE;
-	aData[Enums.TEXT] = 'Healing Field';
-	data[Enums.ACTIONDATA].push(aData);
+	data[Enums.ACTIONDATA].push(ClientActions.actionBubble(unit.id,'Healing Field'));
 
 	for (var i = 0; i < nodes.length;i++){
-		var node = nodes[i];
+		node = nodes[i];
 		if (node.unit){
 			if (node.unit.owner == unit.owner){
 				data[Enums.ACTIONDATA] = node.unit.damage({
@@ -304,13 +278,21 @@ Actions.prototype.checkStealthRemove = function(unit,data){
 	}
 	return false;
 }
-Actions.prototype.preparedShotAttack = function(target,unit,data,actionData){
-	//get all units in radius;
-	console.log('EXECUTE PREPARED SHOT');
-	console.log(data);
-	console.log(target.name);
-	console.log(unit.name);
-	return [actionData,false];
+Actions.prototype.preparedShotAttack = function(unit,data){
+	var atData = {};
+	atData.unit = unit;
+	atData.weapon = unit.getWeapon();
+	if (atData.weapon.type != 'gun'){
+        return false;
+    }
+    atData.q = data.target.currentNode.q;
+    atData.r = data.target.currentNode.r;
+    if (unit.owner.session.unitAttack(atData)){
+		data.actionData.push(ClientActions.log(' - ' + unit.name + ' fires a prepared shot!!'));
+		unit.removeBuff('buff_preparedShot');
+		return data;
+	}
+	return false;
 };
 
 Actions.prototype.evasionEffect = function(unit,data){
@@ -318,10 +300,7 @@ Actions.prototype.evasionEffect = function(unit,data){
     if (data.attackType == 'aoe'){
     	if (unit.reaction > 0){
     		unit.reaction -= 1;
-			var cData5 = {};
-			cData5[Enums.ACTION] = Enums.LOG;
-			cData5[Enums.TEXT] = ' - ' + unit.name + ' evades!';
-			data.aData.push(cData5);
+			data.aData.push(ClientActions.log(' - ' + unit.name + ' evades!'));
 			data.value = Math.ceil(data.value * (1-(unit.agility.value*4/100)));
     		return data;
     	}
@@ -333,10 +312,7 @@ Actions.prototype.dodgeEffect = function(unit,data){
     if (data.attackType == 'attack'){
     	if (unit.reaction > 0){
     		unit.reaction -= 1;
-			var cData5 = {};
-			cData5[Enums.ACTION] = Enums.LOG;
-			cData5[Enums.TEXT] = ' - ' + unit.name + ' dodges!';
-			data.aData.push(cData5);
+			data.aData.push(ClientActions.log(' - ' + unit.name + ' dodges!'));
 			data.value = Math.ceil(data.value * (1-(unit.agility.value*4/100)));
 			return data;
     	}
@@ -356,16 +332,8 @@ Actions.prototype.counterAttackEffect = function(unit,data){
             atData.r = data.source.currentNode.r;
             console.log(atData.q + ', ' + atData.r);
             if (unit.owner.session.unitAttack(atData)){
-
-				data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-					Enums.UNITID, unit.id,
-			        Enums.ACTION, Enums.ACTIONBUBBLE,
-			        Enums.TEXT, 'Counterattack'
-				));
-				var cData5 = {};
-				cData5[Enums.ACTION] = Enums.LOG;
-				cData5[Enums.TEXT] = ' - ' + unit.name + ' counters the attack!!';
-				data.aData.push(cData5);
+				data[Enums.ACTIONDATA].push(ClientActions.actionBubble(unit.id,'Counterattack'));
+				data.aData.push(ClientActions.log(' - ' + unit.name + ' counters the attack!!'));
     			unit.reaction -= 1;
 				return data;
     		}
@@ -394,8 +362,11 @@ Actions.prototype.getAction = function(a){
 		case ActionEnums.Poison:
 			return this.poison;
 			break;
-		case ActionEnums.AddOnAttackEffect:
-			return this.addOnAttackEffect;
+		case ActionEnums.AddOnAttack:
+			return this.addOnAttack;
+			break;
+		case ActionEnums.AddOnEnemyMove:
+			return this.addOnEnemyMove;
 			break;
 		case ActionEnums.HealingFieldEffect:
 			return this.healingFieldEffect;
@@ -492,11 +463,7 @@ Actions.prototype.flare = function(unit,data){
 		}else{
 			d.newDir = nextUnit.direction
 		}
-		var cData = {};
-		cData[Enums.ACTION] = Enums.FACE;
-		cData[Enums.UNITID] = nextUnit.id;
-		cData[Enums.DIRECTION] = d.newDir;
-		data[Enums.ACTIONDATA].push(cData);
+		data[Enums.ACTIONDATA].push(ClientActions.face(nextUnit.id,d.newDir));
     	if (nextUnit.hidden){
 			nextUnit.removeBuffsWithTag('stealth');
 	    }
@@ -506,12 +473,7 @@ Actions.prototype.flare = function(unit,data){
 Actions.prototype.quickAttack = function(unit,data){
     data = unit.owner.session.executeAttack(data);
     if (!data){return false;}
-    var cData = {};
-    cData[Enums.ACTION] = Enums.ATTACK;
-    cData[Enums.UNITID] = data.unit.id;
-    cData[Enums.WEAPON] = 'Quick Attack';
-    cData[Enums.DIRECTION] = data.d.newDir;
-    data[Enums.ACTIONDATA].splice(0,0,cData);
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Quick Attack',data.d.newDir));
     unit.charge += unit.owner.session.chargeMax*(0.3+Math.round(unit.agility.value*1.5)/100);
 	return true;
 }
@@ -552,7 +514,7 @@ Actions.prototype.dodge = function(unit,abl){
     	unit.removeOnTakeDamage('dodgeEffect');
     }else{
     	unit.addOnTakeDamage({
-    		name: 'dodgeEffect'
+    		'name': 'dodgeEffect'
     	})
     }
 	return true;
@@ -562,7 +524,7 @@ Actions.prototype.evasion = function(unit,abl){
     	unit.removeOnTakeDamage('evasionEffect');
     }else{
     	unit.addOnTakeDamage({
-    		name: 'evasionEffect'
+    		'name': 'evasionEffect'
     	})
     }
 	return true;
@@ -572,7 +534,7 @@ Actions.prototype.counterAttack = function(unit,abl){
     	unit.removeOnAfterTakeDamage('counterAttackEffect');
     }else{
     	unit.addOnAfterTakeDamage({
-    		name: 'counterAttackEffect'
+    		'name': 'counterAttackEffect'
     	})
     }
 	return true;
@@ -612,11 +574,7 @@ Actions.prototype.cheer = function(unit,data){
 			nodes[i].unit.agility.nMod += 2;
 			nodes[i].unit.agility.set(true);
 			var aData = 
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Agility +2'
-		    ));
+			data[Enums.ACTIONDATA].push(clientData.damageText(nodes[i].unit.id,'Agility +2'));
 		}
 	}
 	return true;
@@ -627,12 +585,7 @@ Actions.prototype.interrupt = function(unit,data){
     	return false;
     }
     data = unit.owner.session.executeAttack(data);
-    var cData = {};
-    cData[Enums.ACTION] = Enums.ATTACK;
-    cData[Enums.UNITID] = data.unit.id;
-    cData[Enums.WEAPON] = 'Interrupt';
-    cData[Enums.DIRECTION] = data.d.newDir;
-    data[Enums.ACTIONDATA].splice(0,0,cData);
+    data[Enums.ACTIONDATA].splice(0,0,clientData.attack(data.unit.id,'Interrupt',data.d.newDir));
     data.node.unit.charge -= unit.owner.session.chargeMax*((10+unit.agility.value)/100);
     if (data.node.unit.charge < 0){
     	data.node.unit.charge = 0;
@@ -655,16 +608,16 @@ Actions.prototype.poisonWeapon = function(unit,data){
 		var buffData = unit.owner.session.engine.buffs["buff_poisonedWeapon"];
 		var buff = new Buff(buffData);
 		buff.actionsOnImmediate.push({
-	        "action": "addOnAttackEffect",
+	        "action": "addOnAttack",
 	        "effect": {
-	        	"action": "poison",
-	        	"instances": 1+Math.floor(unit.intelligence.value/4),
+	        	'name': "poison",
+	        	'instances': 1+Math.floor(unit.intelligence.value/4),
 	        }
 		});
 		buff.actionsOnEnd.push({
-			"action": "addOnAttackEffect",
+			"action": "addOnAttack",
 	        "reverse": true,
-	        "actionid": "poison"
+	        "name": "poison"
 		});
 		buff.init({
 		    unit: unit //the buff will perform actions on this object
@@ -706,11 +659,7 @@ Actions.prototype.aim = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.dexterity.nMod += 2;
 			nodes[i].unit.dexterity.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Dexterity +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Dexterity +2'));
 		}
 	}
 	return true;
@@ -724,11 +673,7 @@ Actions.prototype.center = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.willpower.nMod += 2;
 			nodes[i].unit.willpower.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Willpower +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Willpower +2'));
 		}
 	}
 	return true;
@@ -743,11 +688,7 @@ Actions.prototype.dictate = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.intelligence.nMod += 2;
 			nodes[i].unit.intelligence.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Intelligence +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Intelligence +2'));
 		}
 	}
 	return true;
@@ -878,11 +819,7 @@ Actions.prototype.resUp = function(unit,data){
 			    unit: nodes[i].unit //the buff will perform actions on this object
 			});
 			buff.duration = Math.floor(1+unit.charisma.value/2);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'All res +' + percent + '%'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'All res +' + percent + '%'));
 		}
 	}
 	return true;
@@ -915,11 +852,7 @@ Actions.prototype.bolster = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.endurance.nMod += 2;
 			nodes[i].unit.endurance.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Endurance +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Endurance +2'));
 		}
 	}
 	return true;
@@ -933,11 +866,7 @@ Actions.prototype.battlecry = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.strength.nMod += 2;
 			nodes[i].unit.strength.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Strength +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Strength +2'));
 		}
 	}
 	return true;
@@ -947,11 +876,7 @@ Actions.prototype.instruct = function(unit,data){
 	var val = Math.ceil(unit.skill.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.skill.nMod += val;
 	unit.skill.set(true);
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, unit.id,
-        Enums.TEXT, 'Instruct +' + val
-    ));
+	data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'Skill +' + val));
 	return true;
 }
 
@@ -959,11 +884,7 @@ Actions.prototype.shout = function(unit,data){
 	var val = Math.ceil(unit.power.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.power.nMod += val;
 	unit.power.set(true);
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, unit.id,
-        Enums.TEXT, 'Power +' + val
-    ));
+	data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'Power +' + val));
 	return true;
 }
 
@@ -971,11 +892,7 @@ Actions.prototype.focus = function(unit,data){
 	var val = Math.ceil(unit.tactics.value*(unit.willpower.value/100)) + unit.willpower.value*2;
 	unit.tactics.nMod += val;
 	unit.tactics.set(true);
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, unit.id,
-        Enums.TEXT, 'Tactics +' + val
-    ));
+	data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'Tactics +' + val));
 	return true;
 }
 
@@ -987,12 +904,7 @@ Actions.prototype.powerShot = function(unit,data){
     data.ablMod = 1+(25+Math.floor(unit.strength.value*2))/100;
     data = unit.owner.session.executeAttack(data);
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Power Shot',
-        Enums.DIRECTION, data.d.newDir
-    ));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Power Shot',data.d.newDir));
 	return true;
 }
 
@@ -1004,12 +916,7 @@ Actions.prototype.powerAttack = function(unit,data){
     data.ablMod = 1+(25+Math.floor(unit.dexterity.value*2))/100;
     data = unit.owner.session.executeAttack(data);
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Power Attack',
-        Enums.DIRECTION, data.d.newDir
-    ));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Power Attack',data.d.newDir));
 	return true;
 }
 
@@ -1025,18 +932,12 @@ Actions.prototype.reversal = function(unit,data){
     var targetCurrentNode = {q:data.target.currentNode.q,r:data.target.currentNode.r};
     unit.newNode(unit.owner.session.map.axialMap[targetCurrentNode.q][targetCurrentNode.r]);
     data.target.newNode(unit.owner.session.map.axialMap[unitCurrentNode.q][unitCurrentNode.r]);
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Reversal',
-        Enums.DIRECTION, data.d.newDir
-    ));
-    data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.REVERSAL,
-        Enums.UNITID, data.unit.id,
-        Enums.UNITNEWNODE, unit.engine.createClientData(Enums.Q, unit.currentNode.q, Enums.R, unit.currentNode.r),
-        Enums.TARGETNEWNODE, unit.engine.createClientData(Enums.Q, data.target.currentNode.q, Enums.R, data.target.currentNode.r),
-        Enums.TARGETID, data.target.id
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Reversal',data.d.newDir));
+    data[Enums.ACTIONDATA].push(ClientActions.reversal(
+    	data.unit.id,
+    	unit.engine.createClientData(Enums.Q, unit.currentNode.q, Enums.R, unit.currentNode.r),
+    	data.target.id,
+    	unit.engine.createClientData(Enums.Q, data.target.currentNode.q, Enums.R, data.target.currentNode.r)
     ));
 	return true;
 }
@@ -1098,13 +999,7 @@ Actions.prototype.slam = function(unit,data){
     	}else{
     		//move the target to the new node
     		data.target.newNode(newNode);
-    		data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-	            Enums.ACTION, Enums.SLAM,
-	            Enums.UNITID, data.target.id,
-	            Enums.X, newNode.x,
-	            Enums.Y, newNode.y,
-	            Enums.Z, newNode.z
-	        ));
+    		data[Enums.ACTIONDATA].push(ClientActions.slam(data.target.id,x,y,z));
     	}
     }
 	return true;
@@ -1139,12 +1034,7 @@ Actions.prototype.heroicCharge = function(unit,data){
     	}
     }
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Heroic Charge',
-        Enums.DIRECTION, data.d.newDir
-    ));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Heroic Charge',data.d.newDir));
 	return true;
 }
 
@@ -1180,12 +1070,7 @@ Actions.prototype.heroicLeap = function(unit,data){
     	}
     }
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Heroic Leap',
-        Enums.DIRECTION, data.d.newDir
-    ));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Heroic Leap',data.d.newDir));
 	return true;
 }
 
@@ -1245,16 +1130,7 @@ Actions.prototype.resuscitate = function(unit,data){
 	    unit: u //the buff will perform actions on this object
 	});
 	buff.duration = 1;
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, u.id,
-        Enums.TEXT, 'Revived',
-        Enums.SHIELDS, u.currentShields,
-        Enums.HEALTH, u.currentHealth,
-        Enums.FAINTED, u.fainted,
-        Enums.TYPE, 'heal',
-        Enums.DEAD, u.dead
-    ));
+	data[Enums.ACTIONDATA].push(ClientActions.damageText(u.id,'Revived',u.currentShields,u.currentHealth,u.fainted,'heal',u.dead));
 	return true;
 }
 
@@ -1324,11 +1200,7 @@ Actions.prototype.influence = function(unit,data){
 		if (nodes[i].unit && nodes[i].unit.owner == unit.owner){
 			nodes[i].unit.charisma.nMod += 2;
 			nodes[i].unit.charisma.set(true);
-			data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-		        Enums.ACTION, Enums.DAMAGETEXT,
-		        Enums.UNITID, nodes[i].unit.id,
-		        Enums.TEXT, 'Charisma +2'
-		    ));
+			data[Enums.ACTIONDATA].push(ClientActions.damageText(nodes[i].unit.id,'Charisma +2'));
 		}
 	}
 	return true;
@@ -1341,21 +1213,12 @@ Actions.prototype.precisionStrike = function(unit,data){
     }
     data = unit.owner.session.executeAttack(data);
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Precision Strike',
-        Enums.DIRECTION, data.d.newDir
-    ));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Precision Strike',data.d.newDir));
     data.node.unit.healMod.nMod -= unit.strength.value*2;
     if (data.node.unit.healMod.value < -100){
     	data.node.unit.healMod.value = -100;
     }
-    data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, data.node.unit.id,
-        Enums.TEXT, 'Healing -' + unit.strength.value*2 + '%'
-    ));
+    data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Healing -' + unit.strength.value*2 + '%'));
     data.node.unit.healMod.set();
 	return true;
 }
@@ -1367,18 +1230,9 @@ Actions.prototype.cripple = function(unit,data){
     }
     data = unit.owner.session.executeAttack(data);
     if (!data){return false;}
-    data.node.unit.moveLeft -= Math.floor(1+unit.dexterity.value/5);
-    data[Enums.ACTIONDATA].splice(0,0,unit.engine.createClientData(
-        Enums.ACTION, Enums.ATTACK,
-        Enums.UNITID, data.unit.id,
-        Enums.WEAPON, 'Cripple',
-        Enums.DIRECTION, data.d.newDir
-    ));
-    data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, data.node.unit.id,
-        Enums.TEXT, 'Move -' + Math.floor(1+unit.dexterity.value/5)
-    ));
+    data.node.unit.setMoveLeft(data.node.unit.moveLeft - Math.floor(1+unit.dexterity.value/5));
+    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Cripple',data.d.newDir));
+    data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Move -' + Math.floor(1+unit.dexterity.value/5)));
 	return true;
 }
 
@@ -1408,12 +1262,7 @@ Actions.prototype.shieldBoost = function(unit,data){
 	buff.duration = unit.intelligence.value;
 	var diff = data.target.maximumShields.value-current;
 	data.target.currentShields += diff;
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, data.target.id,
-        Enums.TEXT, 'Shields +' + percent + '%',
-        Enums.SHIELDS, data.target.currentShields
-    ));
+    data[Enums.ACTIONDATA].push(ClientActions.damageText(data.target.id,'Shields +' + percent + '%',data.target.currentShields));
 	return true;
 }
 
@@ -1438,45 +1287,22 @@ Actions.prototype.concentrate = function(unit,data){
 	    unit: unit //the buff will perform actions on this object
 	});
 	buff.duration = unit.willpower.value;
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, data.unit.id,
-        Enums.TEXT, 'Casting speed +' + percent + '%'
-    ));
+    data[Enums.ACTIONDATA].push(ClientActions.damageText(data.unit.id,'Casting speed +' + percent + '%'));
 	return true;
 }
 Actions.prototype.gunner = function(unit,data){
-	var Buff = require('./buff.js').Buff;
-
-	var percent = (125+unit.willpower.value*10);
-	var buffData = unit.owner.session.engine.buffs["buff_concentrate"];
-	var buff = new Buff(buffData);
-	buff.actionsOnImmediate.push({
-        "action": "alterStat",
-        "stat": 'cSpeedMod',
-        "value": percent/100
-	});
-	buff.actionsOnEnd.push({
-        "action": "alterStat",
-        "stat": 'cSpeedMod',
-        "value": percent/100,
-        "reverse":true
-	});
-	buff.init({
-	    unit: unit //the buff will perform actions on this object
-	});
-	buff.duration = unit.willpower.value;
-	data[Enums.ACTIONDATA].push(unit.engine.createClientData(
-        Enums.ACTION, Enums.DAMAGETEXT,
-        Enums.UNITID, data.unit.id,
-        Enums.TEXT, 'Casting speed +' + percent + '%'
-    ));
+	
+	return true;
+}
+Actions.prototype.expertSighting = function(unit,data){
+	
 	return true;
 }
 Actions.prototype.preparedShot = function(unit,data){
 	var Buff = require('./buff.js').Buff;
 	//add prepared shot buff
 	unit.addBuff("buff_preparedShot");
+	unit.setMoveLeft(0);
 	return true;
 }
 
@@ -1826,6 +1652,9 @@ Actions.prototype.getAbility = function(a){
 			break;
 		case AbilityEnums.Gunner:
 			return this.gunner;
+			break;
+		case AbilityEnums.ExpertSighting:
+			return this.expertSighting;
 			break;
 		//commando abilities
 		case AbilityEnums.Instruct:

@@ -411,14 +411,12 @@
             });
 
             Acorn.Net.on(Enums.SETMOVELEFT, function (data) {
-                console.log(data);
                 if (!Game.units){
                     return;
                 }
-                if (typeof Game.units[data[Enums.UNITID]] != 'undefined'){
-                    Game.units[data[Enums.UNITID]].moveLeft = data[Enums.VALUE];
+                if (typeof Game.units[data[Enums.UNIT]] != 'undefined'){
+                    Game.units[data[Enums.UNIT]].moveLeft = data[Enums.VALUE];
                 }
-                console.log(data);
             });
 
             Acorn.Net.on('debug', function (data) {

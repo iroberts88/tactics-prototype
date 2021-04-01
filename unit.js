@@ -2,6 +2,7 @@ var User = require('./user.js').User,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
     Actions = require('./actions.js').Actions,
+    Buff = require('./buff.js').Buff,
     Item = require('./item.js').Item,
     UnitAI = require('./unitai.js').UnitAI,
     Enums = require('./enums.js').Enums;
@@ -150,7 +151,7 @@ Unit.prototype.addOnTakeDamage = function(obj){
 }
 Unit.prototype.removeOnTakeDamage = function(n){
     for (let i = 0;i < this.onTakeDamage.length;i++){
-        if (this.onTakeDamage.name == n){
+        if (this.onTakeDamage['name'] == n){
             this.onTakeDamage.splice(i,1);
             return;
         }
@@ -165,7 +166,7 @@ Unit.prototype.addOnAfterTakeDamage = function(obj){
 }
 Unit.prototype.removeOnAfterTakeDamage = function(n){
     for (let i = 0;i < this.onAfterTakeDamage.length;i++){
-        if (this.onAfterTakeDamage.name == n){
+        if (this.onAfterTakeDamage['name'] == n){
             this.onAfterTakeDamage.splice(i,1);
             return;
         }
@@ -181,7 +182,7 @@ Unit.prototype.addOnAction = function(obj){
 }
 Unit.prototype.removeOnAction = function(n){
     for (let i = 0;i < this.onAction.length;i++){
-        if (this.onAction.name == n){
+        if (this.onAction['name'] == n){
             this.onAction.splice(i,1);
             return;
         }
@@ -196,7 +197,7 @@ Unit.prototype.addOnAttack = function(obj){
 }
 Unit.prototype.removeOnAttack = function(n){
     for (let i = 0;i < this.onAttack.length;i++){
-        if (this.onAttack.name == n){
+        if (this.onAttack['name'] == n){
             this.onAttack.splice(i,1);
             return;
         }
@@ -212,7 +213,7 @@ Unit.prototype.addOnMove = function(obj){
 }
 Unit.prototype.removeOnMove = function(n){
     for (let i = 0;i < this.onMove.length;i++){
-        if (this.onMove.name == n){
+        if (this.onMove['name'] == n){
             this.onMove.splice(i,1);
             return;
         }
@@ -228,7 +229,7 @@ Unit.prototype.addOnEnemyMove = function(obj){
 }
 Unit.prototype.removeOnEnemyMove = function(n){
     for (let i = 0;i < this.onEnemyMove.length;i++){
-        if (this.onEnemyMove.name == n){
+        if (this.onEnemyMove['name'] == n){
             this.onEnemyMove.splice(i,1);
             return;
         }
@@ -244,7 +245,7 @@ Unit.prototype.addOnTurnEnd = function(obj){
 }
 Unit.prototype.removeOnTurnEnd = function(n){
     for (let i = 0;i < this.onTurnEnd.length;i++){
-        if (this.onTurnEnd.name == n){
+        if (this.onTurnEnd['name'] == n){
             this.onTurnEnd.splice(i,1);
             return;
         }
@@ -260,7 +261,7 @@ Unit.prototype.addOnTurnStart = function(obj){
 }
 Unit.prototype.removeOnTurnStart = function(n){
     for (let i = 0;i < this.onTurnStart.length;i++){
-        if (this.onTurnStart.name == n){
+        if (this.onTurnStart['name'] == n){
             this.onTurnStart.splice(i,1);
             return;
         }
@@ -276,7 +277,7 @@ Unit.prototype.addOnFaint = function(obj){
 }
 Unit.prototype.removeOnFaint = function(n){
     for (let i = 0;i < this.onFaint.length;i++){
-        if (this.onFaint.name == n){
+        if (this.onFaint['name'] == n){
             this.onFaint.splice(i,1);
             return;
         }
@@ -292,7 +293,7 @@ Unit.prototype.addOnDeath = function(obj){
 }
 Unit.prototype.removeOnDeath = function(n){
     for (let i = 0;i < this.onDeath.length;i++){
-        if (this.onDeath.name == n){
+        if (this.onDeath['name'] == n){
             this.onDeath.splice(i,1);
             return;
         }
@@ -750,16 +751,29 @@ Unit.prototype.init = function(data) {
 Unit.prototype.endTurn = function(){
     //tick all buffs
     for (var i = 0; i < this.buffs.length;i++){
-        this.buffs[i].tick();
-        if (this.buffs[i].buffEnded){
-            this.buffs.splice(i,1);
-            i -= 1;
+        if (!this.buffs[i].tickBeforeTurn){
+            this.buffs[i].tick();
+            if (this.buffs[i].buffEnded){
+                this.buffs.splice(i,1);
+                i -= 1;
+            }
         }
     }
     this.setMoveLeft(this.move.value);
     this.reaction = 1;
 };
-
+Unit.prototype.beginTurn = function(){
+    //tick all buffs
+    for (var i = 0; i < this.buffs.length;i++){
+        if (this.buffs[i].tickBeforeTurn){
+            this.buffs[i].tick();
+            if (this.buffs[i].buffEnded){
+                this.buffs.splice(i,1);
+                i -= 1;
+            }
+        }
+    }
+};
 Unit.prototype.damage = function(data){
     //damage based on type
     var type = Utils.udCheck(data.damageType,null,data.damageType);
@@ -771,7 +785,7 @@ Unit.prototype.damage = function(data){
     if (source){
         if (this.owner != source.owner){
             for (let i = 0; i < this.onTakeDamage.length;i++){
-                let aFunc = Actions.getAction(this.onTakeDamage[i].name);
+                let aFunc = Actions.getAction(this.onTakeDamage[i]['name']);
                 this.onTakeDamage[i].type = type;
                 this.onTakeDamage[i].value = value;
                 this.onTakeDamage[i].aData = aData;
@@ -779,7 +793,7 @@ Unit.prototype.damage = function(data){
                 this.onTakeDamage[i].attackType = attackType;
                 let success = aFunc(this,this.onTakeDamage[i]);
                 if (success){
-                    console.log('success - ' + this.onTakeDamage[i].name)
+                    console.log('success - ' + this.onTakeDamage[i]['name'])
                     type = success.type;
                     value = success.value;
                     aData = success.aData;
@@ -842,7 +856,7 @@ Unit.prototype.damage = function(data){
         case this.engine.dmgTypeEnums.Cold:
             value -= Math.round(value*(this.coldRes.value/100));
             //reduces move by 1
-            this.moveLeft -= 1;
+            this.setMoveLeft(this.moveLeft - 1);
             this._damage(value);
             break;
         case this.engine.dmgTypeEnums.Radiation:
@@ -1390,20 +1404,25 @@ Unit.prototype.addAp = function(data){
     }
     return amt;
 }
-Unit.prototype.addBuff = function(buffData){
-    try{
-        this.classInfo.ap[classid] += amt;
-        if (this.classInfo.ap[classid] > 9999){
-            this.classInfo.ap[classid] = 9999;
+Unit.prototype.addBuff = function(buffid, source = this){
+    let buffData = this.owner.session.engine.buffs[buffid];
+    let buff = new Buff(buffData);
+    buff.init({
+        unit: this, //the buff will perform actions on this object
+        source: source
+    });
+}
+Unit.prototype.removeBuff = function(buffid){
+    console.log('trying to remove ' + buffid);
+    for(var i = 0;i < this.buffs.length;i++){
+        var buff = this.buffs[i];
+        console.log(buff.buffid + ' -- ID')
+        if (buff.buffid == buffid){
+            buff.ticker = buff.duration;
+            buff.end();
+            this.buffs.splice(i,1);
+            break;
         }
-        this.owner.engine.queuePlayer(this.owner,Enums.MODAP,Utils.createClientData(
-            Enums.UNITID, this.id,
-            Enums.CLASSID, classid,
-            Enums.VALUE, this.classInfo.ap[classid]
-        ));
-    }catch(e){
-        console.log("unable to mod ap");
-        console.log(e);
     }
 }
 Unit.prototype.newNode = function(node){

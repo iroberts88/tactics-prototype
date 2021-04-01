@@ -6,7 +6,7 @@ var Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
     Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap,
-    Utils = require('./utils.js').Utils,
+    ClientActions = require('./clientActions.js').ClientActions,
     Utils = require('./utils.js').Utils,
     UnitAI = require('./unitai.js').UnitAI;
 
@@ -352,6 +352,9 @@ GameSession.prototype.getTurnOrder = function(){
             unit.charge += Math.round(this.turnOrder[0].val)*unit.speed.value;
         }
     }
+    if (!this.allUnits[this.turnOrder[0].id].isCastTimer){
+        this.allUnits[this.turnOrder[0].id].beginTurn();
+    }
     //now check if the new turn is a cast time
     if (this.allUnits[this.turnOrder[0].id].isCastTimer){
         var abl = this.allUnits[this.turnOrder[0].id];
@@ -362,11 +365,7 @@ GameSession.prototype.getTurnOrder = function(){
         aFunc(this.allUnits[abl.unitid],abl.data);
         var cData = {};
         cData[Enums.ACTIONDATA] = abl.data[Enums.ACTIONDATA];
-        cData[Enums.ACTIONDATA].splice(0,0,Utils.createClientData(
-            Enums.ACTION,Enums.ACTIONBUBBLE,
-            Enums.UNITID,abl.unitid,
-            Enums.TEXT,abl.abilityData.name
-        ));
+        cData[Enums.ACTIONDATA].splice(0,0,ClientActions.actionBubble(abl.unitid,abl.abilityData.name));
         this.queueData(Enums.ACTION,cData);
         var cData2 = {};
         cData2[Enums.UNITID] = this.turnOrder[0].id;
@@ -404,38 +403,26 @@ GameSession.prototype.getUnitsNotInLos = function(){
 
 GameSession.prototype.executeMove = function(data){
     data.moveUsed = 0;
-    for (var i = 0; i < data.path.length;i++){
-        var a = this.map.getAxial(data.path[i]);
+    var stopped = false;
+    for (var i = 1; i < data.path.length;i++){
+        if (data.unit.moveLeft <= 0){
+            //the unit is out of moves
+            stopped = true;
+            break;
+        }
+        var nextNode = data.path[i];
+        let a = this.map.getAxial(data.path[i]);
         if (a.unit){
             if (a.unit.hidden && a.unit.owner != data.unit.owner){
                 //hidden unit!
                 data.path = data.path.slice(0,i);
                 var keepGoing = true;
                 a.unit.removeBuffsWithTag('removeOnContact');
-                while(keepGoing){
-                    if (data.path.length <=1){
-                        return;
-                    }else if (data.path[data.path.length-1].unit){
-                        data.path.pop();
-                    }else{
-                        keepGoing = false;
-                    }
-                }
-            }
-        }
-    }
-    var stopped = false;
-    for (var i = 1; i < data.path.length;i++){
-        if (data.isAMove){
-            data.unit.moveUsed = true;
-            if (data.unit.moveLeft <= 0){
-                //the unit is out of moves
                 data.unit.newNode(this.map.getAxial(data.path[i-1]));
                 stopped = true;
                 break;
             }
         }
-        var nextNode = data.path[i];
         //TODO check reactions for each moved node?
         //check each enemy for "onEnemyMove" reactions
         for (var j in this.allUnits){
@@ -444,30 +431,30 @@ GameSession.prototype.executeMove = function(data){
             }
             var u = this.allUnits[j];
             for (var j = 0; j < u.onEnemyMove.length;j++){
-                var aFunc = Actions.getAction(u.onEnemyMove[j]['action']);
-                var eMoveArr = aiFunc(data.unit,u,u.onEnemyMove[j],data[Enums.ACTIONDATA]);
-                data[Enums.ACTIONDATA] = eMoveArr[0];
-                stopped = eMoveArr[1];
+                var aFunc = Actions.getAction(u.onEnemyMove[j]['name']);
+                u.onEnemyMove[j].target = data.unit;
+                u.onEnemyMove[j].stopped = stopped;
+                u.onEnemyMove[j].actionData = data[Enums.ACTIONDATA];
+                var success = aFunc(u,u.onEnemyMove[j]);
+                if (success){
+                    data[Enums.ACTIONDATA] = success.actionData
+                    stopped = success.stopped;
+                }
             }
+        }
+        if (data.unit.dead || data.unit.fainted){
+            stopped = true;
+            break;
         }
         //set the new node for the unit
         var dir = this.map.getNewDirectionCube(data.path[i-1],data.path[i]);
         if (dir){
             data.unit.direction = this.map.cardinalDirections[dir];
         }
-        var cData = {};
-        cData[Enums.ACTION] = Enums.MOVE;
-        cData[Enums.UNITID] = data.unit.id;
-        cData[Enums.X] = data.path[i].x;
-        cData[Enums.Y] = data.path[i].y;
-        cData[Enums.Z] = data.path[i].z;
-        cData[Enums.REDUCELEFT] = data.isAMove;
-        data[Enums.ACTIONDATA].push(cData);
+        data[Enums.ACTIONDATA].push(ClientActions.move(data.unit.id,data.path[i].x,data.path[i].y,data.path[i].z));
         if (data.isAMove){
-            data.moveUsed += 1;
+            data.unit.moveLeft -= 1;
         }
-    }
-    if (!stopped){
         data.unit.newNode(this.map.getAxial(data.path[data.path.length-1]));
     }
     //this.getUnitsNotInLos();
@@ -491,14 +478,8 @@ GameSession.prototype.unitMove = function(data){
     data.path = this.map.findPath(this.map.getCube(data.unit.currentNode),endingNode,{startingUnit: data.unit,maxJump:data.unit.jump.value});
     data.isAMove = true;
     data = this.executeMove(data);
-    data.unit.moveLeft -= data.moveUsed;
     //send down the action info to all players in the battle
-
-    var cData5 = {};
-    cData5[Enums.ACTION] = Enums.LOG;
-    cData5[Enums.TEXT] = ' - ' + data.unit.name + ' moves to node [' + endingNode.x + ',' + endingNode.y + ']';
-    data[Enums.ACTIONDATA].push(cData5);
-    console.log(data[Enums.ACTIONDATA]);
+    data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' moves to node [' + data.unit.currentNode.x + ',' + data.unit.currentNode.y + ']'));
     var cData = {};
     cData[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
     if (data.unit.hidden){
@@ -511,24 +492,15 @@ GameSession.prototype.unitMove = function(data){
     }else{
         this.queueData(Enums.ACTION,cData);
     }
+    //send moveleft down to client
+    console.log(data.unit.moveLeft);
+    data.unit.setMoveLeft(data.unit.moveLeft);
 }
 GameSession.prototype.executeAttack = function(data){
-    if (typeof data.unit == 'undefined'){
-        data.unit = this.allUnits[this.turnOrder[0].id];
-        if (data.unit.actionUsed){
-            return false;
-        }
-    }
-    if ( data.unit.fainted || data.unit.dead){return false;}
-    data.node = this.map.axialMap[data.q][data.r];
-    if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
-    data.weapon = data.unit.getWeapon();
     var validNodes = data.weapon.getWeaponNodes(this.map,data.unit.currentNode);
     //check if the node is a valid node
     var valid = false;
     var losMod = 1.0;
-    console.log(validNodes.length)
-    console.log(data.node.q + ',' + data.node.r + '...');
     for (var i = 0; i < validNodes.length;i++){
         if (validNodes[i].q == data.node.q && validNodes[i].r == data.node.r){
             //check LOS
@@ -540,19 +512,13 @@ GameSession.prototype.executeAttack = function(data){
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
-                var cData = {};
-                cData[Enums.ACTION] = Enums.DAMAGTEXT;
-                cData[Enums.UNITID] = data.node.unit.id
-                cData[Enums.TEXT] = 'Partial LOS'
-                data[Enums.ACTIONDATA].push(cData);
+                data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Partial LOS'));
                 valid = true;
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
                 var cData = {};
-                cData[Enums.ACTIONDATA] = [{}];
-                cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.NOLOS;
-                cData[Enums.ACTIONDATA][0][Enums.UNITID] = data.unit.id;
+                cData[Enums.ACTIONDATA] = [ClientActions.noLOS(data.unit.id)];
                 this.queueData(Enums.ACTION,cData);
             }
         }
@@ -574,7 +540,6 @@ GameSession.prototype.executeAttack = function(data){
     //TODO check for pre-attack reactions
 
     //get directional mod
-    data.d = this.map.getDMod(data.unit.currentNode,data.node);
     var tMod = 1.0;
     if (data.weapon.type == 'gun'){
         tMod += data.unit.skill.value/100;
@@ -583,7 +548,7 @@ GameSession.prototype.executeAttack = function(data){
     }
     //execute attack
     for (var i = 0; i < data.unit.onAttack.length;i++){
-        var aFunc = Actions.getAction(data.unit.onAttack[i].action);
+        var aFunc = Actions.getAction(data.unit.onAttack[i]['name']);
         data.unit.onAttack[i].target = data.node.unit;
         aFunc(data.unit,data.unit.onAttack[i]);
     }
@@ -597,56 +562,39 @@ GameSession.prototype.executeAttack = function(data){
     data.dmgValue = data[Enums.ACTIONDATA][data[Enums.ACTIONDATA].length-1][Enums.TEXT];
 
     if (data[Enums.ACTIONDATA][data[Enums.ACTIONDATA].length-1][Enums.DEAD]){
-        var cData5 = {};
-        cData5[Enums.ACTION] = Enums.LOG;
-        cData5[Enums.TEXT] = ' - ' + this.name + ' died.';
-        data[Enums.ACTIONDATA].push(cData5);
+        data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + this.name + ' died.'));
     }else if (data[Enums.ACTIONDATA][data[Enums.ACTIONDATA].length-1][Enums.FAINTED]){
-        var cData5 = {};
-        cData5[Enums.ACTION] = Enums.LOG;
-        cData5[Enums.TEXT] = ' - ' + this.name + ' was knocked unconscious.';
-        data[Enums.ACTIONDATA].push(cData5);
+        data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + this.name + ' was knocked unconscious.'));
     }
     return data;
 }
 GameSession.prototype.unitAttack = function(data){
+    if (typeof data.unit == 'undefined'){
+        data.unit = this.allUnits[this.turnOrder[0].id];
+        if (data.unit.actionUsed){
+            return false;
+        }
+    }
+    if ( data.unit.fainted || data.unit.dead){return false;}
+    data.node = this.map.axialMap[data.q][data.r];
+    if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
+    data.weapon = data.unit.getWeapon();
+    data.d = this.map.getDMod(data.unit.currentNode,data.node);
     data[Enums.ACTIONDATA] = [];
     data.ablMod = 1.0;
+    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir));
     data = this.executeAttack(data);
     if (!data){return false;}
-
-    var cData = {};
-    cData[Enums.ACTION] = Enums.ATTACK;
-    cData[Enums.UNITID] = data.unit.id;
-    cData[Enums.WEAPON] = data.weapon.name;
-    cData[Enums.DIRECTION] = data.d.newDir;
-    data[Enums.ACTIONDATA].splice(0,0,cData);
     //TODO check for post-attack reactions
     data.unit.actionUsed = true;
-    var cData2 = {};
-    cData2[Enums.ACTION] = Enums.ACTIONUSED;
-    cData2[Enums.UNITID] = data.unit.id;
-    data[Enums.ACTIONDATA].push(cData2);
-
+    data[Enums.ACTIONDATA].push(ClientActions.actionUsed(data.unit.id));
     var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
-    var cData3 = {};
-    cData3[Enums.ACTION] = Enums.DAMAGETEXT;
-    cData3[Enums.UNITID] = data.unit.id;
-    cData3[Enums.TEXT] = '+' + apamt + ' AP';
-    cData3[Enums.OWNERONLY] = true;
-
-    data[Enums.ACTIONDATA].push(cData3);
-
-    //send down action data
-    var cData4 = {};
-
-    var cData5 = {};
-    cData5[Enums.ACTION] = Enums.LOG;
-    cData5[Enums.TEXT] = ' - ' + data.unit.name + ' attacks ' + data.node.unit.name + ' with ' + data.weapon.name + ' for ' + data.dmgValue + ' ' + data.weapon.eqData.damageType + ' damage!';
-    data[Enums.ACTIONDATA].push(cData5);
-
-    cData4[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
-    this.queueData(Enums.ACTION,cData4);
+    data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(data.unit.id,'+' + apamt + ' AP'));
+    data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' attacks ' + data.node.unit.name + ' with ' + data.weapon.name + ' for ' + data.dmgValue + ' ' + data.weapon.eqData.damageType + ' damage!'));
+    var cData = {};
+    cData[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
+    this.queueData(Enums.ACTION,cData);
+    return true;
 }
                       
 GameSession.prototype.unitAbility = function(data){
@@ -705,6 +653,7 @@ GameSession.prototype.unitAbility = function(data){
             break;
     }
     var gotNode = false;
+    let castAbl = false;
     for (var i = 0; i < possibleNodes.length;i++){
         if (possibleNodes[i].q == node.q && possibleNodes[i].r == node.r){
             //node is valid!
@@ -716,17 +665,10 @@ GameSession.prototype.unitAbility = function(data){
             var energy = this.parseStringCode(unit,data.ability.eCost);
             if (unit.currentEnergy >= energy){
                 unit.currentEnergy -= energy;
-                var cData = {};
-                cData[Enums.ACTION] = Enums.SETENERGY;
-                cData[Enums.UNITID] = unit.id;
-                cData[Enums.VALUE] = unit.currentEnergy;
-                data[Enums.ACTIONDATA].push(cData);
+                data[Enums.ACTIONDATA].push(ClientActions.setEnergy(unit.id,unit.currentEnergy));
             }else{
                 var cData = {};
-                cData[Enums.ACTIONDATA] = [{}];
-                cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.SETENERGY;
-                cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-                cData[Enums.ACTIONDATA][0][Enums.TEXT] = 'Not enough energy';
+                cData[Enums.ACTIONDATA] = [ClientActions.damageText(unit.id,'Not enough energy')];
                 this.queuePlayer(unit.owner,Enums.ACTION,cData);
                 return;
             }
@@ -737,23 +679,16 @@ GameSession.prototype.unitAbility = function(data){
                 if (!success){
                     unit.currentEnergy += energy;
                     var cData = {};
-                    cData[Enums.ACTIONDATA] = [{}];
-                    cData[Enums.ACTIONDATA][0][Enums.ACTION] = Enums.DAMAGETEXT;
-                    cData[Enums.ACTIONDATA][0][Enums.UNITID] = unit.id;
-                    cData[Enums.ACTIONDATA][0][Enums.TEXT] = 'Action failed';
+                    cData[Enums.ACTIONDATA] = [ClientActions.damageText(unit.id,'Action failed')];
                     this.queuePlayer(unit.owner,Enums.ACTION,cData);
                     return;
                 }
-
-                var cData5 = {};
-                cData5[Enums.ACTION] = Enums.LOG;
-                cData5[Enums.TEXT] = ' - ' + data.unit.name + ' used ' + data.ability.name;
-                data[Enums.ACTIONDATA].push(cData5);
+                data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' used ' + data.ability.name));
             }else{
                 //The ability has a cast time
                 //add cast time to the turn order and start casting!
                 var speed = Math.round((unit.speed.value + this.parseStringCode(unit,data.ability.speed)) * unit.castingSpeedMod.value);
-                console.log('Cast speed: ' + speed);
+
                 abData = {
                     id: this.engine.getId(),
                     isCastTimer: true,
@@ -775,53 +710,32 @@ GameSession.prototype.unitAbility = function(data){
                 cData[Enums.CHARGE] = 0;
                 this.queueData(Enums.ADDCASTTIMER,cData);
 
-                var cData2 = {};
-                cData2[Enums.ACTION] = Enums.DAMAGETEXT;
-                cData2[Enums.UNITID] = unit.id;
-                cData2[Enums.TEXT] = 'casting...';
-                data[Enums.ACTIONDATA].push(cData2);
+                data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'casting...'));
 
-                var cData5 = {};
-                cData5[Enums.ACTION] = Enums.LOG;
-                cData5[Enums.TEXT] = ' - ' + data.unit.name + ' used ' + data.ability.name;
-                data[Enums.ACTIONDATA].push(cData5);
+                data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' used ' + data.ability.name));
+                castAbl = true;
             }
         }
     }
     if (!gotNode){
-        var cData3 = {};
-        cData3[Enums.ACTION] = Enums.DAMAGETEXT;
-        cData3[Enums.UNITID] = unit.id;
-        cData3[Enums.TEXT] = 'get node failed...';
-        data[Enums.ACTIONDATA].push(cData3);
+        data[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'get node failed...'));
         var cData4 = {};
         cData4[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
         this.queuePlayer(unit.owner,Enums.ACTION,cData4);
         return;
     }
     var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass,mod: 1.5});
-    var cData5 = {};
-    cData5[Enums.ACTION] = Enums.DAMAGETEXT;
-    cData5[Enums.UNITID] = unit.id;
-    cData5[Enums.TEXT] = '+' + apamt + ' AP';
-    cData5[Enums.OWNERONLY] = true;
-    data[Enums.ACTIONDATA].push(cData5);
+    data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(unit.id,'+' + apamt + ' AP'));
     data.unit.actionUsed = true;
 
-    var cData6 = {};
-    cData6[Enums.ACTION] = Enums.ACTIONUSED;
-    cData6[Enums.UNITID] = unit.id;
-    data[Enums.ACTIONDATA].push(cData6);
-
-    var cData8 = {};
-    cData8[Enums.UNITID] = unit.id;
-    cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
-    cData8[Enums.TEXT] = data.ability.name;
-    data[Enums.ACTIONDATA].splice(0,0,cData8);
+    data[Enums.ACTIONDATA].push(ClientActions.actionUsed(unit.id));
+    if (!castAbl){
+        data[Enums.ACTIONDATA].splice(0,0,ClientActions.actionBubble(unit.id,data.ability.name));
+    }
 
     var cData7 = {};
     cData7[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
-    this.queuePlayer(unit.owner,Enums.ACTION,cData7);
+    this.queueData(Enums.ACTION,cData7);
 }
                        
 GameSession.prototype.unitItem = function(data){ //check if ability is valid and execute
@@ -880,10 +794,7 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
             success = true;
             compound = true;
 
-            let d2 = {}
-            d2[Enums.ACTION] = Enums.LOG;
-            d2[Enums.TEXT] = '- ' + unit.name + ' used a ' + item.name;
-            cData[Enums.ACTIONDATA].push(d2);
+            cData[Enums.ACTIONDATA].push(ClientActions.log('- ' + unit.name + ' used a ' + item.name));
             break;
 
     }
@@ -891,46 +802,22 @@ GameSession.prototype.unitItem = function(data){ //check if ability is valid and
         return false;
     }else{
         if (!compound){
-            let d1 = {}
-            d1[Enums.ACTION] = Enums.DAMAGETEXT;
-            d1[Enums.UNITID] = unit.id;
-            d1[Enums.TEXT] = 'Equip Change';
-            cData[Enums.ACTIONDATA].push(d1);
-            let d2 = {}
-            d2[Enums.ACTION] = Enums.LOG;
-            d2[Enums.TEXT] = '- ' + unit.name + ' changed equipment';
-            cData[Enums.ACTIONDATA].push(d2);
-
-            var cData8 = {};
-            cData8[Enums.UNITID] = unit.id;
-            cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
-            cData8[Enums.TEXT] = "Equipment Change";
-            cData[Enums.ACTIONDATA].splice(0,0,cData8);
+            cData[Enums.ACTIONDATA].push(ClientActions.damageText(unit.id,'Equip Change'));
+            cData[Enums.ACTIONDATA].push(ClientActions.log('- ' + unit.name + ' changed equipment'));
+            cData[Enums.ACTIONDATA].splice(0,0,ClientActions.actionBubble(unit.id,'Equip Change'));
         }else{
-            var cData8 = {};
-            cData8[Enums.UNITID] = unit.id;
-            cData8[Enums.ACTION] = Enums.ACTIONBUBBLE;
-            cData8[Enums.TEXT] = item.name;
-            cData[Enums.ACTIONDATA].splice(0,0,cData8);
+            cData[Enums.ACTIONDATA].splice(0,0,ClientActions.actionBubble(unit.id,item.name));
         }
     }
     var apamt = unit.addAp({classid: unit.classInfo.currentClass,mod: 0.5});
-    var cData5 = {};
-    cData5[Enums.ACTION] = Enums.DAMAGETEXT;
-    cData5[Enums.UNITID] = unit.id;
-    cData5[Enums.TEXT] = '+' + apamt + ' AP';
-    cData5[Enums.OWNERONLY] = true;
-    cData[Enums.ACTIONDATA].push(cData5);
+    cData[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(unit.id,'+' + apamt + ' AP'));
     unit.actionUsed = true;
-    var cData6 = {};
-    cData6[Enums.ACTION] = Enums.ACTIONUSED;
-    cData6[Enums.UNITID] = unit.id;
-    cData[Enums.ACTIONDATA].push(cData6);
+    cData[Enums.ACTIONDATA].push(ClientActions.actionUsed(unit.id));
 
 
     var cData7 = {};
     cData7[Enums.ACTIONDATA] = cData[Enums.ACTIONDATA];
-    this.queuePlayer(unit.owner,Enums.ACTION,cData7);
+    this.queueData(Enums.ACTION,cData7);
 }
                       
 GameSession.prototype.unitEnd = function(data){
@@ -948,10 +835,7 @@ GameSession.prototype.unitEnd = function(data){
     }
     if (!valid){return;}
     unit.endTurn();
-    var actionData = [{}];
-    actionData[0][Enums.ACTION] = Enums.FACE;
-    actionData[0][Enums.UNITID] = unit.id;
-    actionData[0][Enums.DIRECTION] = unit.direction;
+    var actionData = [ClientActions.face(unit.id,unit.direction)];
     if (this.currentInGameState == this.inGameStates.WaitingForTurnInfo){
         this.ticker = this.timePerTurn;
     }
@@ -960,10 +844,7 @@ GameSession.prototype.unitEnd = function(data){
 
     var cData = {};
     cData[Enums.ACTIONDATA] = actionData;
-    var cData5 = {};
-    cData5[Enums.ACTION] = Enums.LOG;
-    cData5[Enums.TEXT] = ' - ' + unit.name + ' turn is ended facing ' + data.direction + '.';
-    cData[Enums.ACTIONDATA].push(cData5);
+    cData[Enums.ACTIONDATA].push(ClientActions.log(' - ' + unit.name + ' turn is ended facing ' + data.direction + '.'));
     if (unit.hidden){
         //unless the unit is hidden
         for (var i in this.players){

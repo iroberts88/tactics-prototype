@@ -170,6 +170,7 @@
         },
         clear: function(){
             //clear class/ability buttons etc.
+            //TODO this needs to destroy everything?
             this.buttons = [];
             Graphics.uiContainer.removeChildren();
             Graphics.uiContainer2.removeChildren();
@@ -213,7 +214,7 @@
             var wText = Graphics.makeUiElement({
                 text: 'Weight:',
                 style: this.style1,
-                position: [this.weightText.position.x,this.weightText.position.y - this.weightText.height/2],
+                position: [this.weightText.position.x,this.weightText.position.y - this.weightText.height/2-15],
             });
             wText.style.fontSize = 24;
             Graphics.uiContainer.addChild(wText);

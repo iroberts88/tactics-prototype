@@ -229,9 +229,6 @@
             //data.unit.sprite.position.x = data.endPos[0];
             //data.unit.sprite.position.y = data.endPos[1];
             actions.endAction(data);
-            if(data[Enums.REDUCELEFT]){
-                data.unit.moveLeft -= 1;
-            }
             data.unit.currentNode = data.newNode;
             if (!data.newNode.unit){
                 data.newNode.unit = data.unit;

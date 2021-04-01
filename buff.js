@@ -23,6 +23,8 @@ var Buff = function(data){
      // an array containing the buff tags or specific id's to remove when the buff inits
     this.removes = typeof data.removes == 'undefined' ? {tags: [],ids: []} : data.removes;
 
+    this.tickBeforeTurn = typeof data.tickBeforeTurn == 'undefined' ? false : data['tickBeforeTurn'];
+
     //tags for buff removal/stacking etc.
     //E.G. ["health restore","positive"]
     this.tags = typeof data.tags == 'undefined' ? [] : data.tags;
@@ -64,6 +66,7 @@ var Buff = function(data){
 Buff.prototype.init =  function(data){
     var Actions = require('./actions.js').Actions
     this.unit = data.unit; //the buff will perform actions on this object
+    this.source = data.source;
     this.id = data.unit.owner.session.getId();
     var add = true;
 
@@ -108,7 +111,7 @@ Buff.prototype.init =  function(data){
 
         if (this.tickImmediately){
             for (var i = 0;i < this.actionsOnImmediate.length;i++){
-                var action = Actions.getAction(this.actionsOnImmediate[i].action);
+                var action = Actions.getAction(this.actionsOnImmediate[i]['action']);
                 action(this.unit, this.actionsOnImmediate[i]);
             }
         }
@@ -151,7 +154,7 @@ Buff.prototype.end = function(){
     var Actions = require('./actions.js').Actions;
     //The timer is over the max duration. Perform actions on end and end the buff
     for (var i = 0;i < this.actionsOnEnd.length;i++){
-        var action = Actions.getAction(this.actionsOnEnd[i].action);
+        var action = Actions.getAction(this.actionsOnEnd[i]['action']);
         action(this.unit, this.actionsOnEnd[i]);
     }
     console.log('buff ' + this.name + ' ended')

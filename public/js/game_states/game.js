@@ -811,7 +811,7 @@
                 return;
             }
             
-            var text = "End " + this.units[this.turnList[0]].name + 's turn facing ' + dir + '?';
+            var text = "End " + this.units[this.turnList[0]].name + '\'s turn facing ' + dir + '?';
             var y = function(){
                 console.log('Send end command!!');
                 Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(

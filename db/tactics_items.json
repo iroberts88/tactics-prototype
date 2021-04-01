@@ -242,7 +242,7 @@
             "value": 5
           }
         ],
-        "rangeMax": 8,
+        "rangeMax": 6,
         "rangeMin": 2
       },
       "type": "gun"
@@ -279,7 +279,7 @@
         "onEquip": [],
         "onHit": [],
         "onFire": [],
-        "rangeMax": 8,
+        "rangeMax": 5,
         "rangeMin": 2
       },
       "type": "gun"

@@ -130,7 +130,7 @@ function User() {
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
                         }
-                        var unitClass = 'splicer';
+                        var unitClass = 'marksman';
                         var learned = {};
                         var equipped = {}; 
                         switch(unitClass){
@@ -159,8 +159,8 @@ function User() {
                                 equipped = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
                                 break;
                             case 'marksman':
-                                learned = { "scan" : true, "aim": true};
-                                equipped = { "scan" : true, "aim": true};
+                                learned = { "scan" : true, "aim": true, 'preparedShot': true,'gunner': true, 'expertSighting': true};
+                                equipped = { "scan" : true, "aim": true, 'preparedShot': true,'gunner': true, 'expertSighting': true};
                                 break;
                         }
                         char.classInfo = new ClassInfo();
