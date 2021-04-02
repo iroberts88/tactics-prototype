@@ -425,6 +425,10 @@ GameSession.prototype.executeMove = function(data){
         }
         //TODO check reactions for each moved node?
         //check each enemy for "onEnemyMove" reactions
+        if (data.unit.dead || data.unit.fainted){
+            stopped = true;
+            break;
+        }
         for (var j in this.allUnits){
             if (this.allUnits[j].owner == data.unit.owner || this.allUnits[j].isCastTimer){
                 continue;
@@ -455,7 +459,25 @@ GameSession.prototype.executeMove = function(data){
         if (data.isAMove){
             data.unit.moveLeft -= 1;
         }
-        data.unit.newNode(this.map.getAxial(data.path[data.path.length-1]));
+        data.unit.newNode(this.map.getAxial(data.path[i]));
+
+        for (var j in this.allUnits){
+            if (this.allUnits[j].owner == data.unit.owner || this.allUnits[j].isCastTimer){
+                continue;
+            }
+            var u = this.allUnits[j];
+            for (var j = 0; j < u.afterEnemyMove.length;j++){
+                var aFunc = Actions.getAction(u.afterEnemyMove[j]['name']);
+                u.afterEnemyMove[j].target = data.unit;
+                u.afterEnemyMove[j].stopped = stopped;
+                u.afterEnemyMove[j].actionData = data[Enums.ACTIONDATA];
+                var success = aFunc(u,u.afterEnemyMove[j]);
+                if (success){
+                    data[Enums.ACTIONDATA] = success.actionData
+                    stopped = success.stopped;
+                }
+            }
+        }
     }
     //this.getUnitsNotInLos();
     return data;
@@ -527,6 +549,9 @@ GameSession.prototype.executeAttack = function(data){
         console.log('invalid attack?')
         return false;
     }
+
+    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir));
+
     if (data.unit.hidden){
         data[Enums.ACTIONDATA] = data.node.unit.damage({
             damageType: data.weapon.eqData.damageType,
@@ -580,9 +605,7 @@ GameSession.prototype.unitAttack = function(data){
     if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
     data.weapon = data.unit.getWeapon();
     data.d = this.map.getDMod(data.unit.currentNode,data.node);
-    data[Enums.ACTIONDATA] = [];
     data.ablMod = 1.0;
-    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir));
     data = this.executeAttack(data);
     if (!data){return false;}
     //TODO check for post-attack reactions
@@ -591,10 +614,7 @@ GameSession.prototype.unitAttack = function(data){
     var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
     data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(data.unit.id,'+' + apamt + ' AP'));
     data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' attacks ' + data.node.unit.name + ' with ' + data.weapon.name + ' for ' + data.dmgValue + ' ' + data.weapon.eqData.damageType + ' damage!'));
-    var cData = {};
-    cData[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
-    this.queueData(Enums.ACTION,cData);
-    return true;
+    return data;
 }
                       
 GameSession.prototype.unitAbility = function(data){

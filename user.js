@@ -116,7 +116,7 @@ function User() {
                             name: name,
                             sex: sexes[Math.floor(Math.random()*sexes.length)],
                             inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield', 'compound_healing'],
-                            weapon: Math.floor(Math.random()*2),
+                            weapon: 1,//Math.floor(Math.random()*2),
                             shield: 3,
                             accessory: 2
                         });

@@ -23,7 +23,7 @@ var Buff = function(data){
      // an array containing the buff tags or specific id's to remove when the buff inits
     this.removes = typeof data.removes == 'undefined' ? {tags: [],ids: []} : data.removes;
 
-    this.tickBeforeTurn = typeof data.tickBeforeTurn == 'undefined' ? false : data['tickBeforeTurn'];
+    this.tickBeforeTurn = typeof data['tickBeforeTurn'] == 'undefined' ? false : data['tickBeforeTurn'];
 
     //tags for buff removal/stacking etc.
     //E.G. ["health restore","positive"]
@@ -109,11 +109,9 @@ Buff.prototype.init =  function(data){
     if (add){
         this.unit.buffs.push(this);
 
-        if (this.tickImmediately){
-            for (var i = 0;i < this.actionsOnImmediate.length;i++){
-                var action = Actions.getAction(this.actionsOnImmediate[i]['action']);
-                action(this.unit, this.actionsOnImmediate[i]);
-            }
+        for (var i = 0;i < this.actionsOnImmediate.length;i++){
+            var action = Actions.getAction(this.actionsOnImmediate[i]['action']);
+            action(this.unit, this.actionsOnImmediate[i]);
         }
 
         //send buff to client

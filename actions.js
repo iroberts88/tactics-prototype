@@ -13,6 +13,7 @@ ActionEnums = {
 	SetHidden: 'setHidden',
 	AddOnAttack: 'addOnAttack',
 	AddOnEnemyMove: 'addOnEnemyMove',
+	AddAfterEnemyMove: 'addAfterEnemyMove',
 	Poison: 'poison',
 	HealingFieldEffect: 'healingFieldEffect',
 	CheckStealthRemove: 'checkStealthRemove',
@@ -188,18 +189,27 @@ Actions.prototype.poison = function(unit,data){
 }
 Actions.prototype.addOnAttack = function(unit,data){
 	if (data['reverse']){
-		unit.removeOnAttack(data['effect']);
+		unit.removeFromEffectArray(unit.onAttack,data['name']);
 	}else{
-		unit.addOnAttack(data['effect'])
+		unit.addToEffectArray(unit.onAttack,data['effect'])
 	}
 	return false;
 }
 Actions.prototype.addOnEnemyMove = function(unit,data){
 	console.log(data);
 	if (data['reverse']){
-		unit.removeOnEnemyMove(data['name']);
+		unit.removeFromEffectArray(unit.onEnemyMove,data['name']);
 	}else{
-		unit.addOnEnemyMove(data['effect'])
+		unit.addToEffectArray(unit.onEnemyMove,data['effect'])
+	}
+	return false;
+}
+Actions.prototype.addAfterEnemyMove = function(unit,data){
+	console.log(data);
+	if (data['reverse']){
+		unit.removeFromEffectArray(unit.afterEnemyMove,data['name']);
+	}else{
+		unit.addToEffectArray(unit.afterEnemyMove,data['effect'])
 	}
 	return false;
 }
@@ -287,7 +297,10 @@ Actions.prototype.preparedShotAttack = function(unit,data){
     }
     atData.q = data.target.currentNode.q;
     atData.r = data.target.currentNode.r;
-    if (unit.owner.session.unitAttack(atData)){
+    atData[Enums.ACTIONDATA] = data.actionData;
+    var newAttack = unit.owner.session.unitAttack(atData);
+    if (newAttack){
+    	data.actionData = newAttack[Enums.ACTIONDATA];
 		data.actionData.push(ClientActions.log(' - ' + unit.name + ' fires a prepared shot!!'));
 		unit.removeBuff('buff_preparedShot');
 		return data;
@@ -330,9 +343,11 @@ Actions.prototype.counterAttackEffect = function(unit,data){
             }
             atData.q = data.source.currentNode.q;
             atData.r = data.source.currentNode.r;
-            console.log(atData.q + ', ' + atData.r);
-            if (unit.owner.session.unitAttack(atData)){
-				data[Enums.ACTIONDATA].push(ClientActions.actionBubble(unit.id,'Counterattack'));
+		    atData[Enums.ACTIONDATA] = data.aData;
+		    var newAttack = unit.owner.session.unitAttack(atData);
+            if (newAttack){
+            	data.aData = newAttack[Enums.ACTIONDATA];
+				data.aData.push(ClientActions.actionBubble(unit.id,'Counterattack'));
 				data.aData.push(ClientActions.log(' - ' + unit.name + ' counters the attack!!'));
     			unit.reaction -= 1;
 				return data;
@@ -367,6 +382,9 @@ Actions.prototype.getAction = function(a){
 			break;
 		case ActionEnums.AddOnEnemyMove:
 			return this.addOnEnemyMove;
+			break;
+		case ActionEnums.AddAfterEnemyMove:
+			return this.addAfterEnemyMove;
 			break;
 		case ActionEnums.HealingFieldEffect:
 			return this.healingFieldEffect;

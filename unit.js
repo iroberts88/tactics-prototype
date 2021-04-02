@@ -126,178 +126,46 @@ var Unit = function(){
         weight:0
     });
 
-
+    //effect arrays
     this.onTakeDamage = []; //list of effects before the unit takes damage
     this.onAfterTakeDamage = []; //list of effects after the unit takes damage
     this.onAction = [];
     this.onAttack = [];
     this.onMove = []; //list of effects when the unit moves
-    this.onEnemyMove = [] //list of effects when an enemy unit moves
+    this.onEnemyMove = [] //list of effects before an enemy unit moves
+    this.afterEnemyMove = [] //list of effects after an enemy unit moves
     this.onTurnEnd = [];
     this.onTurnStart = [];
     this.onFaint = [];
     this.onDeath = [];
+    this.constantEffects = [];
 
     this.currentNode = null;
     this.currentSession = null;
 }
 
-Unit.prototype.addOnTakeDamage = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnTakeDamage');
-        console.log(obj);
-    }
-    this.onTakeDamage.push(obj);
-}
-Unit.prototype.removeOnTakeDamage = function(n){
-    for (let i = 0;i < this.onTakeDamage.length;i++){
-        if (this.onTakeDamage['name'] == n){
-            this.onTakeDamage.splice(i,1);
-            return;
-        }
-    }
-}
-Unit.prototype.addOnAfterTakeDamage = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnAfterTakeDamage');
-        console.log(obj);
-    }
-    this.onAfterTakeDamage.push(obj);
-}
-Unit.prototype.removeOnAfterTakeDamage = function(n){
-    for (let i = 0;i < this.onAfterTakeDamage.length;i++){
-        if (this.onAfterTakeDamage['name'] == n){
-            this.onAfterTakeDamage.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnAction = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnAction');
-        console.log(obj);
-    }
-    this.onAction.push(obj);
-}
-Unit.prototype.removeOnAction = function(n){
-    for (let i = 0;i < this.onAction.length;i++){
-        if (this.onAction['name'] == n){
-            this.onAction.splice(i,1);
-            return;
-        }
-    }
-}
-Unit.prototype.addOnAttack = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnAttack');
-        console.log(obj);
-    }
-    this.onAttack.push(obj);
-}
-Unit.prototype.removeOnAttack = function(n){
-    for (let i = 0;i < this.onAttack.length;i++){
-        if (this.onAttack['name'] == n){
-            this.onAttack.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnMove = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnMove');
-        console.log(obj);
-    }
-    this.onMove.push(obj);
-}
-Unit.prototype.removeOnMove = function(n){
-    for (let i = 0;i < this.onMove.length;i++){
-        if (this.onMove['name'] == n){
-            this.onMove.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnEnemyMove = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnEnemyMove');
-        console.log(obj);
-    }
-    this.onEnemyMove.push(obj);
-}
-Unit.prototype.removeOnEnemyMove = function(n){
-    for (let i = 0;i < this.onEnemyMove.length;i++){
-        if (this.onEnemyMove['name'] == n){
-            this.onEnemyMove.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnTurnEnd = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnTurnEnd');
-        console.log(obj);
-    }
-    this.onTurnEnd.push(obj);
-}
-Unit.prototype.removeOnTurnEnd = function(n){
-    for (let i = 0;i < this.onTurnEnd.length;i++){
-        if (this.onTurnEnd['name'] == n){
-            this.onTurnEnd.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnTurnStart = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnTurnStart');
-        console.log(obj);
-    }
-    this.onTurnStart.push(obj);
-}
-Unit.prototype.removeOnTurnStart = function(n){
-    for (let i = 0;i < this.onTurnStart.length;i++){
-        if (this.onTurnStart['name'] == n){
-            this.onTurnStart.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnFaint = function(obj){
-    if (typeof obj.name == 'undefined'){
-        console.log('no name? addOnFaint');
-        console.log(obj);
-    }
-    this.onFaint.push(obj);
-}
-Unit.prototype.removeOnFaint = function(n){
-    for (let i = 0;i < this.onFaint.length;i++){
-        if (this.onFaint['name'] == n){
-            this.onFaint.splice(i,1);
-            return;
-        }
-    }
-}
-
-Unit.prototype.addOnDeath = function(obj){
+Unit.prototype.addToEffectArray = function(arr,obj){
     if (typeof obj.name == 'undefined'){
         console.log('no name? addOnDeath');
         console.log(obj);
     }
-    this.onDeath.push(obj);
+    arr.push(obj);
 }
-Unit.prototype.removeOnDeath = function(n){
-    for (let i = 0;i < this.onDeath.length;i++){
-        if (this.onDeath['name'] == n){
-            this.onDeath.splice(i,1);
+Unit.prototype.removeFromEffectArray = function(arr,n){
+    for (let i = 0;i < arr.length;i++){
+        if (arr[i]['name'] == n){
+            arr.splice(i,1);
             return;
         }
     }
+}
+Unit.prototype.hasEffectInArray = function(arr,n){
+    for (let i = 0;i < arr.length;i++){
+        if (arr[i]['name'] == n){
+            return true;
+        }
+    }
+    return false;
 }
 
 Unit.prototype.reset = function(){
@@ -753,6 +621,7 @@ Unit.prototype.endTurn = function(){
     for (var i = 0; i < this.buffs.length;i++){
         if (!this.buffs[i].tickBeforeTurn){
             this.buffs[i].tick();
+            console.log("Buff ticking -- " + this.buffs[i].name);
             if (this.buffs[i].buffEnded){
                 this.buffs.splice(i,1);
                 i -= 1;
@@ -761,12 +630,15 @@ Unit.prototype.endTurn = function(){
     }
     this.setMoveLeft(this.move.value);
     this.reaction = 1;
+    this.actionUsed = false;
 };
 Unit.prototype.beginTurn = function(){
     //tick all buffs
+    console.log("Turn Start! -- " + this.name)
     for (var i = 0; i < this.buffs.length;i++){
         if (this.buffs[i].tickBeforeTurn){
             this.buffs[i].tick();
+            console.log("Buff ticking -- " + this.buffs[i].name);
             if (this.buffs[i].buffEnded){
                 this.buffs.splice(i,1);
                 i -= 1;
@@ -1416,7 +1288,6 @@ Unit.prototype.removeBuff = function(buffid){
     console.log('trying to remove ' + buffid);
     for(var i = 0;i < this.buffs.length;i++){
         var buff = this.buffs[i];
-        console.log(buff.buffid + ' -- ID')
         if (buff.buffid == buffid){
             buff.ticker = buff.duration;
             buff.end();

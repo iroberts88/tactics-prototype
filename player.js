@@ -156,7 +156,12 @@ Player.prototype.setupSocket = function() {
                         data.q = data[Enums.Q];
                         data.r = data[Enums.R];
                         //send the data to session and execute the attack
-                        that.session.unitAttack(data);
+                        data[Enums.ACTIONDATA] = [];
+                        if (that.session.unitAttack(data)){
+                            var cData = {};
+                            cData[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
+                            that.session.queueData(Enums.ACTION,cData);
+                        }
                         break;
                     case Enums.ABILITY:
                         console.log('using an ability...')

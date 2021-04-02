@@ -206,7 +206,7 @@
         {
           "name": "Prepared Shot",
           "sCost": 10,
-          "description": "Reduce turn move to 0. Until next turn, you will fire at the first unit that comes into range of your equipped gun, dealing <DEX%> increased damage.",
+          "description": "Reduce turn move to 0. Until next turn, you will fire at the first unit that moves in range of your equipped gun, dealing <DEX%> increased damage.",
           "id": "preparedShot",
           "speed": "instant",
           "type": "singleunit",

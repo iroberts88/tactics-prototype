@@ -122,7 +122,7 @@
       "buffid": "buff_preparedShot",
       "actionsOnImmediate": [
         {
-          "action": "addOnEnemyMove",
+          "action": "addAfterEnemyMove",
           "effect": {
             "name": "preparedShotAttack"
           }
@@ -130,7 +130,7 @@
       ],
       "actionsOnEnd": [
         {
-          "action": "addOnEnemyMove",
+          "action": "addAfterEnemyMove",
           "name": "preparedShotAttack",
           "reverse": true
         }
