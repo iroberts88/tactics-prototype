@@ -303,7 +303,7 @@
         {
           "sCost": 4,
           "name": "Rest",
-          "description": "Restore <25+END> current health and <5+WIL/2> current energy (Increased by tactics)",
+          "description": "Restore <15+END> current health and <5+WIL/2> current energy (Increased by tactics)",
           "range": "self",
           "ApCost": 200,
           "id": "rest",
@@ -656,7 +656,7 @@
         },
         {
           "name": "Cybernetics: Legs",
-          "description": "Mechanically enhance unit's legs, increasing agility by 3",
+          "description": "Mechanically enhance unit's legs, increasing agility by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybLegs",
           "sCost": 15,
@@ -664,7 +664,7 @@
         },
         {
           "name": "Cybernetics: Arms",
-          "description": "Mechanically enhance unit's arms, increasing strength by 3",
+          "description": "Mechanically enhance unit's arms, increasing strength by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybArms",
           "sCost": 15,
@@ -672,7 +672,7 @@
         },
         {
           "name": "Cybernetics: Brain",
-          "description": "Mechanically enhance unit's cerebral cortex, increasing intelligence by 3",
+          "description": "Mechanically enhance unit's cerebral cortex, increasing intelligence by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybBrain",
           "sCost": 15,
@@ -680,7 +680,7 @@
         },
         {
           "name": "Cybernetics: Eyes",
-          "description": "Mechanically enhance unit's eyes, increasing dexterity by 3",
+          "description": "Mechanically enhance unit's eyes, increasing dexterity by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybEyes",
           "sCost": 15,
@@ -688,7 +688,7 @@
         },
         {
           "name": "Cybernetics: Lungs",
-          "description": "Mechanically enhance unit's resperitory system, increasing endurance by 3",
+          "description": "Mechanically enhance unit's resperitory system, increasing endurance by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybLungs",
           "sCost": 15,
@@ -696,7 +696,7 @@
         },
         {
           "name": "Cybernetics: Heart",
-          "description": "Mechanically enhance unit's body, increasing willpower by 3",
+          "description": "Mechanically enhance unit's body, increasing willpower by 3 and synthetics by 10%",
           "ApCost": 300,
           "id": "cybHeart",
           "sCost": 15,

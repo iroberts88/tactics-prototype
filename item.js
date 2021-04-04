@@ -1,4 +1,5 @@
 
+var Enums = require('./enums.js').Enums;
 
 var Item = function(){
     this.id = null;

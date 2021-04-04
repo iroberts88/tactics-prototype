@@ -7,7 +7,8 @@ var GameSession = require('./gamesession.js').GameSession,
     Ability = require('./ability.js').Ability,
     Actions = require('./actions.js').Actions,
     Utils = require('./utils.js').Utils,
-    AWS = require("aws-sdk");
+    AWS = require("aws-sdk"),
+    Enums = require('./enums.js').Enums;
 
 
 var fs = require('fs');

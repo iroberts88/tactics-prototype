@@ -47,11 +47,11 @@ ClientActions.prototype.setEnergy = function(unitid,value){
 	data[Enums.ACTION] = Enums.SETENERGY;
 	return data;
 }
-ClientActions.prototype.reveal = function(unitid,directions,q,r){
+ClientActions.prototype.reveal = function(unitid,direction,q,r){
 	//reveal a unit that has become un-hidden
 	let data = {};
 	data[Enums.UNITID] = unitid;
-	data[Enums.DIRECTIONS] = directions;
+	data[Enums.DIRECTION] = direction;
 	data[Enums.Q] = q;
 	data[Enums.R] = r;
 	data[Enums.ACTION] = Enums.REVEAL;

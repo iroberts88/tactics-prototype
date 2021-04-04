@@ -1,4 +1,5 @@
-var Actions = require('./actions.js').Actions;
+var Enums = require('./enums.js').Enums,
+    Actions = require('./actions.js').Actions;
 
 var Buff = function(data){
     

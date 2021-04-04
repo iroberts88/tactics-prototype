@@ -1,8 +1,9 @@
 // Inventory
 var Item = require('./item.js').Item,
-    Attribute = require('./attribute.js').Attribute;
+    Attribute = require('./attribute.js').Attribute,
     Unit = require('./unit.js').Unit,
     Player = require('./player.js').Player,
+    Actions = require('./actions.js').Actions,
     Actions = require('./actions.js').Actions,
     Enums = require('./enums.js').Enums;
 
@@ -63,6 +64,13 @@ Inventory.prototype.addItemUnit = function(id,amt,updateClient){
             this.items.push(I);
             this.changeWeight(item.weight);
 
+            for (var i = 0; i < this.owner.onInventoryChange.length;i++){
+                var aFunc = Actions.getAction(this.owner.onInventoryChange[i]['name']);
+                this.owner.onInventoryChange[i].item = item;
+                this.owner.onInventoryChange[i].add = true;
+                aFunc(this.owner,this.owner.onInventoryChange[i]);
+            }
+
             //send item data to client
             if (updateClient){
                 this.engine.queuePlayer(this.owner.owner,Enums.ADDITEMTOUNIT,this.engine.createClientData(
@@ -118,9 +126,17 @@ Inventory.prototype.addItem = function(id, amt){
     }catch(e){
         this.engine.debug('additemplayerError',e,index);
     }
+
 }
 
-
+Inventory.prototype.hasWeapon = function(){
+    for (let i = 0;i < this.items.length;i++){
+        if (this.items[i].type == 'weapon'){
+            return true;
+        }
+    }
+    return false;
+}
 
 Inventory.prototype.changeWeight = function(amt,mult){
     //change the current weight
@@ -320,6 +336,13 @@ Inventory.prototype.removeItemUnit = function(index,updateClient){
         this.owner.accessory -= 1;
     }else if (this.owner.accessory == index){
         this.owner.accessory = null;
+    }
+
+    for (var i = 0; i < this.owner.onInventoryChange.length;i++){
+        var aFunc = Actions.getAction(this.owner.onInventoryChange[i]['name']);
+        this.owner.onInventoryChange[i].item = item;
+        this.owner.onInventoryChange[i].add = false;
+        aFunc(this.owner,this.owner.onInventoryChange[i]);
     }
 }
 

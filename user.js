@@ -6,6 +6,7 @@
 var Inventory = require('./inventory.js').Inventory,
     Unit = require('./unit.js').Unit,
     Utils = require('./utils.js').Utils,
+    Enums = require('./enums.js').Enums,
     ClassInfo = require('./classinfo.js').ClassInfo;
 
 var AWS = require("aws-sdk");
@@ -130,7 +131,7 @@ function User() {
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
                         }
-                        var unitClass = 'marksman';
+                        var unitClass = 'scout';
                         var learned = {};
                         var equipped = {}; 
                         switch(unitClass){
@@ -155,8 +156,8 @@ function User() {
                                 equipped = {"acidSpit": true,"center": true, "fireBreath": true, "iceShards": true, "detonate": true,'thunderCross': true, 'viralCloud': true, 'empoison': true, 'energyBlast': true, 'gammaTendrils': true, 'voidScream': true};
                                 break;
                             case 'commando':
-                                learned = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
-                                equipped = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true};
+                                learned = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true,'energize': true,'rest': true};
+                                equipped = {"instruct": true, 'shout': true, 'focus': true, 'bolster': true,'energize': true,'rest': true};
                                 break;
                             case 'marksman':
                                 learned = { "scan" : true, "aim": true, 'preparedShot': true,'gunner': true, 'expertSighting': true};

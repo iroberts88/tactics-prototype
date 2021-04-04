@@ -78,7 +78,7 @@ var Unit = function(){
     this.shieldDelay = null;
     this.shieldRecharge = null;
     
-
+    this.ignoreLOSBlock = false;
     //stuff that gets reset before game start
     this.currentShields = null;
     this.currentEnergy = null;
@@ -111,7 +111,6 @@ var Unit = function(){
 
     this.fainted = false;
 
-
     this.reaction = 1;
 
     this.fists = new Item();
@@ -138,7 +137,7 @@ var Unit = function(){
     this.onTurnStart = [];
     this.onFaint = [];
     this.onDeath = [];
-    this.constantEffects = [];
+    this.onInventoryChange = []; //triggers when items are added/removed from inventory
 
     this.currentNode = null;
     this.currentSession = null;
@@ -163,6 +162,14 @@ Unit.prototype.hasEffectInArray = function(arr,n){
     for (let i = 0;i < arr.length;i++){
         if (arr[i]['name'] == n){
             return true;
+        }
+    }
+    return false;
+}
+Unit.prototype.getEffectInArray = function(arr,n){
+    for (let i = 0;i < arr.length;i++){
+        if (arr[i]['name'] == n){
+            return arr[i];
         }
     }
     return false;
@@ -617,6 +624,18 @@ Unit.prototype.init = function(data) {
     this.reset();
 };
 Unit.prototype.endTurn = function(){
+
+    if (this.moveUsed){ 
+        this.charge -= this.owner.session.chargeMax*this.owner.session.moveChargePercent;
+        this.moveUsed = false;
+    }
+    if (this.actionUsed){
+        this.charge -= this.owner.session.chargeMax*this.owner.session.actionChargePercent;
+        this.actionUsed = false;
+    }
+    this.charge -= this.owner.session.chargeMax*this.owner.session.waitChargePercent;
+    this.endedTurn = false;
+
     //tick all buffs
     for (var i = 0; i < this.buffs.length;i++){
         if (!this.buffs[i].tickBeforeTurn){

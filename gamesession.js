@@ -6,6 +6,7 @@ var Player = require('./player.js').Player,
     Actions = require('./actions.js').Actions,
     Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap,
+    Enums = require('./enums.js').Enums,
     ClientActions = require('./clientActions.js').ClientActions,
     Utils = require('./utils.js').Utils,
     UnitAI = require('./unitai.js').UnitAI;
@@ -198,17 +199,6 @@ GameSession.prototype.tickInGame = function(deltaTime) {
                 this.allUnits[this.turnOrder[0].id].endTurn();
                 //process turn and get new Turn order
                 this.currentInGameState = this.inGameStates.BetweenTurns;
-                //first unit has completed the turn??
-                if (this.allUnits[this.turnOrder[0].id].moveUsed){ 
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.moveChargePercent;
-                    this.allUnits[this.turnOrder[0].id].moveUsed = false;
-                }
-                if (this.allUnits[this.turnOrder[0].id].actionUsed){
-                    this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.actionChargePercent;
-                    this.allUnits[this.turnOrder[0].id].actionUsed = false;
-                }
-                this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax*this.waitChargePercent;
-                this.allUnits[this.turnOrder[0].id].endedTurn = false;
                 this.getTurnOrder();
                 var turnList = [];
                 var turnPercent = [];
@@ -386,7 +376,7 @@ GameSession.prototype.getTurnOrder = function(){
         var cData = {};
         cData[Enums.ACTIONDATA] = actionData;
         this.queueData(Enums.ACTION,cData);
-        this.allUnits[this.turnOrder[0].id].charge -= this.chargeMax;
+        this.allUnits[this.turnOrder[0].id].endTurn();
         this.getTurnOrder();
     }
 }
@@ -529,7 +519,9 @@ GameSession.prototype.executeAttack = function(data){
             var los = this.map.getLOS(data.unit.currentNode,data.node);
             if (los[1]){
                 // Hits another unit!!
-                data.node = this.allUnits[los[1]].currentNode;
+                if (!data.unit.ignoreLOSBlock){
+                    data.node = this.allUnits[los[1]].currentNode;
+                }
             }
             if (los[0] == 'full'){
                 valid = true;

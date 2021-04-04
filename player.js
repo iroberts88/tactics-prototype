@@ -350,7 +350,7 @@ Player.prototype.setupSocket = function() {
                             //remove item from unit
                             unit.inventory.removeItemUnit(data[Enums.INDEX],true);
                         }catch(e){
-                            that.engine.debug('itemToPlayerError',e.stack,data);
+                            that.engine.debug('itemToPlayerError',e,data);
                         }
                         break;
                     case Enums.EQUIPITEM:
