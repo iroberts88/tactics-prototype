@@ -31,6 +31,8 @@ var Player = function(){
     this.unitsNotInLos = {};
     this.myUnits = {};
 
+    this.isNPC = false;
+
 };
 
 Player.prototype.init = function (data) {

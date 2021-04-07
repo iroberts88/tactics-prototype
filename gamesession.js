@@ -594,6 +594,7 @@ GameSession.prototype.unitAttack = function(data){
         }
     }
     data.actionBubble = (typeof data.actionBubble == 'undefined' ? true : data.actionBubble);
+    data.giveAP = (typeof data.giveAP == 'undefined' ? true : data.giveAP);
     if ( data.unit.fainted || data.unit.dead){return false;}
     data.node = this.map.axialMap[data.q][data.r];
     if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
@@ -605,8 +606,10 @@ GameSession.prototype.unitAttack = function(data){
     //TODO check for post-attack reactions
     data.unit.actionUsed = true;
     data[Enums.ACTIONDATA].push(ClientActions.actionUsed(data.unit.id));
-    var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
-    data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(data.unit.id,'+' + apamt + ' AP'));
+    if (data.giveAP){
+        var apamt = data.unit.addAp({classid: data.unit.classInfo.currentClass});
+        data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(data.unit.id,'+' + apamt + ' AP'));
+    }
     data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' attacks ' + data.node.unit.name + ' with ' + data.weapon.name + ' for ' + data.dmgValue + ' ' + data.weapon.eqData.damageType + ' damage!'));
     return data;
 }

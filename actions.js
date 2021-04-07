@@ -3,6 +3,7 @@ var Buff = require('./buff.js').Buff,
     ClassInfo = require('./classinfo.js').ClassInfo,
     ClientActions = require('./clientActions.js').ClientActions,
     Utils = require('./utils.js').Utils,
+    Unit = require('./unit.js').Unit,
     Enums = require('./enums.js').Enums;
 
 ActionEnums = {
@@ -344,6 +345,7 @@ Actions.prototype.preparedShotAttack = function(unit,data){
     atData.q = data.target.currentNode.q;
     atData.r = data.target.currentNode.r;
     atData[Enums.ACTIONDATA] = data.actionData;
+    atData.giveAP = false;
     var newAttack = unit.owner.session.unitAttack(atData);
     if (newAttack){
     	data.actionData = newAttack[Enums.ACTIONDATA];
@@ -390,7 +392,7 @@ Actions.prototype.counterAttackEffect = function(unit,data){
             atData.q = data.source.currentNode.q;
             atData.r = data.source.currentNode.r;
 		    atData[Enums.ACTIONDATA] = data.aData;
-    		atData.actionBubble = false;
+    		atData.giveAP = false;
 		    var newAttack = unit.owner.session.unitAttack(atData);
             if (newAttack){
             	data.aData = newAttack[Enums.ACTIONDATA];
@@ -542,6 +544,8 @@ Actions.prototype.flare = function(unit,data){
 	return true;
 }
 Actions.prototype.quickAttack = function(unit,data){
+    data.giveAP = false;
+    data.actionBubble = false;
     data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
     unit.charge += unit.owner.session.chargeMax*(0.3+Math.round(unit.agility.value*1.5)/100);
@@ -654,6 +658,8 @@ Actions.prototype.interrupt = function(unit,data){
     if (weapon.type != 'weapon'){
     	return false;
     }
+    data.giveAP = false;
+    data.actionBubble = false;
     data = unit.owner.session.unitAttack(data);
     data.node.unit.charge -= unit.owner.session.chargeMax*((10+unit.agility.value)/100);
     if (data.node.unit.charge < 0){
@@ -1081,6 +1087,7 @@ Actions.prototype.powerShot = function(unit,data){
     }
     data.ablMod = 1+(25+Math.floor(unit.strength.value*2))/100;
     data.actionBubble = false;
+    data.giveAP = false;
 	data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
 	return true;
@@ -1093,6 +1100,7 @@ Actions.prototype.powerAttack = function(unit,data){
     }
     data.ablMod = 1+(25+Math.floor(unit.dexterity.value*2))/100;
     data.actionBubble = false;
+    data.giveAP = false;
     data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
 	return true;
@@ -1105,6 +1113,7 @@ Actions.prototype.reversal = function(unit,data){
     }
     data.ablMod = 1+(25+Math.floor(unit.dexterity.value*2))/100;
     data.actionBubble = false;
+    data.giveAP = false;
     data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
     var unitCurrentNode = {q:unit.currentNode.q,r:unit.currentNode.r};
@@ -1213,11 +1222,12 @@ Actions.prototype.heroicCharge = function(unit,data){
     		if (nodes[i].unit.owner != unit.owner){
     			data.q = nodes[i].q;
     			data.r = nodes[i].r;
+    			data.giveAP = false;
+    			data.actionBubble = false;
     			data = unit.owner.session.unitAttack(data);
     		}
     	}
     }
-    console.log(data);
     if (!data){return false;}
 	return true;
 }
@@ -1253,6 +1263,7 @@ Actions.prototype.heroicLeap = function(unit,data){
     		if (nodes[i].unit.owner != unit.owner){
     			data.q = nodes[i].q;
     			data.r = nodes[i].r;
+    			data.giveAP = false;
     			data.actionBubble = false;
     			data = unit.owner.session.unitAttack(data);
     		}
@@ -1319,6 +1330,8 @@ Actions.prototype.resuscitate = function(unit,data){
 }
 
 Actions.prototype.healingField = function(unit,data){
+
+    let Unit = require('./unit.js').Unit;
     var node = unit.owner.session.map.axialMap[data.q][data.r];
     if (node.unit){
     	return false;
@@ -1395,9 +1408,10 @@ Actions.prototype.precisionStrike = function(unit,data){
     if (weapon.type != 'weapon'){
     	return false;
     }
+    data.actionBubble = false;
+    data.giveAP = false;
     data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
-    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Precision Strike',data.d.newDir));
     data.node.unit.healMod.nMod -= unit.strength.value*2;
     if (data.node.unit.healMod.value < -100){
     	data.node.unit.healMod.value = -100;
@@ -1412,10 +1426,11 @@ Actions.prototype.cripple = function(unit,data){
     if (weapon.type != 'gun'){
     	return false;
     }
+    data.actionBubble = false;
+    data.giveAP = false;
     data = unit.owner.session.unitAttack(data);
     if (!data){return false;}
     data.node.unit.setMoveLeft(data.node.unit.moveLeft - Math.floor(1+unit.dexterity.value/5));
-    data[Enums.ACTIONDATA].splice(0,0,ClientActions.attack(data.unit.id,'Cripple',data.d.newDir));
     data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Move -' + Math.floor(1+unit.dexterity.value/5)));
 	return true;
 }
