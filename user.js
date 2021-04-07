@@ -117,7 +117,7 @@ function User() {
                             name: name,
                             sex: sexes[Math.floor(Math.random()*sexes.length)],
                             inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield', 'compound_healing'],
-                            weapon: 1,//Math.floor(Math.random()*2),
+                            weapon: Math.floor(Math.random()*2),
                             shield: 3,
                             accessory: 2
                         });
@@ -131,7 +131,7 @@ function User() {
                         if (i == 4){
                             unitClass = classes[Math.floor(Math.random()*classes.length)];
                         }
-                        var unitClass = 'scout';
+                        var unitClass = 'soldier';
                         var learned = {};
                         var equipped = {}; 
                         switch(unitClass){

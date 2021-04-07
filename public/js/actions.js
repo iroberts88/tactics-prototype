@@ -162,12 +162,8 @@
             var sp = 'sprite' + t;
             data.unit = Game.units[data[Enums.UNITID]];
             data.target = Game.units[data[Enums.TARGETID]]
-            if (data.unit.currentNode.unit == data.unit){
-                data.unit.currentNode.unit = null;
-            }
-            if (data.target.currentNode.unit == data.target){
-                data.target.currentNode.unit = null;
-            }
+            data.unit.currentNode.unit = null;
+            data.target.currentNode.unit = null;
             data.newNode1 = Game.map.axialMap[data[Enums.UNITNEWNODE][Enums.Q]][data[Enums.UNITNEWNODE][Enums.R]];
             data.newNode2 = Game.map.axialMap[data[Enums.TARGETNEWNODE][Enums.Q]][data[Enums.TARGETNEWNODE][Enums.R]];
             data.startPos1 = [data.unit.sprite.position.x,data.unit.sprite.position.y];
@@ -190,12 +186,8 @@
             actions.endAction(data);
             data.unit.currentNode = data.newNode1;
             data.target.currentNode = data.newNode2;
-            if (!data.newNode1.unit){
-                data.newNode1.unit = data.unit;
-            }
-            if (!data.newNode2.unit){
-                data.newNode2.unit = data.target;
-            }
+            data.newNode1.unit = data.unit;
+            data.newNode2.unit = data.target;
         }
     };
     Actions.prototype.move = function(dt,actions,data){
@@ -278,7 +270,9 @@
 
     Actions.prototype.attack = function(dt,actions,data){
         if (typeof data.ticker == 'undefined'){
-            Game.units[data[Enums.UNITID]].addActionBubble(data[Enums.WEAPON]);
+            if (data[Enums.ACTIONBUBBLE]){
+                Game.units[data[Enums.UNITID]].addActionBubble(data[Enums.WEAPON]);
+            }
             Game.units[data[Enums.UNITID]].setNewDirection(data[Enums.DIRECTION]);
             data.ticker = 0;
         }

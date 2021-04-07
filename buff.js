@@ -139,9 +139,14 @@ Buff.prototype.tick = function(){
     this.ticker += 1;
     for (var i = 0;i < this.actionsOnTick.length;i++){
         var action = Actions.getAction(this.actionsOnTick[i].action);
-        var end = action(this.unit, this.actionsOnTick[i]);
-        if (end){
+        var tickData = action(this.unit, this.actionsOnTick[i]);
+        if (tickData.end){
             this.ticker = this.duration;
+        }
+        if (tickData[Enums.ACTIONDATA]){
+            let cData = {};
+            cData[Enums.ACTIONDATA] = tickData[Enums.ACTIONDATA]
+            this.unit.owner.session.queueData(Enums.ACTION,cData);
         }
     }
     if (this.ticker >= this.duration){

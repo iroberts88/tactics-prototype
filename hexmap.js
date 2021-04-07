@@ -808,7 +808,8 @@ HexMap.prototype.getDMod = function(start,end){
     }
     var results = {
         dMod: dMod,
-        newDir: null
+        newDir: null,
+        dirnum: d1
     }
     if (typeof this.cardinalDirections[d1] != 'undefined'){
         results.newDir = this.cardinalDirections[d1];

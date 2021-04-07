@@ -87,13 +87,14 @@ ClientActions.prototype.face = function(unitid,direction){
 	data[Enums.ACTION] = Enums.FACE;
 	return data;
 }
-ClientActions.prototype.attack = function(unitid,weapon,direction){
+ClientActions.prototype.attack = function(unitid,weapon,direction,ab){
 	//unit uses their weapon to attack
 	let data = {};
 	data[Enums.UNITID] = unitid;
 	data[Enums.WEAPON] = weapon;
 	data[Enums.DIRECTION] = direction;
 	data[Enums.ACTION] = Enums.ATTACK;
+	data[Enums.ACTIONBUBBLE] = ab;
 	return data;
 }
 ClientActions.prototype.move = function(unitid,x,y,z){
@@ -121,7 +122,7 @@ ClientActions.prototype.reversal = function(unitid,unitnewnode,target,targetnewn
 	let data = {};
 	data[Enums.UNITID] = unitid;
 	data[Enums.UNITNEWNODE] = unitnewnode;
-	data[Enums.TARGET] = target;
+	data[Enums.TARGETID] = target;
 	data[Enums.TARGETNEWNODE] = targetnewnode;
 	data[Enums.ACTION] = Enums.REVERSAL;
 	return data;

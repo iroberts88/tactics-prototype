@@ -263,7 +263,7 @@ GameSession.prototype.gameStart = function(){
         player.identifiedUnits = {};
         player.myUnits = {};
         this.queuePlayer(player,Enums.MAPINFO, this.mapData);
-        for (var i = 0; i < 3;i++){
+        for (var i = 0; i < 5;i++){
             var uid = player.user.characters[i].id;
             this.allUnits[uid] = player.user.characters[i];
             player.myUnits[uid] = this.allUnits[uid];
@@ -395,7 +395,7 @@ GameSession.prototype.executeMove = function(data){
     data.moveUsed = 0;
     var stopped = false;
     for (var i = 1; i < data.path.length;i++){
-        if (data.unit.moveLeft <= 0){
+        if (data.unit.moveLeft <= 0 && data.isAMove){
             //the unit is out of moves
             stopped = true;
             break;
@@ -542,7 +542,7 @@ GameSession.prototype.executeAttack = function(data){
         return false;
     }
 
-    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir));
+    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir,data.actionBubble));
 
     if (data.unit.hidden){
         data[Enums.ACTIONDATA] = data.node.unit.damage({
@@ -567,6 +567,7 @@ GameSession.prototype.executeAttack = function(data){
     for (var i = 0; i < data.unit.onAttack.length;i++){
         var aFunc = Actions.getAction(data.unit.onAttack[i]['name']);
         data.unit.onAttack[i].target = data.node.unit;
+        data.unit.onAttack[i].actionData = data[Enums.ACTIONDATA];
         aFunc(data.unit,data.unit.onAttack[i]);
     }
     data[Enums.ACTIONDATA] = data.node.unit.damage({
@@ -592,6 +593,7 @@ GameSession.prototype.unitAttack = function(data){
             return false;
         }
     }
+    data.actionBubble = (typeof data.actionBubble == 'undefined' ? true : data.actionBubble);
     if ( data.unit.fainted || data.unit.dead){return false;}
     data.node = this.map.axialMap[data.q][data.r];
     if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
@@ -846,7 +848,6 @@ GameSession.prototype.unitEnd = function(data){
         }
     }
     if (!valid){return;}
-    unit.endTurn();
     var actionData = [ClientActions.face(unit.id,unit.direction)];
     if (this.currentInGameState == this.inGameStates.WaitingForTurnInfo){
         this.ticker = this.timePerTurn;

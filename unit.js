@@ -565,7 +565,10 @@ Unit.prototype.init = function(data) {
         'owner': this,
         'value': (typeof data.synthetic == 'undefined') ? 0 : data['synthetic'],
         'min': 0,
-        'max': 1
+        'max': 1,
+        formula: function(){
+            return Math.round(((this.base+this.nMod)*this.pMod)*100)/100;
+        }
     });
 
     var Inventory = require('./inventory.js').Inventory;
@@ -624,7 +627,7 @@ Unit.prototype.init = function(data) {
     this.reset();
 };
 Unit.prototype.endTurn = function(){
-
+    console.log('end turn!!!');
     if (this.moveUsed){ 
         this.charge -= this.owner.session.chargeMax*this.owner.session.moveChargePercent;
         this.moveUsed = false;
@@ -640,7 +643,7 @@ Unit.prototype.endTurn = function(){
     for (var i = 0; i < this.buffs.length;i++){
         if (!this.buffs[i].tickBeforeTurn){
             this.buffs[i].tick();
-            console.log("Buff ticking -- " + this.buffs[i].name);
+            console.log("Buff ticking -end- " + this.buffs[i].name);
             if (this.buffs[i].buffEnded){
                 this.buffs.splice(i,1);
                 i -= 1;
@@ -657,7 +660,7 @@ Unit.prototype.beginTurn = function(){
     for (var i = 0; i < this.buffs.length;i++){
         if (this.buffs[i].tickBeforeTurn){
             this.buffs[i].tick();
-            console.log("Buff ticking -- " + this.buffs[i].name);
+            console.log("Buff ticking -start- " + this.buffs[i].name);
             if (this.buffs[i].buffEnded){
                 this.buffs.splice(i,1);
                 i -= 1;
@@ -719,6 +722,7 @@ Unit.prototype.damage = function(data){
             break;
         case this.engine.dmgTypeEnums.Poison:
             //ignores shields
+            console.log('poison damage!')
             value -= Math.round(value*(this.poisonRes.value/100));
             this.currentHealth -= value;
             break;
