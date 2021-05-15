@@ -343,7 +343,7 @@ Unit.prototype.init = function(data) {
         'max': 999, //TODO should check if current absl are too high, possibly resetting abilities
 
         formula: function(){
-            return Math.round((this.base+this.nMod)*this.pMod) + 1000;
+            return Math.round((this.base+this.nMod)*this.pMod);
         }
     });
     this.strength = new Attribute();

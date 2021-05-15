@@ -3,6 +3,7 @@
 //----------------------------------------------------------------
 var User = require('./user.js').User,
     Utils = require('./utils.js').Utils,
+    Unit = require('./unit.js').Unit,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo,
     Ability = require('./ability.js').Ability,
@@ -479,6 +480,7 @@ Player.prototype.setupSocket = function() {
                                 that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));
                                 that.user.characters.push(char);
                             }catch(e){
+                                console.log(e.stack)
                                 that.engine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
                             }
                         }
