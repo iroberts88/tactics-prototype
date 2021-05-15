@@ -7,7 +7,7 @@ var Player = require('./player.js').Player,
     Buff = require('./buff.js').Buff,
     HexMap = require('./hexmap.js').HexMap,
     Enums = require('./enums.js').Enums,
-    ClientActions = require('./clientActions.js').ClientActions,
+    ClientActions = require('./clientactions.js').ClientActions,
     Utils = require('./utils.js').Utils,
     UnitAI = require('./unitai.js').UnitAI;
 
