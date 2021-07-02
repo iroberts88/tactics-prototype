@@ -1,7 +1,7 @@
 //actions.js
 var Buff = require('./buff.js').Buff,
     ClassInfo = require('./classinfo.js').ClassInfo,
-    ClientActions = require('./clientActions.js').ClientActions,
+    ClientActions = require('./clientactions.js').ClientActions,
     Utils = require('./utils.js').Utils,
     Unit = require('./unit.js').Unit,
     Enums = require('./enums.js').Enums;
