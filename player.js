@@ -460,7 +460,7 @@ Player.prototype.setupSocket = function() {
                                     sex: sex,
                                     inventory: ['gun_sidearm','weapon_combatKnife']
                                 });
-                                var classes = ['soldier','medic','scout','tech'];
+                                var classes = ['soldier','medic','scout','tech','commando','splicer','marksman'];
                                 var cl = classes[Math.floor(Math.random()*classes.length)];
                                 //randomize stats
                                 var stats = ['strength','endurance','agility','dexterity','willpower','intelligence','charisma'];
@@ -479,7 +479,7 @@ Player.prototype.setupSocket = function() {
                                 that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));
                                 that.user.characters.push(char);
                             }catch(e){
-                                that.engine.debug(that,{'id': 'addRandomUnitError', 'error': e.stack});
+                                console.log(e.stack);
                             }
                         }
                         break;
@@ -493,6 +493,7 @@ Player.prototype.setupSocket = function() {
             }
         }catch(e){
             console.log("Player Update Error");
+            console.log(e.stack);
             that.engine.debug(that,'playerUpdateError',{'id': 'error', 'error': e.stack});
         }
     });
