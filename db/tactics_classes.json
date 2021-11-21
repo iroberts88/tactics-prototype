@@ -880,7 +880,7 @@
         {
           "sCost": 10,
           "name": "Healing Field",
-          "description": "Build a healing field bot with <50+INT*5> health. Every turn the field heals units in a <2+INT/4> hex radius for <10+INT/2+CHA/2>",
+          "description": "Build a healing field bot with <50+INT*5> health. Every turn the bot heals units in a <2+INT/4> hex radius for <10+INT/2+CHA/2>",
           "range": "1|3",
           "ApCost": 100,
           "id": "healingField",

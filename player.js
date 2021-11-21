@@ -2,6 +2,7 @@
 //player.js
 //----------------------------------------------------------------
 var User = require('./user.js').User,
+    Unit = require('./unit.js').Unit,
     Utils = require('./utils.js').Utils,
     Attribute = require('./attribute.js').Attribute,
     ClassInfo = require('./classinfo.js').ClassInfo,
