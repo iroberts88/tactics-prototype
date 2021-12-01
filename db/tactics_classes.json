@@ -71,7 +71,7 @@
           "ApCost": 100,
           "id": "acidSpit",
           "type": "anyhex",
-          "radius": "<8+INT/2> cone2",
+          "radius": "<2+INT/5> cone2",
           "eCost": 60,
           "speed": "1200",
           "projectile": false
@@ -150,7 +150,7 @@
           "type": "anyhex",
           "eCost": 60,
           "speed": "1000",
-          "radius": "<2+INT/2> line",
+          "radius": "<3+INT/3> line",
           "projectile": false
         },
         {
@@ -163,7 +163,7 @@
           "type": "anyhex",
           "eCost": 60,
           "speed": "1000",
-          "radius": "<3+INT/3> cone7",
+          "radius": "<3+INT/4> cone7",
           "projectile": false
         }
       ],

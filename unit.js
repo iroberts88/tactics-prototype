@@ -295,7 +295,7 @@ Unit.prototype.init = function(data) {
     this.power.init({
         'id': Enums.POWER,
         'owner': this,
-        'value': 10,
+        'value': 25,
         'min': 0,
         'max': 9999
     });
@@ -303,7 +303,7 @@ Unit.prototype.init = function(data) {
     this.skill.init({
         'id': Enums.SKILL,
         'owner': this,
-        'value': 10,
+        'value': 25,
         'min': 0,
         'max': 9999
     });
@@ -312,7 +312,7 @@ Unit.prototype.init = function(data) {
     this.tactics.init({
         'id': Enums.TACTICS,
         'owner': this,
-        'value': 10,
+        'value': 25,
         'min': 0,
         'max': 9999
     });
