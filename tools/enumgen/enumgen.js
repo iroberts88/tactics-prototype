@@ -122,6 +122,7 @@ var enums = [
 	'MYUNITS',
 
 	'NAME',
+	'NEWGAME',
 	'NEWTURNORDER',
 	'NODEID',
 	'NOLOS',

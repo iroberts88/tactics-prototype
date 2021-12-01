@@ -487,8 +487,15 @@ Player.prototype.setupSocket = function() {
                     case Enums.TESTGAME:
                         that.engine.playersWaiting.push(that.id);
                         break;
+                    case Enums.NEWGAME:
+                        that.engine.playersWaiting.push(that.id);
+                        break;
                     case Enums.CANCELSEARCH:
                         that.engine.playerCancelSearch(that);
+                        break;
+                    default:
+                        console.log("Recieved player update - no action!");
+                        console.log(data);
                         break;
                 }
             }

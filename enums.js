@@ -200,7 +200,8 @@ var Enums = {
     FOUND: 197,
     MODAP: 198,
     LOG: 199,
-    SYNTHETIC: 200
+    SYNTHETIC: 200,
+    NEWGAME: 201
 
 }
 

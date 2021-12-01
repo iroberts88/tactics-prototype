@@ -642,7 +642,7 @@
                     Graphics.uiContainer.addChild(this.loadMapButton);
 
                     this.joinButton = Graphics.makeUiElement({
-                        text: 'Join (Test)',
+                        text: 'Multiplayer Game',
                         style: AcornSetup.baseStyle,
                         position: [(Graphics.width*0.8),(Graphics.height/1.35)],
                         interactive: true,buttonMode: true,buttonGlow: true,
@@ -656,6 +656,22 @@
                     });
                     this.joinButton.style.fontSize = 48;
                     Graphics.uiContainer.addChild(this.joinButton);
+
+                    this.joinButton2 = Graphics.makeUiElement({
+                        text: 'Solo Game',
+                        style: AcornSetup.baseStyle,
+                        position: [(Graphics.width*0.8),(Graphics.height/1.35)+ 100],
+                        interactive: true,buttonMode: true,buttonGlow: true,
+                        clickFunc: function onClick(){
+                            if (Player.units.length <5){
+                                return;
+                            }
+                            Acorn.Net.socket_.emit(Enums.PLAYERUPDATE,Utils.createServerData(Enums.COMMAND, Enums.NEWGAME));
+                            Acorn.changeState('loader');
+                        }
+                    });
+                    this.joinButton2.style.fontSize = 48;
+                    Graphics.uiContainer.addChild(this.joinButton2);
 
                     this.userName = Graphics.makeUiElement({
                         text: "Welcome " + Player.userData.username + '!',
