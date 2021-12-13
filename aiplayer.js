@@ -29,11 +29,18 @@ AiPlayer.prototype.init = function (data) {
     this.ready = false;
 
     //AI Types
+
     //aggressive - offensive actions are weighed more
     //defensive - defensive actions are weighed more
     //tactical - supportive actions are weighed more
     //balanced - all actions are weighed equally
     //x elemental - actions with a certain element are favored
+
+    //reputations
+
+    //neutral - base
+    //benevolant - will generally spare your unit instead of killing them, less money reward
+    //merciful - will generally spare your unit instead of killing them, less money reward
     this.type = data.type;
 
     if (data.units){

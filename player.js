@@ -488,7 +488,7 @@ Player.prototype.setupSocket = function() {
                         that.engine.playersWaiting.push(that.id);
                         break;
                     case Enums.NEWGAME:
-                        that.engine.playersWaiting.push(that.id);
+                        
                         break;
                     case Enums.CANCELSEARCH:
                         that.engine.playerCancelSearch(that);
