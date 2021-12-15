@@ -38,6 +38,7 @@
             Acorn.Net.on(Enums.MAPINFO, function(data) {
                 console.log(data);
                 //init in-game state
+
                 window.currentMapState = 'game';
                 Game.map = new Map();
                 Game.map.init(data);
@@ -439,6 +440,7 @@
             Acorn.addState({
                 stateId: 'loginScreen',
                 init: function(){
+                    window.currentGameMap = null;
                     Player.init();
                     Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);
                     console.log('Initializing login screen');
@@ -592,6 +594,7 @@
             Acorn.addState({
                 stateId: 'mainMenu',
                 init: function(){
+                    window.currentGameMap = null;
                     console.log('Initializing main menu');
                     document.body.style.cursor = 'default';
                     Graphics.drawBG(Graphics.pallette.color2, Graphics.pallette.color2);

@@ -85,7 +85,7 @@ var GameSession = function (engine) {
 GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
-    var names = ['tri1','throne','arena', 'ice_ravine'];
+    var names = ['rhomb1','tri1','Hex1','plains','throne','arena', 'ice_ravine','ice_river'];
     //for (var i in this.engine.maps){
     //    names.push(i);
     //}

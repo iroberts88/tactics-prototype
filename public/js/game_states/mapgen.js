@@ -35,7 +35,7 @@
         changesMade: null,
 
         currentSZone: 1,
-        sZoneMaxSize: 30,
+        sZoneMaxSize: 60,
 
         losAngle: 1e-6,
 

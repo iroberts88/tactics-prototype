@@ -40,7 +40,7 @@
             this.currentRotation = 0;
         },
         zoom: function(dir){
-            if (Acorn.currentState == 'MapGen' || Acorn.currentState == 'inGame'){
+            if (window.currentGameMap){
                 var changed = true;
                 if (dir == 'in'){
                     window.currentGameMap.currentZoomSetting += 1;

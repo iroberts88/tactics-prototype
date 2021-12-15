@@ -604,6 +604,90 @@
                 }
 
             });
+        }else if (window.currentMapState == 'pregame'){
+            //events for the actual game state
+            //var outlineFilterRed = new PIXI.filters.GlowFilter(15, 2, 1, 0xff9999, 0.5);
+            var filtersOn = function () {
+                this.filters = [outlineFilterRed]
+            }
+
+            var filtersOff = function() {
+                this.filters = []
+            }
+
+            sprite.clicked = false;
+            sprite.on('pointerdown', function onClick(e){
+                if (Game.map.rotateData){return;}
+                var node = Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r];
+                if (Game.moveActive){
+                    Game.tryToMove(node);
+                    return;
+                }
+                if (Game.attackActive){
+                    Game.tryToAttack(node);
+                    return;
+                }
+                if (Game.abilityActive){
+                    Game.tryToAbility(node);
+                    return;
+                }
+                if (node.unit){
+                    Game.selectUnit(node.unit);
+                }
+            });
+
+            sprite.on('pointerup', function onClick(e){
+
+            });
+
+            sprite.on('pointerupoutside', function onClick(e){
+
+            });
+
+            sprite.on('pointerover', function onMove(e){
+                if (Game.map.rotateData){return;}
+                //movement is active...
+                if (Game.moveActive){
+                    Graphics.worldPrimitives.clear();
+                    movePossible = false;
+                    for (var i = 0; i < Game.moveNodesActive.length;i++){
+                        if (sprite.axialCoords.q == Game.moveNodesActive[i].q && sprite.axialCoords.r == Game.moveNodesActive[i].r){
+                            movePossible = true;
+                        }
+                    }
+                    if (movePossible){
+                        var unit = Game.units[Game.turnList[0]]; 
+                        Graphics.worldPrimitives.lineStyle(3,0xFFFF00,1);
+                        var t = 1;
+                        if (!(Game.map.currentRotation%2)){t = 2}
+                        var sp = 'sprite' + t;
+                        var a = unit.currentNode;
+                        var path = Game.map.findPath(Game.map.getCube(unit.currentNode),Game.map.getCube(Game.map.axialMap[sprite.axialCoords.q][sprite.axialCoords.r]),{maxJump: Game.units[Game.turnList[0]].jump,startingUnit:Game.units[Game.turnList[0]]});
+                        Graphics.worldPrimitives.moveTo(a[sp].position.x,a[sp].position.y-Game.map.TILE_HEIGHT*(a.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]);
+                        for (var i = 1; i < path.length;i++){
+                            var a = Game.map.getAxial(path[i]);
+                            Graphics.worldPrimitives.lineTo(a[sp].position.x,a[sp].position.y-Game.map.TILE_HEIGHT*(a.h+1)*0.8*Game.map.ZOOM_SETTINGS[Game.map.currentZoomSetting]);
+                        }
+                    }
+                }
+                if (Game.selectedNode != null){return;}
+                Game.resetTint();
+                Game.setNewHoveredNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
+                Game.currentlyMousedOver = sprite;
+            });
+
+            sprite.on('pointerout', function onMove(e){
+                if (Game.selectedNode == null){
+                    if (Game.map.rotateData){return;}
+                    var cubeNode = Game.map.cubeMap[sprite.cubeCoords.x][sprite.cubeCoords.y][sprite.cubeCoords.z];
+                    var a = Game.map.getAxial(cubeNode);
+                    a.sprite1.filters = [];
+                    a.sprite2.filters = [];
+                    Game.nodeInfo.visible = false;
+                    Game.nodeText.visible = false;
+                }
+
+            });
         }
     }
     //returns a cube node when given an axial node

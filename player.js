@@ -510,12 +510,15 @@ Player.prototype.setupSocket = function() {
         try{
             if (d.c){
                 that.engine.mapids.push(that.mapData.name);
-                that.engine.maps[that.mapData.name] = {
+                let map = {
                     'mapid': that.mapData.name,
                     'mapData': that.mapData.mapData,
                     'sz1': that.mapData.sz1,
-                    'sz2': that.mapData.sz2
+                    'sz2': that.mapData.sz2,
+                    "name": that.engine.maps[that.mapData.name]['name'],
+                    "description": that.engine.maps[that.mapData.name]['description']
                 }
+                that.engine.maps[that.mapData.name] = map
                 that.engine.queuePlayer(that,"mapSaved", {name:d.name});
             }else{
                 that.mapData = null;
