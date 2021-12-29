@@ -22,6 +22,7 @@ var GameSession = function (engine) {
     this.cEnums = this.engine.clientDataEnums;
     this.players = {};
     this.playerCount = 0;
+    this.aiPlayers = {};
     this.id = null;
     this.mapName = 'bunker01';
     this.map = null;
@@ -193,7 +194,16 @@ GameSession.prototype.tickInGame = function(deltaTime) {
     }
     switch(this.currentInGameState){
         case this.inGameStates.WaitingForTurnInfo:
+            let unit = this.allUnits[this.turnOrder[0].id];
             this.ticker += deltaTime;
+            if (unit.owner.isNPC && !unit.aiTurnInfo){
+                unit.getAiTurnInfo();
+            }
+            if (unit.owner.isNPC && this.ticker >= unit.aiTurnInfo.timer){
+                //executeTurn
+
+                return;
+            }
             if (this.ticker >= this.timePerTurn){
                 this.ticker = 0;
                 this.allUnits[this.turnOrder[0].id].endTurn();
@@ -245,10 +255,14 @@ GameSession.prototype.addPlayer = function(p) {
     this.playerCount += 1;
 }
 
-GameSession.prototype.removePlayer = function(p) {
+GameSession.prototype.addAiPlayer = function(p) {
+    this.aiPlayers[p.id] = p;
+    p.setGameSession(this);
+}
+
+GameSession.prototype.removeAiPlayer = function(p) {
     p.setGameSession(null);
-    delete this.players[p.id];
-    this.playerCount -= 1;
+    delete this.aiPlayers[p.id];
 }
 
 GameSession.prototype.gameStart = function(){
@@ -260,32 +274,43 @@ GameSession.prototype.gameStart = function(){
     var used = {};
     for (var p in this.players){
         var player = this.players[p];
-        player.identifiedUnits = {};
-        player.myUnits = {};
-        this.queuePlayer(player,Enums.MAPINFO, this.mapData);
-        for (var i = 0; i < 5;i++){
-            var uid = player.user.characters[i].id;
-            this.allUnits[uid] = player.user.characters[i];
-            player.myUnits[uid] = this.allUnits[uid];
-            //init unit health/etc
-            this.allUnits[uid].reset();
-            //set position on the map
-            var haveNode = false;
-            var node;
-            while(!haveNode){
-                node = this.map['startZone' + sz][Math.floor(Math.random()*this.map['startZone' + sz].length)];
-                if (!used[node.nodeid]){
-                    used[node.nodeid] = 1;
-                    node.unit = this.allUnits[uid];
-                    this.allUnits[uid].currentNode = node;
-                    haveNode = true;
-                }
-            }
-            this.allUnits[uid].direction = this.map.cardinalDirections[Math.floor(Math.random()*this.map.cardinalDirections.length)];
-        }
+        this.initPlayer(player,sz,used);
         sz += 1;
     }
-    
+    for (var p in this.aiPlayers){
+        var player = this.aiPlayers[p];
+        this.initPlayer(player,sz,used);
+        sz += 1;
+    }
+}
+
+GameSession.prototype.initPlayer = function(player,sz,used){
+    player.identifiedUnits = {};
+    player.myUnits = {};
+    let chars = player.isNPC ? player.characters : player.user.characters;
+    if (!player.isNPC){
+        this.queuePlayer(player,Enums.MAPINFO, this.mapData);
+    }
+    for (var i = 0; i < 5;i++){
+        var uid = chars[i].id;
+        this.allUnits[uid] = chars[i];
+        player.myUnits[uid] = this.allUnits[uid];
+        //init unit health/etc
+        this.allUnits[uid].reset();
+        //set position on the map
+        var haveNode = false;
+        var node;
+        while(!haveNode){
+            node = this.map['startZone' + sz][Math.floor(Math.random()*this.map['startZone' + sz].length)];
+            if (!used[node.nodeid]){
+                used[node.nodeid] = 1;
+                node.unit = this.allUnits[uid];
+                this.allUnits[uid].currentNode = node;
+                haveNode = true;
+            }
+        }
+        this.allUnits[uid].direction = this.map.cardinalDirections[Math.floor(Math.random()*this.map.cardinalDirections.length)];
+    }
 }
 
 GameSession.prototype.turnSort = function(arr){

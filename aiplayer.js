@@ -23,6 +23,10 @@ var AiPlayer = function(){
     this.identifiedUnits = {};
     this.unitsNotInLos = {};
     this.myUnits = {};
+
+    this.characters = [];
+
+    this.isNPC = true;
 };
 
 AiPlayer.prototype.init = function (data) {
@@ -123,7 +127,8 @@ AiPlayer.prototype.init = function (data) {
                 equipped: equipped});
             char.levelUp();
             char.level -= 1;
-            this.myUnits.push(char);
+            this.myUnits[char.id] = char;
+            this.characters.push(char);
         }
     }
 
@@ -169,12 +174,15 @@ AiPlayer.prototype.getUnitsNotInLos = function(){
     }
 };
 
-AiPlayer.prototype.setEngine = function(engine){
+AiPlayer.prototype.setGameEngine = function(engine){
     this.engine = engine;
 }
 
-AiPlayer.prototype.setSession = function(session){
+AiPlayer.prototype.setGameSession = function(session){
     this.session = session;
+}
+AiPlayer.prototype.queueData = function(){
+    return;
 }
 
 exports.AiPlayer = AiPlayer;

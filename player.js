@@ -8,6 +8,7 @@ var User = require('./user.js').User,
     ClassInfo = require('./classinfo.js').ClassInfo,
     Ability = require('./ability.js').Ability,
     Actions = require('./actions.js').Actions,
+    AiPlayer = require('./aiplayer.js').AiPlayer,
     Enums = require('./enums.js').Enums;
 
 const crypto = require('crypto');
@@ -488,7 +489,16 @@ Player.prototype.setupSocket = function() {
                         that.engine.playersWaiting.push(that.id);
                         break;
                     case Enums.NEWGAME:
-                        
+                        //new single player game!
+                        let newAiPlayer = new AiPlayer();
+                        newAiPlayer.setGameEngine(that.engine);
+                        newAiPlayer.init({});
+                        var s = that.engine.createSession();
+                        //TODO this will crash the server if the player has <5 units
+                        that.engine.joinSession(s.id,that);
+                        that.engine.joinSession(s.id,newAiPlayer);
+                        //new aiplayer!!
+                        that.engine.sessions[s.id].gameStart();
                         break;
                     case Enums.CANCELSEARCH:
                         that.engine.playerCancelSearch(that);

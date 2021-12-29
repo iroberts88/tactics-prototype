@@ -141,8 +141,22 @@ var Unit = function(){
 
     this.currentNode = null;
     this.currentSession = null;
+
+    this.aiTurnInfo = null;
 }
 
+Unit.prototype.getAiTurnInfo = function(){
+    this.aiTurnInfo = {};
+    //get each movable node (including not moving)
+    let map = this.currentSession.map;
+    let nodes = map.cubeSpiral(this.currentNode,this.move.value);
+    //check each action on each movable node and assign them a value
+    //value is modified by unit owner ai type (also slight randomization?)
+    this.aiTurnInfo.actions = [];
+    
+
+    //assign the highest value action to aiTurnInfo
+}
 Unit.prototype.addToEffectArray = function(arr,obj){
     if (typeof obj.name == 'undefined'){
         console.log('no name? addOnDeath');
@@ -226,7 +240,7 @@ Unit.prototype.init = function(data) {
                 return 0;
             }else{
                 var shield = this.owner.inventory.items[this.owner.shield];
-                this.base = Math.ceil(((10*shield.weight) + (100+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
+                this.base = Math.ceil(((10*shield.weight) + (10+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
             }
             return Math.round((this.base+this.nMod)*this.pMod);
         }
@@ -271,7 +285,7 @@ Unit.prototype.init = function(data) {
     this.move.init({
         'id': Enums.MOVE,
         'owner': this,
-        'value': 7,
+        'value': 3,
         'min': 0,
         'max': 99
     });
@@ -653,6 +667,7 @@ Unit.prototype.endTurn = function(){
     this.setMoveLeft(this.move.value);
     this.reaction = 1;
     this.actionUsed = false;
+    this.aiTurnInfo = null;
 };
 Unit.prototype.beginTurn = function(){
     //tick all buffs

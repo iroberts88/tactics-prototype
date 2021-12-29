@@ -193,12 +193,20 @@ GameEngine.prototype.createSession = function(){
 
 GameEngine.prototype.joinSession = function(id,p) {
     //join a player <p> to a session and remove from session
+    if (p.isNPC){
+        this.sessions[id].addAiPlayer(p);
+        return;
+    }
     this.sessions[id].addPlayer(p);
     this.removePlayer(p);
 }
 
 GameEngine.prototype.leaveSession = function(id,p) {
     //remove a player <p> from a session and add back to engine
+    if (p.isNPC){
+        this.sessions[id].removeAiPlayer(p);
+        return;
+    }
     this.addPlayer(p);
     this.sessions[id].removePlayer(p);
 }

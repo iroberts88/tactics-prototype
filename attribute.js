@@ -75,7 +75,7 @@ Attribute.prototype.set = function(updateClient = false){
         func(updateClient,this,this.onChange[i].ability);
     }
     try{
-        if (updateClient && this.updateClient){
+        if (updateClient && this.updateClient && !this.player.isNPC){
             if (this.player.session){
                 this.player.session.queueDataIfIdentified(Enums.SETUNITSTAT,this.engine.createClientData(
                     Enums.UNITID, this.owner.id,
