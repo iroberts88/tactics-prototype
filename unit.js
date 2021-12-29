@@ -148,14 +148,46 @@ var Unit = function(){
 Unit.prototype.getAiTurnInfo = function(){
     this.aiTurnInfo = {};
     //get each movable node (including not moving)
-    let map = this.currentSession.map;
-    let nodes = map.cubeSpiral(this.currentNode,this.move.value);
+    let map = this.owner.session.map;
+    let possibleNodes = map.cubeSpiral(this.currentNode,this.moveLeft);
     //check each action on each movable node and assign them a value
     //value is modified by unit owner ai type (also slight randomization?)
     this.aiTurnInfo.actions = [];
-    
+    this.aiTurnInfo.time = Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2);
+    this.aiTurnInfo.actions.push({
+        action: 'move',
+        node: nodes[Math.floor(Math.random()*nodes.length)]
+    });
+    this.aiTurnInfo.actions.push({
+        action: 'end',
+        direction: map.cardinalDirections[Math.floor(Math.random()*map.cardinalDirections.length)]
+    });
 
     //assign the highest value action to aiTurnInfo
+
+
+    return;
+}
+Unit.prototype.getMoveNodes = function(){
+    let unit = this;
+    let map = this.owner.session.map;
+    let possibleNodes = this.map.cubeSpiral(unit.currentNode,unit.moveLeft);
+    let start;
+    let end;
+    let pathArr;
+    let returnNodes = [];
+    for(let i = 0; i < possibleNodes.length;i++){
+        start = unit.currentNode;
+        end = possibleNodes[i];
+        if (end.unit){
+            continue;
+        }
+        pathArr = map.findPath(start,end,{maxJump:unit.jump,startingUnit:unit});
+        if(pathArr.length != 0 && pathArr.length <= unit.moveLeft+1){
+            returnNodes.push(possibleNodes[i]);
+        }
+    }
+    return returnNodes;
 }
 Unit.prototype.addToEffectArray = function(arr,obj){
     if (typeof obj.name == 'undefined'){

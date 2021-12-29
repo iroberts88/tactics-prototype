@@ -91,7 +91,7 @@ GameSession.prototype.init = function (data) {
     //    names.push(i);
     //}
     //var name = names[Math.floor(Math.random()*names.length)];
-    var name = ['test4']
+    var name = ['test4'];
     //var name = 'hugeHex';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
@@ -198,11 +198,17 @@ GameSession.prototype.tickInGame = function(deltaTime) {
             this.ticker += deltaTime;
             if (unit.owner.isNPC && !unit.aiTurnInfo){
                 unit.getAiTurnInfo();
+                console.log(unit.aiTurnInfo);
             }
-            if (unit.owner.isNPC && this.ticker >= unit.aiTurnInfo.timer){
+            if (unit.owner.isNPC && this.ticker >= unit.aiTurnInfo.time){
                 //executeTurn
 
-                return;
+                if (!unit.aiTurnInfo.actions.length){
+                    //no actions?
+                }else{
+                    unit.aiTurnInfo = this.executeAiAction(unit.aiTurnInfo);
+                    return;
+                }
             }
             if (this.ticker >= this.timePerTurn){
                 this.ticker = 0;
@@ -238,6 +244,23 @@ GameSession.prototype.tickInGame = function(deltaTime) {
 
 GameSession.prototype.tickPostGame = function(deltaTime) {
     
+}
+
+GameSession.prototype.executeAiAction = function(a) {
+    if (a.actions[0].action == 'move'){
+        this.unitMove({q: a.actions[0].node.q, r: a.actions[0].node.r})
+    }else if (a.actions[0].action == 'ability'){
+        
+    }else if (a.actions[0].action == 'attack'){
+        
+    }else if (a.actions[0].action == 'item'){
+        
+    }else if (a.actions[0].action == 'end'){
+        this.unitEnd({direction: a.actions[0].direction});
+    }
+    a.actions.splice(0,1);
+    a.time += (Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2));
+    return a;
 }
 
 GameSession.prototype.getId = function() {
@@ -512,6 +535,9 @@ GameSession.prototype.unitMove = function(data){
     data[Enums.ACTIONDATA] = [];
     var enemyPlayerData = [];
     var endingNode = this.map.getCube(data);
+    if (endingNode.unit){
+        return;
+    }
     data.path = this.map.findPath(this.map.getCube(data.unit.currentNode),endingNode,{startingUnit: data.unit,maxJump:data.unit.jump.value});
     data.isAMove = true;
     data = this.executeMove(data);
