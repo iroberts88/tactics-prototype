@@ -149,14 +149,14 @@ Unit.prototype.getAiTurnInfo = function(){
     this.aiTurnInfo = {};
     //get each movable node (including not moving)
     let map = this.owner.session.map;
-    let possibleNodes = map.cubeSpiral(this.currentNode,this.moveLeft);
+    let possibleNodes = this.getMoveNodes();
     //check each action on each movable node and assign them a value
     //value is modified by unit owner ai type (also slight randomization?)
     this.aiTurnInfo.actions = [];
     this.aiTurnInfo.time = Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2);
     this.aiTurnInfo.actions.push({
         action: 'move',
-        node: nodes[Math.floor(Math.random()*nodes.length)]
+        node: possibleNodes[Math.floor(Math.random()*possibleNodes.length)]
     });
     this.aiTurnInfo.actions.push({
         action: 'end',
@@ -171,7 +171,7 @@ Unit.prototype.getAiTurnInfo = function(){
 Unit.prototype.getMoveNodes = function(){
     let unit = this;
     let map = this.owner.session.map;
-    let possibleNodes = this.map.cubeSpiral(unit.currentNode,unit.moveLeft);
+    let possibleNodes = map.cubeSpiral(unit.currentNode,unit.moveLeft);
     let start;
     let end;
     let pathArr;
