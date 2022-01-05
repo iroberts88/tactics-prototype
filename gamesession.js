@@ -87,11 +87,11 @@ GameSession.prototype.init = function (data) {
     this.id = data.sid;
     this.map = new HexMap(this);
     var names = ['rhomb1','tri1','Hex1','plains','throne','arena', 'ice_ravine','ice_river'];
-    //for (var i in this.engine.maps){
-    //    names.push(i);
-    //}
-    //var name = names[Math.floor(Math.random()*names.length)];
-    var name = ['test4'];
+    for (var i in this.engine.maps){
+        names.push(i);
+    }
+    var name = names[Math.floor(Math.random()*names.length)];
+    var name = 'test4';
     //var name = 'hugeHex';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
@@ -442,6 +442,7 @@ GameSession.prototype.getUnitsNotInLos = function(){
 GameSession.prototype.executeMove = function(data){
     data.moveUsed = 0;
     var stopped = false;
+    let finalNode = data.unit.currentNode;
     for (var i = 1; i < data.path.length;i++){
         if (data.unit.moveLeft <= 0 && data.isAMove){
             //the unit is out of moves
@@ -488,6 +489,9 @@ GameSession.prototype.executeMove = function(data){
             stopped = true;
             break;
         }
+
+        //todo if unit hits stealthed unit while moving through an ally, stop on same node as ally???
+
         //set the new node for the unit
         var dir = this.map.getNewDirectionCube(data.path[i-1],data.path[i]);
         if (dir){
@@ -497,7 +501,7 @@ GameSession.prototype.executeMove = function(data){
         if (data.isAMove){
             data.unit.moveLeft -= 1;
         }
-        data.unit.newNode(this.map.getAxial(data.path[i]));
+        finalNode = data.path[i];
 
         for (var j in this.allUnits){
             if (this.allUnits[j].owner == data.unit.owner || this.allUnits[j].isCastTimer){
@@ -517,6 +521,7 @@ GameSession.prototype.executeMove = function(data){
             }
         }
     }
+    data.unit.newNode(this.map.getAxial(finalNode));
     //this.getUnitsNotInLos();
     return data;
 }

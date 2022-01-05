@@ -138,10 +138,8 @@ var Unit = function(){
     this.onFaint = [];
     this.onDeath = [];
     this.onInventoryChange = []; //triggers when items are added/removed from inventory
-
     this.currentNode = null;
     this.currentSession = null;
-
     this.aiTurnInfo = null;
 }
 
@@ -162,9 +160,7 @@ Unit.prototype.getAiTurnInfo = function(){
         action: 'end',
         direction: map.cardinalDirections[Math.floor(Math.random()*map.cardinalDirections.length)]
     });
-
     //assign the highest value action to aiTurnInfo
-
 
     return;
 }
@@ -1367,6 +1363,7 @@ Unit.prototype.removeBuff = function(buffid){
     }
 }
 Unit.prototype.newNode = function(node){
+    console.log(node.q + ', ' + node.r)
     this.currentNode.unit = null;
     this.currentNode = node;
     this.currentNode.unit = this;
