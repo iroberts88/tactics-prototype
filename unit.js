@@ -125,14 +125,14 @@ var Unit = function(){
         weight:0
     });
 
-    //effect arrays
-    this.onTakeDamage = []; //list of effects before the unit takes damage
-    this.onAfterTakeDamage = []; //list of effects after the unit takes damage
+    //trigger arrays
+    this.onTakeDamage = []; //triggers before the unit takes damage
+    this.onAfterTakeDamage = []; //triggers after the unit takes damage
     this.onAction = [];
     this.onAttack = [];
-    this.onMove = []; //list of effects when the unit moves
-    this.onEnemyMove = [] //list of effects before an enemy unit moves
-    this.afterEnemyMove = [] //list of effects after an enemy unit moves
+    this.onMove = []; //triggers when the unit moves
+    this.onEnemyMove = [] //triggers before an enemy unit moves
+    this.afterEnemyMove = [] //triggers after an enemy unit moves
     this.onTurnEnd = [];
     this.onTurnStart = [];
     this.onFaint = [];
@@ -148,7 +148,29 @@ Unit.prototype.getAiTurnInfo = function(){
     //get each movable node (including not moving)
     let map = this.owner.session.map;
     let possibleNodes = this.getMoveNodes();
+    let possibleActions = [];
+    let node = null;
+    let tUnit = null;
     //check each action on each movable node and assign them a value
+    for (let i = 0; i < possibleNodes.length;i++){
+        node = possibleNodes[i];
+        //check attack from this node
+        for (let j in this.currentSession.allUnits){
+            tUnit = this.currentSession.allUnits[j];
+            if (tUnit.owner == this.owner){
+                continue;
+            }
+            //if unit is in range from this node
+            //get attack value
+        }
+        //check ability from this node
+
+        //check item from this node
+
+        //check remaining move
+
+        //assign value based on ending position
+    }
     //value is modified by unit owner ai type (also slight randomization?)
     this.aiTurnInfo.actions = [];
     this.aiTurnInfo.time = Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2);
@@ -161,7 +183,6 @@ Unit.prototype.getAiTurnInfo = function(){
         direction: map.cardinalDirections[Math.floor(Math.random()*map.cardinalDirections.length)]
     });
     //assign the highest value action to aiTurnInfo
-
     return;
 }
 Unit.prototype.getMoveNodes = function(){
