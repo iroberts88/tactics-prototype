@@ -854,7 +854,7 @@ HexMap.prototype.getDAngle = function(sNode,eNode){
 }
 HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
     var unit1 = startNode.unit;
-    var aH = unit1.height + startNode.h;
+    var aH = (unit1 ? unit1.height : 0) + startNode.h;
     var unit2 = endNode.unit;
 
     var cPos = {
@@ -937,7 +937,7 @@ HexMap.prototype.getLOS = function(startNode,endNode,hitFirstUnit = null){
 HexMap.prototype._getLOS = function(startNode,endNode){
 
     var unit1 = startNode.unit;
-    var aH = unit1.height + startNode.h;
+    var aH = (unit1 ? unit1.height : 0) + startNode.h;
     var unit2 = endNode.unit;
 
     var cPos = {
@@ -1073,9 +1073,11 @@ HexMap.prototype.findPath = function(startNode,endNode,options){
                 var axial = this.getAxial(node);
                 //check units on this node
                 if (options.startingUnit && axial.unit){
-                    if (axial.unit.owner != options.startingUnit.owner && !axial.unit.hidden){
-                        // not a valid node to process, skip to next neighbor
-                        continue;
+                    if (!axial.unit.fainted && !axial.unit.dead){
+                        if (axial.unit.owner != options.startingUnit.owner && !axial.unit.hidden){
+                            // not a valid node to process, skip to next neighbor
+                            continue;
+                        }
                     }
                 }
                 if(this.findGraphNode(closedList,node) || node == options.skip || node.deleted || axial.h - currentAxial.h > options.maxJump) {

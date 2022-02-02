@@ -1417,9 +1417,11 @@
                     var axial = this.getAxial(node);
                     //check units on this node
                     if (options.startingUnit && axial.unit){
-                        if (axial.unit.owner != options.startingUnit.owner){
-                            // not a valid node to process, skip to next neighbor
-                            continue;
+                        if (!axial.unit.fainted && !axial.unit.dead){
+                            if (axial.unit.owner != options.startingUnit.owner){
+                                // not a valid node to process, skip to next neighbor
+                                continue;
+                            }
                         }
                     }
                     if(this.findGraphNode(closedList,node) || node == options.skip || node.deleted || axial.h - currentAxial.h > options.maxJump) {

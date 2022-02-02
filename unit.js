@@ -151,17 +151,27 @@ Unit.prototype.getAiTurnInfo = function(){
     let possibleActions = [];
     let node = null;
     let tUnit = null;
+    let losData = null;
+    let weapon = this.getWeapon();
     //check each action on each movable node and assign them a value
     for (let i = 0; i < possibleNodes.length;i++){
         node = possibleNodes[i];
         //check attack from this node
-        for (let j in this.currentSession.allUnits){
-            tUnit = this.currentSession.allUnits[j];
-            if (tUnit.owner == this.owner){
+        for (let j in this.owner.session.allUnits){
+            tUnit = this.owner.session.allUnits[j];
+            if (tUnit.owner == this.owner || tUnit.dead || tUnit.fainted){
                 continue;
             }
             //if unit is in range from this node
+            losData = this.owner.session.checkLos({unit: this,currentNode: node,node: tUnit.currentNode,weapon: weapon});
             //get attack value
+            if (losData.valid){
+                possibleActions.push({
+                    moveNode: node,
+                    attackNode: tUnit.currentNode,
+                    value: tUnit.currentHealth - Math.round((weapon.eqData.damage*losData.tMod)*losData.losMod*losData.d.dMod)
+                })
+            }
         }
         //check ability from this node
 
@@ -171,13 +181,35 @@ Unit.prototype.getAiTurnInfo = function(){
 
         //assign value based on ending position
     }
-    //value is modified by unit owner ai type (also slight randomization?)
     this.aiTurnInfo.actions = [];
-    this.aiTurnInfo.time = Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2);
-    this.aiTurnInfo.actions.push({
-        action: 'move',
-        node: possibleNodes[Math.floor(Math.random()*possibleNodes.length)]
-    });
+    this.aiTurnInfo.time = Math.random()*2 + 1 + (Math.round(Math.random()) ? 0 : Math.random()*2);
+    let lowest = null;
+    for (let j = 0; j < possibleActions.length;j++){
+        if (lowest){
+            if (possibleActions[j].value < lowest.value){
+                lowest = possibleActions[j]
+            }
+        }else{
+            lowest = possibleActions[j];
+        }
+    }
+    //value is modified by unit owner ai type (also slight randomization?)
+
+    if (!lowest){
+        this.aiTurnInfo.actions.push({
+            action: 'move',
+            node: possibleNodes[Math.floor(Math.random()*possibleNodes.length)]
+        });
+    }else{
+        this.aiTurnInfo.actions.push({
+            action: 'move',
+            node: lowest.moveNode
+        });
+        this.aiTurnInfo.actions.push({
+            action: 'attack',
+            node: lowest.attackNode
+        });
+    }
     this.aiTurnInfo.actions.push({
         action: 'end',
         direction: map.cardinalDirections[Math.floor(Math.random()*map.cardinalDirections.length)]

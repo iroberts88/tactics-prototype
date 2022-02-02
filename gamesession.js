@@ -91,7 +91,7 @@ GameSession.prototype.init = function (data) {
         names.push(i);
     }
     var name = names[Math.floor(Math.random()*names.length)];
-    var name = 'test4';
+    var name = 'testmap';
     //var name = 'hugeHex';
     //name = this.mapName;
     this.mapData = this.engine.maps[name];
@@ -252,14 +252,16 @@ GameSession.prototype.executeAiAction = function(a) {
     }else if (a.actions[0].action == 'ability'){
         
     }else if (a.actions[0].action == 'attack'){
-        
+        let data = {q: a.actions[0].node.q, r: a.actions[0].node.r};
+        data[Enums.ACTIONDATA] = [];
+        this.unitAttack(data)
     }else if (a.actions[0].action == 'item'){
         
     }else if (a.actions[0].action == 'end'){
         this.unitEnd({direction: a.actions[0].direction});
     }
     a.actions.splice(0,1);
-    a.time += (Math.random()*2 + 3 + (Math.round(Math.random()) ? 0 : Math.random()*2));
+    a.time += (Math.random()*2 + 1 + (Math.round(Math.random()) ? 0 : Math.random()*2));
     return a;
 }
 
@@ -564,41 +566,72 @@ GameSession.prototype.unitMove = function(data){
     console.log(data.unit.moveLeft);
     data.unit.setMoveLeft(data.unit.moveLeft);
 }
-GameSession.prototype.executeAttack = function(data){
-    var validNodes = data.weapon.getWeaponNodes(this.map,data.unit.currentNode);
-    //check if the node is a valid node
-    var valid = false;
-    var losMod = 1.0;
+GameSession.prototype.checkLos = function(data){
+    let losData = {};
+    let valid = false;
+    let losMod = 1.0;
+    let validNodes = data.weapon.getWeaponNodes(this.map,data.currentNode);
     for (var i = 0; i < validNodes.length;i++){
         if (validNodes[i].q == data.node.q && validNodes[i].r == data.node.r){
             //check LOS
-            var los = this.map.getLOS(data.unit.currentNode,data.node);
+            var los = this.map.getLOS(data.currentNode,data.node);
             if (los[1]){
                 // Hits another unit!!
-                if (!data.unit.ignoreLOSBlock){
+                if (!data.unit.ignoreLOSBlock && !this.allUnits[los[1]].dead && !this.allUnits[los[1]].fainted){
                     data.node = this.allUnits[los[1]].currentNode;
                 }
             }
             if (los[0] == 'full'){
                 valid = true;
             }else if (los[0] == 'partial'){
-                data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Partial LOS'));
+                if (data[Enums.ACTIONDATA]){
+                    data[Enums.ACTIONDATA].push(ClientActions.damageText(data.node.unit.id,'Partial LOS'));
+                }
                 valid = true;
                 losMod = 0.5;
             }else if (los[0] == 'none'){
                 valid = false
-                var cData = {};
-                cData[Enums.ACTIONDATA] = [ClientActions.noLOS(data.unit.id)];
-                this.queueData(Enums.ACTION,cData);
+                if (data[Enums.ACTIONDATA]){
+                    var cData = {};
+                    cData[Enums.ACTIONDATA] = [ClientActions.noLOS(data.unit.id)];
+                    this.queueData(Enums.ACTION,cData);
+                }
             }
         }
     }
-    if (!valid){
+
+
+    //get type mod
+    let tMod = 1.0;
+    if (data.weapon.type == 'gun'){
+        tMod += data.unit.skill.value/100;
+    }else if (data.weapon.type == 'weapon'){
+        tMod += data.unit.power.value/100;
+    }
+
+    return {
+        valid: valid,
+        losMod: losMod,
+        tMod: tMod,
+        d: this.map.getDMod(data.unit.currentNode,data.node)
+    }
+}
+
+GameSession.prototype.executeAttack = function(data){
+    //check if the node is a valid node
+    //data.unit: unit making the attack
+    //data.node: node being attacked
+    //data.weapon: weapon being used to attack
+    //data.actionBubble
+    //data.d: direction mod
+    data.currentNode = data.unit.currentNode
+    let losData = this.checkLos(data);
+    if (!losData.valid){
         console.log('invalid attack?')
         return false;
     }
 
-    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,data.d.newDir,data.actionBubble));
+    data[Enums.ACTIONDATA].push(ClientActions.attack(data.unit.id,data.weapon.name,losData.d.newDir,data.actionBubble));
 
     if (data.unit.hidden){
         data[Enums.ACTIONDATA] = data.node.unit.damage({
@@ -612,13 +645,6 @@ GameSession.prototype.executeAttack = function(data){
     data.unit.removeBuffsWithTag('removeOnAction');
     //TODO check for pre-attack reactions
 
-    //get directional mod
-    var tMod = 1.0;
-    if (data.weapon.type == 'gun'){
-        tMod += data.unit.skill.value/100;
-    }else if (data.weapon.type == 'weapon'){
-        tMod += data.unit.power.value/100;
-    }
     //execute attack
     for (var i = 0; i < data.unit.onAttack.length;i++){
         var aFunc = Actions.getAction(data.unit.onAttack[i]['name']);
@@ -628,7 +654,7 @@ GameSession.prototype.executeAttack = function(data){
     }
     data[Enums.ACTIONDATA] = data.node.unit.damage({
         damageType: data.weapon.eqData.damageType,
-        value: Math.round((data.weapon.eqData.damage*tMod)*losMod*data.d.dMod*data.ablMod),
+        value: Math.round((data.weapon.eqData.damage*losData.tMod)*losData.losMod*losData.d.dMod*data.ablMod),
         actionData: data[Enums.ACTIONDATA],
         source: data.unit,
         attackType: 'attack'
@@ -655,7 +681,6 @@ GameSession.prototype.unitAttack = function(data){
     data.node = this.map.axialMap[data.q][data.r];
     if (!data.node.unit){return false;} //node doesnt have a unit? (some weapons might ignore this?)
     data.weapon = data.unit.getWeapon();
-    data.d = this.map.getDMod(data.unit.currentNode,data.node);
     data.ablMod = 1.0;
     data = this.executeAttack(data);
     if (!data){return false;}
@@ -667,6 +692,10 @@ GameSession.prototype.unitAttack = function(data){
         data[Enums.ACTIONDATA].push(ClientActions.damageTextOwnerOnly(data.unit.id,'+' + apamt + ' AP'));
     }
     data[Enums.ACTIONDATA].push(ClientActions.log(' - ' + data.unit.name + ' attacks ' + data.node.unit.name + ' with ' + data.weapon.name + ' for ' + data.dmgValue + ' ' + data.weapon.eqData.damageType + ' damage!'));
+    
+    var cData = {};
+    cData[Enums.ACTIONDATA] = data[Enums.ACTIONDATA];
+    this.queueData(Enums.ACTION,cData);
     return data;
 }
                       

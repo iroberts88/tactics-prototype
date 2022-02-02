@@ -47,7 +47,7 @@
                     this.units[i].equip(data[Enums.INDEX]);
                 }
             }
-            if (Acorn.currentState == 'game'){
+            if (Acorn.currentState == 'inGame'){
                 for(var i in Game.units){
                     if (Game.units[i].id == data[Enums.UNITID]){
                         Game.units[i].equip(data[Enums.INDEX]);
@@ -62,7 +62,7 @@
                     this.units[i].unEquip(data[Enums.INDEX]);
                 }
             }
-            if (Acorn.currentState == 'game'){
+            if (Acorn.currentState == 'inGame'){
                 for(var i in Game.units){
                     if (Game.units[i].id == data[Enums.UNITID]){
                         Game.units[i].unEquip(data[Enums.INDEX]);
