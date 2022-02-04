@@ -873,7 +873,11 @@ Unit.prototype.damage = function(data){
             if (this.currentHealth <= 0){
                 this.currentHealth += value;
                 if (this.currentHealth > 0){
-                    this.currentHealth = 0;
+                    if (data.revive){
+                        this.fainted = false;
+                    }else{
+                        this.currentHealth = 0;
+                    }
                 }
             }else{
                 this.currentHealth += value;

@@ -62,6 +62,8 @@
         infoPane: null,
         turnMenu: null,
 
+        pointerSprite: null,
+
         currentTurnArrow: null,
         turnArrowStartY: null,
 
@@ -139,6 +141,17 @@
             this.currentToolTip = null;
             this.endGame = null;
             this.won = null;
+
+            this.pointerSprite = new PIXI.Sprite(Graphics.pointerTexture);
+            this.pointerSprite.anchor.x = 0.5;
+            this.pointerSprite.anchor.y = 1;
+            this.pointerSprite.scale.x = 0.5;
+            this.pointerSprite.scale.y = 0.5;
+            this.pointerSprite.tint = 0x44bf28;
+            this.pointerSprite.filters = [Game.map.outlineFilter];
+            this.pointerSprite.alpha = 0.8;
+            this.pointerSprite.startingPos = 0;
+
 
             this.ALStyle = {
                 font: '16px Roboto',
@@ -461,6 +474,13 @@
             this.currentState = this.states.BetweenStates;
             this.battleStartText.visible = true;
             this.resetTurnMenu();
+            this.units[this.turnList[0]].sprite.addChild(this.pointerSprite);
+            this.pointerSprite.startingPos = -1* this.units[this.turnList[0]].sprite.height-this.map.TILE_HEIGHT;
+            this.pointerSprite.moveTicker = 0;
+            this.pointerSprite.moveTime = 0.25;
+            this.pointerSprite.moveDir = -1;
+            this.pointerSprite.moveSpeed = 40;
+            this.pointerSprite.position.y = this.pointerSprite.startingPos;
             //this.getLineOfSight();
         },
         resetTurnMenu: function(){
@@ -477,6 +497,9 @@
 
         newTurnOrder: function(arr){
             //set timer
+            if (this.pointerSprite.parent){
+                this.pointerSprite.parent.removeChild(this.pointerSprite);
+            }
             this.timeText.visible = false;
             this.betweenStateTicker = 0;
             this.turnTicker = Date.now();
@@ -490,7 +513,7 @@
                 Graphics.uiContainer.removeChild(this.abilityMenu);
             }
             var turnList = [];
-            var unitList = []
+            var unitList = [];
             for (var i in this.units){
                 if (this.units[i].actionUsed){
                     this.units[i].actionUsed = false;
@@ -523,7 +546,9 @@
                 sprite.on('pointerover', Game.filtersOn);
                 sprite.on('pointerout', Game.filtersOff);
             }
-
+            //set new pointer position
+            this.units[this.turnList[0]].sprite.addChild(this.pointerSprite);
+            this.pointerSprite.position.y = this.pointerSprite.startingPos;
             this.resetTurnMenu()
             this.clearOverlaySprites();
             Acorn.Input.setValue(Acorn.Input.Key.CANCEL, true);
@@ -531,6 +556,19 @@
 
         update: function(deltaTime){
             this.map.update(deltaTime);
+            //update pointer
+            this.pointerSprite.position.y += (deltaTime*this.pointerSprite.moveSpeed*this.pointerSprite.moveDir);
+            if (this.pointerSprite.position.y > this.pointerSprite.startingPos){
+                this.pointerSprite.position.y = this.pointerSprite.startingPos;
+            }
+            if (this.pointerSprite.position.y < this.pointerSprite.startingPos-this.pointerSprite.speed*this.pointerSprite.moveTime){
+                this.pointerSprite.position.y = this.pointerSprite.startingPos-this.pointerSprite.speed*this.pointerSprite.moveTime;
+            }
+            this.pointerSprite.moveTicker += deltaTime;
+            if (this.pointerSprite.moveTicker > this.pointerSprite.moveTime){
+                this.pointerSprite.moveTicker -= this.pointerSprite.moveTime;
+                this.pointerSprite.moveDir*= -1;
+            }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
                 this.setNewHoveredNode = null;
                 this.setNewHoveredUnit = null;

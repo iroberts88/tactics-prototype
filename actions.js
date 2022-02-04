@@ -1295,14 +1295,16 @@ Actions.prototype.resuscitate = function(unit,data){
 	if (!u){return false;}
 	if (u.fainted){
 		u.fainted = false;
-		u.currentHealth = 1;
+		console.log(u.currentHealth);
 		u.damage({
 			damageType: 'heal',
-			value: 0,
+			value: u.currentHealth*-1 + 1,
 			actionData: data[Enums.ACTIONDATA],
 			source: unit,
-			attackType: 'ability'
+			attackType: 'ability',
+			revive: true
 		});
+		console.log(u.currentHealth);
 	}else{
 		return false;
 	}

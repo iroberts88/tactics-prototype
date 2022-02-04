@@ -78,6 +78,7 @@
             this.resources = {};
             this.resourcesReady = false;
             this.animationSpeeds = {};
+            this.createTextures();
             this.createPlusMinusTextures();
         },
 
@@ -538,6 +539,18 @@
                     func(percent);
                 }
             });
+        },
+         createTextures: function(){
+            //Generate textures for use in sprites..
+            var s = 64;
+            var g1 = new PIXI.Graphics();
+            g1.lineStyle(1,0xFFFFFF,1);
+            let polygonPath = [new PIXI.Point(s/4,0),new PIXI.Point(s/2,s),new PIXI.Point(s*3/4,0)];
+            g1.beginFill(0xFFFFFF,1)
+            g1.drawPolygon(polygonPath);
+            g1.endFill();
+            this.pointerTexture = PIXI.RenderTexture.create(s,s);
+            this.app.renderer.render(g1,this.pointerTexture);
         },
         createPlusMinusTextures: function(){
             //create plus and minus textures
