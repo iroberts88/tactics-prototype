@@ -12,21 +12,23 @@ ClientActions.prototype.damageText = function(unitid,text,shields=null,health=nu
 	data[Enums.UNITID] = unitid;
 	data[Enums.TEXT] = text;
 	data[Enums.ACTION] = Enums.DAMAGETEXT;
-	if (shields){
+	if (shields != null){
 		data[Enums.SHIELDS] = shields;
 	}
-	if (health){
-		data[Enums.HEALTH] = health;
+	if (health != null){
+		data[Enums.CURRENTHEALTH] = health;
 	}
-	if (fainted){
+	if (fainted != null){
 		data[Enums.FAINTED] = fainted;
 	}
-	if (type){
+	if (type != null){
 		data[Enums.TYPE] = type;
 	}
-	if (dead){
+	if (dead != null){
 		data[Enums.DEAD] = dead;
 	}
+	console.log('wtf');
+	console.log(data);
 	return data;
 }
 ClientActions.prototype.damageTextOwnerOnly = function(unitid,text){

@@ -233,6 +233,9 @@ Actions.prototype.gunnerEffect = function(unit,data){
 }
 Actions.prototype.mechCloakEffect = function(unit,data){
     if (data.attackType == 'attack'){
+    	if (!unit.reaction){
+    		return false;
+    	}
 	    let n = 3;
 	    let type = 'cone3';
 	    let map = unit.owner.session.map;
@@ -383,6 +386,7 @@ Actions.prototype.dodgeEffect = function(unit,data){
 Actions.prototype.counterAttackEffect = function(unit,data){
     if (data.attackType == 'attack'){
     	if (unit.reaction > 0){
+    		unit.reaction -= 1;
     		var atData = {};
     		atData.unit = unit;
     		atData.weapon = unit.getWeapon();
@@ -398,8 +402,9 @@ Actions.prototype.counterAttackEffect = function(unit,data){
             	data.aData = newAttack[Enums.ACTIONDATA];
 				data.aData.push(ClientActions.actionBubble(unit.id,'Counterattack'));
 				data.aData.push(ClientActions.log(' - ' + unit.name + ' counters the attack!!'));
-    			unit.reaction -= 1;
 				return data;
+    		}else{
+    			unit.reaction += 1;
     		}
     	}
     }
@@ -1295,7 +1300,6 @@ Actions.prototype.resuscitate = function(unit,data){
 	if (!u){return false;}
 	if (u.fainted){
 		u.fainted = false;
-		console.log(u.currentHealth);
 		u.damage({
 			damageType: 'heal',
 			value: u.currentHealth*-1 + 1,
@@ -1304,7 +1308,6 @@ Actions.prototype.resuscitate = function(unit,data){
 			attackType: 'ability',
 			revive: true
 		});
-		console.log(u.currentHealth);
 	}else{
 		return false;
 	}

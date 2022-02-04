@@ -236,6 +236,7 @@ Unit.prototype.getMoveNodes = function(){
             returnNodes.push(possibleNodes[i]);
         }
     }
+    returnNodes.push(unit.currentNode);
     return returnNodes;
 }
 Unit.prototype.addToEffectArray = function(arr,obj){

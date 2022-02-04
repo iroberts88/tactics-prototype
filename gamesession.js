@@ -542,7 +542,7 @@ GameSession.prototype.unitMove = function(data){
     data[Enums.ACTIONDATA] = [];
     var enemyPlayerData = [];
     var endingNode = this.map.getCube(data);
-    if (endingNode.unit){
+    if (endingNode.unit || endingNode == data.unit.currentNode){
         return;
     }
     data.path = this.map.findPath(this.map.getCube(data.unit.currentNode),endingNode,{startingUnit: data.unit,maxJump:data.unit.jump.value});
