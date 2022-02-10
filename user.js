@@ -105,17 +105,18 @@ function User() {
                         var sex = sexes[Math.floor(Math.random()*sexes.length)];
                         var nT = sex;
                         var options = {
-                            'male': ['male','male2','romanMale','male3'],
-                            'female': ['female','female2','romanFemale','female3']
+                            'male': ['male3'],
+                            'female': ['female3']
                         }
+                        var nameset = Utils.nameSet[sex+'3'];
                         var thing = options[sex][Math.floor(Math.random()*options[sex].length)];
-                        var name = '' + Utils.generateName(thing) + ' ' + Utils.generateName('last');
+                        var name = '' + (Math.round(Math.random()) ? nameset[Math.floor(Math.random()*nameset.length)]:Utils.generateName(thing))  + ' ' + Utils.generateName('last');
                         char.init({
                             owner: this.owner,
                             id: this.owner.engine.getId(),
                             abilitySlots: 999,
                             name: name,
-                            sex: sexes[Math.floor(Math.random()*sexes.length)],
+                            sex: sex,
                             inventory: ['weapon_combatKnife','gun_sidearm','accessory_focus','shield_shield', 'compound_healing'],
                             weapon: Math.floor(Math.random()*2),
                             shield: 3,
