@@ -329,8 +329,6 @@
                 unit.sprite.position.y = node[sp].position.y-this.map.TILE_HEIGHT*(node.h+1)*0.8*this.map.ZOOM_SETTINGS[this.map.currentZoomSetting];
                 this.map[cont].addChildAt(unit.sprite,this.map[cont].getChildIndex(node[sp])+1);
             }
-            unit.sprite.interactive = true;
-            unit.sprite.buttonMode = true;
             unit.infoPane = this.getUnitInfoPane(unit.id);
             var overFunc = function(e){
                 if (Game.units[e.currentTarget.unitid].isCastTimer){return;}
@@ -342,9 +340,6 @@
                     Game.tryToAbility(Game.units[e.currentTarget.unitid].currentNode);
                 }
             }
-            unit.sprite.on('pointerdown',overFunc);
-            unit.sprite.on('pointerover', Game.filtersOn);
-            unit.sprite.on('pointerout', Game.filtersOff);
             if (!unit.visible){
                 unit.sprite.visible = false;
             }

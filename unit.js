@@ -159,7 +159,7 @@ Unit.prototype.getAiTurnInfo = function(){
         //check attack from this node
         for (let j in this.owner.session.allUnits){
             tUnit = this.owner.session.allUnits[j];
-            if (tUnit.owner == this.owner || tUnit.dead || tUnit.fainted){
+            if (tUnit.owner == this.owner || tUnit.dead || tUnit.fainted || tUnit.isCastTimer){
                 continue;
             }
             //if unit is in range from this node

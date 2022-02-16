@@ -30,10 +30,10 @@ var HexMap = function(session){
     }
     this.dModEnums = {
         //damage multiplicators for directional attacks
-        Behind: 1.5,
-        BehindSide: 1.25,
+        Behind: 1.25,
+        BehindSide: 1.125,
         FrontSide: 1.0,
-        Front: 0.75
+        Front: 0.88
     };
     this.startZone1 = [];
     this.startZone2 = [];
