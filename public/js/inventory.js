@@ -68,6 +68,7 @@
         this.onFullRecharge = Utils.udCheck(data[Enums.ONFULLRECHARGE]);
         this.onDepleted = Utils.udCheck(data[Enums.ONDEPLETED]);
         this.name = Utils.udCheck(data[Enums.NAME]);
+        this.mfg = Utils.udCheck(data[Enums.MFG]);
         this.eqData = {};
         this.eqData.range = Utils.udCheck(data[Enums.EQDATA][Enums.RANGE]);
         this.eqData.damage = Utils.udCheck(data[Enums.EQDATA][Enums.DAMAGE]);

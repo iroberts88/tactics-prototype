@@ -5,6 +5,7 @@ var Item = function(){
     this.id = null;
     this.name = null;
     this.description = null;
+    this.mfg = null;
     this.onUse = null;
     this.icon = null;
     this.type = null;
@@ -30,6 +31,7 @@ Item.prototype.getClientData = function(){
     data[Enums.ID] = this.id;
     data[Enums.NAME] = this.name;
     data[Enums.DESCRIPTION] = this.description;
+    data[Enums.MFG] = this.mfg;
     data[Enums.TYPE] = this.type;
     data[Enums.AMOUNT] = this.amount;
     data[Enums.WEIGHT] = this.weight;
@@ -65,28 +67,29 @@ Item.prototype.getClientData = function(){
 }
 
 Item.prototype.init = function(data) {
-    this.id = data.itemid;
-    this.name = data.name;
-    this.description = data.description;
-    this.classes = data.classes;
-    this.onUse = data.onUse;
-    this.icon = data.icon;
-    this.type = data.type;
-    this.amount = data.amount;
-    this.weight = data.weight;
+    this.id = data['itemid'];
+    this.name = data['name'];
+    this.description = data['description'];
+    this.classes = data['classes'];
+    this.onUse = data['onUse'];
+    this.icon = data['icon'];
+    this.type = data['type'];
+    this.amount = data['amount'];
+    this.weight = data['weight'];
+    this.mfg = data['mfg'];
     this.amount = 1;
     if (this.type != 'compound' && this.type != 'misc'){
         this.eqData = new Equipment();
-        this.eqData.init(data.eqData);
+        this.eqData.init(data['eqData']);
     }
-    this.onUseText = data.onUseText;
-    this.onFireText = data.onFireText;
-    this.onEquipText = data.onEquipText;
-    this.onHitText = data.onHitText;
-    this.onTakeDamageText = data.onTakeDamageText;
-    this.onDepletedText = data.onDepletedText;
-    this.onFullRechargeText = data.onFullRechargeText;
-    this.constantEffectText = data.constantEffectText;
+    this.onUseText = data['onUseText'];
+    this.onFireText = data['onFireText'];
+    this.onEquipText = data['onEquipText'];
+    this.onHitText = data['onHitText'];
+    this.onTakeDamageText = data['onTakeDamageText'];
+    this.onDepletedText = data['onDepletedText'];
+    this.onFullRechargeText = data['onFullRechargeText'];
+    this.constantEffectText = data['constantEffectText'];
 };
 
 Item.prototype.getWeaponNodes = function(map,node){

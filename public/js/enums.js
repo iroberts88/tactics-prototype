@@ -202,7 +202,8 @@
     MODAP: 198,
     LOG: 199,
     SYNTHETIC: 200,
-    NEWGAME: 201
+    NEWGAME: 201,
+    MFG: 202
 
     };
     window.Enums = Enums;

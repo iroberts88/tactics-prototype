@@ -322,7 +322,7 @@ Unit.prototype.init = function(data) {
                 return 0;
             }else{
                 var shield = this.owner.inventory.items[this.owner.shield];
-                this.base = Math.ceil(((10*shield.weight) + (10+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
+                this.base = Math.ceil(((10*shield.weight) + (100+this.owner.level*5)) * (20/(shield.eqData.recharge+30)) *((shield.eqData.delay-1)*(0.25*(1+shield.eqData.delay/5))+0.2));
             }
             return Math.round((this.base+this.nMod)*this.pMod);
         }
@@ -1377,9 +1377,7 @@ Unit.prototype.addAp = function(data){
     var mod = (typeof data.mod == 'undefined') ? 1 : data.mod;
     var amt = (typeof data.amt == 'undefined') ? Math.floor(Math.min(99,Math.max(10,Math.pow(this.classInfo.totalAPValues[classid],0.48))*mod)) : data.amt;
     var updateClient = (typeof data.updateClient == 'undefined') ? false : data.updateClient;
-    console.log(classid);
-    console.log(mod);
-    console.log(amt);
+
     try{
         this.classInfo.ap[classid] += amt;
         this.classInfo.totalAPValues[classid] += amt;

@@ -206,7 +206,7 @@ ClassInfo.prototype.setClass = function(c){
 	try{
 		//TODO reduce attributes from old class?
 		
-		var charClass = this.unit.owner.engine.classes[c]
+		var charClass = this.engine.classes[c]
 		this.classid = c;
 		this.currentClass = charClass.classid;
 		//TODO this should be enums
@@ -214,12 +214,10 @@ ClassInfo.prototype.setClass = function(c){
 			this.unit[stat].base += charClass.attributes[stat];
 			this.unit[stat].set();
 		}
-		/*if (typeof this.ap[charClass.classid] == 'undefined'){
+		if (typeof this.ap[charClass.classid] == 'undefined'){
 			this.ap[charClass.classid] = 100;
 			this.totalAPValues[charClass.classid] = 100;
-		}*/
-			this.ap[charClass.classid] = 5000;
-			this.totalAPValues[charClass.classid] = 5000;
+		}
 		if (typeof this.allClassAbilities[charClass.classid] == 'undefined'){
 			//changed to a new class, set abilities
 			this.allClassAbilities[charClass.classid] = {
@@ -237,7 +235,7 @@ ClassInfo.prototype.setClass = function(c){
 
 ClassInfo.prototype.setBaseClass = function(c){
 	try{
-		var charClass = this.unit.owner.engine.classes[c];
+		var charClass = this.engine.classes[c];
 		this.baseClass = charClass.classid;
 		this.baseid = c;
 		this.allClassAbilities[charClass.classid] = charClass.abilities;
@@ -246,8 +244,8 @@ ClassInfo.prototype.setBaseClass = function(c){
 			this.unit[stat].set();
 		}
 		if (typeof this.ap[charClass.classid] == 'undefined'){
-			this.ap[charClass.classid] = 1000;
-			this.totalAPValues[charClass.classid] = 1000;
+			this.ap[charClass.classid] = 100;
+			this.totalAPValues[charClass.classid] = 100;
 		}
 	}catch(e){
 		console.log("ERROR: unable to set base class");

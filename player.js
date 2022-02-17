@@ -73,6 +73,26 @@ Player.prototype.hasUnit = function(id){
     }
     return false;
 }
+Player.prototype.addNewUnit = function(data){ 
+    data.owner = this;
+    data.id = this.engine.getId();
+    let char = new Unit();
+    //init unit
+    char.init(data);
+   
+    char.classInfo = new ClassInfo();
+    char.classInfo.setUnit(char);
+    char.classInfo.setBaseClass(data['classInfo']['baseClass']);
+    char.classInfo.setClass(data['classInfo']['currentClass']);
+    char.classInfo.init({unit: char, 
+        learned: data['classInfo']['learnedAbilities'],
+        equipped: data['classInfo']['equippedAbilities'],
+        ap: data['classInfo']['ap'],
+        totalAPValues: data['classInfo']['totalAPValues']});
+    char.levelUp();
+    char.level -= 1;
+    return char;
+}
 
 Player.prototype.getUnitsNotInLos = function(){
     for (var i in this.session.players){
@@ -360,7 +380,7 @@ Player.prototype.setupSocket = function() {
                                 return;
                             }
                             var unit = that.getUnit(data[Enums.UNITID]);
-                            var id = that.user.inventory.getItemID(data[Enums.INDEX]);
+                            var id = unit.inventory.getItemID(data[Enums.INDEX]);
                             if (!unit || !id){
                                 console.log('equip item Error');
                                 return;

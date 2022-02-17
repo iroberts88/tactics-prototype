@@ -58,33 +58,15 @@ function User() {
                         if (err) {
                             console.error("Unable to find user data. Error JSON:", JSON.stringify(err, null, 2));
                         } else {
+                            console.log(data.Item);
                             try{
-                                var c = data.Item.characters;
-                                var inv = data.Item.inventory;
-                                if (typeof inv != 'undefined'){
-                                    for (var i = 0; i < inv.length;i++){
-                                        that.inventory.addItem(inv[i][0],inv[i][1],true);
-                                    }
+                                let char = null;
+                                for (var i = 0; i < data.Item['characters'].length;i++){
+                                    char = that.owner.addNewUnit(data.Item['characters'][i]);
+                                    that.owner.engine.queuePlayer(that.owner,Enums.ADDNEWUNIT, that.owner.engine.createClientData(Enums.UNITID, char.getClientData()));
+                                    that.characters.push(char);
                                 }
-                                if (typeof c != 'undefined'){
-                                    for (var i = 0; i < c.length; i++){
-                                        var char = new Unit();
-                                        //init unit
-                                        c[i].owner = that.owner;
-                                        c[i].id = that.owner.engine.getId();
-                                        char.init(c[i]);
-                                        char.classInfo = new ClassInfo();
-                                        char.classInfo.init({unit: char, 
-                                            learned: c[i].classInfo['learnedAbilities'],
-                                            equipped: c[i].classInfo['equippedAbilities'],
-                                            ap: c[i].classInfo['ap'],
-                                            totalApValues: c[i].classInfo['totalApValues']});
-                                        char.classInfo.setBaseClass(c[i].classInfo['baseid']);
-                                        char.classInfo.setClass(c[i].classInfo['classid']);
-                                        that.owner.engine.queuePlayer(that.owner,Enums.ADDNEWUNIT, that.owner.engine.createClientData(Enums.UNITID, char.getClientData()));
-                                        that.characters.push(char);
-                                    }
-                                }
+
                             }catch(e){
                                 console.log(e);
                             }
@@ -98,7 +80,7 @@ function User() {
                 if (d.guest){
                     //add random units
                     var classes = ['medic','tech','soldier','scout', 'commando', 'splicer', 'marksman'];
-                    for (var i = 0; i < 5; i++){
+                    for (var i = 0; i < 0; i++){
                         var char = new Unit();
                         //init unit
                         var sexes = ['male','female'];
@@ -176,9 +158,12 @@ function User() {
                         this.owner.engine.queuePlayer(this.owner,Enums.ADDNEWUNIT, this.owner.engine.createClientData(Enums.UNITID, char.getClientData()));
                         this.characters.push(char);
                     }
-
-                    for (var i in this.owner.engine.items){
-                        this.inventory.addItem(this.owner.engine.items[i].itemid,5, true);
+                    let items = {
+                        'gun_sidearm': 5,
+                        'weapon_combatKnife': 5
+                    }
+                    for (var i in items){
+                        this.inventory.addItem(i,items[i], true);
                     }
                 }
             }catch(e){
@@ -267,6 +252,7 @@ function User() {
                     for (var i = 0; i < this.inventory.items.length;i++){
                        inv.push([this.inventory.items[i].id,this.inventory.items[i].amount]);
                     }
+                    var credits = this.inventory.credits;
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                     var params = {
                         TableName: 'users',
@@ -286,10 +272,11 @@ function User() {
                     params = {
                         TableName: 'tactics_userdata',
                         Key:{username: d.username},
-                        UpdateExpression: "set characters = :c, inventory = :i",
+                        UpdateExpression: "set characters = :c, inventory = :i, credits = :cred",
                         ExpressionAttributeValues: {
                             ":c": c,
-                            ":i": inv
+                            ":i": inv,
+                            ":cred": credits
                         }
                     }
                     docClient.update(params, function(err, data) {

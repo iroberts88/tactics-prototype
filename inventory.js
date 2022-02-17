@@ -14,6 +14,7 @@ var Inventory = function () {
     this.currentWeight = 0;
     this.maxItemPile = 99;
     this.items = [];
+    this.credits = 0;
     this.maxWeight = null;
     this.maxUnitItems = 10;
 }

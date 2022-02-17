@@ -208,6 +208,7 @@
 
         var ttArray = [{text: '<' + item.name + '>'}];
         if (item.weight){ttArray.push({text: '{Weight: }' + item.weight});}
+        if (item.mfg){ttArray.push({text: '{Mfg: }' + item.mfg});}
         if (item.description){ttArray.push({text: item.description,color: '#ffd9b3'});}
         if (item.eqData.damage){ttArray.push({text: '{Damage: }' + item.eqData.damage});}
         if (item.eqData.rangeMin){ttArray.push({text: '{Range: }' + item.eqData.rangeMin + '-' + item.eqData.rangeMax});}
