@@ -494,6 +494,7 @@ Player.prototype.setupSocket = function() {
                                 char.classInfo.init({});
                                 char.levelUp();
                                 char.level -= 1;
+                                char.inventory.equip(Math.round(Math.random()));
                                 that.engine.queuePlayer(that,Enums.ADDNEWUNIT, that.engine.createClientData(Enums.UNITID, char.getClientData()));
                                 that.user.characters.push(char);
                             }catch(e){
